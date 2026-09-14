@@ -112,36 +112,39 @@ const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse S
 function formatPrice(p){return 'Rp '+p.toLocaleString('id-ID');}
 function getSelectedArmada(){const s=document.getElementById('calcUnit');if(!s||!s.value||s.selectedIndex<=0)return null;const o=s.options[s.selectedIndex];return{id:o.dataset.id,name:o.dataset.name,cap:parseInt(o.dataset.cap)||0,capmax:parseInt(o.dataset.capmax)||0,price:parseInt(o.value)||0};}
 function selectUnitFromCard(id){const s=document.getElementById('calcUnit');for(let i=0;i<s.options.length;i++){if(s.options[i].dataset.id===id){s.selectedIndex=i;break;}}calculateLive();checkCapacityLive();document.getElementById('pesan').scrollIntoView({behavior:'smooth'});}
-function initInnerArmadaSliders(){document.querySelectorAll('.armada-img-container').forEach(c=>{const slides=c.querySelectorAll('.armada-img-slide');const dots=c.querySelectorAll('.armada-img-dot');if(slides.length<=1) return;let idx=0;const show=(i)=>{slides.forEach((s,j)=>s.classList.toggle('active',j===i));dots.forEach((d,j)=>{d.style.background=j===i?'var(--accent)':'var(--border-soft)';});};setInterval(()=>{idx=(idx+1)%slides.length;show(idx);},4000);});}
+
 
 function renderArmada(){
 const cards=document.getElementById('armada-cards');const tbody=document.getElementById('armada-harga-body');const sel=document.getElementById('calcUnit');const destWrapper=document.getElementById('destinasi-wrapper');
-cards.innerHTML='';tbody.innerHTML='';sel.innerHTML='';destWrapper.innerHTML='';
+if(!cards) return;
+cards.innerHTML='';if(tbody)tbody.innerHTML='';if(sel)sel.innerHTML='';if(destWrapper)destWrapper.innerHTML='';
 const groupIcons={lembang:'🌲 Lembang (12 Destinasi)',dago:'🌃 Dago & Kota (8 Destinasi)',ciwidey:'⛰ Ciwidey (9 Destinasi)',pangalengan:'☕ Pangalengan (8 Destinasi)'};
+const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
 Object.keys(DESTINASI_DATA).forEach(g=>{
   const w=document.createElement('div');w.className='rounded-xl border overflow-hidden shadow-sm';w.style.background='var(--bg-section-alt)';w.style.borderColor='var(--border-soft)';
-  w.innerHTML=`<button type="button" onclick="toggleAccordion('${g}')" class="w-full flex items-center justify-between p-4 text-sm font-semibold" style="color:var(--text-primary)"><span>${groupIcons[g]}</span><div class="flex items-center gap-2"><span id="count-${g}" class="text-[10px] px-2 py-1 rounded-full font-bold" style="background:var(--accent-glow);color:var(--accent)">0 dipilih</span>▾</div></button><div id="acc-${g}" class="accordion-content"><div class="p-4 pt-0"><div class="flex justify-between items-center mb-3 pb-2 border-b" style="border-color:var(--border-soft)"><span class="text-[11px]" style="color:var(--text-muted)">Pilih destinasi yang ingin dikunjungi</span><button type="button" onclick="selectAllInGroup('${g}',true)" class="text-[11px] font-bold" style="color:var(--accent)">Pilih Semua</button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="dest-${g}"></div><div class="mt-3 flex justify-end"><button type="button" onclick="selectAllInGroup('${g}',false)" class="text-[10px]" style="color:var(--text-muted)">Hapus Semua</button></div></div></div>`;
+  w.innerHTML=`<button type="button" onclick="toggleAccordion('${g}')" class="w-full flex items-center justify-between p-4 text-sm font-semibold"><span>${groupIcons[g]}</span><div class="flex items-center gap-2"><span id="count-${g}" class="text-[10px] px-2 py-1 rounded-full font-bold">0 dipilih</span>▾</div></button><div id="acc-${g}" class="accordion-content"><div class="p-4 pt-0"><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="dest-${g}"></div></div></div>`;
   destWrapper.appendChild(w);
   const cont=w.querySelector(`#dest-${g}`);
-  cont.innerHTML=DESTINASI_DATA[g].map(v=>`<label class="dest-item flex gap-2 items-center cursor-pointer"><input type="checkbox" name="destinasi" data-group="${g}" value="${v}" class="dest-checkbox w-4 h-4 rounded"><span style="color:var(--text-secondary)">${v}</span></label>`).join('');
+  cont.innerHTML=DESTINASI_DATA[g].map(v=>`<label class="dest-item flex gap-2 items-center cursor-pointer"><input type="checkbox" name="destinasi" data-group="${g}" value="${v}" class="dest-checkbox w-4 h-4 rounded"><span>${v}</span></label>`).join('');
 });
-document.querySelectorAll('input[name="destinasi"]').forEach(cb=>cb.addEventListener('change',calculateLive));
-const placeholder = document.createElement('option');
-placeholder.value = "";
-placeholder.textContent = "— Pilih Armada Dulu —";
-placeholder.disabled = true;
-placeholder.selected = true;
-sel.appendChild(placeholder);
-ARMADA_DATA.forEach(unit=>{
-const card=document.createElement('div');card.className=`${unit.span} rounded-[24px] overflow-hidden flex flex-col h-full theme-card border`;
-// FIX UTAMA DISINI: pakai images/ di depan
-card.innerHTML=`<div class="h-48 bg-black relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${(unit.images||[unit.image]).map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}"><img src="images/${img}" loading="lazy" alt="Sewa ${unit.name} Bandung" class="w-full h-full object-contain p-2"></div>`).join('')}</div><div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:white"><span class="text-[9px] font-bold uppercase">${unit.badge}</span></div><div class="absolute top-3 right-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[8px] px-2 py-1 rounded-full uppercase font-bold z-10">🟢 Ready</div><div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${(unit.images||[unit.image]).map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join('')}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${unit.name}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${unit.capacity} • Max ${unit.capacityMax}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>👥 <b style="color:var(--text-primary)">${unit.capacity}</b> + driver • Max ${unit.capacityMax}</li><li>🧳 ${unit.baggage}</li><li>💺 ${unit.maxInfo}</li><li class="${unit.noteClass}">${unit.note}</li></ul><button type="button" onclick="selectUnitFromCard('${unit.id}')" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:white">Pilih Unit - ${formatPrice(unit.price)} / 12 Jam</button></div>`;
-cards.appendChild(card);
-const tr=document.createElement('tr');tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${unit.name}</td><td class="py-5 px-6 text-center"><b>${unit.capacityNum}</b> / Max ${unit.capacityMax}</td><td class="py-5 px-6 text-xs">${unit.baggage}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">${formatPrice(unit.price)}</td><td class="py-5 px-6 text-center"><button onclick="selectUnitFromCard('${unit.id}')" class="border text-[10px] px-4 py-1.5 rounded-full" style="background:var(--bg-card);border-color:var(--border-color)">Pilih</button></td>`;tbody.appendChild(tr);
-const opt=document.createElement('option');opt.value=unit.price;opt.dataset.id=unit.id;opt.dataset.name=unit.shortName;opt.dataset.cap=unit.capacityNum;opt.dataset.capmax=unit.capacityMax;opt.textContent=`${unit.name} - ${formatPrice(unit.price)} / 12 Jam`;sel.appendChild(opt);
-});
-setTimeout(initInnerArmadaSliders,200);
+if(document.querySelectorAll('input[name="destinasi"]').length){document.querySelectorAll('input[name="destinasi"]').forEach(cb=>cb.addEventListener('change',calculateLive));}
+if(sel){
+const placeholder=document.createElement('option');placeholder.value="";placeholder.textContent="— Pilih Armada Dulu —";placeholder.disabled=true;placeholder.selected=true;sel.appendChild(placeholder);
 }
+ARMADA_DATA.forEach(unit=>{
+const card=document.createElement('div');card.className=`rounded-[24px] overflow-hidden flex flex-col h-full theme-card border`;
+// SIMPLE IMAGE - NO SLIDER, NO OPACITY
+card.innerHTML=`<div class="h-56 bg-white relative overflow-hidden flex items-center justify-center"><img src="images/${unit.image}" loading="lazy" alt="Sewa ${unit.name} Bandung" class="w-full h-full object-contain p-2 bg-white" onerror="this.src='https://via.placeholder.com/400x300?text='+encodeURIComponent('${unit.name}'); this.style.background='white'"><div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:white"><span class="text-[9px] font-bold uppercase">${unit.badge}</span></div><div class="absolute top-3 right-3 bg-emerald-500/90 text-white text-[8px] px-2 py-1 rounded-full uppercase font-bold z-10">READY</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold">${unit.name}</h3><p class="text-[10px] uppercase mb-3 font-bold">${unit.capacity} • Max ${unit.capacityMax}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow"><li>👥 <b>${unit.capacity}</b> + driver • Max ${unit.capacityMax}</li><li>🧳 ${unit.baggage}</li><li>💺 ${unit.maxInfo}</li><li class="${unit.noteClass}">${unit.note}</li></ul><button type="button" onclick="selectUnitFromCard('${unit.id}')" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:white">Pilih Unit - Rp ${unit.price.toLocaleString('id-ID')} / 12 Jam</button></div>`;
+cards.appendChild(card);
+if(tbody){
+const tr=document.createElement('tr');tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${unit.name}</td><td class="py-5 px-6 text-center"><b>${unit.capacityNum}</b> / Max ${unit.capacityMax}</td><td class="py-5 px-6 text-xs">${unit.baggage}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">Rp ${unit.price.toLocaleString('id-ID')}</td><td class="py-5 px-6 text-center"><button onclick="selectUnitFromCard('${unit.id}')" class="border text-[10px] px-4 py-1.5 rounded-full" style="background:var(--bg-card);border-color:var(--border-color)">Pilih</button></td>`;tbody.appendChild(tr);
+}
+if(sel){
+const opt=document.createElement('option');opt.value=unit.price;opt.dataset.id=unit.id;opt.dataset.name=unit.shortName;opt.dataset.cap=unit.capacityNum;opt.dataset.capmax=unit.capacityMax;opt.textContent=`${unit.name} - Rp ${unit.price.toLocaleString('id-ID')} / 12 Jam`;sel.appendChild(opt);
+}
+});
+}
+
 function toggleAccordion(g){const c=document.getElementById('acc-'+g);const isOpen=c.classList.contains('open');document.querySelectorAll('.accordion-content').forEach(x=>x.classList.remove('open'));if(!isOpen)c.classList.add('open');}
 function focusRegion(r){toggleAccordion(r);document.getElementById('acc-'+r)?.scrollIntoView({behavior:'smooth',block:'center'});}
 function selectAllInGroup(g, checked){document.querySelectorAll(`input[name="destinasi"][data-group="${g}"]`).forEach(cb=>cb.checked=checked);calculateLive();}
