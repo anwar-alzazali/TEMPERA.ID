@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - TEMPERA.ID</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body{background:#f6f9fc;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Poppins',sans-serif}
+.login-card{background:white;border-radius:20px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.1);width:100%;max-width:420px}
+.logo{font-weight:800;color:#0ea5e9;font-size:24px;text-align:center;margin-bottom:30px}
+.btn-tempera{background:#0ea5e9;color:white;border-radius:50px;padding:12px;font-weight:600;width:100%}
+.btn-tempera:hover{background:#0284c7;color:white}
+</style>
+</head>
+<body>
+<div class="login-card">
+<div class="logo">TEMPERA.ID<br><small style="font-size:12px;color:#64748b;font-weight:400">Private Trip Bandung</small></div>
+<h5 class="mb-3 text-center">Login Driver / Admin</h5>
+<div id="alert"></div>
+<form id="loginForm">
+<div class="mb-3">
+<label class="form-label">Email</label>
+<input type="email" class="form-control" id="email" placeholder="udin@tempera.id" required value="admin@tempera.id">
+</div>
+<div class="mb-4">
+<label class="form-label">Password</label>
+<input type="password" class="form-control" id="password" placeholder="Password" required>
+</div>
+<button type="submit" class="btn btn-tempera" id="btnLogin">MASUK</button>
+</form>
+<div class="mt-4 text-center">
+<small class="text-muted">Akun Test:<br>admin@tempera.id / Admin123!<br>udin@tempera.id / Tempera123!</small>
+</div>
+<div class="mt-3 text-center"><a href="index.html" style="text-decoration:none;font-size:13px">← Kembali ke Beranda</a></div>
+</div>
 
+<!-- FIX: hapus data:application/javascript;base64, ganti pakai file asli -->
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+// URL Supabase kamu yang asli (dari file lama)
+const SUPABASE_URL = 'https://wjmotidqelgcyujacud.supabase.co'
+// KUNCI INI YANG BIKIN LOGIN GAGAL - HARUS DIISI DARI DASHBOARD SUPABASE
+// Buka https://supabase.com/dashboard/project/wjmotidqelgcyujacud/settings/api -> copy anon public key
+const SUPABASE_ANON_KEY = 'sb_publishable_w9OGGJHKIYg6QiKl5cI15A_hY0Ha-ir'
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+ e.preventDefault();
+ const email = document.getElementById('email').value.trim();
+ const pass = document.getElementById('password').value;
+ const btn = document.getElementById('btnLogin');
+ const alertBox = document.getElementById('alert');
+ btn.disabled=true; btn.innerText='Loading...';
+ try{
+   const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+   if(error) throw error;
+   const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
+   console.log('profile',profile);
+   alertBox.innerHTML = `<div class="alert alert-success">Login berhasil! Mengalihkan...</div>`;
+   if(profile && profile.role==='admin'){
+      window.location.href='admin.html';
+   }else{
+      window.location.href='driver/dashboard.html';
+   }
+ }catch(err){
+   console.error(err);
+   alertBox.innerHTML = `<div class="alert alert-danger">${err.message} <br><small>Pastikan ANON KEY sudah diisi di baris 38</small></div>`;
+   btn.disabled=false; btn.innerText='MASUK';
+ }
+});
+</script>
+</body>
+</html>
