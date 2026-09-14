@@ -29,7 +29,7 @@
 .armada-card-uniform .p-6{flex:1 1 auto;display:flex;flex-direction:column}
 .armada-card-uniform ul{flex:1 1 auto}
 .armada-card-uniform button{margin-top:auto!important}
-
+.armada-img-container{background:white!important;height:220px!important;display:flex!important;align-items:center;justify-content:center}.armada-img-container img{opacity:1!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;background:white!important}.armada-img-slide{position:relative!important;opacity:1!important;display:block!important
 
 
 /* ===== ORIGINAL STYLE BLOCK ===== */
