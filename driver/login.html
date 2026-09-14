@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login Driver - Tempera.id</title><link rel="stylesheet" href="../css/main.css"><script src="https://cdn.tailwindcss.com"></script></head><body class="min-h-screen flex items-center justify-center bg-[#0A0A0A]">
+<div class="w-full max-w-md p-8 bg-white rounded-[24px] border"><h1 class="text-2xl font-bold font-serif">Login Driver</h1><p class="text-sm opacity-70">Masuk untuk ganti foto di tempera.id/driver/[nama]/</p><div class="mt-6 space-y-3"><input id="email" type="email" placeholder="udin@tempera.id" class="w-full px-4 py-3 rounded-full border"><input id="password" type="password" placeholder="123456" class="w-full px-4 py-3 rounded-full border"><button onclick="login()" class="w-full py-3 rounded-full font-bold text-white" style="background:#E5B80B">Login</button><p id="msg" class="text-sm text-center mt-2"></p></div><div class="mt-4 text-[11px] opacity-60 text-center">Demo: udin@tempera.id / 123456 | admin@tempera.id / admin123</div></div>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.supabase = supabase;
+window.login = async () => {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('msg');
+  msg.textContent = "Loading...";
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if(error){ msg.textContent = "Error: "+error.message; return; }
+  msg.textContent = "Berhasil!";
+  const slug = email.split('@')[0];
+  setTimeout(()=> location.href = `./${slug}/dashboard.html`, 800);
+}
+</script></body></html>
