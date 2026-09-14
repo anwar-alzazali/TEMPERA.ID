@@ -1,0 +1,107 @@
+
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+
+/* FIX GRID KE POTONG & CARD SERAGAM */
+#armada-cards{display:grid!important;grid-template-columns:repeat(1,minmax(0,1fr))!important;gap:1.5rem!important}
+@media(min-width:768px){#armada-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(min-width:1024px){#armada-cards{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+.armada-card-uniform{display:flex!important;flex-direction:column!important;height:100%!important;min-height:520px!important}
+.armada-card-uniform .armada-img-container{height:220px!important;flex-shrink:0}
+.armada-card-uniform .p-6{flex:1 1 auto;display:flex;flex-direction:column}
+.armada-card-uniform ul{flex:1 1 auto}
+.armada-card-uniform button{margin-top:auto!important}
+
+
+
+
+html{scroll-behavior:smooth}
+.gold-text{background:linear-gradient(to right,var(--accent),var(--accent-light),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}.animate-shake{animation:shake.5s ease-in-out}
+.accordion-content{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
+.accordion-content.open{max-height:2000px}
+:root{--accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;--text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#71717A;--border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07)}
+[data-theme="classic"]{--accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;--text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#71717A;--border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07)}
+[data-theme="sky"]{--accent:#0EA5E9;--accent-light:#38BDF8;--accent-glow:rgba(14,165,233,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F0F9FF;--bg-card:#FFFFFF;--bg-card-hover:#E0F2FE;--bg-input:#FFFFFF;--text-primary:#0C4A6E;--text-secondary:#0369A1;--text-muted:#7DD3FC;--border-color:rgba(14,165,233,0.30);--border-soft:#E0F2FE}
+[data-theme="tropical"]{--accent:#06B6D4;--accent-light:#22D3EE;--accent-glow:rgba(6,182,214,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#ECFEFF;--bg-card:#FFFFFF;--bg-card-hover:#CFFAFE;--bg-input:#FFFFFF;--text-primary:#164E63;--text-secondary:#0E7490;--text-muted:#67E8F9;--border-color:rgba(6,182,214,0.30);--border-soft:#CFFAFE}
+[data-theme="mountain"]{--accent:#10B981;--accent-light:#34D399;--accent-glow:rgba(16,185,129,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#ECFDF5;--bg-card:#FFFFFF;--bg-card-hover:#D1FAE5;--bg-input:#FFFFFF;--text-primary:#022C22;--text-secondary:#065F46;--text-muted:#6EE7B7;--border-color:rgba(16,185,129,0.30);--border-soft:#D1FAE5}
+[data-theme="ocean"]{--accent:#2563EB;--accent-light:#3B82F6;--accent-glow:rgba(37,99,235,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#EFF6FF;--bg-card:#FFFFFF;--bg-card-hover:#DBEAFE;--bg-input:#FFFFFF;--text-primary:#1E3A8A;--text-secondary:#1D4ED8;--text-muted:#93C5FD;--border-color:rgba(37,99,235,0.30);--border-soft:#DBEAFE}
+[data-theme="sunset"]{--accent:#F97316;--accent-light:#FB923C;--accent-glow:rgba(249,115,22,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#FFF7ED;--bg-card:#FFFFFF;--bg-card-hover:#FFEDD5;--bg-input:#FFFFFF;--text-primary:#431407;--text-secondary:#9A3412;--text-muted:#FDBA74;--border-color:rgba(249,115,22,0.30);--border-soft:#FFEDD5}
+[data-theme="minimal"]{--accent:#334155;--accent-light:#475569;--accent-glow:rgba(51,65,85,0.12);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F8FAFC;--bg-card:#FFFFFF;--bg-card-hover:#F1F5F9;--bg-input:#FFFFFF;--text-primary:#0F172A;--text-secondary:#334155;--text-muted:#94A3B8;--border-color:#CBD5E1;--border-soft:#F1F5F9}
+[data-theme="heritage"]{--accent:#7C3AED;--accent-light:#A78BFA;--accent-glow:rgba(124,58,237,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F5F3FF;--bg-card:#FFFFFF;--bg-card-hover:#EDE9FE;--bg-input:#FFFFFF;--text-primary:#1E1B4B;--text-secondary:#5B21B6;--text-muted:#C4B5FD;--border-color:rgba(124,58,237,0.30);--border-soft:#EDE9FE}
+/* FINAL FIX: MALAM HITAM SEMUA TEMA - TAPI BISA DIPAKSA PUTIH DI AWAL */
+html.is-night{--bg-main:#0A0A0A!important;--bg-section:#0A0A0A!important;--bg-section-alt:#0F0F0F!important;--bg-card:#111111!important;--bg-card-hover:#1A1A1A!important;--bg-input:#1A1A1A!important;--text-primary:#FFFFFF!important;--text-secondary:#A1A1AA!important;--text-muted:#71717A!important;--border-soft:rgba(255,255,255,0.07)!important}
+body{background:var(--bg-main);color:var(--text-primary);transition:all 0.4s ease}
+.theme-section{background:var(--bg-section);transition:all 0.4s ease}
+.theme-section-alt{background:var(--bg-section-alt);transition:all 0.4s ease}
+.theme-card{background:var(--bg-card);border-color:var(--border-color);box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:all 0.4s ease}
+.theme-card:hover{border-color:var(--accent);box-shadow:0 8px 30px var(--accent-glow);transform:translateY(-2px)}
+.theme-input{background:var(--bg-input);border-color:var(--border-soft);color:var(--text-primary);transition:all 0.3s ease}
+.theme-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.weather-android{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:background 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease; position:relative; overflow:hidden;}
+.lottie-weather{width:110px;height:110px;min-width:110px;min-height:110px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 8px 30px var(--accent-glow));position:relative;z-index:2}
+.armada-img-container{position:relative}.armada-img-track{position:relative;width:100%;height:100%}.armada-img-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.6s ease, transform 0.6s ease;transform:scale(1.02)}.armada-img-slide.active{opacity:1;transform:scale(1)}
+.dest-checkbox{accent-color:var(--accent)}.dest-item{border:1px solid var(--border-soft);border-radius:12px;padding:10px 12px;transition:all.2s}.dest-item:has(input:checked){border-color:var(--accent);background:color-mix(in srgb, var(--accent) 8%, var(--bg-card))}
+#weather-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:32px;z-index:1}
+.rain-drop{position:absolute;width:2px;height:18px;border-radius:2px;background:linear-gradient(to bottom, transparent, currentColor);animation:rainFall linear infinite;opacity:0.6}
+@keyframes rainFall{0%{transform:translateY(-20px) translateX(0);opacity:0}10%{opacity:0.8}90%{opacity:0.6}100%{transform:translateY(420px) translateX(-12px);opacity:0}}
+.drizzle-drop{position:absolute;width:1.5px;height:10px;border-radius:2px;background:currentColor;animation:rainFall 1.2s linear infinite;opacity:0.5}
+.thunder-flash{position:absolute;inset:0;background:radial-gradient(circle at 30% 20%, white 0%, transparent 45%);opacity:0;animation:thunderFlash 5s ease-in-out infinite}
+@keyframes thunderFlash{0%,90%,100%{opacity:0}92%{opacity:0.85}93%{opacity:0.15}94%{opacity:0.9}95%{opacity:0}}
+.sun-ray{position:absolute;width:2px;height:70px;top:50%;left:50%;background:linear-gradient(to bottom, var(--accent), transparent);transform-origin:bottom center;opacity:0.28;animation:sunRotate 20s linear infinite}
+@keyframes sunRotate{from{transform:translate(-50%,-100%) rotate(0deg)}to{transform:translate(-50%,-100%) rotate(360deg)}}
+.fog-layer{position:absolute;left:-50%;width:200%;height:40px;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);filter:blur(10px);animation:fogMove 12s linear infinite}
+@keyframes fogMove{0%{transform:translateX(-25%)}100%{transform:translateX(25%)}}
+.cloud-dot{position:absolute;background:white;border-radius:50%;filter:blur(8px);opacity:0.45;animation:cloudDrift 18s ease-in-out infinite alternate}
+@keyframes cloudDrift{from{transform:translateX(0)}to{transform:translateX(25px)}}
+@keyframes wa-float {0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes wa-heartbeat {0%{transform:scale(1)}14%{transform:scale(1.3)}28%{transform:scale(1)}42%{transform:scale(1.3)}70%{transform:scale(1)}}
+@keyframes wa-pulse-ring {0%{transform:scale(0.8);opacity:0.8}100%{transform:scale(1.8);opacity:0}}
+.wa-float {animation:wa-float 3s ease-in-out infinite}
+.wa-heart {animation:wa-heartbeat 1.5s ease-in-out infinite}
+.wa-pulse {position:absolute;inset:0;border-radius:9999px;background:#25D366;animation:wa-pulse-ring 2s cubic-bezier(0.455,0.03,0.515,0.955) infinite}
+@keyframes coinFlip{
+  0%,90%,100%{ transform: perspective(600px) rotateY(0) scale(1); filter: drop-shadow(0 8px 20px var(--accent-glow)); }
+  92%{ transform: perspective(600px) rotateY(180deg) scale(1.1); filter: drop-shadow(0 15px 35px var(--accent-glow)) brightness(1.2); }
+  95%{ transform: perspective(600px) rotateY(360deg) scale(1.1); filter: drop-shadow(0 15px 35px var(--accent-glow)) brightness(1.2); }
+}
+#footerLogo{animation: coinFlip 8s ease-in-out infinite;transform-style: preserve-3d;}
+#mobileArmadaName{font-size: 12px!important;font-weight: 700!important;letter-spacing: 0.02em;line-height: 1.2;}
+#mobileTotalPrice{font-size: 22px!important;font-weight: 800!important;font-family: 'Cormorant Garamond', serif!important;letter-spacing: -0.02em;line-height: 1;}
+
+/* FIX GRID KE POTONG & CARD SERAGAM */
+#armada-cards{display:grid!important;grid-template-columns:repeat(1,minmax(0,1fr))!important;gap:1.5rem!important}
+@media(min-width:768px){#armada-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(min-width:1024px){#armada-cards{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+.armada-card-uniform{display:flex!important;flex-direction:column!important;height:100%!important;min-height:520px!important}
+.armada-card-uniform .armada-img-container{height:220px!important;flex-shrink:0}
+.armada-card-uniform .p-6{flex:1 1 auto;display:flex;flex-direction:column}
+.armada-card-uniform ul{flex:1 1 auto}
+.armada-card-uniform button{margin-top:auto!important}
+
+
+/* === FIX ANTI-HITAM GITHUB PAGES - TESTED - HANYA ARMADA, NAVBAR AMAN === */
+#armada-cards .armada-img-container{ background:#ffffff !important; position:relative !important; overflow:hidden !important; height:220px !important; }
+#armada-cards .armada-img-track{ position:relative !important; width:100% !important; height:100% !important; }
+#armada-cards .armada-img-slide{ opacity:1 !important; position:relative !important; inset:auto !important; transform:none !important; display:none !important; }
+#armada-cards .armada-img-slide.active, #armada-cards .armada-img-slide:first-child{ display:block !important; opacity:1 !important; }
+#armada-cards .armada-img-slide img{ opacity:1 !important; display:block !important; width:100% !important; height:220px !important; object-fit:cover !important; background:#fff !important; }
+/* Navbar tetap solid - tidak diapa-apain */
