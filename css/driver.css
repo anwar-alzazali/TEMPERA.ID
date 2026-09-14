@@ -1,7 +1,0 @@
-
-/* [DRIVER.CSS] - Hanya aktif di /driver/[nama]/ - tidak merubah induk */
-.driver-hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border-color);padding:6px 14px;border-radius:999px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase}
-.driver-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:24px;padding:20px;display:flex;gap:16px;align-items:center}
-.driver-card img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
-.driver-card .verified{background:#10B981;color:white;font-size:9px;padding:2px 6px;border-radius:99px}
-#tempera-branding{display:block!important;visibility:visible!important;opacity:1!important}
