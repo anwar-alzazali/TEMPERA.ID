@@ -1,77 +1,155 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - TEMPERA.ID</title>
+<title>Login - TEMPERA.ID - FINAL FIX</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
 body{background:#f6f9fc;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Poppins',sans-serif}
 .login-card{background:white;border-radius:20px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.1);width:100%;max-width:420px}
-.logo{font-weight:800;color:#0ea5e9;font-size:24px;text-align:center;margin-bottom:30px}
+.logo{font-weight:800;color:#0ea5e9;font-size:24px;text-align:center;margin-bottom:20px}
 .btn-tempera{background:#0ea5e9;color:white;border-radius:50px;padding:12px;font-weight:600;width:100%}
 .btn-tempera:hover{background:#0284c7;color:white}
+.key-box{background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:10px;padding:10px;font-size:11px;word-break:break-all;margin-bottom:15px}
 </style>
 </head>
 <body>
 <div class="login-card">
-<div class="logo">TEMPERA.ID<br><small style="font-size:12px;color:#64748b;font-weight:400">Private Trip Bandung</small></div>
-<h5 class="mb-3 text-center">Login Driver / Admin</h5>
+<div class="logo">TEMPERA.ID<br><small style="font-size:12px;color:#64748b;font-weight:400">Web travel - wjmotidqelgcyujacud</small></div>
+<h5 class="mb-3 text-center">Login FINAL - Pakai ANON Key</h5>
+
+<div id="setupKey" style="display:block">
+<p style="font-size:12px;color:#475569">Paste kunci <b>anon public eyJ...</b> yang tadi kamu copy dari halaman Legacy:</p>
+<textarea id="pasteKey" class="form-control" rows="3" placeholder="Paste eyJhbGciOi... di sini"></textarea>
+<button onclick="saveKey()" class="btn btn-dark w-100 mt-2" style="border-radius:20px;font-size:13px">SIMPAN KUNCI & COBA LOGIN</button>
+<div style="font-size:11px;color:#94a3b8;margin-top:8px">Kunci akan disimpan di browser kamu (localStorage), jadi cuma sekali paste.</div>
+<hr>
+</div>
+
+<div id="currentKeyDisplay" class="key-box" style="display:none"></div>
+
 <div id="alert"></div>
 <form id="loginForm">
 <div class="mb-3">
 <label class="form-label">Email</label>
-<input type="email" class="form-control" id="email" placeholder="udin@tempera.id" required value="admin@tempera.id">
+<input type="email" class="form-control" id="email" placeholder="admin@tempera.id" required value="admin@tempera.id">
 </div>
-<div class="mb-4">
+<div class="mb-3">
 <label class="form-label">Password</label>
 <input type="password" class="form-control" id="password" placeholder="Password" required>
 </div>
 <button type="submit" class="btn btn-tempera" id="btnLogin">MASUK</button>
 </form>
-<div class="mt-4 text-center">
-<small class="text-muted">Akun Test:<br>admin@tempera.id / Admin123!<br>udin@tempera.id / Tempera123!</small>
+<div class="mt-3 text-center"><a href="index.html" style="text-decoration:none;font-size:12px">← Kembali ke Beranda</a></div>
+<div class="mt-3" style="font-size:11px;color:#64748b;background:#f8fafc;padding:10px;border-radius:10px">
+<b>Akun yang harus ada di Supabase Auth:</b><br>
+• admin@tempera.id / Admin123!<br>
+• udin@tempera.id / Tempera123!<br>
+Kalau belum ada, buat dulu di Dashboard → Authentication → Add User
 </div>
-<div class="mt-3 text-center"><a href="index.html" style="text-decoration:none;font-size:13px">← Kembali ke Beranda</a></div>
 </div>
 
 <script type="module">
-// FIX FINAL: pakai esm.sh versi 2.45.4 yang support sb_publishable_
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 
 const SUPABASE_URL = 'https://wjmotidqelgcyujacud.supabase.co'
-// Kunci publishable kamu yang dari screenshot - AMAN untuk browser
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac'
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+// Cek localStorage dulu
+let SUPABASE_ANON_KEY = localStorage.getItem('tempera_anon_key') || '';
+
+function updateUI(){
+  const display = document.getElementById('currentKeyDisplay');
+  const setup = document.getElementById('setupKey');
+  if(SUPABASE_ANON_KEY && SUPABASE_ANON_KEY.startsWith('eyJ')){
+    display.style.display='block';
+    display.innerHTML = `✅ Kunci tersimpan: ${SUPABASE_ANON_KEY.substring(0,40)}...<br><a href="#" onclick="clearKey()" style="font-size:11px">Ganti kunci</a>`;
+    setup.style.display='none';
+  }else{
+    display.style.display='none';
+    setup.style.display='block';
+  }
+}
+window.saveKey = ()=>{
+  const v = document.getElementById('pasteKey').value.trim();
+  if(!v.startsWith('eyJ')){ alert('Kunci harus diawali eyJ... (anon key)'); return; }
+  localStorage.setItem('tempera_anon_key', v);
+  SUPABASE_ANON_KEY = v;
+  updateUI();
+  document.getElementById('alert').innerHTML = `<div class="alert alert-success" style="font-size:12px">Kunci disimpan! Silakan coba login.</div>`;
+}
+window.clearKey = ()=>{
+  localStorage.removeItem('tempera_anon_key');
+  SUPABASE_ANON_KEY='';
+  document.getElementById('pasteKey').value='';
+  updateUI();
+}
+updateUI();
 
 document.getElementById('loginForm').addEventListener('submit', async (e)=>{
  e.preventDefault();
+ if(!SUPABASE_ANON_KEY){
+   document.getElementById('alert').innerHTML = `<div class="alert alert-warning" style="font-size:12px">Paste dulu kunci anon eyJ... di atas!</div>`;
+   return;
+ }
  const email = document.getElementById('email').value.trim();
  const pass = document.getElementById('password').value;
  const btn = document.getElementById('btnLogin');
  const alertBox = document.getElementById('alert');
- btn.disabled=true; btn.innerText='Loading...';
+ btn.disabled=true; btn.innerText='Menghubungkan...';
+
  try{
+   // Buat client baru setiap login biar pakai key terbaru
+   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+   console.log('Trying login to', SUPABASE_URL);
    const { data, error } = await supabase.auth.signInWithPassword({ email, password: pass });
    if(error) throw error;
-   // ambil profile
-   const { data: profile } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-   console.log('profile',profile);
-   alertBox.innerHTML = `<div class="alert alert-success">Login berhasil! Mengalihkan...</div>`;
+
+   alertBox.innerHTML = `<div class="alert alert-success">Login berhasil! User: ${data.user.email}<br>Mengalihkan...</div>`;
+   // Simpan session
    setTimeout(()=>{
-     if(profile && profile.role==='admin'){
+     if(email.includes('admin')){
         window.location.href='admin.html';
      }else{
-        window.location.href='driver/dashboard.html';
+        const slug = email.split('@')[0];
+        window.location.href=`driver/${slug}/dashboard.html`;
      }
-   }, 800);
+   }, 1000);
  }catch(err){
    console.error(err);
-   alertBox.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+   let msg = err.message;
+   if(msg.includes('Failed to fetch')){
+     msg = 'Failed to fetch - Project Supabase wjmotidq... mungkin masih Paused atau URL salah. Cek Dashboard → Project harus Active, dan pastikan kunci anon benar.';
+   }
+   if(msg.includes('Invalid API key')){
+     msg = 'Invalid API key - Kunci anon yang kamu paste salah / kepotong. Copy lagi yang FULL eyJ... dari Dashboard Legacy keys (klik icon copy, jangan block text)';
+   }
+   alertBox.innerHTML = `<div class="alert alert-danger" style="font-size:12px">${msg}</div>`;
    btn.disabled=false; btn.innerText='MASUK';
  }
 });
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
+
