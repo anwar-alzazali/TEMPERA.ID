@@ -1,1 +1,51 @@
-
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Driver Dashboard - TEMPERA.ID</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>body{background:#f1f5f9;font-family:Poppins,sans-serif}.card{border:none;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,.05)}</style></head><body>
+<div class="container py-4" style="max-width:800px">
+<div class="card p-4"><div class="d-flex justify-content-between align-items-center"><div><h4 class="fw-bold mb-0"><i class="bi bi-car-front"></i> Dashboard Driver</h4><small class="text-muted">TEMPERA.ID - 1 file untuk semua driver (auto)</small></div><button onclick="logout()" class="btn btn-danger btn-sm">Logout</button></div>
+<div id="welcome" class="alert alert-info mt-3"></div>
+<div class="row g-3 mt-1">
+<div class="col-6"><div class="card p-3 bg-light"><small class="text-muted">Nama</small><h6 id="d_nama" class="fw-bold">-</h6></div></div>
+<div class="col-6"><div class="card p-3 bg-light"><small class="text-muted">Email Login</small><h6 id="d_email" class="fw-bold">-</h6></div></div>
+<div class="col-6"><div class="card p-3 bg-light"><small class="text-muted">No HP</small><h6 id="d_hp" class="fw-bold">-</h6></div></div>
+<div class="col-6"><div class="card p-3 bg-light"><small class="text-muted">Plat Mobil</small><h6 id="d_plat" class="fw-bold">-</h6></div></div>
+</div>
+<div class="card p-3 mt-4"><h6><i class="bi bi-calendar-check"></i> Job / Trip Saya</h6><div id="myJobs" class="mt-2" style="font-size:13px">Loading jobs...</div></div>
+<div class="alert alert-success mt-4" style="font-size:12px"><b>Info:</b> Kamu gak perlu bikin folder driver/udin manual lagi! Cukup login pakai email masing-masing driver di <code>driver/dashboard.html</code> ini, data otomatis muncul dari Supabase tabel <code>drivers</code> berdasarkan email yang login.</div>
+<a href="../index.html" class="btn btn-outline-secondary w-100 mt-3">← Ke Beranda</a>
+</div></div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
+const URL='https://wjmotidelqgcyyujacud.supabase.co'
+const KEY=localStorage.getItem('tempera_anon_key_bener')||localStorage.getItem('tempera_anon_key')||''
+if(!KEY){location.href='../login.html'}
+const supabase=createClient(URL,KEY)
+async function init(){
+ const {data:{user}}=await supabase.auth.getUser()
+ if(!user){location.href='../login.html';return}
+ document.getElementById('welcome').innerText=`Halo ${user.email} - Login berhasil ✅`
+ document.getElementById('d_email').innerText=user.email
+ // ambil data driver dari tabel drivers where email = user.email
+ const {data:driver,error}=await supabase.from('drivers').select('*').eq('email',user.email).single()
+ if(driver){
+   document.getElementById('d_nama').innerText=driver.nama||'-'
+   document.getElementById('d_hp').innerText=driver.hp||'-'
+   document.getElementById('d_plat').innerText=driver.plat||'-'
+   document.getElementById('welcome').innerHTML=`✅ Halo <b>${driver.nama}</b> (${driver.email}) - Status: ${driver.status}`
+ }else{
+   document.getElementById('d_nama').innerText='(belum ada di tabel drivers)'
+   document.getElementById('myJobs').innerHTML=`<div class="text-muted">Data driver belum ada di tabel drivers. Tambahkan di admin.html → Kelola Driver → email harus sama: ${user.email}</div>`
+ }
+ // load bookings untuk driver ini
+ const {data:jobs}=await supabase.from('bookings').select('*').eq('driver_email',user.email).order('created_at',{ascending:false})
+ if(jobs && jobs.length>0){
+   document.getElementById('myJobs').innerHTML=jobs.map(j=>`<div class="border-bottom py-2">${j.tanggal||''} - ${j.customer_name||''} - ${j.status||''}</div>`).join('')
+ }else{
+   document.getElementById('myJobs').innerHTML='Belum ada job / trip untuk kamu.'
+ }
+}
+window.logout=async()=>{await supabase.auth.signOut();location.href='../login.html'}
+init()
+</script>
+</body></html>
