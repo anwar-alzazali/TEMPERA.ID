@@ -1,0 +1,1 @@
+tailwind.config={theme:{extend:{fontFamily:{serif:['Cormorant Garamond','serif'],sans:['Inter','sans-serif']}}}}
