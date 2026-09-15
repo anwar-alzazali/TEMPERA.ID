@@ -1,30 +1,33 @@
 {
-  "name": "TEMPERA.ID Driver",
-  "short_name": "TEMPERA Driver",
-  "description": "Aplikasi Driver TEMPERA.ID - Classic",
-  "start_url": "/login.html",
-  "display": "standalone",
-  "background_color": "#0f2342",
-  "theme_color": "#0f2342",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/logo-tempera-classic.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    }
-  ]
+"name"
+:
+"TEMPERA.ID Driver",
+"short_name"
+:
+"TEMPERA Driver",
+"start_url"
+:
+"/login.html",
+"display"
+:
+"standalone",
+"background_color"
+:
+"#0f2342",
+"theme_color"
+:
+"#0f2342",
+▶
+"icons"
+:
+[
+▶
+{
+4 keys
+},
+▶
+{
+4 keys
+}
+]
 }
