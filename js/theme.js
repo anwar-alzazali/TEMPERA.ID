@@ -1,14 +1,14 @@
 /* [THEME.JS] - 100% dari file asli, tidak rubah design */
 
-const LOGO_MAP={
-  classic:'logo_classic_gold_transparent.png',
-  sky:'logo_sky_blue_transparent.png',
-  tropical:'logo_tropical_transparent.png',
-  mountain:'logo_mountain_transparent.png',
-  ocean:'logo_ocean_transparent.png',
-  sunset:'logo_sunset_transparent.png',
-  minimal:'logo_minimal_transparent.png',
-  heritage:'logo_heritage_transparent.png'
+var LOGO_MAP={
+    classic:'images/logo_classic_gold_transparent.png',
+    sky:'images/logo_sky_blue_transparent.png',
+    tropical:'images/logo_tropical_transparent.png',
+    mountain:'images/logo_mountain_transparent.png',
+    ocean:'images/logo_ocean_transparent.png',
+    sunset:'images/logo_sunset_transparent.png',
+    minimal:'images/logo_minimal_transparent.png',
+    heritage:'images/logo_heritage_transparent.png'
 };
 (function(){
   const originalSetTheme = window.setTheme;
