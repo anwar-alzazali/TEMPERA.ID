@@ -156,14 +156,26 @@ function toggleAccordion(g){const c=document.getElementById('acc-'+g);const isOp
 function focusRegion(r){toggleAccordion(r);document.getElementById('acc-'+r)?.scrollIntoView({behavior:'smooth',block:'center'});}
 function selectAllInGroup(g, checked){document.querySelectorAll(`input[name="destinasi"][data-group="${g}"]`).forEach(cb=>cb.checked=checked);calculateLive();}
 function checkCapacityLive(){const j=parseInt(document.getElementById('formJumlah').value)||0;const info=document.getElementById('resCapacityInfo');const txt=document.getElementById('resCapacityText');if(j<=0||!info||!txt){if(info)info.classList.add('hidden');return false;}const armada=getSelectedArmada();if(!armada){info.classList.add('hidden');return false;}info.classList.remove('hidden');if(j<=armada.cap){txt.innerHTML=`<span style="color:#059669">✅ ${j} orang muat nyaman di ${armada.name}</span>`;return false;}else if(j<=armada.capmax){txt.innerHTML=`<span style="color:#D97706">⚠ ${j} orang melebihi nyaman (${armada.cap}) tapi masih max ${armada.capmax}</span>`;return 'over_comfort';}else{txt.innerHTML=`<span style="color:#DC2626">🚫 ${j} orang melebihi MAX ${armada.capmax}</span>`;return 'over_max';}}
+
 function calculateLive(){
 const sel=document.getElementById('calcUnit');
 const base=parseInt(sel.value)||0;
 const hasArmada = sel.value && sel.selectedIndex>0;
 const l=document.querySelectorAll('input[name="destinasi"][data-group="lembang"]:checked');const d=document.querySelectorAll('input[name="destinasi"][data-group="dago"]:checked');const c=document.querySelectorAll('input[name="destinasi"][data-group="ciwidey"]:checked');const p=document.querySelectorAll('input[name="destinasi"][data-group="pangalengan"]:checked');
 document.getElementById('count-lembang').innerText=`${l.length} dipilih`;document.getElementById('count-dago').innerText=`${d.length} dipilih`;document.getElementById('count-ciwidey').innerText=`${c.length} dipilih`;document.getElementById('count-pangalengan').innerText=`${p.length} dipilih`;
-const hasUtara=l.length>0||d.length>0;const hasCiwidey=c.length>0;const hasPangalengan=p.length>0;let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;
-let cost=0;let labelCost="";if(regionCount>1){cost=(regionCount-1)*400000;labelCost=` (+ Rp 200k x ${regionCount-1})`;}
+const hasUtara=l.length>0||d.length>0;const hasCiwidey=c.length>0;const hasPangalengan=p.length>0;
+let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;
+// LOGIKA BARU BIAYA CROSS - FAIR
+let cost=0;let labelCost="";let crossType="none";
+if(regionCount===2){
+  if(hasCiwidey && hasPangalengan){
+    cost=400000; labelCost=" (Beda Lembah Selatan)"; crossType="beda_lembah";
+  } else {
+    cost=400000; labelCost=" (Lintas Utara-Selatan)"; crossType="utara_selatan";
+  }
+} else if(regionCount===3){
+  cost=800000; labelCost=" (3 Penjuru)"; crossType="tiga_penjuru";
+}
 const armada=getSelectedArmada();
 if(!hasArmada){
   document.getElementById('resArmadaName').innerText='Belum dipilih';
@@ -182,18 +194,86 @@ if(!hasArmada){
   document.getElementById('resRegionCost').innerText='Rp '+cost.toLocaleString('id-ID');
   document.getElementById('resRegionLabel').innerText=labelCost;
   document.getElementById('resTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');
-  document.getElementById('resGrandTotal').innerText='Rp '+(base+cost+100000).toLocaleString('id-ID');
+  document.getElementById('resGrandTotal').innerText='Rp '+(base+cost).toLocaleString('id-ID');
   document.getElementById('mobileArmadaName').innerText=armada?armada.name:'Avanza';
   document.getElementById('mobileTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');
   document.getElementById('mobileStickyBar').classList.remove('hidden');
 }
 const listEl=document.getElementById('resSelectedList');const all=document.querySelectorAll('input[name="destinasi"]:checked');if(all.length==0)listEl.innerText='Belum ada';else{let g={};all.forEach(cb=>{if(!g[cb.dataset.group])g[cb.dataset.group]=[];g[cb.dataset.group].push(cb.value);});let t='';for(let k in g){t+=`${k.toUpperCase()}: ${g[k].join(', ')} | `;}listEl.innerText=t.slice(0,-3);}
-const warn=document.getElementById('crossTripWarning'),wTitle=document.getElementById('warningTitle'),wDesc=document.getElementById('warningDesc'),wDet=document.getElementById('warningDetails'),eff=document.getElementById('resEfficiency'),effV=document.getElementById('resEfficiencyValue');
-if(regionCount>=2){warn.classList.remove('hidden');if(eff)eff.classList.remove('hidden');if(regionCount>=3){wTitle.innerText=`🚫 3 Wilayah Terdeteksi - Cross Rp ${cost.toLocaleString('id-ID')}`;wDesc.innerText=`Anda memilih 3 wilayah sekaligus.`;wDet.innerHTML=`<li>Biaya Cross: Rp ${cost.toLocaleString('id-ID')}</li>`;if(effV){effV.innerText=`🚫 Wajib 3D2N`;effV.style.color='#DC2626';}}else if(hasUtara&&(hasCiwidey||hasPangalengan)){wTitle.innerText=`⚠ Cross Trip - Biaya Cross Rp ${cost.toLocaleString('id-ID')}`;wDesc.innerText=`Lintas Utara + Selatan harus lewat pusat Kota Bandung.`;wDet.innerHTML=`<li>Biaya Cross: Rp ${cost.toLocaleString('id-ID')}</li>`;if(effV){effV.innerText=`⚠ Cross Rp ${cost.toLocaleString('id-ID')}`;effV.style.color='#D97706';}}else{wTitle.innerText=`ℹ Ciwidey + Pangalengan - Cross Rp ${cost.toLocaleString('id-ID')}`;wDesc.innerText=`2 wilayah Selatan masih satu arah.`;wDet.innerHTML=`<li>Biaya Cross: Rp ${cost.toLocaleString('id-ID')}</li>`;if(effV){effV.innerText=`✅ Efektif - Cross Rp ${cost.toLocaleString('id-ID')}`;effV.style.color='#059669';}}}else{warn.classList.add('hidden');if(eff&&regionCount>0){eff.classList.remove('hidden');if(effV){effV.innerText='✅ Efektif (1 Wilayah) - Tanpa Cross';effV.style.color='#059669';}}else if(eff)eff.classList.add('hidden');}
+const warn=document.getElementById('crossTripWarning');
+
+if(regionCount>=2){
+  warn.classList.remove('hidden');
+  // RENDER WARINING SESUAI TIPE
+  if(crossType==="beda_lembah"){
+    warn.className="rounded-[20px] border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 p-5 mt-4";
+    warn.innerHTML=`
+      <div class="flex gap-3">
+        <div class="w-9 h-9 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold shrink-0">!</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 flex-wrap"><p class="text-[11px] font-black tracking-[0.12em] text-amber-800 uppercase">Sama-Sama Selatan, Tapi Beda Lembah</p><span class="rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-bold text-white">62 KM MEMUTAR</span></div>
+          <p class="mt-2 text-[13px] font-semibold leading-snug text-zinc-800">Ciwidey itu <b>Selatan Barat</b>, Pangalengan itu <b>Selatan Timur</b>. Gak ada jalan tembus langsung.</p>
+          <div class="mt-3 bg-white rounded-xl border border-amber-200 p-3 flex items-center justify-between">
+            <div class="text-center"><div class="text-[9px] text-zinc-400">CIWIDEY</div><div class="font-bold text-[11px]">Kawah Putih</div></div>
+            <div class="flex-1 px-2 text-center"><div class="text-[9px] text-zinc-400">harus muter via</div><div class="text-[10px] font-bold text-amber-600">Banjaran - 62 KM • 2 Jam</div><div class="h-0.5 bg-amber-200 my-1 border-dashed border-t"></div></div>
+            <div class="text-center"><div class="text-[9px] text-zinc-400">PANGALENGAN</div><div class="font-bold text-[11px]">Wayang Windu</div></div>
+          </div>
+          <div class="mt-3 rounded-xl bg-white/90 p-3 border border-amber-200">
+            <div class="flex justify-between text-[11px]"><span class="text-zinc-500">Paket dasar</span><span class="font-semibold">Rp ${base.toLocaleString('id-ID')}</span></div>
+            <div class="flex justify-between text-[11px] mt-1"><span class="text-amber-700 font-medium">+ Beda Lembah (BBM + waktu)</span><span class="font-bold text-amber-700">Rp ${cost.toLocaleString('id-ID')}</span></div>
+            <div class="mt-2 flex justify-between border-t pt-2 text-[13px] font-black"><span>Total</span><span>Rp ${(base+cost).toLocaleString('id-ID')}</span></div>
+          </div>
+          <div class="mt-3 flex gap-2"><button onclick="selectAllInGroup('pangalengan',false)" class="px-3 py-1.5 bg-white border rounded-full text-[10px] font-bold">Pilih Ciwidey aja (Hemat)</button><button onclick="selectAllInGroup('ciwidey',false)" class="px-3 py-1.5 bg-white border rounded-full text-[10px] font-bold">Pilih Pangalengan aja</button></div>
+        </div>
+      </div>`;
+  } else if(crossType==="utara_selatan"){
+    warn.className="rounded-[20px] border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 p-5 mt-4";
+    warn.innerHTML=`
+      <div class="flex gap-3">
+        <div class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold shrink-0">!</div>
+        <div class="flex-1">
+          <p class="text-[11px] font-black tracking-[0.12em] text-orange-800 uppercase">Rute Berlawanan Arah - Utara vs Selatan</p>
+          <p class="mt-2 text-[13px] font-semibold text-zinc-800">Lembang itu <b>Utara</b>, Ciwidey/Pangalengan itu <b>Selatan</b>. Harus lewat tengah kota Bandung, macet 2x.</p>
+          <div class="mt-3 bg-white rounded-xl border border-orange-200 p-3 text-center">
+            <div class="flex items-center justify-center gap-2 text-[11px] font-bold"><span>LEMBANG (Utara)</span><span class="text-orange-500">↔ 65KM ↕</span><span>CIWIDEY (Selatan)</span></div>
+            <div class="text-[10px] text-zinc-500 mt-1">Total muter ~90KM • 3-4 Jam di jalan kalau 1 hari</div>
+          </div>
+          <div class="mt-3 rounded-xl bg-white/90 p-3 border border-orange-200"><div class="flex justify-between text-[11px] mt-1"><span class="text-orange-700 font-medium">+ Lintas Utara-Selatan</span><span class="font-bold text-orange-700">Rp ${cost.toLocaleString('id-ID')}</span></div><div class="mt-2 flex justify-between border-t pt-2 text-[13px] font-black"><span>Total</span><span>Rp ${(base+cost).toLocaleString('id-ID')}</span></div></div>
+          <div class="mt-3"><button onclick="if(confirm('Jadikan 2 hari? Hari 1 Lembang, Hari 2 Ciwidey+Pangalengan')){alert('Chat admin untuk paket 2D1N!')}" class="w-full bg-zinc-900 text-white rounded-full py-2.5 text-[11px] font-bold">💡 Mending jadi 2 hari? (Lebih santai, driver rekomen)</button></div>
+        </div>
+      </div>`;
+  } else if(crossType==="tiga_penjuru"){
+    warn.className="rounded-[20px] border-2 border-zinc-900 bg-zinc-900 text-white p-5 mt-4";
+    warn.innerHTML=`
+      <div class="flex flex-col">
+        <div class="flex items-center gap-2"><span class="bg-amber-400 text-black text-[10px] font-black px-2.5 py-1 rounded-full">3 PENJURU BANDUNG</span><span class="text-[10px] text-zinc-400">UTARA • SELATAN BARAT • SELATAN TIMUR</span></div>
+        <p class="mt-3 text-[15px] font-bold leading-tight">Wah, kamu mau muterin Bandung 1 hari penuh! 🔥</p>
+        <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+          <div class="bg-zinc-800 rounded-xl p-2.5 border border-zinc-700"><div class="text-[9px] text-zinc-400">07:00</div><div class="text-[11px] font-bold mt-1">LEMBANG</div><div class="text-[9px] text-amber-300">Utara</div></div>
+          <div class="bg-zinc-800 rounded-xl p-2.5 border border-zinc-700"><div class="text-[9px] text-zinc-400">11:30</div><div class="text-[11px] font-bold mt-1">CIWIDEY</div><div class="text-[9px] text-amber-300">Selatan Barat</div></div>
+          <div class="bg-zinc-800 rounded-xl p-2.5 border-2 border-amber-400"><div class="text-[9px] text-amber-400">14:30</div><div class="text-[11px] font-bold mt-1">PANGALENGAN</div><div class="text-[9px] text-amber-300">Selatan Timur</div></div>
+        </div>
+        <div class="mt-4 rounded-xl bg-white text-black p-3">
+          <div class="flex justify-between text-[11px]"><span class="text-zinc-500">Jarak total hari ini</span><span class="font-bold">~152 KM • 7-8 Jam di jalan</span></div>
+          <div class="flex justify-between text-[11px] mt-1.5"><span class="text-zinc-500">Waktu foto-foto</span><span class="font-bold text-red-500">Sisa 2 jam doang 😥</span></div>
+          <div class="mt-2 pt-2 border-t flex justify-between text-[12px] font-black"><span>+ Biaya 3 Penjuru (BBM + lembur driver)</span><span>Rp ${cost.toLocaleString('id-ID')}</span></div>
+          <div class="mt-1 flex justify-between text-[13px] font-black"><span>Total</span><span>Rp ${(base+cost).toLocaleString('id-ID')}</span></div>
+        </div>
+        <p class="text-[11px] text-zinc-400 mt-3 leading-snug">Jujur, kalau dipaksain 1 hari bakal capek banget. Driver rekomen <b class="text-white">pecah jadi 2 hari</b> biar puas.</p>
+        <div class="mt-4 grid grid-cols-1 gap-2">
+          <button onclick="window.open('https://wa.me/6285174352575?text=Halo%20mau%20paket%202%20hari%20Lembang%20%2B%20Ciwidey%20Pangalengan','_blank')" class="w-full bg-amber-400 text-black rounded-full py-3 text-[12px] font-black">💡 MAU DIBIKIN 2 HARI AJA? (Lebih santai)</button>
+          <div class="grid grid-cols-2 gap-2"><button onclick="selectAllInGroup('lembang',false);selectAllInGroup('dago',false)" class="bg-zinc-800 border border-zinc-700 rounded-full py-2.5 text-[11px] font-bold">Pilih 2 wilayah aja</button><button class="bg-white text-black rounded-full py-2.5 text-[11px] font-black">Tetap 3 wilayah + Rp ${cost.toLocaleString('id-ID')}</button></div>
+        </div>
+      </div>`;
+  }
+} else {
+  warn.classList.add('hidden');
 }
+}
+
 function normalizeWA(input){let num=input.replace(/[^0-9]/g,'');if(num.startsWith('0'))num='62'+num.substring(1);if(num.startsWith('8'))num='62'+num;return num;}
 let pendingBooking=null;
-function handleFormSubmit(e){e.preventDefault();const nama=document.getElementById('formNama').value.trim();const kontakRaw=document.getElementById('formKontak').value.trim();const kontak=normalizeWA(kontakRaw);if(!kontak){alert('Nomor WA tidak valid');return;}const sel=document.getElementById('calcUnit');if(!sel.value){alert('Pilih armada dulu!'); sel.focus(); return;}const hargaDasar=parseInt(sel.value);const jumlah=parseInt(document.getElementById('formJumlah').value)||0;const tanggal=document.getElementById('formTanggal').value,jam=document.getElementById('formJam').value,catatan=document.getElementById('formCatatan').value;const checked=document.querySelectorAll('input[name="destinasi"]:checked');if(checked.length==0){alert('Pilih minimal satu destinasi!');return;}const armada=getSelectedArmada();if(jumlah>armada.capmax){showCapacityModal('over_max',jumlah,armada);return;}let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]};checked.forEach(cb=>{by[cb.dataset.group].push(cb.value);});const hasUtara=by.lembang.length>0||by.dago.length>0;const hasCiwidey=by.ciwidey.length>0;const hasPangalengan=by.pangalengan.length>0;let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;let biaya=0;if(regionCount>1)biaya=(regionCount-1)*200000;pendingBooking={nama,kontak,hargaDasar,jumlah,tanggal,jam,catatan,by,regionCount,biaya,armada};if(jumlah>armada.cap&&jumlah<=armada.capmax){showCapacityModal('over_comfort',jumlah,armada);return;}if(regionCount>=2){if(!confirm(`${regionCount} WILAYAH = BIAYA CROSS Rp ${biaya.toLocaleString('id-ID')}. Tetap lanjut?`))return;}sendToWA(pendingBooking,false);}
+function handleFormSubmit(e){e.preventDefault();const nama=document.getElementById('formNama').value.trim();const kontakRaw=document.getElementById('formKontak').value.trim();const kontak=normalizeWA(kontakRaw);if(!kontak){alert('Nomor WA tidak valid');return;}const sel=document.getElementById('calcUnit');if(!sel.value){alert('Pilih armada dulu!'); sel.focus(); return;}const hargaDasar=parseInt(sel.value);const jumlah=parseInt(document.getElementById('formJumlah').value)||0;const tanggal=document.getElementById('formTanggal').value,jam=document.getElementById('formJam').value,catatan=document.getElementById('formCatatan').value;const checked=document.querySelectorAll('input[name="destinasi"]:checked');if(checked.length==0){alert('Pilih minimal satu destinasi!');return;}const armada=getSelectedArmada();if(jumlah>armada.capmax){showCapacityModal('over_max',jumlah,armada);return;}let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]};checked.forEach(cb=>{by[cb.dataset.group].push(cb.value);});const hasUtara=by.lembang.length>0||by.dago.length>0;const hasCiwidey=by.ciwidey.length>0;const hasPangalengan=by.pangalengan.length>0;let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;let biaya=0;if(regionCount===2)biaya=400000; else if(regionCount===3)biaya=800000; else biaya=0;pendingBooking={nama,kontak,hargaDasar,jumlah,tanggal,jam,catatan,by,regionCount,biaya,armada};if(jumlah>armada.cap&&jumlah<=armada.capmax){showCapacityModal('over_comfort',jumlah,armada);return;}if(regionCount>=2){if(!confirm(`${regionCount} WILAYAH = BIAYA CROSS Rp ${biaya.toLocaleString('id-ID')}. Tetap lanjut?`))return;}sendToWA(pendingBooking,false);}
 function sendToWA(data,forced){let ruteTeks='';if(data.by.lembang.length)ruteTeks+=`\n- Lembang: ${data.by.lembang.join(', ')}`;if(data.by.dago.length)ruteTeks+=`\n- Dago: ${data.by.dago.join(', ')}`;if(data.by.ciwidey.length)ruteTeks+=`\n- Ciwidey: ${data.by.ciwidey.join(', ')}`;if(data.by.pangalengan.length)ruteTeks+=`\n- Pangalengan: ${data.by.pangalengan.join(', ')}`;let msg=`Halo Admin Tempera, saya ingin memesan:\n\n* NAMA: ${data.nama}\n* KONTAK: ${data.kontak}\n* ARMADA: ${data.armada.name}\n* DESTINASI:${ruteTeks}\n\nRINCIAN:\n- Armada: Rp ${data.hargaDasar.toLocaleString('id-ID')}${data.biaya>0?`\n- Cross: Rp ${data.biaya.toLocaleString('id-ID')}`:''}\nTOTAL: Rp ${(data.hargaDasar+data.biaya).toLocaleString('id-ID')}\nGRAND TOTAL ± Rp ${(data.hargaDasar+data.biaya+100000).toLocaleString('id-ID')}\n\n* PESERTA: ${data.jumlah}\n* TANGGAL: ${data.tanggal}\n* JAM: ${data.jam}\n* CATATAN: ${data.catatan}`;window.open(`https://wa.me/6285174352575?text=${encodeURIComponent(msg)}`,'_blank');}
 function showCapacityModal(type,jumlah,armada){const modal=document.getElementById('capacityModal');const icon=document.getElementById('capacityModalIcon');const title=document.getElementById('capacityModalTitle');const text=document.getElementById('capacityModalText');const list=document.getElementById('capacityModalList');const actions=document.getElementById('capacityModalActions');if(type==='over_comfort'){icon.innerText='⚠';title.innerText='Melebihi Kapasitas Nyaman';text.innerText=`Anda pesan ${jumlah} orang, nyaman hanya ${armada.cap} orang (max ${armada.capmax}).`;actions.innerHTML=`<button onclick="closeCapacityModal()" class="bg-gray-100 border py-3 rounded-full text-[10px] uppercase">Batal</button><button onclick="forceContinueBooking()" class="bg-amber-500 text-white py-3 rounded-full text-[10px] uppercase">Tetap Lanjut</button>`;}else{icon.innerText='🚫';title.innerText='Melebihi Kapasitas MAX';text.innerText=`TIDAK BISA! ${jumlah} orang melebihi MAX ${armada.name} (${armada.capmax}). Wajib upgrade.`;actions.innerHTML=`<button onclick="closeCapacityModal()" class="bg-gray-100 border py-3 rounded-full text-[10px] uppercase">Ubah Jumlah</button><button onclick="upgradeArmada()" class="py-3 rounded-full text-[10px] uppercase" style="background:var(--accent);color:white">Upgrade</button>`;}modal.classList.remove('hidden');}
 function closeCapacityModal(){document.getElementById('capacityModal').classList.add('hidden');}
