@@ -326,5 +326,10 @@
 <!-- SCRIPT PENGHUBUNG (JS EKSTERNAL) -->
 <script src="js/main.js"></script>
 <script src="js/theme.js"></script>
+  <script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js');
+}
+</script>
 </body>
 </html>
