@@ -331,5 +331,42 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js');
 }
 </script>
+  <script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
+const URL='https://wjmotidelqgcyyujacud.supabase.co'
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMTc2MDIsImV4cCI6MjA3MDc5MzYwMn0.1uuc5gTaq3vLifL2vQek1V1z2Q5QyN3p4WvX0z4k5l6m7'
+const supabase = createClient(URL, KEY)
+
+// ambil slug dari?ref=udin atau localStorage
+const params = new URLSearchParams(window.location.search);
+let slug = params.get('ref') || params.get('r') || localStorage.getItem('tempera_sales_slug') || 'admin';
+slug = slug.toLowerCase().trim();
+console.log('SALES REF:', slug);
+
+try {
+  const { data, error } = await supabase.from('profiles').select('*').eq('slug', slug).single();
+  if(error) throw error;
+  if(data && data.wa_number){
+    console.log('Ganti WA jadi:', data.nama, data.wa_number);
+    // Ganti semua tombol WA di halaman
+    document.querySelectorAll('a[href*="wa.me"], a[href*="api.whatsapp.com"]').forEach(a => {
+      const oldHref = a.href;
+      // ambil text wa yang lama kalau ada
+      const textMatch = oldHref.match(/text=([^&]*)/);
+      let text = textMatch? decodeURIComponent(textMatch[1]) : `Halo ${data.nama} TEMPERA`;
+      // kalau ref udin, ganti text biar personal
+      if(slug!== 'admin') text = `Halo ${data.nama} dari TEMPERA, saya lihat link ${slug}...`;
+
+      a.href = `https://wa.me/${data.wa_number}?text=${encodeURIComponent(text)}`;
+    });
+
+    // Kalau ada element yang nampilin nama sales, ganti juga (opsional)
+    const salesNameEl = document.querySelector('#salesName,.sales-name, [data-sales-name]');
+    if(salesNameEl) salesNameEl.innerText = data.nama;
+  }
+} catch(e){
+  console.warn('Sales tidak ditemukan, pakai admin:', e.message);
+}
+</script>
 </body>
 </html>
