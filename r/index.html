@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Redirect - TEMPERA</title>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
+const URL='https://wjmotidelqgcyyujacud.supabase.co'
+const KEY=localStorage.getItem('tempera_anon_key_bener')||localStorage.getItem('tempera_anon_key')||'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMTc2MDIsImV4cCI6MjA3MDc5MzYwMn0.1uuc5gTaq3vLifL2vQek1V1z2Q5QyN3p4WvX0z4k5l6m7'
+const supabase=createClient(URL,KEY)
+
+// AMBIL SLUG: support /r/udin, /r/?udin, /r/index.html?r=udin, /r/?r=udin
+let slug = '';
+const path = window.location.pathname;
+if(path.includes('/r/')){
+  const parts = path.split('/r/')[1].split('/').filter(Boolean);
+  slug = parts[0] || '';
+}
+slug = slug || new URLSearchParams(location.search).get('r') || new URLSearchParams(location.search).get('ref') || location.search.replace('?','').split('&')[0] || '';
+slug = slug.replace('index.html','').trim().toLowerCase();
+if(!slug) slug='admin';
+
+document.getElementById('s').innerText = slug;
+localStorage.setItem('tempera_sales_slug', slug);
+
+// catat ke visits biar muncul di admin
+try{ await supabase.from('visits').insert({sales_slug: slug}); }catch(e){}
+
+setTimeout(()=>{ location.href = '../index.html?ref=' + slug; }, 800);
+</script>
+</head><body style="font-family:sans-serif;text-align:center;padding:40px">
+<h3>Redirecting...</h3>
+<p>Sales: <b id="s">...</b></p>
+<p style="color:#888">Mengalihkan ke homepage...</p>
+</body></html>
