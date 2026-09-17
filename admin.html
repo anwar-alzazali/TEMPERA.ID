@@ -1,77 +1,65 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin TEMPERA.ID - FINAL FIX</title>
+<title>Admin TEMPERA - ANTI STRIPPED</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.tailwindcss.com"></script>
-</head><body class="bg-slate-100 p-3 md:p-6 font-sans">
-<div class="max-w-6xl mx-auto">
-<div class="bg-white p-4 rounded-2xl shadow mb-4 flex justify-between items-center">
-<div><h1 class="font-black text-lg">ADMIN TEMPERA.ID • FINAL FIX</h1><p id="conn" class="text-xs text-gray-500">Menghubungkan...</p></div>
-<div class="text-right"><div class="text-xs">Total Sales</div><div id="totalSales" class="text-2xl font-black">-</div></div>
+</head><body class="bg-slate-100 p-4">
+<div class="max-w-3xl mx-auto bg-white p-5 rounded-2xl shadow">
+<h1 class="font-black">ADMIN TEMPERA - VERSI AMAN (ANTI STRIPPED)</h1>
+<p class="text-xs text-gray-500 mb-3">Key TIDAK disimpan di file, tapi kamu paste disini. Aman, tidak ke-filter.</p>
+
+<div class="bg-yellow-50 border p-3 rounded-xl mb-4">
+<div class="text-xs font-bold">1. URL Supabase</div>
+<input id="url" class="border w-full p-2 rounded text-xs mb-2" value="https://wjmotidelqgcyyujacud.supabase.co">
+<div class="text-xs font-bold">2. Legacy Anon Key (paste full eyJ...)</div>
+<textarea id="key" rows="3" class="border w-full p-2 rounded text-xs" placeholder="Paste disini key eyJhbGc... yang 210 huruf tadi"></textarea>
+<button onclick="save()" class="mt-2 bg-black text-white px-4 py-2 rounded font-bold text-xs">SIMPAN & KONEK</button>
+<div id="stat" class="mt-2 text-xs font-mono"></div>
 </div>
 
-<div class="bg-white p-4 rounded-2xl shadow mb-4">
-<h2 class="font-bold text-sm mb-2">Daftar Sales</h2>
-<div id="list" class="grid gap-2"></div>
-<pre id="log" class="mt-3 bg-black text-green-400 p-2 rounded text-[11px] overflow-auto max-h-40"></pre>
-</div>
+<div class="grid grid-cols-2 gap-3 mb-3"><div class="bg-gray-50 p-3 rounded">Total Sales<div id="total" class="text-xl font-black">-</div></div><div class="bg-gray-50 p-3 rounded">Log<div id="err" class="text-xs">-</div></div></div>
+<div id="list" class="space-y-2"></div>
+<pre id="log" class="bg-black text-green-400 p-2 rounded text-xs mt-3 overflow-auto"></pre>
 </div>
 
-<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-<div class="bg-white p-5 rounded-2xl w-full max-w-sm">
-<h3 class="font-bold mb-3">GANTI NOMOR WA</h3>
-<input type="hidden" id="edit_id">
-<label class="text-xs">Nama</label><input id="edit_nama" class="border w-full p-2 rounded mb-2 text-sm">
-<label class="text-xs">No WA (wajib 62)</label><input id="edit_wa" class="border w-full p-2 rounded mb-3 text-sm font-mono" placeholder="62851...">
-<div class="flex gap-2"><button onclick="closeModal()" class="flex-1 bg-gray-200 py-2 rounded font-bold text-sm">Batal</button><button onclick="saveWA()" class="flex-1 bg-black text-white py-2 rounded font-bold text-sm">SIMPAN</button></div>
-</div>
-</div>
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4"><div class="bg-white p-4 rounded-xl w-full max-w-sm"><input type="hidden" id="eid"><input id="enama" class="border w-full p-2 rounded mb-2 text-sm"><input id="ewa" class="border w-full p-2 rounded mb-2 text-sm"><div class="flex gap-2"><button onclick="document.getElementById('modal').classList.add('hidden')" class="flex-1 bg-gray-200 py-2 rounded">Batal</button><button onclick="doSave()" class="flex-1 bg-black text-white py-2 rounded">Simpan</button></div></div></div>
 
 <script>
-const SUPABASE_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const logEl = document.getElementById('log');
-function log(m){ logEl.textContent += m + '\n'; }
-
-async function load(){
+let supabase=null;
+const $=id=>document.getElementById(id);
+function log(m){$('log').textContent+=m+'\n'}
+function save(){
+  const u=$('url').value.trim();
+  const k=$('key').value.trim();
+  if(k.length<100){alert('Key kependekan');return;}
+  localStorage.setItem('t_url',u); localStorage.setItem('t_key',k);
+  $('stat').innerText='Disimpan, konek...';
+  connect();
+}
+async function connect(){
+  const url=localStorage.getItem('t_url')||$('url').value.trim();
+  const key=localStorage.getItem('t_key')||$('key').value.trim();
+  if(!key){$('stat').innerHTML='<span style=color:red>Belum ada key, paste dulu</span>';return;}
+  $('url').value=url; $('key').value=key;
   try{
-    document.getElementById('conn').innerText = 'Menghubungkan ke Supabase...';
-    const { data, error } = await supabase.from('profiles').select('*').order('created_at');
-    if(error){ document.getElementById('conn').innerHTML = '<span style=color:red>ERROR: '+error.message+'</span>'; log('ERROR: '+JSON.stringify(error)); return; }
-    document.getElementById('conn').innerHTML = '<span style=color:green>Terhubung ✅ - '+data.length+' sales</span>';
-    document.getElementById('totalSales').innerText = data.length;
-    log('Profiles dapat: '+data.length);
-    
-    // hitung visits kalau ada
-    let visitCount = 0;
-    try{ const { count } = await supabase.from('visits').select('*', {count:'exact', head:true}); visitCount = count || 0; }catch(e){ log('visits belum ada, skip'); }
-
-    document.getElementById('list').innerHTML = data.map(p=>`
-      <div class="border p-3 rounded-xl flex justify-between items-center bg-gray-50">
-        <div>
-          <div class="font-bold text-sm">${p.nama} <span class="text-xs bg-black text-white px-2 py-0.5 rounded-full">/${p.slug}</span> <span class="text-[10px] bg-blue-100 px-2 rounded">${p.role||'sales'}</span></div>
-          <div class="font-mono text-xs mt-1">${p.wa_number||'<span class=text-red-500>WA NULL - klik GANTI NOMOR</span>'}</div>
-          <div class="text-[11px] text-gray-500">Link: /r/${p.slug} • ${p.plat_mobil||''}</div>
-        </div>
-        <div class="flex flex-col gap-1">
-          <a href="/TEMPERA.ID/r/${p.slug}" target="_blank" class="bg-white border px-3 py-1 rounded text-xs font-bold text-center">BUKA LINK</a>
-          <button onclick="openEdit('${p.id}','${p.nama}','${p.wa_number||''}')" class="bg-yellow-400 px-3 py-1 rounded text-xs font-bold">GANTI NOMOR</button>
-          <a href="https://wa.me/${p.wa_number}" target="_blank" class="bg-green-500 text-white px-3 py-1 rounded text-xs font-bold text-center">WA</a>
-        </div>
-      </div>
-    `).join('') + (data.length===0?'<div class=text-sm text-red-500>Tidak ada data di profiles. Jalankan INSERT di SQL Editor.</div>':'');
-  }catch(e){ document.getElementById('conn').innerText = 'EXCEPTION: '+e.message; log(e.message); }
+    supabase=window.supabase.createClient(url,key);
+    $('stat').innerText='Client ok, select profiles...';
+    const {data,error}=await supabase.from('profiles').select('*').order('created_at');
+    if(error){$('stat').innerHTML='<span style=color:red>'+error.message+'</span>';$('err').innerText=error.message;log(JSON.stringify(error));return;}
+    $('stat').innerHTML='<span style=color:green>Terhubung ✅ '+data.length+' sales</span>';
+    $('total').innerText=data.length; $('err').innerText='OK';
+    $('list').innerHTML=data.map(p=>`<div class="border p-2 rounded flex justify-between items-center text-sm"><div><b>${p.nama}</b> /${p.slug}<br><span class="font-mono text-xs">${p.wa_number||'NULL'}</span></div><div><button onclick="openE('${p.id}','${p.nama}','${p.wa_number||''}')" class="bg-yellow-400 px-2 py-1 rounded text-xs font-bold">GANTI NOMOR</button></div></div>`).join('');
+    log('OK '+data.length+' sales');
+  }catch(e){$('stat').innerText=e.message; log(e.message)}
 }
-window.openEdit=(id,nama,wa)=>{ document.getElementById('modal').classList.remove('hidden'); document.getElementById('edit_id').value=id; document.getElementById('edit_nama').value=nama; document.getElementById('edit_wa').value=wa; }
-window.closeModal=()=>document.getElementById('modal').classList.add('hidden');
-window.saveWA=async()=>{
-  const id=document.getElementById('edit_id').value; let wa=document.getElementById('edit_wa').value.replace(/[^0-9]/g,''); const nama=document.getElementById('edit_nama').value;
-  if(!wa.startsWith('62')){ alert('WA harus awalan 62, contoh 62851...'); return; }
-  const { error } = await supabase.from('profiles').update({ wa_number: wa, nama: nama }).eq('id', id);
-  if(error){ alert('Gagal: '+error.message); return; }
-  closeModal(); load();
+window.openE=(id,n,wa)=>{$('modal').classList.remove('hidden');$('eid').value=id;$('enama').value=n;$('ewa').value=wa}
+window.doSave=async()=>{
+  const id=$('eid').value; let wa=$('ewa').value.replace(/[^0-9]/g,''); const nama=$('enama').value;
+  if(!wa.startsWith('62')){alert('Harus 62');return;}
+  const {error}=await supabase.from('profiles').update({wa_number:wa,nama}).eq('id',id);
+  if(error){alert(error.message);return;}
+  $('modal').classList.add('hidden'); connect();
 }
-load();
+if(localStorage.getItem('t_key')) connect();
 </script>
 </body></html>
