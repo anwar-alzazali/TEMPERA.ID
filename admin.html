@@ -1,81 +1,77 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin TEMPERA - FINAL FIX</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin TEMPERA.ID - FINAL FIX</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body class="bg-gray-100 min-h-screen p-4">
-<div class="max-w-5xl mx-auto">
-  <h1 class="text-2xl font-black">ADMIN TEMPERA.ID - FINAL FIX</h1>
-  <p id="status" class="text-sm text-gray-500 mb-4">Connecting...</p>
-  <div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-white p-4 rounded-xl shadow">Total Sales<br><span id="totalSales" class="text-3xl font-black">-</span></div>
-    <div class="bg-white p-4 rounded-xl shadow">Total Klik<br><span id="totalKlik" class="text-3xl font-black">-</span></div>
-  </div>
-  <div class="bg-white rounded-xl shadow overflow-hidden">
-    <div class="p-4 font-bold border-b flex justify-between"><span>Daftar Sales</span><button onclick="load()" class="text-xs bg-black text-white px-3 py-1 rounded">REFRESH</button></div>
-    <table class="w-full text-sm"><thead class="bg-gray-50"><tr><th class="p-3 text-left">Nama / Slug</th><th class="p-3">Link</th><th class="p-3">No WA</th><th class="p-3">Aksi</th></tr></thead><tbody id="tbody"></tbody></table>
-  </div>
-  <pre id="log" class="mt-4 bg-black text-green-400 p-3 rounded text-xs overflow-auto"></pre>
+<script src="https://cdn.tailwindcss.com"></script>
+</head><body class="bg-slate-100 p-3 md:p-6 font-sans">
+<div class="max-w-6xl mx-auto">
+<div class="bg-white p-4 rounded-2xl shadow mb-4 flex justify-between items-center">
+<div><h1 class="font-black text-lg">ADMIN TEMPERA.ID • FINAL FIX</h1><p id="conn" class="text-xs text-gray-500">Menghubungkan...</p></div>
+<div class="text-right"><div class="text-xs">Total Sales</div><div id="totalSales" class="text-2xl font-black">-</div></div>
+</div>
+
+<div class="bg-white p-4 rounded-2xl shadow mb-4">
+<h2 class="font-bold text-sm mb-2">Daftar Sales</h2>
+<div id="list" class="grid gap-2"></div>
+<pre id="log" class="mt-3 bg-black text-green-400 p-2 rounded text-[11px] overflow-auto max-h-40"></pre>
+</div>
 </div>
 
 <div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-xl p-6 w-full max-w-sm">
-    <h3 class="font-bold mb-4">Ganti Nomor WA</h3>
-    <input type="hidden" id="edit_id">
-    <label class="text-xs">Nama</label><input id="edit_nama" class="w-full border p-2 rounded mb-2">
-    <label class="text-xs">Slug</label><input id="edit_slug" disabled class="w-full border p-2 rounded mb-2 bg-gray-100">
-    <label class="text-xs">No WA (62)</label><input id="edit_wa" class="w-full border p-2 rounded mb-4 font-mono">
-    <div class="flex gap-2"><button onclick="closeModal()" class="flex-1 bg-gray-200 py-2 rounded">Batal</button><button id="btnSave" onclick="saveSales()" class="flex-1 bg-black text-white py-2 rounded font-bold">SIMPAN</button></div>
-  </div>
+<div class="bg-white p-5 rounded-2xl w-full max-w-sm">
+<h3 class="font-bold mb-3">GANTI NOMOR WA</h3>
+<input type="hidden" id="edit_id">
+<label class="text-xs">Nama</label><input id="edit_nama" class="border w-full p-2 rounded mb-2 text-sm">
+<label class="text-xs">No WA (wajib 62)</label><input id="edit_wa" class="border w-full p-2 rounded mb-3 text-sm font-mono" placeholder="62851...">
+<div class="flex gap-2"><button onclick="closeModal()" class="flex-1 bg-gray-200 py-2 rounded font-bold text-sm">Batal</button><button onclick="saveWA()" class="flex-1 bg-black text-white py-2 rounded font-bold text-sm">SIMPAN</button></div>
+</div>
 </div>
 
 <script>
 const SUPABASE_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-function log(m){document.getElementById('log').innerText += m + '\n'; console.log(m);}
+const logEl = document.getElementById('log');
+function log(m){ logEl.textContent += m + '\n'; }
 
 async function load(){
-  document.getElementById('status').innerText = 'Loading dari '+SUPABASE_URL+' ...';
-  log('Load profiles...');
-  const { data: profiles, error: e1 } = await supabase.from('profiles').select('*').order('created_at');
-  if(e1){ document.getElementById('status').innerText='Error profiles: '+e1.message; log('ERROR profiles: '+e1.message); return; }
-  log('Profiles dapat: '+(profiles?.length||0));
-  console.log(profiles);
-  const { data: visits } = await supabase.from('visits').select('*');
-  document.getElementById('totalSales').innerText = profiles?.length||0;
-  document.getElementById('totalKlik').innerText = visits?.length||0;
-  document.getElementById('status').innerText = 'Terhubung ✅ - '+ (profiles?.length||0)+' sales';
-  document.getElementById('tbody').innerHTML = (profiles||[]).map(p=>`
-    <tr class="border-b"><td class="p-3"><b>${p.nama}</b><br><span class="text-xs text-gray-500">/${p.slug}</span></td>
-    <td class="p-3"><a href="https://anwar-alzazali.github.io/TEMPERA.ID/r/${p.slug}" target="_blank" class="text-blue-600 underline">/r/${p.slug}</a></td>
-    <td class="p-3 font-mono">${p.wa_number||'<span class=text-red-500>NULL</span>'}</td>
-    <td class="p-3"><button onclick="editSales('${p.id}','${p.nama}','${p.slug}','${p.wa_number}')" class="bg-yellow-400 px-3 py-1 rounded font-bold text-xs">GANTI NOMOR</button></td></tr>
-  `).join('') || '<tr><td colspan=4 class="p-5 text-center">Kosong</td></tr>';
+  try{
+    document.getElementById('conn').innerText = 'Menghubungkan ke Supabase...';
+    const { data, error } = await supabase.from('profiles').select('*').order('created_at');
+    if(error){ document.getElementById('conn').innerHTML = '<span style=color:red>ERROR: '+error.message+'</span>'; log('ERROR: '+JSON.stringify(error)); return; }
+    document.getElementById('conn').innerHTML = '<span style=color:green>Terhubung ✅ - '+data.length+' sales</span>';
+    document.getElementById('totalSales').innerText = data.length;
+    log('Profiles dapat: '+data.length);
+    
+    // hitung visits kalau ada
+    let visitCount = 0;
+    try{ const { count } = await supabase.from('visits').select('*', {count:'exact', head:true}); visitCount = count || 0; }catch(e){ log('visits belum ada, skip'); }
+
+    document.getElementById('list').innerHTML = data.map(p=>`
+      <div class="border p-3 rounded-xl flex justify-between items-center bg-gray-50">
+        <div>
+          <div class="font-bold text-sm">${p.nama} <span class="text-xs bg-black text-white px-2 py-0.5 rounded-full">/${p.slug}</span> <span class="text-[10px] bg-blue-100 px-2 rounded">${p.role||'sales'}</span></div>
+          <div class="font-mono text-xs mt-1">${p.wa_number||'<span class=text-red-500>WA NULL - klik GANTI NOMOR</span>'}</div>
+          <div class="text-[11px] text-gray-500">Link: /r/${p.slug} • ${p.plat_mobil||''}</div>
+        </div>
+        <div class="flex flex-col gap-1">
+          <a href="/TEMPERA.ID/r/${p.slug}" target="_blank" class="bg-white border px-3 py-1 rounded text-xs font-bold text-center">BUKA LINK</a>
+          <button onclick="openEdit('${p.id}','${p.nama}','${p.wa_number||''}')" class="bg-yellow-400 px-3 py-1 rounded text-xs font-bold">GANTI NOMOR</button>
+          <a href="https://wa.me/${p.wa_number}" target="_blank" class="bg-green-500 text-white px-3 py-1 rounded text-xs font-bold text-center">WA</a>
+        </div>
+      </div>
+    `).join('') + (data.length===0?'<div class=text-sm text-red-500>Tidak ada data di profiles. Jalankan INSERT di SQL Editor.</div>':'');
+  }catch(e){ document.getElementById('conn').innerText = 'EXCEPTION: '+e.message; log(e.message); }
 }
-window.editSales=(id,nama,slug,wa)=>{
-  document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('edit_id').value=id;
-  document.getElementById('edit_nama').value=nama;
-  document.getElementById('edit_slug').value=slug;
-  document.getElementById('edit_wa').value=wa||'';
-}
+window.openEdit=(id,nama,wa)=>{ document.getElementById('modal').classList.remove('hidden'); document.getElementById('edit_id').value=id; document.getElementById('edit_nama').value=nama; document.getElementById('edit_wa').value=wa; }
 window.closeModal=()=>document.getElementById('modal').classList.add('hidden');
-window.saveSales=async()=>{
-  const id=document.getElementById('edit_id').value;
-  const wa=document.getElementById('edit_wa').value.trim().replace(/[^0-9]/g,'');
-  const nama=document.getElementById('edit_nama').value;
-  if(!wa.startsWith('62')){alert('Harus 62'); return;}
-  const btn=document.getElementById('btnSave'); btn.innerText='Menyimpan...';
-  const { error } = await supabase.from('profiles').update({wa_number:wa, nama}).eq('id',id);
-  btn.innerText='SIMPAN';
-  if(error){alert(error.message); log('Save error: '+error.message); return;}
-  closeModal(); load(); alert('Berhasil ganti jadi '+wa);
+window.saveWA=async()=>{
+  const id=document.getElementById('edit_id').value; let wa=document.getElementById('edit_wa').value.replace(/[^0-9]/g,''); const nama=document.getElementById('edit_nama').value;
+  if(!wa.startsWith('62')){ alert('WA harus awalan 62, contoh 62851...'); return; }
+  const { error } = await supabase.from('profiles').update({ wa_number: wa, nama: nama }).eq('id', id);
+  if(error){ alert('Gagal: '+error.message); return; }
+  closeModal(); load();
 }
 load();
 </script>
-</body>
-</html>
+</body></html>
