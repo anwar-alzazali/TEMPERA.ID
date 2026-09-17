@@ -1,4 +1,4 @@
-/* [THEME.JS] - 100% dari file asli, tidak rubah design */
+/* [THEME.JS] - patch logo ikut tema, tanpa ubah tampilan */
 
 var LOGO_MAP={
     classic:'images/logo_classic_gold_transparent.png',
@@ -10,32 +10,35 @@ var LOGO_MAP={
     minimal:'images/logo_minimal_transparent.png',
     heritage:'images/logo_heritage_transparent.png'
 };
+
 (function(){
+  // Guard: theme.js wajib dimuat SETELAH main.js. Kalau CDN/main.js gagal load, jangan diam-diam mati.
+  if(typeof window.setTheme !== 'function'){
+    console.error('theme.js dimuat sebelum main.js, atau main.js gagal load. Sistem tema tidak aktif.');
+    return;
+  }
+
   const originalSetTheme = window.setTheme;
+
   window.setTheme = function(k, forceBlack){
-    // deteksi manual click
-    const isManualBtn = typeof forceBlack === 'string' ? false : false;
-    if(k && typeof forceBlack === 'boolean' && forceBlack===true && document.activeElement && document.activeElement.hasAttribute('data-theme-btn')){
-      // ini dari tombol theme, jangan paksa hitam, biar user pilih
-      userManuallyChangedTheme = true;
-      originalSetTheme(k, null);
-    } else {
-      if(typeof forceBlack === 'boolean' && forceBlack===true && k===undefined){
-        // manual
-      }
-      originalSetTheme(k, forceBlack);
-    }
+    originalSetTheme(k, forceBlack);
     const file = LOGO_MAP[k] || LOGO_MAP.classic;
     const mainLogo = document.getElementById('mainLogo');
-    if(mainLogo) mainLogo.src = file;
+    if(mainLogo){
+      mainLogo.onerror = function(){ this.onerror = null; this.src = LOGO_MAP.classic; };
+      mainLogo.src = file;
+    }
     const footerLogo = document.getElementById('footerLogo');
-    if(footerLogo) footerLogo.src = file;
-    document.querySelectorAll('footer img').forEach(img => { img.src = file; });
+    if(footerLogo){
+      footerLogo.onerror = function(){ this.onerror = null; this.src = LOGO_MAP.classic; };
+      footerLogo.src = file;
+    }
   };
-  // helper buat tombol manual
+
+  // Dipanggil dari tombol tema manual di navbar (data-theme-btn)
   window.setThemeManual = function(k){
     userManuallyChangedTheme = true;
+    try{ localStorage.setItem('tempera_theme_manual', k); }catch(e){}
     window.setTheme(k, null);
   };
 })();
-
