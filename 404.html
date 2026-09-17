@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script>
+// GitHub Pages 404 trick untuk handle /r/udin
+// Kalau user buka /TEMPERA.ID/r/udin tapi file gak ada, GitHub akan load 404.html ini
+// Kita redirect ke handler yang sebenarnya
+const path = window.location.pathname;
+if(path.includes('/r/')){
+  const slug = path.split('/r/')[1].split('/').filter(Boolean)[0];
+  if(slug && slug !== 'index.html'){
+    // simpan slug dan redirect ke /r/index.html?r=slug
+    const base = path.split('/r/')[0] + '/r/';
+    location.replace(base + '?r=' + slug);
+  } else {
+    location.replace(path.split('/r/')[0] + '/index.html');
+  }
+} else {
+  location.replace('/TEMPERA.ID/index.html');
+}
+</script>
+</head><body>Redirecting...</body></htm
