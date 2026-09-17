@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TEST KONEKSI SUPABASE</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{font-family:monospace;padding:20px;background:#111;color:#0f0} .err{color:#f55} .ok{color:#0f5} pre{background:#222;padding:12px;border-radius:8px;overflow:auto}</style>
+</head><body>
+<h2>TEST KONEKSI SUPABASE - TEMPERA</h2>
+<div id="out">Mencoba koneksi...</div>
+<pre id="log"></pre>
+
+<script>
+// >>> GANTI 2 INI DENGAN YANG ADA DI SUPABASE > SETTINGS > API > LEGACY <<<
+const SUPABASE_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMTc2MDIsImV4cCI6MjA3MDc5MzYwMn0.1uuc5gTaq3vLifL2vQek1V1z2Q5QyN3p4WvX0z4k5l6m7';
+
+const logEl = document.getElementById('log');
+function log(m){ logEl.textContent += m + '\n'; }
+
+async function test(){
+  const out = document.getElementById('out');
+  log('URL: ' + SUPABASE_URL);
+  log('KEY (10 char awal): ' + SUPABASE_ANON_KEY.substring(0,20) + '... panjang: ' + SUPABASE_ANON_KEY.length);
+  
+  if(SUPABASE_ANON_KEY.includes('STRIPPED') || SUPABASE_ANON_KEY.length < 100){
+    out.innerHTML = '<span class=err>ERROR: ANON KEY MASIH CONTOH [STRIPPED], belum diganti key asli kamu!</span>';
+    log('KEY MASIH PALSU, ganti dulu!');
+    return;
+  }
+
+  try{
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    log('Client dibuat, coba select profiles...');
+    const { data, error } = await supabase.from('profiles').select('*');
+    if(error){
+      out.innerHTML = '<span class=err>ERROR SELECT profiles: ' + error.message + '</span>';
+      log('ERROR DETAIL: ' + JSON.stringify(error, null, 2));
+      log('\nSOLUSI:');
+      log('1. Cek di Supabase > Table Editor > profiles > ada datanya?');
+      log('2. Cek di Supabase > Authentication > Policies > profiles > harus ada policy "Allow public read" FOR SELECT USING (true)');
+      log('3. Cek URL typo: harus wjmotidelqgcyyujacud (cek huruf q/l nya)');
+      return;
+    }
+    out.innerHTML = '<span class=ok>BERHASIL! Dapat ' + data.length + ' sales</span>';
+    log('DATA: ' + JSON.stringify(data, null, 2));
+    
+    log('\nCoba select visits...');
+    const { data: visits, error: e2 } = await supabase.from('visits').select('*');
+    if(e2){ log('visits error (wajar kalau tabel belum ada): ' + e2.message); }
+    else { log('visits dapat: ' + visits.length); }
+
+  }catch(err){
+    out.innerHTML = '<span class=err>EXCEPTION: ' + err.message + '</span>';
+    log('EXCEPTION: ' + err.stack);
+  }
+}
+test();
+</script>
+</body></html>
