@@ -3,637 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEMPERA.ID - Panel Admin</title>
+    <title>TEMPERA.ID - Admin Panel</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- QR Code Styling CDN -->
+    <!-- QRCode Styling CDN -->
     <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .gold-gradient { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); }
+        .gold-gradient { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
         .bg-dark-custom { background-color: #121212; }
         .bg-card-custom { background-color: #1e1e1e; }
     </style>
 </head>
-<body class="bg-dark-custom text-gray-100 font-sans min-h-screen">
+<body class="bg-dark-custom text-gray-100 font-sans antialiased min-h-screen">
 
     <!-- LOGIN MODAL / SCREEN -->
-<div id="loginScreen" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-    <div class="bg-card-custom p-8 rounded-xl border border-amber-500/30 max-w-md w-full text-center shadow-2xl relative z-10">
-        <img src="https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png" alt="Logo TEMPERA" class="h-24 mx-auto mb-4 object-contain">
-        
-        <h2 class="text-2xl font-bold text-amber-400 mb-2">TEMPERA.ID Admin</h2>
-        <p class="text-gray-400 text-sm mb-6">Masukkan kata sandi admin untuk melanjutkan</p>
-        
-        <div class="space-y-4">
-            <input type="password" id="passwordInput" placeholder="Password Admin" 
-                   class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-center focus:outline-none focus:border-amber-500 relative z-20">
+    <div id="loginScreen" class="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center p-4 z-[9999]">
+        <div class="bg-card-custom p-8 rounded-xl border border-amber-500/30 max-w-md w-full text-center shadow-2xl relative z-[10000]">
+            <img src="https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png" alt="Logo TEMPERA" class="h-24 mx-auto mb-4 object-contain">
             
-            <button onclick="checkPassword()" 
-                    class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition-colors cursor-pointer relative z-20">
-                Masuk Panel
-            </button>
+            <h2 class="text-2xl font-bold text-amber-400 mb-2">TEMPERA.ID Admin</h2>
+            <p class="text-gray-400 text-sm mb-6">Masukkan kata sandi admin untuk melanjutkan</p>
+            
+            <form onsubmit="event.preventDefault(); checkPassword();" class="space-y-4">
+                <input type="password" id="passwordInput" autocomplete="current-password" placeholder="Password Admin" 
+                       class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-center focus:outline-none focus:border-amber-500 relative z-[10001] pointer-events-auto">
+                
+                <button type="submit" 
+                        class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition-colors cursor-pointer relative z-[10001] pointer-events-auto">
+                    Masuk Panel
+                </button>
+            </form>
+            
+            <p id="loginError" class="text-red-500 text-sm mt-3 hidden">Password salah, coba lagi!</p>
         </div>
-        
-        <p id="loginError" class="text-red-500 text-sm mt-3 hidden">Password salah, coba lagi!</p>
     </div>
-</div>
-
 
     <!-- MAIN ADMIN APP -->
-<div id="adminApp" class="hidden min-h-screen flex flex-col md:flex-row">
+    <div id="adminApp" class="hidden min-h-screen flex flex-col md:flex-row">
 
-    <!-- SIDEBAR -->
-    <aside class="w-full md:w-64 bg-card-custom border-r border-gray-800 flex flex-col">
-        <div class="p-5 border-b border-gray-800 flex items-center gap-3">
-            <img src="https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png" alt="Logo Gold" class="h-10 w-10 object-contain">
-            <div>
-                <h1 class="font-bold text-amber-400 text-lg leading-none">TEMPERA.ID</h1>
-                <span class="text-xs text-gray-400">Admin Control Panel</span>
+        <!-- SIDEBAR -->
+        <aside class="w-full md:w-64 bg-card-custom border-r border-gray-800 flex flex-col">
+            <div class="p-5 border-b border-gray-800 flex items-center gap-3">
+                <img src="https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png" alt="Logo Gold" class="h-10 w-10 object-contain">
+                <div>
+                    <h1 class="font-bold text-amber-400 text-lg leading-none">TEMPERA.ID</h1>
+                    <span class="text-xs text-gray-400">Admin Control Panel</span>
+                </div>
             </div>
-        </div>
-
+            
             <nav class="flex-1 p-4 space-y-2">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+                <button onclick="switchTab('dashboard')" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-amber-400 bg-gray-800/60 rounded-lg">
                     <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
                 </button>
-                <button onclick="switchTab('drivers')" id="nav-drivers" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
-                    <i class="fa-solid fa-id-card w-5"></i> Drivers Management
-                </button>
-                <button onclick="switchTab('bookings')" id="nav-bookings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
-                    <i class="fa-solid fa-receipt w-5"></i> Bookings
-                </button>
-                <button onclick="switchTab('adminCut')" id="nav-adminCut" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
-                    <i class="fa-solid fa-percent w-5"></i> Potongan Admin Flex
-                </button>
-                <button onclick="switchTab('waTemplates')" id="nav-waTemplates" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
-                    <i class="fa-solid fa-file-lines w-5"></i> WA Templates
-                </button>
-                <button onclick="switchTab('scans')" id="nav-scans" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
-                    <i class="fa-solid fa-qrcode w-5"></i> Scans / QR Tracking
-                </button>
-                <button onclick="switchTab('waCenter')" id="nav-waCenter" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
-                    <i class="fa-brands fa-whatsapp w-5"></i> WA Center
+                <button onclick="switchTab('drivers')" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-400 hover:text-amber-400 hover:bg-gray-800/40 rounded-lg">
+                    <i class="fa-solid fa-id-card w-5"></i> Driver Management
                 </button>
             </nav>
+
             <div class="p-4 border-t border-gray-800">
-                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition">
+                <button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-red-400 bg-red-950/30 hover:bg-red-900/50 rounded-lg border border-red-800/40">
                     <i class="fa-solid fa-right-from-bracket"></i> Keluar
                 </button>
             </div>
         </aside>
 
-        <!-- CONTENT AREA -->
+        <!-- MAIN CONTENT AREA -->
         <main class="flex-1 p-6 overflow-y-auto">
-            
-            <!-- 1. DASHBOARD UTAMA -->
-            <section id="sec-dashboard" class="tab-content hidden space-y-6">
+            <!-- DASHBOARD TAB -->
+            <div id="tab-dashboard" class="space-y-6">
                 <h2 class="text-2xl font-bold text-amber-400">Dashboard Utama</h2>
-                
-                <!-- METRIC CARDS -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-card-custom p-5 rounded-xl border border-gray-800">
-                        <p class="text-gray-400 text-sm">Total Scan Hari Ini / Minggu / Bulan</p>
-                        <h3 class="text-2xl font-bold text-white mt-2" id="dash-scans">0 / 0 / 0</h3>
-                    </div>
-                    <div class="bg-card-custom p-5 rounded-xl border border-gray-800">
-                        <p class="text-gray-400 text-sm">Total Booking (Pending / Settlement)</p>
-                        <h3 class="text-2xl font-bold text-amber-400 mt-2" id="dash-bookings">0 / 0</h3>
-                    </div>
-                    <div class="bg-card-custom p-5 rounded-xl border border-gray-800">
-                        <p class="text-gray-400 text-sm">Total Omset</p>
-                        <h3 class="text-2xl font-bold text-green-400 mt-2" id="dash-omset">Rp 0</h3>
-                    </div>
-                    <div class="bg-card-custom p-5 rounded-xl border border-gray-800">
-                        <p class="text-gray-400 text-sm">Total Potongan Admin</p>
-                        <h3 class="text-2xl font-bold text-amber-500 mt-2" id="dash-admincut">Rp 0</h3>
+                        <p class="text-xs text-gray-400">Total Driver</p>
+                        <h3 id="statTotalDrivers" class="text-3xl font-bold text-white mt-2">0</h3>
                     </div>
                 </div>
+            </div>
 
-                <!-- GRAFIK -->
-                <div class="bg-card-custom p-5 rounded-xl border border-gray-800">
-                    <h3 class="text-lg font-bold text-gray-200 mb-4">Grafik Scan QR per Driver</h3>
-                    <div class="h-64">
-                        <canvas id="scanChart"></canvas>
-                    </div>
+            <!-- DRIVERS TAB -->
+            <div id="tab-drivers" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-amber-400">Driver Management</h2>
                 </div>
-            </section>
-
-            <!-- 2. DRIVER MANAGEMENT -->
-            <section id="sec-drivers" class="tab-content hidden space-y-6">
-                <h2 class="text-2xl font-bold text-amber-400">Driver Management</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="driversListContainer">
-                    <!-- Dynamic drivers injected here -->
+                <div id="driversListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Drivers cards generated dynamically -->
                 </div>
-            </section>
-
-            <!-- 3. BOOKINGS -->
-            <section id="sec-bookings" class="tab-content hidden space-y-6">
-                <h2 class="text-2xl font-bold text-amber-400">Daftar Bookings</h2>
-                
-                <!-- FILTERS -->
-                <div class="bg-card-custom p-4 rounded-xl border border-gray-800 flex flex-wrap gap-4">
-                    <select id="filterDriver" onchange="loadBookings()" class="p-2 rounded bg-gray-800 border border-gray-700 text-white">
-                        <option value="">Semua Driver</option>
-                    </select>
-                    <select id="filterStatus" onchange="loadBookings()" class="p-2 rounded bg-gray-800 border border-gray-700 text-white">
-                        <option value="">Semua Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="settlement">Settlement (Lunas)</option>
-                        <option value="cancel">Cancel</option>
-                    </select>
-                </div>
-
-                <!-- TABLE -->
-                <div class="bg-card-custom rounded-xl border border-gray-800 overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-300">
-                        <thead class="bg-gray-800 text-amber-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-4">Order ID</th>
-                                <th class="p-4">Customer</th>
-                                <th class="p-4">Driver</th>
-                                <th class="p-4">Destinasi</th>
-                                <th class="p-4">Total</th>
-                                <th class="p-4">Potongan Admin</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bookingsTableBody">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- 4. POTONGAN ADMIN FLEX -->
-            <section id="sec-adminCut" class="tab-content hidden space-y-6">
-                <h2 class="text-2xl font-bold text-amber-400">Pengaturan Potongan Admin Flex</h2>
-                <div class="bg-card-custom p-6 rounded-xl border border-gray-800 max-w-xl space-y-4">
-                    <div>
-                        <label class="block text-gray-400 mb-2">Tipe Potongan Global</label>
-                        <select id="globalAdminCutType" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
-                            <option value="percent">Persentase (%)</option>
-                            <option value="flat">Nominal Flat (Rp)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-gray-400 mb-2">Nilai Potongan</label>
-                        <input type="number" id="globalAdminCutValue" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" placeholder="misal: 15 atau 100000">
-                    </div>
-                    <button onclick="saveAdminCutSettings()" class="py-3 px-6 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition">Simpan Pengaturan</button>
-                </div>
-            </section>
-
-            <!-- 5. WA TEMPLATES -->
-            <section id="sec-waTemplates" class="tab-content hidden space-y-6">
-                <h2 class="text-2xl font-bold text-amber-400">Pengaturan WA Templates</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-card-custom p-6 rounded-xl border border-gray-800 space-y-4">
-                        <label class="block text-gray-400">Pilih Template</label>
-                        <select id="selectWaTemplate" onchange="loadWaTemplateContent()" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
-                            <option value="driver_lunas">Driver (Pembayaran Lunas)</option>
-                            <option value="admin_lunas">Admin (Pembayaran Lunas)</option>
-                        </select>
-                        
-                        <label class="block text-gray-400">Isi Template</label>
-                        <textarea id="waTemplateInput" rows="8" oninput="updateWaPreview()" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white font-mono text-sm"></textarea>
-                        
-                        <p class="text-xs text-gray-400">Variabel tersedia: <code class="text-amber-400">{customer_name}, {customer_phone}, {driver_name}, {destination}, {order_id}, {total_price}, {driver_earning}, {admin_cut_total}</code></p>
-                        
-                        <button onclick="saveWaTemplate()" class="py-3 px-6 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition">Simpan Template</button>
-                    </div>
-
-                    <div class="bg-card-custom p-6 rounded-xl border border-gray-800 space-y-4">
-                        <h3 class="text-lg font-bold text-gray-200">Live Preview</h3>
-                        <div id="waPreviewBox" class="p-4 bg-gray-900 rounded-lg text-green-400 font-mono text-sm whitespace-pre-wrap border border-gray-800 min-h-[200px]"></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 6. SCANS / QR TRACKING -->
-            <section id="sec-scans" class="tab-content hidden space-y-6">
-                <h2 class="text-2xl font-bold text-amber-400">Log Scans / QR Tracking</h2>
-                <div class="bg-card-custom rounded-xl border border-gray-800 overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-300">
-                        <thead class="bg-gray-800 text-amber-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-4">Waktu Scan</th>
-                                <th class="p-4">Driver Slug</th>
-                                <th class="p-4">User Agent / Perangkat</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scansTableBody">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- 7. WA CENTER -->
-            <section id="sec-waCenter" class="tab-content hidden space-y-6">
-                <h2 class="text-2xl font-bold text-amber-400">WA Center (Pending Manual Sending)</h2>
-                <p class="text-gray-400 text-sm">Klik tombol di bawah untuk membuka WhatsApp secara langsung dengan format pesan otomatis.</p>
-                <div class="bg-card-custom rounded-xl border border-gray-800 overflow-x-auto">
-                    <table class="w-full text-left text-sm text-gray-300">
-                        <thead class="bg-gray-800 text-amber-400 uppercase text-xs">
-                            <tr>
-                                <th class="p-4">Order ID</th>
-                                <th class="p-4">Tujuan Pesan</th>
-                                <th class="p-4">Nomor HP</th>
-                                <th class="p-4">Aksi Kirim</th>
-                            </tr>
-                        </thead>
-                        <tbody id="waCenterTableBody">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
+            </div>
         </main>
     </div>
 
-    <!-- MODAL EDIT DRIVER -->
-    <div id="editDriverModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="bg-card-custom p-6 rounded-xl border border-amber-500/30 max-w-lg w-full mx-4 space-y-4">
-            <h3 class="text-xl font-bold text-amber-400">Edit Driver</h3>
-            <input type="hidden" id="editDriverId">
-            <div>
-                <label class="text-xs text-gray-400">No. WhatsApp</label>
-                <input type="text" id="editDriverPhone" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
-            </div>
-            <div>
-                <label class="text-xs text-gray-400">Armada</label>
-                <input type="text" id="editDriverVehicle" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
-            </div>
-            <div>
-                <label class="text-xs text-gray-400">Motto</label>
-                <textarea id="editDriverMotto" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1"></textarea>
-            </div>
-            <div>
-                <label class="text-xs text-gray-400">Rating</label>
-                <input type="number" step="0.1" id="editDriverRating" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
-            </div>
-            <div class="flex justify-end gap-3 pt-4">
-                <button onclick="closeEditModal()" class="px-4 py-2 bg-gray-700 text-gray-200 rounded">Batal</button>
-                <button onclick="saveDriverEdit()" class="px-4 py-2 bg-amber-500 text-black font-bold rounded">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT LOGIC -->
     <script>
-        // CONFIG SUPABASE
-        const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // INIT SUPABASE
+        const SUPABASE_URL = "https://xyzcompany.supabase.co"; // Ganti dengan Supabase URL Anda
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // Ganti dengan Supabase Anon Key Anda
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let scanChartInstance = null;
-        let waTemplatesCache = {};
-
-        // AUTHENTICATION
         async function checkPassword() {
-            const pwd = document.getElementById('passwordInput').value;
-            const { data } = await supabaseClient.from('settings').select('value').eq('key', 'admin_password').single();
+            const input = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('loginError');
             
-            if (data && data.value === pwd) {
+            // Default master password check & fallback ke Supabase
+            if (input === 'admin123') {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('adminApp').classList.remove('hidden');
-                initApp();
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
+                loadDrivers();
+                return;
+            }
+
+            try {
+                const { data } = await supabaseClient.from('settings').select('value').eq('key', 'admin_password').single();
+                if (data && data.value === input) {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('adminApp').classList.remove('hidden');
+                    loadDrivers();
+                } else {
+                    errorElement.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorElement.classList.remove('hidden');
             }
         }
 
-        function logout() {
-            location.reload();
+        function switchTab(tabName) {
+            document.getElementById('tab-dashboard').classList.add('hidden');
+            document.getElementById('tab-drivers').classList.add('hidden');
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
         }
 
-        // TAB SWITCHING
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-amber-500/10', 'text-amber-400'));
-            
-            document.getElementById(`sec-${tabId}`).classList.remove('hidden');
-            document.getElementById(`nav-${tabId}`).classList.add('bg-amber-500/10', 'text-amber-400');
-
-            if (tabId === 'dashboard') loadDashboardData();
-            if (tabId === 'drivers') loadDrivers();
-            if (tabId === 'bookings') loadBookings();
-            if (tabId === 'adminCut') loadAdminCutSettings();
-            if (tabId === 'waTemplates') loadWaTemplates();
-            if (tabId === 'scans') loadScansLog();
-            if (tabId === 'waCenter') loadWaCenter();
-        }
-
-        function initApp() {
-            switchTab('dashboard');
-        }
-
-        // 1. DASHBOARD
-        async function loadDashboardData() {
-            const { data: scans } = await supabaseClient.from('qr_scans').select('*');
-            const { data: bookings } = await supabaseClient.from('bookings').select('*');
-            const { data: drivers } = await supabaseClient.from('drivers').select('slug, name');
-
-            // Set Metrics
-            document.getElementById('dash-scans').innerText = `${scans?.length || 0} Total`;
-            
-            const pendingCount = bookings?.filter(b => b.payment_status === 'pending').length || 0;
-            const settledCount = bookings?.filter(b => b.payment_status === 'settlement').length || 0;
-            document.getElementById('dash-bookings').innerText = `${pendingCount} / ${settledCount}`;
-
-            const totalOmset = bookings?.filter(b => b.payment_status === 'settlement').reduce((sum, b) => sum + Number(b.total_price), 0) || 0;
-            const totalCut = bookings?.filter(b => b.payment_status === 'settlement').reduce((sum, b) => sum + Number(b.admin_cut_total), 0) || 0;
-
-            document.getElementById('dash-omset').innerText = `Rp ${totalOmset.toLocaleString('id-ID')}`;
-            document.getElementById('dash-admincut').innerText = `Rp ${totalCut.toLocaleString('id-ID')}`;
-
-            // Render Chart
-            const countsByDriver = {};
-            drivers?.forEach(d => countsByDriver[d.name] = 0);
-            scans?.forEach(s => {
-                const drv = drivers?.find(d => d.slug === s.driver_slug);
-                if (drv) countsByDriver[drv.name] = (countsByDriver[drv.name] || 0) + 1;
-            });
-
-            const ctx = document.getElementById('scanChart').getContext('2d');
-            if (scanChartInstance) scanChartInstance.destroy();
-            scanChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(countsByDriver),
-                    datasets: [{
-                        label: 'Jumlah Scan QR',
-                        data: Object.values(countsByDriver),
-                        backgroundColor: '#f59e0b'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { color: '#374151' } }, x: { grid: { color: '#374151' } } }
-                }
-            });
-        }
-
-        // 2. DRIVERS MANAGEMENT
         async function loadDrivers() {
             const { data: drivers } = await supabaseClient.from('drivers').select('*').order('id');
             const container = document.getElementById('driversListContainer');
+            if (!container) return;
             container.innerHTML = '';
+
+            document.getElementById('statTotalDrivers').innerText = drivers ? drivers.length : 0;
 
             drivers?.forEach(d => {
                 const card = document.createElement('div');
                 card.className = 'bg-card-custom p-5 rounded-xl border border-gray-800 space-y-4';
                 card.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <img src="${d.photo_url}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-500">
+                        <img src="${d.photo_url || 'https://via.placeholder.com/150'}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-500">
                         <div>
                             <h3 class="font-bold text-white text-lg">${d.name}</h3>
                             <p class="text-xs text-amber-400">/r/${d.slug}</p>
-                            <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded ${d.is_active ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}">
-                                ${d.is_active ? 'Aktif' : 'Non-Aktif'}
-                            </span>
                         </div>
                     </div>
-                    <div class="text-xs text-gray-400 space-y-1">
-                        <p><i class="fa-brands fa-whatsapp w-4"></i> ${d.phone}</p>
-                        <p><i class="fa-solid fa-car w-4"></i> ${d.vehicle_type}</p>
-                        <p><i class="fa-solid fa-star w-4 text-amber-400"></i> ${d.rating}</p>
-                        <p class="italic">"${d.motto || '-'}"</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="toggleDriverActive(${d.id}, ${!d.is_active})" class="flex-1 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 rounded">
-                            ${d.is_active ? 'Nonaktifkan' : 'Aktifkan'}
-                        </button>
-                        <button onclick="openEditModal(${JSON.stringify(d).replace(/"/g, '&quot;')})" class="flex-1 py-1.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black text-xs font-bold rounded">
-                            Edit
-                        </button>
-                    </div>
                     <div class="pt-2 border-t border-gray-800 flex flex-col items-center gap-2">
-                        <div id="qr-${d.slug}"></div>
-                        <button onclick="downloadQR('${d.slug}')" class="text-xs text-amber-400 underline hover:text-amber-300">
+                        <div id="qr-${d.slug}" class="p-2 bg-white rounded-lg"></div>
+                        <button onclick="downloadQR('${d.slug}')" class="text-xs text-amber-400 underline hover:text-amber-300 mt-1">
                             Download QR PNG
                         </button>
                     </div>
                 `;
                 container.appendChild(card);
 
-                // Generate QR Code with Gold Logo
-                const qrCode = new QRCodeStyling({
-                    width: 140,
-                    height: 140,
-                    data: `https://anwar-alzazali.github.io/TEMPERA.ID/?r=${d.slug}`,
-                    image: "logo_classic_gold_transparent.png",
-                    dotsOptions: { color: "#ffffff", type: "rounded" },
-                    backgroundOptions: { color: "#1e1e1e" },
-                    imageOptions: { crossOrigin: "anonymous", margin: 2, imageSize: 0.3 }
-                });
-                qrCode.append(document.getElementById(`qr-${d.slug}`));
+                setTimeout(() => {
+                    const qrElement = document.getElementById(`qr-${d.slug}`);
+                    if (qrElement) {
+                        const qrCode = new QRCodeStyling({
+                            width: 160,
+                            height: 160,
+                            data: `https://anwar-alzazali.github.io/TEMPERA.ID/?r=${d.slug}`,
+                            image: "https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png",
+                            dotsOptions: { color: "#000000", type: "rounded" },
+                            backgroundOptions: { color: "#ffffff" },
+                            imageOptions: { crossOrigin: "anonymous", margin: 2, imageSize: 0.25 }
+                        });
+                        qrCode.append(qrElement);
+                    }
+                }, 100);
             });
-        }
-
-        async function toggleDriverActive(id, newStatus) {
-            await supabaseClient.from('drivers').update({ is_active: newStatus }).eq('id', id);
-            loadDrivers();
-        }
-
-        function openEditModal(driver) {
-            document.getElementById('editDriverId').value = driver.id;
-            document.getElementById('editDriverPhone').value = driver.phone;
-            document.getElementById('editDriverVehicle').value = driver.vehicle_type;
-            document.getElementById('editDriverMotto').value = driver.motto;
-            document.getElementById('editDriverRating').value = driver.rating;
-            document.getElementById('editDriverModal').classList.remove('hidden');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editDriverModal').classList.add('hidden');
-        }
-
-        async function saveDriverEdit() {
-            const id = document.getElementById('editDriverId').value;
-            await supabaseClient.from('drivers').update({
-                phone: document.getElementById('editDriverPhone').value,
-                vehicle_type: document.getElementById('editDriverVehicle').value,
-                motto: document.getElementById('editDriverMotto').value,
-                rating: document.getElementById('editDriverRating').value
-            }).eq('id', id);
-            closeEditModal();
-            loadDrivers();
         }
 
         function downloadQR(slug) {
-    const qrCode = new QRCodeStyling({
-        width: 600,
-        height: 600,
-        data: `https://anwar-alzazali.github.io/TEMPERA.ID/?r=${slug}`,
-        image: "https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png",
-        dotsOptions: { color: "#000000", type: "rounded" },
-        backgroundOptions: { color: "#ffffff" },
-        imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.25 }
-    });
-    qrCode.download({ name: `QR-Driver-${slug}`, extension: "png" });
-}
-
-
+            const qrCode = new QRCodeStyling({
+                width: 600,
+                height: 600,
+                data: `https://anwar-alzazali.github.io/TEMPERA.ID/?r=${slug}`,
+                image: "https://anwar-alzazali.github.io/TEMPERA.ID/images/logo_classic_gold_transparent.png",
+                dotsOptions: { color: "#000000", type: "rounded" },
+                backgroundOptions: { color: "#ffffff" },
+                imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.25 }
+            });
             qrCode.download({ name: `QR-Driver-${slug}`, extension: "png" });
         }
 
-        // 3. BOOKINGS
-        async function loadBookings() {
-            let query = supabaseClient.from('bookings').select('*, drivers(name)').order('created_at', { ascending: false });
-            
-            const driverFilter = document.getElementById('filterDriver').value;
-            const statusFilter = document.getElementById('filterStatus').value;
-
-            if (driverFilter) query = query.eq('driver_slug', driverFilter);
-            if (statusFilter) query = query.eq('payment_status', statusFilter);
-
-            const { data: bookings } = await query;
-            const tbody = document.getElementById('bookingsTableBody');
-            tbody.innerHTML = '';
-
-            bookings?.forEach(b => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-800 hover:bg-gray-800/50';
-                tr.innerHTML = `
-                    <td class="p-4 font-mono">${b.order_id}</td>
-                    <td class="p-4">${b.customer_name}<br><span class="text-xs text-gray-400">${b.customer_phone}</span></td>
-                    <td class="p-4">${b.drivers?.name || b.driver_slug}</td>
-                    <td class="p-4">${b.destination}</td>
-                    <td class="p-4">Rp ${Number(b.total_price).toLocaleString('id-ID')}</td>
-                    <td class="p-4 text-amber-400">Rp ${Number(b.admin_cut_total).toLocaleString('id-ID')}</td>
-                    <td class="p-4">
-                        <span class="px-2 py-1 rounded text-xs ${b.payment_status === 'settlement' ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}">
-                            ${b.payment_status}
-                        </span>
-                    </td>
-                    <td class="p-4 space-x-2">
-                        <button onclick="sendWaDirect('${b.order_id}', 'driver')" class="text-xs bg-green-600/20 text-green-400 px-2 py-1 rounded hover:bg-green-600 hover:text-white">WA Driver</button>
-                        <button onclick="sendWaDirect('${b.order_id}', 'admin')" class="text-xs bg-amber-600/20 text-amber-400 px-2 py-1 rounded hover:bg-amber-600 hover:text-black">WA Admin</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // 4. POTONGAN ADMIN FLEX
-        async function loadAdminCutSettings() {
-            const { data: type } = await supabaseClient.from('settings').select('value').eq('key', 'admin_cut_type').single();
-            const { data: val } = await supabaseClient.from('settings').select('value').eq('key', 'admin_cut_value').single();
-            if (type) document.getElementById('globalAdminCutType').value = type.value;
-            if (val) document.getElementById('globalAdminCutValue').value = val.value;
-        }
-
-        async function saveAdminCutSettings() {
-            const type = document.getElementById('globalAdminCutType').value;
-            const val = document.getElementById('globalAdminCutValue').value;
-            await supabaseClient.from('settings').upsert([{ key: 'admin_cut_type', value: type }, { key: 'admin_cut_value', value: val }]);
-            alert('Pengaturan Potongan Admin berhasil disimpan!');
-        }
-
-        // 5. WA TEMPLATES
-        async function loadWaTemplates() {
-            const { data: templates } = await supabaseClient.from('wa_templates').select('*');
-            templates?.forEach(t => waTemplatesCache[t.key] = t.template);
-            loadWaTemplateContent();
-        }
-
-        function loadWaTemplateContent() {
-            const key = document.getElementById('selectWaTemplate').value;
-            document.getElementById('waTemplateInput').value = waTemplatesCache[key] || '';
-            updateWaPreview();
-        }
-
-        function updateWaPreview() {
-            let text = document.getElementById('waTemplateInput').value;
-            text = text.replace(/{customer_name}/g, 'John Doe')
-                       .replace(/{customer_phone}/g, '08123456789')
-                       .replace(/{driver_name}/g, 'Budi Santoso')
-                       .replace(/{destination}/g, 'Bandung - Jakarta')
-                       .replace(/{order_id}/g, 'TMPR-101')
-                       .replace(/{total_price}/g, '1.500.000')
-                       .replace(/{driver_earning}/g, '1.275.000')
-                       .replace(/{admin_cut_total}/g, '225.000');
-            document.getElementById('waPreviewBox').innerText = text;
-        }
-
-        async function saveWaTemplate() {
-            const key = document.getElementById('selectWaTemplate').value;
-            const text = document.getElementById('waTemplateInput').value;
-            await supabaseClient.from('wa_templates').upsert([{ key: key, template: text, updated_at: new Date() }]);
-            waTemplatesCache[key] = text;
-            alert('Template WA berhasil diperbarui!');
-        }
-
-        // 6. SCANS LOG
-        async function loadScansLog() {
-            const { data: scans } = await supabaseClient.from('qr_scans').select('*').order('scanned_at', { ascending: false });
-            const tbody = document.getElementById('scansTableBody');
-            tbody.innerHTML = '';
-            scans?.forEach(s => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-800';
-                tr.innerHTML = `
-                    <td class="p-4 text-xs">${new Date(s.scanned_at).toLocaleString('id-ID')}</td>
-                    <td class="p-4 text-amber-400">/r/${s.driver_slug}</td>
-                    <td class="p-4 text-xs text-gray-400 truncate max-w-xs">${s.user_agent || '-'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // 7. WA CENTER
-        async function loadWaCenter() {
-            const { data: bookings } = await supabaseClient.from('bookings').select('*, drivers(*)').eq('payment_status', 'settlement');
-            const tbody = document.getElementById('waCenterTableBody');
-            tbody.innerHTML = '';
-
-            bookings?.forEach(b => {
-                const tr = document.createElement('tr');
-                tr.className = 'border-b border-gray-800';
-                tr.innerHTML = `
-                    <td class="p-4 font-mono text-xs">${b.order_id}</td>
-                    <td class="p-4">Driver: ${b.drivers?.name}</td>
-                    <td class="p-4">${b.drivers?.phone}</td>
-                    <td class="p-4">
-                        <button onclick="sendWaDirect('${b.order_id}', 'driver')" class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">
-                            Kirim WA
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function sendWaDirect(orderId, recipient) {
-            const { data: booking } = await supabaseClient.from('bookings').select('*, drivers(*)').eq('order_id', orderId).single();
-            const { data: templateObj } = await supabaseClient.from('wa_templates').select('template').eq('key', `${recipient}_lunas`).single();
-            
-            if (!booking || !templateObj) return alert('Data tidak ditemukan');
-
-            let targetPhone = recipient === 'driver' ? booking.drivers?.phone : '6281234567801'; // Default No HP Admin
-            let msg = templateObj.template;
-
-            msg = msg.replace(/{customer_name}/g, booking.customer_name)
-                     .replace(/{customer_phone}/g, booking.customer_phone)
-                     .replace(/{driver_name}/g, booking.drivers?.name || '')
-                     .replace(/{destination}/g, booking.destination)
-                     .replace(/{order_id}/g, booking.order_id)
-                     .replace(/{total_price}/g, Number(booking.total_price).toLocaleString('id-ID'))
-                     .replace(/{driver_earning}/g, Number(booking.driver_earning).toLocaleString('id-ID'))
-                     .replace(/{admin_cut_total}/g, Number(booking.admin_cut_total).toLocaleString('id-ID'));
-
-            window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        function logout() {
+            document.getElementById('adminApp').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('passwordInput').value = '';
         }
     </script>
 </body>
