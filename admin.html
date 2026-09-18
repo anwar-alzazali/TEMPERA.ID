@@ -247,33 +247,43 @@
         </main>
     </div>
 
-    <!-- MODAL EDIT DRIVER -->
-    <div id="editDriverModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
-        <div class="bg-card-custom p-6 rounded-xl border border-amber-500/30 max-w-lg w-full mx-4 space-y-4">
-            <h3 class="text-xl font-bold text-amber-400">Edit Driver</h3>
-            <input type="hidden" id="editDriverId">
-            <div>
-                <label class="text-xs text-gray-400">No. WhatsApp</label>
-                <input type="text" id="editDriverPhone" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
-            </div>
-            <div>
-                <label class="text-xs text-gray-400">Armada</label>
-                <input type="text" id="editDriverVehicle" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
-            </div>
-            <div>
-                <label class="text-xs text-gray-400">Motto</label>
-                <textarea id="editDriverMotto" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1"></textarea>
-            </div>
-            <div>
-                <label class="text-xs text-gray-400">Rating</label>
-                <input type="number" step="0.1" id="editDriverRating" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
-            </div>
-            <div class="flex justify-end gap-3 pt-4">
-                <button onclick="closeEditModal()" class="px-4 py-2 bg-gray-700 text-gray-200 rounded">Batal</button>
-                <button onclick="saveDriverEdit()" class="px-4 py-2 bg-amber-500 text-black font-bold rounded">Simpan</button>
-            </div>
+   <!-- MODAL EDIT DRIVER -->
+<div id="editDriverModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+    <div class="bg-card-custom p-6 rounded-xl border border-amber-500/30 max-w-lg w-full mx-4 space-y-4">
+        <h3 class="text-xl font-bold text-amber-400">Edit Driver</h3>
+        <input type="hidden" id="editDriverId">
+        
+        <div>
+            <label class="text-xs text-gray-400">Nama Driver</label>
+            <input type="text" id="editDriverName" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">Foto Profil (Upload Baru)</label>
+            <input type="file" id="editDriverPhotoFile" accept="image/*" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white text-xs mt-1">
+            <input type="hidden" id="editDriverPhotoUrl">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">No. WhatsApp</label>
+            <input type="text" id="editDriverPhone" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">Armada</label>
+            <input type="text" id="editDriverVehicle" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">Motto</label>
+            <textarea id="editDriverMotto" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1"></textarea>
+        </div>
+        <div>
+            <label class="text-xs text-gray-400">Rating</label>
+            <input type="number" step="0.1" id="editDriverRating" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+        </div>
+        <div class="flex justify-end gap-3 pt-4">
+            <button onclick="closeEditModal()" class="px-4 py-2 bg-gray-700 text-gray-200 rounded">Batal</button>
+            <button id="btnSaveDriver" onclick="saveDriverEdit()" class="px-4 py-2 bg-amber-500 text-black font-bold rounded">Simpan</button>
         </div>
     </div>
+</div>
 
     <!-- SCRIPT LOGIC -->
     <script>
