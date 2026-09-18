@@ -1,23 +1,19 @@
-<!<!DOCTYPE html><html><head><meta charset="UTF-8">
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Redirecting...</title>
 <script>
-// Fix GitHub Pages SPA untuk tempera.id
 const path = window.location.pathname;
 const host = window.location.host;
-const isCustomDomain = host.includes('tempera.id');
-
-// Base path - kalau di github.io ada /TEMPERA.ID, kalau di tempera.id kosong
-const base = isCustomDomain? '' : '/TEMPERA.ID';
-
+const isCustom = host.includes('tempera.id');
+const base = isCustom? '' : '/TEMPERA.ID';
 if(path.includes('/r/')){
-  const slug = path.split('/r/')[1].split('/')[0].split('?')[0];
-  if(slug && slug!== 'index.html' && slug!== ''){
+  const slug = path.split('/r/')[1].split('/')[0].split('?')[0].split('#')[0];
+  if(slug && slug!='index.html' && slug!=''){
     location.replace(base + '/r/index.html?r=' + slug);
   } else {
     location.replace(base + '/r/index.html');
   }
 } else if(path.includes('/driver/')){
-  const slug = path.split('/driver/')[1].split('/')[0].split('?')[0];
-  if(slug && slug!== 'index.html' && slug!== ''){
+  const slug = path.split('/driver/')[1].split('/')[0].split('?')[0].split('#')[0];
+  if(slug && slug!='index.html' && slug!=''){
     location.replace(base + '/driver/index.html?driver=' + slug);
   } else {
     location.replace(base + '/driver/index.html');
@@ -25,24 +21,4 @@ if(path.includes('/r/')){
 } else {
   location.replace(base + '/index.html');
 }
-</script>
-</head><body>Redirecting...</body></html> html><html><head><meta charset="UTF-8">
-<script>
-// GitHub Pages 404 trick untuk handle /r/udin
-// Kalau user buka /TEMPERA.ID/r/udin tapi file gak ada, GitHub akan load 404.html ini
-// Kita redirect ke handler yang sebenarnya
-const path = window.location.pathname;
-if(path.includes('/r/')){
-  const slug = path.split('/r/')[1].split('/').filter(Boolean)[0];
-  if(slug && slug !== 'index.html'){
-    // simpan slug dan redirect ke /r/index.html?r=slug
-    const base = path.split('/r/')[0] + '/r/';
-    location.replace(base + '?r=' + slug);
-  } else {
-    location.replace(path.split('/r/')[0] + '/index.html');
-  }
-} else {
-  location.replace('/TEMPERA.ID/index.html');
-}
-</script>
-</head><body>Redirecting...</body></htm
+</script></head><body>Redirecting...</body></html>
