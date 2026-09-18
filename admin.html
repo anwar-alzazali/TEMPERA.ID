@@ -397,61 +397,72 @@
         }
 
         // 2. DRIVERS MANAGEMENT
-        async function loadDrivers() {
-            const { data: drivers } = await supabaseClient.from('drivers').select('*').order('id');
-            const container = document.getElementById('driversListContainer');
-            container.innerHTML = '';
+async function loadDrivers() {
+    // Urutkan berdasarkan 'created_at' karena 'id' menggunakan UUID
+    const { data: drivers, error } = await supabaseClient
+        .from('drivers')
+        .select('*')
+        .order('created_at', { ascending: true });
 
-            drivers?.forEach(d => {
-                const card = document.createElement('div');
-                card.className = 'bg-card-custom p-5 rounded-xl border border-gray-800 space-y-4';
-                card.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <img src="${d.photo_url}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-500">
-                        <div>
-                            <h3 class="font-bold text-white text-lg">${d.name}</h3>
-                            <p class="text-xs text-amber-400">/r/${d.slug}</p>
-                            <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded ${d.is_active ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}">
-                                ${d.is_active ? 'Aktif' : 'Non-Aktif'}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="text-xs text-gray-400 space-y-1">
-                        <p><i class="fa-brands fa-whatsapp w-4"></i> ${d.phone}</p>
-                        <p><i class="fa-solid fa-car w-4"></i> ${d.vehicle_type}</p>
-                        <p><i class="fa-solid fa-star w-4 text-amber-400"></i> ${d.rating}</p>
-                        <p class="italic">"${d.motto || '-'}"</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="toggleDriverActive(${d.id}, ${!d.is_active})" class="flex-1 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 rounded">
-                            ${d.is_active ? 'Nonaktifkan' : 'Aktifkan'}
-                        </button>
-                        <button onclick="openEditModal(${JSON.stringify(d).replace(/"/g, '&quot;')})" class="flex-1 py-1.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black text-xs font-bold rounded">
-                            Edit
-                        </button>
-                    </div>
-                    <div class="pt-2 border-t border-gray-800 flex flex-col items-center gap-2">
-                        <div id="qr-${d.slug}"></div>
-                        <button onclick="downloadQR('${d.slug}')" class="text-xs text-amber-400 underline hover:text-amber-300">
-                            Download QR PNG
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
+    if (error) {
+        console.error("Error loading drivers:", error);
+    }
 
-                // Generate QR Code with Gold Logo from images directory
-                const qrCode = new QRCodeStyling({
-                    width: 140,
-                    height: 140,
-                    data: `https://anwar-alzazali.github.io/TEMPERA.ID/?r=${d.slug}`,
-                    image: "images/logo_classic_gold_transparent.png",
-                    dotsOptions: { color: "#ffffff", type: "rounded" },
-                    backgroundOptions: { color: "#1e1e1e" },
-                    imageOptions: { crossOrigin: "anonymous", margin: 2, imageSize: 0.3 }
-                });
-                qrCode.append(document.getElementById(`qr-${d.slug}`));
-            });
-        }
+    const container = document.getElementById('driversListContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    drivers?.forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'bg-card-custom p-5 rounded-xl border border-gray-800 space-y-4';
+        card.innerHTML = `
+            <div class="flex items-center gap-4">
+                <img src="${d.photo_url || 'https://via.placeholder.com/150'}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-500">
+                <div>
+                    <h3 class="font-bold text-white text-lg">${d.name || 'Tanpa Nama'}</h3>
+                    <p class="text-xs text-amber-400">/r/${d.slug || ''}</p>
+                    <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded ${d.is_active ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}">
+                        ${d.is_active ? 'Aktif' : 'Non-Aktif'}
+                    </span>
+                </div>
+            </div>
+            <div class="text-xs text-gray-400 space-y-1">
+                <p><i class="fa-brands fa-whatsapp w-4"></i> ${d.phone || '-'}</p>
+                <p><i class="fa-solid fa-car w-4"></i> ${d.vehicle_type || '-'}</p>
+                <p><i class="fa-solid fa-star w-4 text-amber-400"></i> ${d.rating || '5.0'}</p>
+                <p class="italic">"${d.motto || '-'}"</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="toggleDriverActive('${d.id}', ${!d.is_active})" class="flex-1 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 rounded">
+                    ${d.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+                </button>
+                <button onclick='openEditModal(${JSON.stringify(d)})' class="flex-1 py-1.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black text-xs font-bold rounded">
+                    Edit
+                </button>
+            </div>
+            <div class="pt-2 border-t border-gray-800 flex flex-col items-center gap-2">
+                <div id="qr-${d.slug}"></div>
+                <button onclick="downloadQR('${d.slug}')" class="text-xs text-amber-400 underline hover:text-amber-300">
+                    Download QR PNG
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+
+        // Generate QR Code
+        const qrCode = new QRCodeStyling({
+            width: 140,
+            height: 140,
+            data: `https://anwar-alzazali.github.io/TEMPERA.ID/?r=${d.slug}`,
+            image: "images/logo_classic_gold_transparent.png",
+            dotsOptions: { color: "#ffffff", type: "rounded" },
+            backgroundOptions: { color: "#1e1e1e" },
+            imageOptions: { crossOrigin: "anonymous", margin: 2, imageSize: 0.3 }
+        });
+        qrCode.append(document.getElementById(`qr-${d.slug}`));
+    });
+}
+
 
         async function toggleDriverActive(id, newStatus) {
             await supabaseClient.from('drivers').update({ is_active: newStatus }).eq('id', id);
