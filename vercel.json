@@ -1,7 +1,6 @@
 {
   "rewrites": [
-    { "source": "/driver/:slug", "destination": "/driver/:slug/index.html" },
     { "source": "/r/:slug", "destination": "/r/index.html" },
-    { "source": "/r/:slug/", "destination": "/r/index.html" }
+    { "source": "/driver/:slug", "destination": "/driver/index.html" }
   ]
 }
