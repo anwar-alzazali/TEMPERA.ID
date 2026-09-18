@@ -373,8 +373,18 @@ async function handleFormSubmitMidtrans(event) {
   const btn = document.getElementById('submitBtn');
   const oldText = btn ? btn.textContent : '';
   if(btn){ btn.textContent='Memproses...'; btn.disabled=true; }
+  // GANTI INI DENGAN ANON KEY KAMU DARI SUPABASE > Settings > API
+  const SUPABASE_ANON_KEY = 'ISI_ANON_KEY_KAMU_DISINI';
   try{
-    const res = await fetch(MIDTRANS_ENDPOINT, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const res = await fetch(MIDTRANS_ENDPOINT, { 
+      method:'POST', 
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY
+      }, 
+      body: JSON.stringify(payload) 
+    });
     const data = await res.json();
     if(data.snap_token){
       window.snap.pay(data.snap_token, {
