@@ -422,7 +422,7 @@ async function handleFormSubmit(event) {
 
   try {
     // PENTING: Ganti URL di bawah dengan alamat file PHP back-end Anda (misal: https://tempera.id/create-transaction.php)
-    const response = await fetch('https://api.yourdomain.com/api/create-midtrans-transaction', {
+    const response = await fetch('https://wjmotidelqgcyyujacud.supabase.co/functions/v1/create_transaction_midtrans', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(orderPayload)
