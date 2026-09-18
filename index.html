@@ -40,6 +40,12 @@
 <link rel="icon" href="images/logo_classic_gold_transparent.png">
 <link rel="apple-touch-icon" href="images/logo_classic_gold_transparent.png">
 
+<!-- MIDTRANS SNAP SCRIPT -->
+<!-- (Ganti data-client-key dengan Client Key Midtrans Anda. Gunakan link sandbox untuk uji coba, atau app.midtrans.com untuk mode production/live) -->
+<script type="text/javascript"
+  src="https://app.sandbox.midtrans.com/snap/snap.js"
+  data-client-key="GANTI_DENGAN_CLIENT_KEY_ANDA"></script>
+
 <!-- ANTI-KEDIP TEMA: set tema & is-night SEBELUM CSS render biar nggak kedip -->
 <script>
 (function(){
@@ -57,6 +63,7 @@
 </script>
 
 </head>
+
 <body>
 
 <!-- NAVBAR -->
@@ -223,8 +230,9 @@
 </div>
 <div class="border rounded-2xl p-6 sm:p-8 h-fit lg:sticky lg:top-28" style="background:var(--bg-section-alt);border-color:var(--border-color)"><h3 class="text-xs uppercase tracking-[0.2em] font-bold mb-6 pb-3 border-b" style="color:var(--accent);border-color:var(--border-soft)" data-i18n="summary">Rincian Biaya</h3>
 <div class="border rounded-xl p-4 mb-4" style="background:var(--bg-card);border-color:var(--border-color)"><div class="flex justify-between"><div><span class="text-[10px] uppercase font-bold block mb-1" style="color:var(--accent)">🚐 Armada</span><span id="resArmadaName" class="font-bold text-[14px]">Belum dipilih</span><span id="resArmadaCap" class="text-[10px] block" style="color:var(--text-muted)">Pilih armada di atas</span></div><div class="text-right"><span id="resBasePrice" class="font-bold text-[14px]" style="color:var(--accent)">Rp 0</span></div></div></div>
-<div class="space-y-4 text-xs" style="color:var(--text-secondary)"><div class="flex justify-between"><span>Biaya Cross:</span><div class="text-right"><span id="resRegionCost" class="font-bold" style="color:var(--text-primary)">Rp 0</span><span id="resRegionLabel" class="text-[10px]" style="color:var(--text-muted)"></span></div></div><div id="resEfficiency" class="hidden flex justify-between pt-3 border-t" style="border-color:var(--border-soft)"><span>Efisiensi:</span><span id="resEfficiencyValue" class="font-bold text-[11px]"></span></div><div class="pt-3 border-t" style="border-color:var(--border-soft)"><span class="uppercase text-[10px] block mb-1" style="color:var(--text-muted)">Destinasi:</span><span id="resSelectedList" class="text-[11px]">Belum ada</span></div><div id="resCapacityInfo" class="hidden pt-3 border-t" style="border-color:var(--border-soft)"><span class="text-[10px] uppercase block mb-1" style="color:var(--text-muted)">Kapasitas:</span><span id="resCapacityText" class="text-[11px]"></span></div></div><div class="pt-8 mt-8 border-t" style="border-color:var(--border-soft)"><span class="text-[10px] uppercase block mb-1" style="color:var(--text-muted)">Total Tarif</span><div id="resTotalPrice" class="text-3xl font-bold font-serif mb-2" style="color:var(--accent)">Rp 0</div><p class="text-[10px] mb-6" style="color:var(--text-muted)">+ tol & parkir ~100rb • Total bawa ± <span id="resGrandTotal" class="font-bold" style="color:var(--text-primary)">Rp 0</span></p><button type="submit" id="submitBtn" class="w-full font-bold py-4 rounded-xl uppercase text-[11px]" style="background:var(--accent);color:white" data-i18n="btn_wa">Kirim Pesanan via WhatsApp</button></div></div>
+<div class="space-y-4 text-xs" style="color:var(--text-secondary)"><div class="flex justify-between"><span>Biaya Cross:</span><div class="text-right"><span id="resRegionCost" class="font-bold" style="color:var(--text-primary)">Rp 0</span><span id="resRegionLabel" class="text-[10px]" style="color:var(--text-muted)"></span></div></div><div id="resEfficiency" class="hidden flex justify-between pt-3 border-t" style="border-color:var(--border-soft)"><span>Efisiensi:</span><span id="resEfficiencyValue" class="font-bold text-[11px]"></span></div><div class="pt-3 border-t" style="border-color:var(--border-soft)"><span class="uppercase text-[10px] block mb-1" style="color:var(--text-muted)">Destinasi:</span><span id="resSelectedList" class="text-[11px]">Belum ada</span></div><div id="resCapacityInfo" class="hidden pt-3 border-t" style="border-color:var(--border-soft)"><span class="text-[10px] uppercase block mb-1" style="color:var(--text-muted)">Kapasitas:</span><span id="resCapacityText" class="text-[11px]"></span></div></div><div class="pt-8 mt-8 border-t" style="border-color:var(--border-soft)"><span class="text-[10px] uppercase block mb-1" style="color:var(--text-muted)">Total Tarif</span><div id="resTotalPrice" class="text-3xl font-bold font-serif mb-2" style="color:var(--accent)">Rp 0</div><p class="text-[10px] mb-6" style="color:var(--text-muted)">+ tol & parkir ~100rb • Total bawa ± <span id="resGrandTotal" class="font-bold" style="color:var(--text-primary)">Rp 0</span></p><button type="submit" id="submitBtn" class="w-full font-bold py-4 rounded-xl uppercase text-[11px]" style="background:var(--accent);color:white">Konfirmasi & Bayar</button></div></div>
 </form></div></section>
+
 
 <!-- TESTIMONI SECTION -->
 <section id="testimoni" class="py-10 pb-4 theme-section-alt border-t" style="border-color:var(--border-soft)">
