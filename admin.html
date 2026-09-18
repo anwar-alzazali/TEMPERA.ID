@@ -299,16 +299,41 @@
 
         // AUTHENTICATION
         async function checkPassword() {
-            const pwd = document.getElementById('passwordInput').value;
-            const { data } = await supabaseClient.from('settings').select('value').eq('key', 'admin_password').single();
-            
-            if (data && data.value === pwd) {
+    const input = document.getElementById('passwordInput').value;
+    const errorElement = document.getElementById('loginError');
+
+    // 1. Cek langsung password lokal 'admin123'
+    if (input === 'admin123') {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('adminApp').classList.remove('hidden');
+        if (typeof loadDrivers === 'function') loadDrivers();
+        return;
+    }
+
+    // 2. Jika bukan 'admin123', coba cek ke Supabase
+    try {
+        if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+            const { data, error } = await supabaseClient
+                .from('settings')
+                .select('value')
+                .eq('key', 'admin_password')
+                .maybeSingle();
+
+            if (data && data.value === input) {
                 document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('adminApp').classList.remove('hidden');
-                initApp();
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
+                if (typeof loadDrivers === 'function') loadDrivers();
+                return;
             }
+        }
+    } catch (err) {
+        console.error("Supabase Error:", err);
+    }
+
+    // Jika password salah / Supabase gagal
+    errorElement.classList.remove('hidden');
+}
+
         }
 
         function logout() {
