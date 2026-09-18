@@ -480,29 +480,94 @@ async function loadDrivers() {
         }
 
         function openEditModal(driver) {
-            document.getElementById('editDriverId').value = driver.id;
-            document.getElementById('editDriverPhone').value = driver.phone;
-            document.getElementById('editDriverVehicle').value = driver.vehicle_type;
-            document.getElementById('editDriverMotto').value = driver.motto;
-            document.getElementById('editDriverRating').value = driver.rating;
-            document.getElementById('editDriverModal').classList.remove('hidden');
+    document.getElementById('editDriverId').value = driver.id;
+    document.getElementById('editDriverName').value = driver.name || '';
+    document.getElementById('editDriverPhotoUrl').value = driver.photo_url || '';
+    document.getElementById('editDriverPhotoFile').value = ''; // Reset input file
+    document.getElementById('editDriverPhone').value = driver.phone || '';
+    document.getElementById('editDriverVehicle').value = driver.vehicle_type || '';
+    document.getElementById('editDriverMotto').value = driver.motto || '';
+    document.getElementById('editDriverRating').value = driver.rating || '5.0';
+    document.getElementById('editDriverModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('editDriverModal').classList.add('hidden');
+}
+
+async function saveDriverEdit() {
+    const id = document.getElementById('editDriverId').value;
+    const name = document.getElementById('editDriverName').value;
+    const phone = document.getElementById('editDriverPhone').value;
+    const vehicle = document.getElementById('editDriverVehicle').value;
+    const motto = document.getElementById('editDriverMotto').value;
+    const rating = document.getElementById('editDriverRating').value;
+    
+    const fileInput = document.getElementById('editDriverPhotoFile');
+    let photoUrl = document.getElementById('editDriverPhotoUrl').value;
+
+    const btnSave = document.getElementById('btnSaveDriver');
+    btnSave.innerText = "Lagi Menyimpan...";
+    btnSave.disabled = true;
+
+    try {
+        // Jika ada file foto baru yang di-upload
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}.${fileExt}`;
+            const filePath = `drivers/${fileName}`;
+
+            // Upload ke Supabase Storage
+            const { data: uploadData, error: uploadError } = await supabaseClient
+                .storage
+                .from('driver-photos')
+                .upload(filePath, file);
+
+            if (uploadError) {
+                alert('Gagal upload foto: ' + uploadError.message);
+                btnSave.innerText = "Simpan";
+                btnSave.disabled = false;
+                return;
+            }
+
+            // Dapatkan Public URL
+            const { data: urlData } = supabaseClient
+                .storage
+                .from('driver-photos')
+                .getPublicUrl(filePath);
+
+            photoUrl = urlData.publicUrl;
         }
 
-        function closeEditModal() {
-            document.getElementById('editDriverModal').classList.add('hidden');
-        }
+        // Update database
+        const { error: updateError } = await supabaseClient
+            .from('drivers')
+            .update({
+                name: name,
+                photo_url: photoUrl,
+                phone: phone,
+                vehicle_type: vehicle,
+                motto: motto,
+                rating: rating
+            })
+            .eq('id', id);
 
-        async function saveDriverEdit() {
-            const id = document.getElementById('editDriverId').value;
-            await supabaseClient.from('drivers').update({
-                phone: document.getElementById('editDriverPhone').value,
-                vehicle_type: document.getElementById('editDriverVehicle').value,
-                motto: document.getElementById('editDriverMotto').value,
-                rating: document.getElementById('editDriverRating').value
-            }).eq('id', id);
+        if (updateError) {
+            alert('Gagal update data driver: ' + updateError.message);
+        } else {
             closeEditModal();
-            loadDrivers();
+            loadDrivers(); // Reload daftar driver
         }
+
+    } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan saat menyimpan data.');
+    } finally {
+        btnSave.innerText = "Simpan";
+        btnSave.disabled = false;
+    }
+}
 
         function downloadQR(slug) {
             const qrCode = new QRCodeStyling({
