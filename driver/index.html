@@ -1,44 +1,96 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Driver Dashboard - TEMPERA.ID</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
-<body class="bg-black text-white min-h-screen p-4">
-<div class="max-w-md mx-auto">
-<div class="bg-zinc-900 border border-zinc-800 rounded-[24px] p-6">
+<body class="bg-black text-white min-h-screen p-4 flex justify-center">
+<div class="max-w-md w-full">
+<div class="bg-zinc-900 border border-zinc-800 rounded-[28px] p-6 mt-4">
 <div class="flex items-center gap-4 mb-6">
-<div id="avatar" class="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold text-xl">T</div>
-<div><h1 id="driverName" class="text-xl font-bold">Loading...</h1><p id="driverSlug" class="text-zinc-500 text-sm">@...</p></div>
+<div id="avatar" class="w-[64px] h-[64px] rounded-full bg-yellow-500 flex items-center justify-center text-black font-black text-2xl">T</div>
+<div><h1 id="driverName" class="text-[22px] font-bold leading-tight">Loading...</h1><p id="driverSlug" class="text-zinc-500 text-[13px]">@...</p></div>
 </div>
-<div class="bg-black border border-yellow-500/30 rounded-[20px] p-5 text-center">
-<p class="text-[10px] tracking-[0.3em] text-yellow-500 mb-3">YOUR GOLD QR</p>
-<div id="qrcode" class="flex justify-center bg-white p-3 rounded-xl mx-auto w-fit"></div>
-<p id="qrLink" class="mt-3 text-xs text-zinc-400 break-all"></p>
+<div class="bg-black border border-yellow-500/20 rounded-[24px] p-6 text-center">
+<p class="text-[10px] tracking-[0.35em] text-yellow-500/80 mb-4 font-semibold">YOUR GOLD QR</p>
+<div id="qrcode" class="flex justify-center bg-white p-3 rounded-2xl mx-auto w-fit min-h-[80px] items-center"></div>
+<p id="qrLink" class="mt-4 text-[11px] text-zinc-500 break-all"></p>
+<p class="mt-3 text-[10px] text-zinc-600">Scan untuk booking - komisi masuk otomatis</p>
 </div>
-<div class="grid grid-cols-3 gap-3 mt-4">
-<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-center"><p id="scanTotal" class="text-2xl font-bold text-yellow-500">0</p><p class="text-[10px] text-zinc-500">TOTAL SCAN</p></div>
-<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-center"><p id="scanToday" class="text-2xl font-bold">0</p><p class="text-[10px] text-zinc-500">HARI INI</p></div>
-<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-center"><p id="scanWeek" class="text-2xl font-bold">0</p><p class="text-[10px] text-zinc-500">LINK BOOKING</p></div>
+<div class="grid grid-cols-3 gap-3 mt-5">
+<div class="bg-[#111] border border-zinc-800/80 rounded-[18px] p-4 text-center"><p id="scanTotal" class="text-[26px] font-bold text-yellow-500 leading-none">0</p><p class="text-[9px] tracking-widest text-zinc-500 mt-2">TOTAL SCAN</p></div>
+<div class="bg-[#111] border border-zinc-800/80 rounded-[18px] p-4 text-center"><p id="scanToday" class="text-[26px] font-bold leading-none">0</p><p class="text-[9px] tracking-widest text-zinc-500 mt-2">HARI INI</p></div>
+<div class="bg-[#111] border border-zinc-800/80 rounded-[18px] p-4 text-center"><p id="scanWeek" class="text-[26px] font-bold leading-none">0</p><p class="text-[9px] tracking-widest text-zinc-500 mt-2">LINK BOOKING</p></div>
+</div>
+<div class="mt-5 flex gap-2">
+<a id="btnShare" href="#" class="flex-1 bg-yellow-500 text-black text-center py-3 rounded-full font-bold text-sm">Share Link</a>
+<a id="btnBooking" href="#" class="flex-1 bg-zinc-800 text-white text-center py-3 rounded-full font-bold text-sm border border-zinc-700">Buka Booking</a>
 </div>
 </div>
+<p class="text-center text-[11px] text-zinc-600 mt-4">TEMPERA.ID - Sewa Mobil Bandung</p>
 </div>
 <script>
-const SUPABASE_URL = "https://wjmotidelqgcy yujacud.supabase.co".replace(" ","")
-const SUPABASE_KEY = localStorage.getItem('tempera_anon_key_bener') || "YOUR_ANON_KEY"
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-const slug = window.location.pathname.split("/").filter(Boolean).pop() || "udin"
-const qrUrl = `https://tempera.id/r/${slug}`
-document.getElementById("driverSlug").innerText="@"+slug
-document.getElementById("driverName").innerText=slug.replace(/-/g," ").replace(/\b\w/g,l=>l.toUpperCase())
-document.getElementById("avatar").innerText=slug.charAt(0).toUpperCase()
-document.getElementById("qrLink").innerText=qrUrl
-new QRCode(document.getElementById("qrcode"), {text: qrUrl, width: 160, height: 160})
-async function load(){try{const{count:t}=await supabase.from('scans').select('*',{count:'exact',head:true}).eq('driver_slug',slug);document.getElementById("scanTotal").innerText=t||0}catch(e){}}
-load()
+function getSlug(){
+  const urlParams = new URLSearchParams(window.location.search);
+  let slug = urlParams.get('driver') || urlParams.get('r') || '';
+  if(!slug){
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    const idx = parts.indexOf('driver');
+    if(idx>=0 && parts[idx+1] && parts[idx+1]!='index.html') slug = parts[idx+1];
+  }
+  return (slug || 'udin').toLowerCase().replace(/[^a-z0-9-]/g,'');
+}
+const slug = getSlug();
+const isCustom = window.location.host.includes('tempera.id');
+const baseUrl = isCustom ? 'https://tempera.id' : 'https://anwar-alzazali.github.io/TEMPERA.ID';
+const qrUrl = `${baseUrl}/r/${slug}`;
+
+document.getElementById('driverSlug').innerText = '@'+slug;
+document.getElementById('driverName').innerText = slug.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+document.getElementById('avatar').innerText = slug.charAt(0).toUpperCase();
+document.getElementById('qrLink').innerText = qrUrl;
+document.getElementById('btnShare').href = `https://wa.me/?text=Booking%20via%20${slug}%20${encodeURIComponent(qrUrl)}`;
+document.getElementById('btnBooking').href = qrUrl;
+
+// QR
+document.getElementById('qrcode').innerHTML = '';
+new QRCode(document.getElementById('qrcode'), {text: qrUrl, width: 168, height: 168, correctLevel: QRCode.CorrectLevel.H});
+
+// Supabase optional - kalau anon key belum diisi, skip scan count
+try{
+  const SUPABASE_URL = "https://wjmotidqgcyujacud.supabase.co";
+  const anonKey = localStorage.getItem('tempera_anon_key_bener');
+  if(anonKey){
+    const supabase = window.supabase.createClient(SUPABASE_URL, anonKey);
+    supabase.from('scans').select('*',{count:'exact',head:true}).eq('driver_slug',slug).then(({count})=>{
+      if(count!=null) document.getElementById('scanTotal').innerText = count;
+    });
+  }
+}catch(e){}
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
