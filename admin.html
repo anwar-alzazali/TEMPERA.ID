@@ -344,6 +344,7 @@ let scanChartInstance = null;
 let waTemplatesCache = {};
 let driversCache = [];
 let slugTouched = false;
+let driversRenderId = 0;
 
 // ============================================================
 // HELPER
@@ -405,15 +406,27 @@ return map;
 // ============================================================
 async function checkPassword() {
 const pwd = document.getElementById('passwordInput').value;
+const errEl = document.getElementById('loginError');
+const showError = (msg) => { errEl.innerText = msg; errEl.classList.remove('hidden'); };
+
 const { data, error } = await supabaseClient.from('settings').select('value').eq('key', 'admin_password').maybeSingle();
-if (!error && data && data.value === pwd) {
-document.getElementById('loginError').classList.add('hidden');
+
+if (error) {
+console.error('Login gagal, error dari Supabase:', error);
+return showError('Tidak bisa membaca database: ' + error.message);
+}
+if (!data) {
+console.error('Baris settings dengan key "admin_password" kosong. Penyebab: barisnya belum ada, atau RLS memblokir SELECT pada tabel settings.');
+return showError('Password admin tidak ditemukan. Cek isi tabel settings dan policy RLS-nya.');
+}
+if (String(data.value).trim() !== pwd.trim()) {
+return showError('Password salah, coba lagi!');
+}
+
+errEl.classList.add('hidden');
 document.getElementById('loginScreen').classList.add('hidden');
 document.getElementById('adminApp').classList.remove('hidden');
 initApp();
-} else {
-document.getElementById('loginError').classList.remove('hidden');
-}
 }
 
 document.getElementById('passwordInput').addEventListener('keydown', (e) => {
@@ -521,10 +534,12 @@ x: { grid: { color: '#374151' } }
 // 2. DRIVERS MANAGEMENT
 // ============================================================
 async function loadDrivers() {
+const renderId = ++driversRenderId;
 const container = document.getElementById('driversListContainer');
 container.innerHTML = '<p class="text-gray-400 text-sm">Memuat data driver...</p>';
 
 const { data: drivers, error } = await supabaseClient.from('drivers').select('*').order('id');
+if (renderId !== driversRenderId) return; // ada pemanggilan yang lebih baru, abaikan yang ini
 if (error) {
 container.innerHTML = `<p class="text-red-400 text-sm">Gagal memuat driver: ${esc(error.message)}</p>`;
 return;
@@ -575,11 +590,18 @@ Download QR PNG
 container.appendChild(card);
 
 // QR: titik hitam di atas latar putih agar mudah dipindai
+const qrBox = document.getElementById(`qr-${Number(d.id)}`);
 try {
-buildQR(d.slug, 140).append(document.getElementById(`qr-${Number(d.id)}`));
+qrBox.innerHTML = '';
+buildQR(d.slug, 140).append(qrBox);
+// Pengaman: kalau library menambahkan gambar lebih dari satu, sisakan yang pertama saja
+[400, 1500].forEach(ms => setTimeout(() => {
+const extra = qrBox.querySelectorAll('canvas, svg');
+for (let i = 1; i < extra.length; i++) extra[i].remove();
+}, ms));
 } catch (err) {
 console.error('Gagal membuat QR untuk', d.slug, err);
-document.getElementById(`qr-${Number(d.id)}`).innerText = 'QR gagal dibuat';
+qrBox.innerText = 'QR gagal dibuat';
 }
 });
 }
