@@ -341,10 +341,30 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
 }
 </script>
-  <script>
-  const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac"; // Kunci lengkap Anda
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-</script>
+// ===== PELACAK SCAN QR DRIVER =====
+async function trackScan() {
+  const slug = new URLSearchParams(location.search).get('r');
+  if (!slug) return;
+  try {
+    const res = await fetch('https://wjmotidelqgcyyujacud.supabase.co/rest/v1/scans', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        driver_slug: slug,
+        user_agent: navigator.userAgent,
+        scanned_at: new Date().toISOString()
+      })
+    });
+    if (!res.ok) console.error('Gagal mencatat scan:', res.status, await res.text());
+  } catch (e) {
+    console.error('Gagal mencatat scan:', e);
+  }
+}
+trackScan();
 </body>
 </html>
