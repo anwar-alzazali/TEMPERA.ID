@@ -24,11 +24,12 @@ async function trackAndRedirect() {
     try {
       // Mengirim data sesuai dengan kolom yang ada di tabel scans (slug, user_agent, dll)
       const { error } = await supabase
-        .from('scans')
-        .insert([{ 
-          slug: slug, 
-          user_agent: navigator.userAgent 
-        }]);
+  .from('scans')
+  .insert([{ 
+    driver_slug: slug, 
+    user_agent: navigator.userAgent 
+  }]);
+
 
       if (error) {
         console.error("Gagal mencatat scan:", error.message);
