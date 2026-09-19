@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body style="background:#000; color:#fff; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
-  <div style="text-align:center;">
+  <div style="text-align:center;" id="status">
     <p>Mengarahkan...</p>
   </div>
 
@@ -22,20 +22,23 @@ const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).
 async function trackAndRedirect() {
   if (slug) {
     try {
-      // Kita masukkan data dengan menyertakan id random (UUID) agar tidak ditolak database
+      // Mengisi semua kolom sesuai struktur tabel Supabase
       const { error } = await supabase
         .from('scans')
         .insert([{ 
           id: crypto.randomUUID(),
           driver_slug: slug, 
+          ip_address: "Direct Scan", 
           user_agent: navigator.userAgent 
         }]);
 
       if (error) {
-        console.error("Gagal mencatat scan:", error.message);
+        console.error("Gagal simpan:", error.message);
+      } else {
+        console.log("Berhasil masuk!");
       }
     } catch (err) {
-      console.error("Error sistem:", err);
+      console.error("Error:", err);
     }
 
     setTimeout(() => {
