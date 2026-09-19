@@ -885,7 +885,7 @@ async function loadScansLog() {
     tr.className = 'border-b border-gray-800';
     tr.innerHTML = `
       <td class="p-4 text-xs">${new Date(s.scanned_at).toLocaleString('id-ID')}</td>
-      <td class="p-4 text-amber-400">?r=${esc(s.driver_slug)}</td>
+      <td class="p-4 text-amber-400">${esc(s.driver_slug)}</td>
       <td class="p-4 text-xs text-gray-400 truncate max-w-xs" title="${esc(s.user_agent || '')}">${esc(s.user_agent || '-')}</td>
     `;
     tbody.appendChild(tr);
