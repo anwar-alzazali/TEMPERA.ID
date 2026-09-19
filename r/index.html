@@ -18,15 +18,19 @@ const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).
 async function go(){
   if(slug){
     try {
-      await supabase.from('scans').insert({driver_slug: slug});
+      const { error } = await supabase.from('scans').insert({driver_slug: slug});
+      if (error) {
+        alert("Error Supabase: " + error.message);
+      }
     } catch(e) {
-      console.log(e);
+      alert("Error JS: " + e.message);
     }
     location.href = "/?driver=" + slug;
   } else {
     location.href = "/";
   }
 }
+
 setTimeout(go, 300);
 </script>
 </body>
