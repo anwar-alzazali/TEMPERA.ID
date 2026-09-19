@@ -1,186 +1,950 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEMPERA.ID - Panel Admin</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FIX: Gunakan QRCode Generator Library yang Sangat Stabil -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        /* Memastikan QR code berada di tengah kotak putih */
-        #qr-code-udin img {
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEMPERA.ID - Panel Admin</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Supabase JS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- QR Code Styling CDN -->
+<script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.gold-gradient { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); }
+.bg-dark-custom { background-color: #121212; }
+.bg-card-custom { background-color: #1e1e1e; }
+</style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-dark-custom text-gray-100 font-sans min-h-screen">
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-500 text-slate-950 p-2 rounded-xl font-bold tracking-wider text-lg shadow-lg shadow-amber-500/20">
-                    TEMPERA.ID
-                </div>
-                <span class="text-xs uppercase bg-slate-800 text-amber-400 px-2.5 py-1 rounded-md font-semibold tracking-wider border border-amber-500/30">Panel Admin</span>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button onclick="openAddDriverModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl font-semibold text-sm transition shadow-lg shadow-amber-500/20 flex items-center space-x-2">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span>Tambah Driver</span>
-                </button>
-            </div>
-        </div>
-    </header>
+<!-- LOGIN MODAL / SCREEN -->
+<div id="loginScreen" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+<div class="bg-card-custom p-8 rounded-xl border border-amber-500/30 max-w-md w-full mx-4 shadow-2xl text-center">
+<img src="images/logo_classic_gold_transparent.png" alt="Logo TEMPERA" class="h-24 mx-auto mb-4 object-contain">
+<h2 class="text-2xl font-bold text-amber-400 mb-2">TEMPERA.ID Admin</h2>
+<p class="text-gray-400 text-sm mb-6">Masukkan kata sandi admin untuk melanjutkan</p>
+<input type="password" id="passwordInput" placeholder="Password Admin" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white mb-4 focus:outline-none focus:border-amber-500">
+<button onclick="checkPassword()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition duration-200">Masuk Panel</button>
+<p id="loginError" class="text-red-500 text-sm mt-3 hidden">Password salah, coba lagi!</p>
+</div>
+</div>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-white tracking-wide">Driver Management</h1>
-            <p class="text-sm text-slate-400 mt-1">Kelola data driver, status keaktifan, dan unduh QR code profil.</p>
-        </div>
+<!-- MAIN ADMIN APP -->
+<div id="adminApp" class="hidden min-h-screen flex flex-col md:flex-row">
+<!-- SIDEBAR -->
+<aside class="w-full md:w-64 bg-card-custom border-r border-gray-800 flex flex-col">
+<div class="p-5 border-b border-gray-800 flex items-center gap-3">
+<img src="images/logo_classic_gold_transparent.png" alt="Logo Gold" class="h-10 w-10 object-contain">
+<div>
+<h1 class="font-bold text-amber-400 text-lg leading-none">TEMPERA.ID</h1>
+<span class="text-xs text-gray-400">Admin Control Panel</span>
+</div>
+</div>
+<nav class="flex-1 p-4 space-y-2">
+<button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-solid fa-chart-pie w-5"></i> Dashboard
+</button>
+<button onclick="switchTab('drivers')" id="nav-drivers" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-solid fa-id-card w-5"></i> Drivers Management
+</button>
+<button onclick="switchTab('bookings')" id="nav-bookings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-solid fa-receipt w-5"></i> Bookings
+</button>
+<button onclick="switchTab('adminCut')" id="nav-adminCut" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-solid fa-percent w-5"></i> Potongan Admin Flex
+</button>
+<button onclick="switchTab('waTemplates')" id="nav-waTemplates" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-solid fa-file-lines w-5"></i> WA Templates
+</button>
+<button onclick="switchTab('scans')" id="nav-scans" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-solid fa-qrcode w-5"></i> Scans / QR Tracking
+</button>
+<button onclick="switchTab('waCenter')" id="nav-waCenter" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left text-gray-300 hover:bg-amber-500/10 hover:text-amber-400 transition">
+<i class="fa-brands fa-whatsapp w-5"></i> WA Center
+</button>
+</nav>
+<div class="p-4 border-t border-gray-800">
+<button onclick="logout()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white rounded-lg transition">
+<i class="fa-solid fa-right-from-bracket"></i> Keluar
+</button>
+</div>
+</aside>
 
-        <!-- Driver Card Grid / Management Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="driver-list-container">
-            <!-- Driver Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-3">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Kang Udin" class="w-12 h-12 rounded-full object-cover border-2 border-amber-500">
-                            <div>
-                                <h3 class="font-bold text-white text-base">Kang Udin</h3>
-                                <p class="text-xs text-amber-400 font-medium">/r/udin</p>
-                            </div>
-                        </div>
-                        <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
-                    </div>
+<!-- CONTENT AREA -->
+<main class="flex-1 p-6 overflow-y-auto">
 
-                    <div class="space-y-2 text-sm text-slate-300 mb-6 border-t border-slate-800/80 pt-4">
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-brands fa-whatsapp text-emerald-400 w-5"></i>
-                            <span>6281223456789</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-car text-amber-400 w-5"></i>
-                            <span>Avanza</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-star text-amber-400 w-5"></i>
-                            <span>4.9</span>
-                        </div>
-                        <div class="flex items-center space-x-2 italic text-slate-400">
-                            <i class="fa-solid fa-quote-left text-slate-500 w-5"></i>
-                            <span>"Trip santai"</span>
-                        </div>
-                    </div>
-                </div>
+<!-- 1. DASHBOARD UTAMA -->
+<section id="sec-dashboard" class="tab-content hidden space-y-6">
+<h2 class="text-2xl font-bold text-amber-400">Dashboard Utama</h2>
+<!-- METRIC CARDS -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-card-custom p-5 rounded-xl border border-gray-800">
+<p class="text-gray-400 text-sm">Total Scan Hari Ini / Minggu Ini / Bulan Ini</p>
+<h3 class="text-2xl font-bold text-white mt-2" id="dash-scans">0 / 0 / 0</h3>
+<p class="text-xs text-gray-500 mt-1" id="dash-scans-total">Total keseluruhan: 0</p>
+</div>
+<div class="bg-card-custom p-5 rounded-xl border border-gray-800">
+<p class="text-gray-400 text-sm">Total Booking (Pending / Settlement)</p>
+<h3 class="text-2xl font-bold text-amber-400 mt-2" id="dash-bookings">0 / 0</h3>
+</div>
+<div class="bg-card-custom p-5 rounded-xl border border-gray-800">
+<p class="text-gray-400 text-sm">Total Omset</p>
+<h3 class="text-2xl font-bold text-green-400 mt-2" id="dash-omset">Rp 0</h3>
+</div>
+<div class="bg-card-custom p-5 rounded-xl border border-gray-800">
+<p class="text-gray-400 text-sm">Total Potongan Admin</p>
+<h3 class="text-2xl font-bold text-amber-500 mt-2" id="dash-admincut">Rp 0</h3>
+</div>
+</div>
 
-                <div>
-                    <!-- Kotak QR Code -->
-                    <div id="qr-code-udin" class="bg-white p-3 rounded-xl flex justify-center items-center mb-4 shadow-inner min-h-[140px]"></div>
+<!-- GRAFIK -->
+<div class="bg-card-custom p-5 rounded-xl border border-gray-800">
+<h3 class="text-lg font-bold text-gray-200 mb-4">Grafik Scan QR per Driver</h3>
+<div class="h-64">
+<canvas id="scanChart"></canvas>
+</div>
+</div>
+</section>
 
-                    <div class="flex space-x-2">
-                        <button class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-semibold transition border border-slate-700">Nonaktifkan</button>
-                        <button class="flex-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 py-2 rounded-xl text-xs font-semibold transition">Edit</button>
-                    </div>
-                    <div class="mt-3 text-center">
-                        <button onclick="downloadQR('udin')" class="text-xs text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-4">Download QR PNG</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+<!-- 2. DRIVER MANAGEMENT -->
+<section id="sec-drivers" class="tab-content hidden space-y-6">
+<div class="flex justify-between items-center">
+<h2 class="text-2xl font-bold text-amber-400">Driver Management</h2>
+<button onclick="openAddDriverModal()" class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition text-sm">
+<i class="fa-solid fa-user-plus"></i> Tambah Driver Baru
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="driversListContainer">
+<!-- Dynamic drivers injected here -->
+</div>
+</section>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        &copy; 2026 TEMPERA.ID - All Rights Reserved.
-    </footer>
+<!-- 3. BOOKINGS -->
+<section id="sec-bookings" class="tab-content hidden space-y-6">
+<h2 class="text-2xl font-bold text-amber-400">Daftar Bookings</h2>
+<!-- FILTERS -->
+<div class="bg-card-custom p-4 rounded-xl border border-gray-800 flex flex-wrap gap-4">
+<select id="filterDriver" onchange="loadBookings()" class="p-2 rounded bg-gray-800 border border-gray-700 text-white">
+<option value="">Semua Driver</option>
+</select>
+<select id="filterStatus" onchange="loadBookings()" class="p-2 rounded bg-gray-800 border border-gray-700 text-white">
+<option value="">Semua Status</option>
+<option value="pending">Pending</option>
+<option value="settlement">Settlement (Lunas)</option>
+<option value="cancel">Cancel</option>
+</select>
+</div>
 
-    <!-- Modal Tambah Driver -->
-    <div id="addDriverModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                <h3 class="text-lg font-bold text-white">Tambah Driver Baru</h3>
-                <button onclick="closeAddDriverModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form onsubmit="handleAddDriver(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Nama Driver</label>
-                    <input type="text" id="driverName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Nomor WhatsApp</label>
-                    <input type="text" id="driverPhone" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 mb-1">Kendaraan</label>
-                    <input type="text" id="driverVehicle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
-                </div>
-                <div class="flex justify-end space-x-2 pt-2">
-                    <button type="button" onclick="closeAddDriverModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs font-semibold">Batal</button>
-                    <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-semibold">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
+<!-- TABLE -->
+<div class="bg-card-custom rounded-xl border border-gray-800 overflow-x-auto">
+<table class="w-full text-left text-sm text-gray-300">
+<thead class="bg-gray-800 text-amber-400 uppercase text-xs">
+<tr>
+<th class="p-4">Order ID</th>
+<th class="p-4">Customer</th>
+<th class="p-4">Driver</th>
+<th class="p-4">Destinasi</th>
+<th class="p-4">Total</th>
+<th class="p-4">Potongan Admin</th>
+<th class="p-4">Status</th>
+<th class="p-4">Aksi</th>
+</tr>
+</thead>
+<tbody id="bookingsTableBody">
+<!-- Dynamic rows -->
+</tbody>
+</table>
+</div>
+</section>
 
-    <!-- Script Render QR Code -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Render QR Code secara otomatis saat halaman terbuka
-            const qrContainer = document.getElementById("qr-code-udin");
-            if (qrContainer) {
-                qrContainer.innerHTML = ""; // Bersihkan kontainer
-                new QRCode(qrContainer, {
-                    text: "https://anwar-alzazali.github.io/TEMPERA.ID/?r=udin",
-                    width: 128,
-                    height: 128,
-                    colorDark: "#0f172a",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.H
-                });
-            }
-        });
+<!-- 4. POTONGAN ADMIN FLEX -->
+<section id="sec-adminCut" class="tab-content hidden space-y-6">
+<h2 class="text-2xl font-bold text-amber-400">Pengaturan Potongan Admin Flex</h2>
+<div class="bg-card-custom p-6 rounded-xl border border-gray-800 max-w-xl space-y-4">
+<div>
+<label class="block text-gray-400 mb-2">Tipe Potongan Global</label>
+<select id="globalAdminCutType" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
+<option value="percent">Persentase (%)</option>
+<option value="flat">Nominal Flat (Rp)</option>
+</select>
+</div>
+<div>
+<label class="block text-gray-400 mb-2">Nilai Potongan</label>
+<input type="number" id="globalAdminCutValue" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white" placeholder="misal: 15 atau 100000">
+</div>
+<button onclick="saveAdminCutSettings()" class="py-3 px-6 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition">Simpan Pengaturan</button>
+</div>
+</section>
 
-        function downloadQR(name) {
-            const img = document.querySelector("#qr-code-udin img");
-            if (img) {
-                const link = document.createElement('a');
-                link.download = `QR-Driver-${name}.png`;
-                link.href = img.src;
-                link.click();
-            } else {
-                alert("QR Code belum siap diunduh.");
-            }
-        }
+<!-- 5. WA TEMPLATES -->
+<section id="sec-waTemplates" class="tab-content hidden space-y-6">
+<h2 class="text-2xl font-bold text-amber-400">Pengaturan WA Templates</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-card-custom p-6 rounded-xl border border-gray-800 space-y-4">
+<label class="block text-gray-400">Pilih Template</label>
+<select id="selectWaTemplate" onchange="loadWaTemplateContent()" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
+<option value="driver_lunas">Driver (Pembayaran Lunas)</option>
+<option value="admin_lunas">Admin (Pembayaran Lunas)</option>
+</select>
+<label class="block text-gray-400">Isi Template</label>
+<textarea id="waTemplateInput" rows="8" oninput="updateWaPreview()" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white font-mono text-sm"></textarea>
+<p class="text-xs text-gray-400">Variabel tersedia: <code class="text-amber-400">{customer_name}, {customer_phone}, {driver_name}, {destination}, {order_id}, {total_price}, {driver_earning}, {admin_cut_total}</code></p>
+<button onclick="saveWaTemplate()" class="py-3 px-6 bg-amber-500 hover:bg-amber-600 text-black font-bold rounded-lg transition">Simpan Template</button>
+</div>
 
-        function openAddDriverModal() {
-            document.getElementById('addDriverModal').classList.remove('hidden');
-        }
+<div class="bg-card-custom p-6 rounded-xl border border-gray-800 space-y-4">
+<h3 class="text-lg font-bold text-gray-200">Live Preview</h3>
+<div id="waPreviewBox" class="p-4 bg-gray-900 rounded-lg text-green-400 font-mono text-sm whitespace-pre-wrap border border-gray-800 min-h-[200px]"></div>
+</div>
+</div>
+</section>
 
-        function closeAddDriverModal() {
-            document.getElementById('addDriverModal').classList.add('hidden');
-        }
+<!-- 6. SCANS / QR TRACKING -->
+<section id="sec-scans" class="tab-content hidden space-y-6">
+<h2 class="text-2xl font-bold text-amber-400">Log Scans / QR Tracking</h2>
+<p class="text-gray-400 text-sm">Menampilkan 200 scan terbaru.</p>
+<div class="bg-card-custom rounded-xl border border-gray-800 overflow-x-auto">
+<table class="w-full text-left text-sm text-gray-300">
+<thead class="bg-gray-800 text-amber-400 uppercase text-xs">
+<tr>
+<th class="p-4">Waktu Scan</th>
+<th class="p-4">Driver Slug</th>
+<th class="p-4">User Agent / Perangkat</th>
+</tr>
+</thead>
+<tbody id="scansTableBody">
+<!-- Dynamic rows -->
+</tbody>
+</table>
+</div>
+</section>
 
-        function handleAddDriver(e) {
-            e.preventDefault();
-            alert('Fitur tambah driver berhasil diproses!');
-            closeAddDriverModal();
-        }
-    </script>
+<!-- 7. WA CENTER -->
+<section id="sec-waCenter" class="tab-content hidden space-y-6">
+<h2 class="text-2xl font-bold text-amber-400">WA Center (Pending Manual Sending)</h2>
+<p class="text-gray-400 text-sm">Klik tombol di bawah untuk membuka WhatsApp secara langsung dengan format pesan otomatis.</p>
+<div class="bg-card-custom rounded-xl border border-gray-800 overflow-x-auto">
+<table class="w-full text-left text-sm text-gray-300">
+<thead class="bg-gray-800 text-amber-400 uppercase text-xs">
+<tr>
+<th class="p-4">Order ID</th>
+<th class="p-4">Tujuan Pesan</th>
+<th class="p-4">Nomor HP</th>
+<th class="p-4">Aksi Kirim</th>
+</tr>
+</thead>
+<tbody id="waCenterTableBody">
+<!-- Dynamic rows -->
+</tbody>
+</table>
+</div>
+</section>
+
+</main>
+</div>
+
+<!-- MODAL EDIT DRIVER -->
+<div id="editDriverModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+<div class="bg-card-custom p-6 rounded-xl border border-amber-500/30 max-w-lg w-full mx-4 space-y-4 max-h-[90vh] overflow-y-auto">
+<h3 class="text-xl font-bold text-amber-400">Edit Driver</h3>
+<input type="hidden" id="editDriverId">
+<div>
+<label class="text-xs text-gray-400">Nama Lengkap</label>
+<input type="text" id="editDriverName" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">No. WhatsApp (Awali dengan 62)</label>
+<input type="text" id="editDriverPhone" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">Armada</label>
+<input type="text" id="editDriverVehicle" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">URL Foto Profil</label>
+<input type="text" id="editDriverPhoto" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">Motto</label>
+<textarea id="editDriverMotto" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1"></textarea>
+</div>
+<div>
+<label class="text-xs text-gray-400">Rating</label>
+<input type="number" step="0.1" min="0" max="5" id="editDriverRating" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div class="flex justify-end gap-3 pt-4">
+<button onclick="closeEditModal()" class="px-4 py-2 bg-gray-700 text-gray-200 rounded">Batal</button>
+<button onclick="saveDriverEdit()" class="px-4 py-2 bg-amber-500 text-black font-bold rounded">Simpan</button>
+</div>
+</div>
+</div>
+
+<!-- MODAL TAMBAH DRIVER BARU -->
+<div id="addDriverModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+<div class="bg-card-custom p-6 rounded-xl border border-amber-500/30 max-w-lg w-full mx-4 space-y-4 max-h-[90vh] overflow-y-auto">
+<h3 class="text-xl font-bold text-amber-400">Tambah Driver Baru</h3>
+<div>
+<label class="text-xs text-gray-400">Nama Lengkap</label>
+<input type="text" id="addDriverName" oninput="autoFillSlug()" placeholder="Contoh: Budi Santoso" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">Slug (URL unik, misal: budi-bandung)</label>
+<input type="text" id="addDriverSlug" oninput="slugTouched = true" placeholder="budi-bandung" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+<p class="text-xs text-gray-500 mt-1">Hanya huruf kecil, angka, dan tanda hubung. Slug dipakai di link QR, jadi jangan diubah setelah QR dicetak.</p>
+</div>
+<div>
+<label class="text-xs text-gray-400">No. WhatsApp (boleh diawali 0 atau 62)</label>
+<input type="text" id="addDriverPhone" placeholder="628123456789" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">Armada / Kendaraan</label>
+<input type="text" id="addDriverVehicle" placeholder="Toyota Avanza" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">URL Foto Profil</label>
+<input type="text" id="addDriverPhoto" placeholder="https://..." class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div>
+<label class="text-xs text-gray-400">Motto</label>
+<textarea id="addDriverMotto" placeholder="Aman & Nyaman sampai tujuan" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1"></textarea>
+</div>
+<div>
+<label class="text-xs text-gray-400">Rating Awal</label>
+<input type="number" step="0.1" min="0" max="5" id="addDriverRating" value="5.0" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-white mt-1">
+</div>
+<div class="flex justify-end gap-3 pt-4">
+<button onclick="closeAddDriverModal()" class="px-4 py-2 bg-gray-700 text-gray-200 rounded">Batal</button>
+<button id="btnSaveNewDriver" onclick="saveNewDriver()" class="px-4 py-2 bg-amber-500 text-black font-bold rounded">Simpan Driver</button>
+</div>
+</div>
+</div>
+
+<!-- SCRIPT LOGIC -->
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Path logo harus sama untuk halaman, kartu driver, dan QR
+const LOGO_URL = 'images/logo_classic_gold_transparent.png';
+// Alamat website utama; QR mengarah ke SITE_URL + ?r=slug
+const SITE_URL = 'https://anwar-alzazali.github.io/TEMPERA.ID/';
+// Nomor WA admin (cadangan). Kalau tabel settings punya key "admin_phone", nilai itu yang dipakai.
+const ADMIN_WA_FALLBACK = '6281234567801';
+
+let scanChartInstance = null;
+let waTemplatesCache = {};
+let driversCache = [];
+let slugTouched = false;
+
+// ============================================================
+// HELPER
+// ============================================================
+// Escape teks sebelum dimasukkan ke innerHTML agar data tidak merusak tampilan
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({
+'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[c]));
+
+const rupiah = (n) => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+
+function slugify(text) {
+return String(text || '').toLowerCase().trim()
+.replace(/[^a-z0-9]+/g, '-')
+.replace(/^-+|-+$/g, '');
+}
+
+function normalizePhone(raw) {
+let phone = String(raw || '').replace(/\D/g, '');
+if (phone.startsWith('0')) phone = '62' + phone.slice(1);
+return phone;
+}
+
+function fillTemplate(text, vars) {
+return String(text || '').replace(/\{(\w+)\}/g, (match, key) => (key in vars ? vars[key] : match));
+}
+
+function buildQR(slug, size) {
+return new QRCodeStyling({
+width: size,
+height: size,
+data: `${SITE_URL}?r=${encodeURIComponent(slug)}`,
+image: LOGO_URL,
+qrOptions: { errorCorrectionLevel: 'H' },
+dotsOptions: { color: '#000000', type: 'rounded' },
+backgroundOptions: { color: '#ffffff' },
+imageOptions: { crossOrigin: 'anonymous', margin: 4, imageSize: 0.25 }
+});
+}
+
+async function fetchDrivers() {
+const { data, error } = await supabaseClient.from('drivers').select('*').order('id');
+if (error) {
+console.error('Gagal memuat drivers:', error);
+return [];
+}
+driversCache = data || [];
+return driversCache;
+}
+
+function driversBySlug(drivers) {
+const map = {};
+(drivers || []).forEach(d => map[d.slug] = d);
+return map;
+}
+
+// ============================================================
+// AUTHENTICATION
+// ============================================================
+async function checkPassword() {
+const pwd = document.getElementById('passwordInput').value;
+const { data, error } = await supabaseClient.from('settings').select('value').eq('key', 'admin_password').maybeSingle();
+if (!error && data && data.value === pwd) {
+document.getElementById('loginError').classList.add('hidden');
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('adminApp').classList.remove('hidden');
+initApp();
+} else {
+document.getElementById('loginError').classList.remove('hidden');
+}
+}
+
+document.getElementById('passwordInput').addEventListener('keydown', (e) => {
+if (e.key === 'Enter') checkPassword();
+});
+
+function logout() {
+location.reload();
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+async function switchTab(tabId) {
+document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-amber-500/10', 'text-amber-400'));
+document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+document.getElementById(`nav-${tabId}`).classList.add('bg-amber-500/10', 'text-amber-400');
+
+if (tabId === 'dashboard') loadDashboardData();
+if (tabId === 'drivers') loadDrivers();
+if (tabId === 'bookings') { await populateDriverFilter(); loadBookings(); }
+if (tabId === 'adminCut') loadAdminCutSettings();
+if (tabId === 'waTemplates') loadWaTemplates();
+if (tabId === 'scans') loadScansLog();
+if (tabId === 'waCenter') loadWaCenter();
+}
+
+function initApp() {
+switchTab('dashboard');
+}
+
+// ============================================================
+// 1. DASHBOARD
+// ============================================================
+async function loadDashboardData() {
+const [scansRes, bookingsRes, drivers] = await Promise.all([
+supabaseClient.from('qr_scans').select('driver_slug, scanned_at'),
+supabaseClient.from('bookings').select('payment_status, total_price, admin_cut_total'),
+fetchDrivers()
+]);
+const scans = scansRes.data || [];
+const bookings = bookingsRes.data || [];
+
+// Scan: hari ini / minggu ini (mulai Senin) / bulan ini
+const now = new Date();
+const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+const startWeek = new Date(startToday);
+startWeek.setDate(startWeek.getDate() - ((startToday.getDay() + 6) % 7));
+const startMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+let today = 0, week = 0, month = 0;
+scans.forEach(s => {
+const t = new Date(s.scanned_at);
+if (t >= startToday) today++;
+if (t >= startWeek) week++;
+if (t >= startMonth) month++;
+});
+document.getElementById('dash-scans').innerText = `${today} / ${week} / ${month}`;
+document.getElementById('dash-scans-total').innerText = `Total keseluruhan: ${scans.length}`;
+
+// Booking & omset
+const settled = bookings.filter(b => b.payment_status === 'settlement');
+const pendingCount = bookings.filter(b => b.payment_status === 'pending').length;
+document.getElementById('dash-bookings').innerText = `${pendingCount} / ${settled.length}`;
+
+const totalOmset = settled.reduce((sum, b) => sum + Number(b.total_price || 0), 0);
+const totalCut = settled.reduce((sum, b) => sum + Number(b.admin_cut_total || 0), 0);
+document.getElementById('dash-omset').innerText = rupiah(totalOmset);
+document.getElementById('dash-admincut').innerText = rupiah(totalCut);
+
+// Grafik scan per driver
+const countsByDriver = {};
+drivers.forEach(d => countsByDriver[d.name] = 0);
+scans.forEach(s => {
+const drv = drivers.find(d => d.slug === s.driver_slug);
+if (drv) countsByDriver[drv.name] = (countsByDriver[drv.name] || 0) + 1;
+});
+
+const ctx = document.getElementById('scanChart').getContext('2d');
+if (scanChartInstance) scanChartInstance.destroy();
+scanChartInstance = new Chart(ctx, {
+type: 'bar',
+data: {
+labels: Object.keys(countsByDriver),
+datasets: [{
+label: 'Jumlah Scan QR',
+data: Object.values(countsByDriver),
+backgroundColor: '#f59e0b'
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+plugins: { legend: { display: false } },
+scales: {
+y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#374151' } },
+x: { grid: { color: '#374151' } }
+}
+}
+});
+}
+
+// ============================================================
+// 2. DRIVERS MANAGEMENT
+// ============================================================
+async function loadDrivers() {
+const container = document.getElementById('driversListContainer');
+container.innerHTML = '<p class="text-gray-400 text-sm">Memuat data driver...</p>';
+
+const { data: drivers, error } = await supabaseClient.from('drivers').select('*').order('id');
+if (error) {
+container.innerHTML = `<p class="text-red-400 text-sm">Gagal memuat driver: ${esc(error.message)}</p>`;
+return;
+}
+driversCache = drivers || [];
+
+if (driversCache.length === 0) {
+container.innerHTML = '<p class="text-gray-400 text-sm">Belum ada driver. Klik "Tambah Driver Baru" untuk mulai.</p>';
+return;
+}
+
+container.innerHTML = '';
+driversCache.forEach(d => {
+const card = document.createElement('div');
+card.className = 'bg-card-custom p-5 rounded-xl border border-gray-800 space-y-4';
+card.innerHTML = `
+<div class="flex items-center gap-4">
+<img src="${esc(d.photo_url || LOGO_URL)}" onerror="this.onerror=null;this.src='${LOGO_URL}'" alt="Foto ${esc(d.name)}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-500">
+<div>
+<h3 class="font-bold text-white text-lg">${esc(d.name)}</h3>
+<p class="text-xs text-amber-400">?r=${esc(d.slug)}</p>
+<span class="inline-block mt-1 text-xs px-2 py-0.5 rounded ${d.is_active ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}">
+${d.is_active ? 'Aktif' : 'Non-Aktif'}
+</span>
+</div>
+</div>
+<div class="text-xs text-gray-400 space-y-1">
+<p><i class="fa-brands fa-whatsapp w-4"></i> ${esc(d.phone)}</p>
+<p><i class="fa-solid fa-car w-4"></i> ${esc(d.vehicle_type || '-')}</p>
+<p><i class="fa-solid fa-star w-4 text-amber-400"></i> ${esc(d.rating)}</p>
+<p class="italic">"${esc(d.motto || '-')}"</p>
+</div>
+<div class="flex gap-2">
+<button onclick="toggleDriverActive(${Number(d.id)}, ${!d.is_active})" class="flex-1 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 rounded">
+${d.is_active ? 'Nonaktifkan' : 'Aktifkan'}
+</button>
+<button onclick="openEditModal(${Number(d.id)})" class="flex-1 py-1.5 bg-amber-500/20 text-amber-400 hover:bg-amber-500 hover:text-black text-xs font-bold rounded">
+Edit
+</button>
+</div>
+<div class="pt-2 border-t border-gray-800 flex flex-col items-center gap-2">
+<div id="qr-${Number(d.id)}" class="bg-white p-2 rounded-lg"></div>
+<button onclick="downloadQR('${esc(d.slug)}')" class="text-xs text-amber-400 underline hover:text-amber-300">
+Download QR PNG
+</button>
+</div>
+`;
+container.appendChild(card);
+
+// QR: titik hitam di atas latar putih agar mudah dipindai
+try {
+buildQR(d.slug, 140).append(document.getElementById(`qr-${Number(d.id)}`));
+} catch (err) {
+console.error('Gagal membuat QR untuk', d.slug, err);
+document.getElementById(`qr-${Number(d.id)}`).innerText = 'QR gagal dibuat';
+}
+});
+}
+
+// ---- Tambah driver ----
+function openAddDriverModal() {
+slugTouched = false;
+document.getElementById('addDriverName').value = '';
+document.getElementById('addDriverSlug').value = '';
+document.getElementById('addDriverPhone').value = '';
+document.getElementById('addDriverVehicle').value = '';
+document.getElementById('addDriverPhoto').value = '';
+document.getElementById('addDriverMotto').value = '';
+document.getElementById('addDriverRating').value = '5.0';
+document.getElementById('addDriverModal').classList.remove('hidden');
+}
+
+function closeAddDriverModal() {
+document.getElementById('addDriverModal').classList.add('hidden');
+}
+
+// Slug terisi otomatis dari nama, kecuali admin sudah mengetiknya sendiri
+function autoFillSlug() {
+if (slugTouched) return;
+document.getElementById('addDriverSlug').value = slugify(document.getElementById('addDriverName').value);
+}
+
+async function saveNewDriver() {
+const name = document.getElementById('addDriverName').value.trim();
+const slug = slugify(document.getElementById('addDriverSlug').value);
+const phone = normalizePhone(document.getElementById('addDriverPhone').value);
+const vehicle_type = document.getElementById('addDriverVehicle').value.trim();
+const photo_url = document.getElementById('addDriverPhoto').value.trim();
+const motto = document.getElementById('addDriverMotto').value.trim();
+const rating = parseFloat(document.getElementById('addDriverRating').value);
+
+if (!name || !slug || !phone) {
+alert('Nama, Slug, dan Nomor WhatsApp wajib diisi!');
+return;
+}
+if (phone.length < 10) {
+alert('Nomor WhatsApp terlalu pendek. Periksa lagi.');
+return;
+}
+
+const btn = document.getElementById('btnSaveNewDriver');
+btn.disabled = true;
+btn.innerText = 'Menyimpan...';
+
+const { error } = await supabaseClient.from('drivers').insert([{
+name,
+slug,
+phone,
+vehicle_type,
+photo_url: photo_url || null,
+motto,
+rating: isNaN(rating) ? 5.0 : rating,
+is_active: true
+}]);
+
+btn.disabled = false;
+btn.innerText = 'Simpan Driver';
+
+if (error) {
+console.error(error);
+let msg = error.message;
+if (error.code === '23505') msg = 'Slug sudah dipakai driver lain, ganti yang lain.';
+else if (/row-level security/i.test(error.message)) msg = 'Ditolak oleh Supabase (RLS). Tambahkan policy INSERT untuk tabel drivers.';
+alert('Gagal menambah driver: ' + msg);
+return;
+}
+
+alert('Driver baru berhasil ditambahkan!');
+closeAddDriverModal();
+loadDrivers();
+}
+
+// ---- Aktif / nonaktif ----
+async function toggleDriverActive(id, newStatus) {
+const { error } = await supabaseClient.from('drivers').update({ is_active: newStatus }).eq('id', id);
+if (error) alert('Gagal mengubah status: ' + error.message);
+loadDrivers();
+}
+
+// ---- Edit driver ----
+function openEditModal(id) {
+const driver = driversCache.find(d => Number(d.id) === Number(id));
+if (!driver) return alert('Data driver tidak ditemukan, muat ulang halaman.');
+document.getElementById('editDriverId').value = driver.id;
+document.getElementById('editDriverName').value = driver.name || '';
+document.getElementById('editDriverPhone').value = driver.phone || '';
+document.getElementById('editDriverVehicle').value = driver.vehicle_type || '';
+document.getElementById('editDriverPhoto').value = driver.photo_url || '';
+document.getElementById('editDriverMotto').value = driver.motto || '';
+document.getElementById('editDriverRating').value = driver.rating ?? '';
+document.getElementById('editDriverModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+document.getElementById('editDriverModal').classList.add('hidden');
+}
+
+async function saveDriverEdit() {
+const id = document.getElementById('editDriverId').value;
+const name = document.getElementById('editDriverName').value.trim();
+const phone = normalizePhone(document.getElementById('editDriverPhone').value);
+if (!name || !phone) return alert('Nama dan Nomor WhatsApp wajib diisi!');
+
+const rating = parseFloat(document.getElementById('editDriverRating').value);
+const { error } = await supabaseClient.from('drivers').update({
+name,
+phone,
+vehicle_type: document.getElementById('editDriverVehicle').value.trim(),
+photo_url: document.getElementById('editDriverPhoto').value.trim() || null,
+motto: document.getElementById('editDriverMotto').value.trim(),
+rating: isNaN(rating) ? 5.0 : rating
+}).eq('id', id);
+
+if (error) return alert('Gagal menyimpan perubahan: ' + error.message);
+closeEditModal();
+loadDrivers();
+}
+
+function downloadQR(slug) {
+buildQR(slug, 600).download({ name: `QR-Driver-${slug}`, extension: 'png' });
+}
+
+// ============================================================
+// 3. BOOKINGS
+// ============================================================
+async function populateDriverFilter() {
+const sel = document.getElementById('filterDriver');
+const current = sel.value;
+const drivers = await fetchDrivers();
+sel.innerHTML = '<option value="">Semua Driver</option>' +
+drivers.map(d => `<option value="${esc(d.slug)}">${esc(d.name)}</option>`).join('');
+sel.value = current;
+}
+
+async function loadBookings() {
+let query = supabaseClient.from('bookings').select('*').order('created_at', { ascending: false });
+const driverFilter = document.getElementById('filterDriver').value;
+const statusFilter = document.getElementById('filterStatus').value;
+
+if (driverFilter) query = query.eq('driver_slug', driverFilter);
+if (statusFilter) query = query.eq('payment_status', statusFilter);
+
+const { data: bookings, error } = await query;
+const tbody = document.getElementById('bookingsTableBody');
+tbody.innerHTML = '';
+
+if (error) {
+tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-red-400">Gagal memuat booking: ${esc(error.message)}</td></tr>`;
+return;
+}
+if (!bookings || bookings.length === 0) {
+tbody.innerHTML = '<tr><td colspan="8" class="p-4 text-gray-400">Belum ada data booking.</td></tr>';
+return;
+}
+
+const map = driversBySlug(driversCache);
+
+bookings.forEach(b => {
+const statusClass = b.payment_status === 'settlement'
+? 'bg-green-600/20 text-green-400'
+: b.payment_status === 'pending'
+? 'bg-yellow-600/20 text-yellow-400'
+: 'bg-red-600/20 text-red-400';
+
+const tr = document.createElement('tr');
+tr.className = 'border-b border-gray-800 hover:bg-gray-800/50';
+tr.innerHTML = `
+<td class="p-4 font-mono">${esc(b.order_id)}</td>
+<td class="p-4">${esc(b.customer_name)}<br><span class="text-xs text-gray-400">${esc(b.customer_phone)}</span></td>
+<td class="p-4">${esc(map[b.driver_slug]?.name || b.driver_slug)}</td>
+<td class="p-4">${esc(b.destination)}</td>
+<td class="p-4">${rupiah(b.total_price)}</td>
+<td class="p-4 text-amber-400">${rupiah(b.admin_cut_total)}</td>
+<td class="p-4">
+<span class="px-2 py-1 rounded text-xs ${statusClass}">${esc(b.payment_status)}</span>
+</td>
+<td class="p-4 space-x-2">
+<button onclick="sendWaDirect('${esc(b.order_id)}', 'driver')" class="text-xs bg-green-600/20 text-green-400 px-2 py-1 rounded hover:bg-green-600 hover:text-white">WA Driver</button>
+<button onclick="sendWaDirect('${esc(b.order_id)}', 'admin')" class="text-xs bg-amber-600/20 text-amber-400 px-2 py-1 rounded hover:bg-amber-600 hover:text-black">WA Admin</button>
+</td>
+`;
+tbody.appendChild(tr);
+});
+}
+
+// ============================================================
+// 4. POTONGAN ADMIN FLEX
+// ============================================================
+async function loadAdminCutSettings() {
+const { data } = await supabaseClient.from('settings').select('key, value').in('key', ['admin_cut_type', 'admin_cut_value']);
+(data || []).forEach(row => {
+if (row.key === 'admin_cut_type') document.getElementById('globalAdminCutType').value = row.value;
+if (row.key === 'admin_cut_value') document.getElementById('globalAdminCutValue').value = row.value;
+});
+}
+
+async function saveAdminCutSettings() {
+const type = document.getElementById('globalAdminCutType').value;
+const val = document.getElementById('globalAdminCutValue').value;
+if (val === '' || Number(val) < 0) return alert('Isi nilai potongan dengan angka yang valid.');
+if (type === 'percent' && Number(val) > 100) return alert('Persentase tidak boleh lebih dari 100.');
+
+const { error } = await supabaseClient.from('settings').upsert(
+[{ key: 'admin_cut_type', value: type }, { key: 'admin_cut_value', value: String(val) }],
+{ onConflict: 'key' }
+);
+if (error) return alert('Gagal menyimpan pengaturan: ' + error.message);
+alert('Pengaturan Potongan Admin berhasil disimpan!');
+}
+
+// ============================================================
+// 5. WA TEMPLATES
+// ============================================================
+const WA_PREVIEW_VARS = {
+customer_name: 'John Doe',
+customer_phone: '08123456789',
+driver_name: 'Budi Santoso',
+destination: 'Bandung - Jakarta',
+order_id: 'TMPR-101',
+total_price: '1.500.000',
+driver_earning: '1.275.000',
+admin_cut_total: '225.000'
+};
+
+async function loadWaTemplates() {
+const { data: templates } = await supabaseClient.from('wa_templates').select('*');
+(templates || []).forEach(t => waTemplatesCache[t.key] = t.template);
+loadWaTemplateContent();
+}
+
+function loadWaTemplateContent() {
+const key = document.getElementById('selectWaTemplate').value;
+document.getElementById('waTemplateInput').value = waTemplatesCache[key] || '';
+updateWaPreview();
+}
+
+function updateWaPreview() {
+const text = document.getElementById('waTemplateInput').value;
+document.getElementById('waPreviewBox').innerText = fillTemplate(text, WA_PREVIEW_VARS);
+}
+
+async function saveWaTemplate() {
+const key = document.getElementById('selectWaTemplate').value;
+const text = document.getElementById('waTemplateInput').value;
+const { error } = await supabaseClient.from('wa_templates').upsert(
+[{ key, template: text, updated_at: new Date().toISOString() }],
+{ onConflict: 'key' }
+);
+if (error) return alert('Gagal menyimpan template: ' + error.message);
+waTemplatesCache[key] = text;
+alert('Template WA berhasil diperbarui!');
+}
+
+// ============================================================
+// 6. SCANS LOG
+// ============================================================
+async function loadScansLog() {
+const { data: scans, error } = await supabaseClient.from('qr_scans').select('*').order('scanned_at', { ascending: false }).limit(200);
+const tbody = document.getElementById('scansTableBody');
+tbody.innerHTML = '';
+
+if (error) {
+tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-red-400">Gagal memuat log: ${esc(error.message)}</td></tr>`;
+return;
+}
+if (!scans || scans.length === 0) {
+tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-gray-400">Belum ada scan tercatat.</td></tr>';
+return;
+}
+
+scans.forEach(s => {
+const tr = document.createElement('tr');
+tr.className = 'border-b border-gray-800';
+tr.innerHTML = `
+<td class="p-4 text-xs">${new Date(s.scanned_at).toLocaleString('id-ID')}</td>
+<td class="p-4 text-amber-400">?r=${esc(s.driver_slug)}</td>
+<td class="p-4 text-xs text-gray-400 truncate max-w-xs" title="${esc(s.user_agent || '')}">${esc(s.user_agent || '-')}</td>
+`;
+tbody.appendChild(tr);
+});
+}
+
+// ============================================================
+// 7. WA CENTER
+// ============================================================
+async function getAdminPhone() {
+const { data } = await supabaseClient.from('settings').select('value').eq('key', 'admin_phone').maybeSingle();
+return normalizePhone(data?.value) || ADMIN_WA_FALLBACK;
+}
+
+async function loadWaCenter() {
+const [bookingsRes, drivers, adminPhone] = await Promise.all([
+supabaseClient.from('bookings').select('*').eq('payment_status', 'settlement').order('created_at', { ascending: false }),
+fetchDrivers(),
+getAdminPhone()
+]);
+const tbody = document.getElementById('waCenterTableBody');
+tbody.innerHTML = '';
+
+if (bookingsRes.error) {
+tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-red-400">Gagal memuat data: ${esc(bookingsRes.error.message)}</td></tr>`;
+return;
+}
+const bookings = bookingsRes.data || [];
+if (bookings.length === 0) {
+tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400">Belum ada booking lunas.</td></tr>';
+return;
+}
+
+const map = driversBySlug(drivers);
+
+bookings.forEach(b => {
+const drv = map[b.driver_slug];
+const rows = [
+{ recipient: 'driver', label: `Driver: ${drv?.name || b.driver_slug}`, phone: drv?.phone || '-' },
+{ recipient: 'admin', label: 'Admin', phone: adminPhone }
+];
+rows.forEach(r => {
+const tr = document.createElement('tr');
+tr.className = 'border-b border-gray-800';
+tr.innerHTML = `
+<td class="p-4 font-mono text-xs">${esc(b.order_id)}</td>
+<td class="p-4">${esc(r.label)}</td>
+<td class="p-4">${esc(r.phone)}</td>
+<td class="p-4">
+<button onclick="sendWaDirect('${esc(b.order_id)}', '${r.recipient}')" class="px-3 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700">
+Kirim WA
+</button>
+</td>
+`;
+tbody.appendChild(tr);
+});
+});
+}
+
+async function sendWaDirect(orderId, recipient) {
+const { data: booking } = await supabaseClient.from('bookings').select('*').eq('order_id', orderId).maybeSingle();
+const { data: templateObj } = await supabaseClient.from('wa_templates').select('template').eq('key', `${recipient}_lunas`).maybeSingle();
+if (!booking) return alert('Data booking tidak ditemukan.');
+if (!templateObj) return alert(`Template "${recipient}_lunas" belum dibuat. Isi dulu di menu WA Templates.`);
+
+const { data: driver } = await supabaseClient.from('drivers').select('name, phone').eq('slug', booking.driver_slug).maybeSingle();
+
+const targetPhone = recipient === 'driver' ? normalizePhone(driver?.phone) : await getAdminPhone();
+if (!targetPhone) return alert('Nomor WhatsApp tujuan tidak tersedia.');
+
+const msg = fillTemplate(templateObj.template, {
+customer_name: booking.customer_name ?? '',
+customer_phone: booking.customer_phone ?? '',
+driver_name: driver?.name || '',
+destination: booking.destination ?? '',
+order_id: booking.order_id ?? '',
+total_price: Number(booking.total_price || 0).toLocaleString('id-ID'),
+driver_earning: Number(booking.driver_earning || 0).toLocaleString('id-ID'),
+admin_cut_total: Number(booking.admin_cut_total || 0).toLocaleString('id-ID')
+});
+
+window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
 </body>
 </html>
+
