@@ -39,6 +39,7 @@
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" href="images/logo_classic_gold_transparent.png">
 <link rel="apple-touch-icon" href="images/logo_classic_gold_transparent.png">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- MIDTRANS SNAP SCRIPT -->
 <!-- (Ganti data-client-key dengan Client Key Midtrans Anda. Gunakan link sandbox untuk uji coba, atau app.midtrans.com untuk mode production/live) -->
@@ -339,6 +340,11 @@
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
 }
+</script>
+  <script>
+  const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1Ni..."; // Kunci lengkap Anda
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 </script>
 </body>
 </html>
