@@ -16,12 +16,15 @@ const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac"; // Gunakan anon key Anda
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Perbarui bagian ini di fungsi trackScan Anda:
 const urlParams = new URLSearchParams(location.search);
-const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).pop();
+// Bersihkan string agar hanya mengambil nilai slug-nya saja
+let slug = urlParams.get('r') || urlParams.get('driver') || '';
+// Jika slug tidak sengaja masih mengandung format ?r=, kita bersihkan:
+slug = slug.replace('?r=', '').replace('?driver=', '');
 
-async function trackAndRedirect() {
-  if (slug) {
-    try {
+if (!slug) return;
+
       // Mengisi semua kolom sesuai struktur tabel Supabase
       const { error } = await supabase
         .from('scans')
