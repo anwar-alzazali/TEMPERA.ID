@@ -464,7 +464,7 @@ switchTab('dashboard');
 // ============================================================
 async function loadDashboardData() {
 const [scansRes, bookingsRes, drivers] = await Promise.all([
-supabaseClient.from('qr_scans').select('driver_slug, scanned_at'),
+supabaseClient.from('scans').select('driver_slug, scanned_at'),
 supabaseClient.from('bookings').select('payment_status, total_price, admin_cut_total'),
 fetchDrivers()
 ]);
