@@ -864,7 +864,7 @@ alert('Template WA berhasil diperbarui!');
 // 6. SCANS LOG
 // ============================================================
 async function loadScansLog() {
-const { data: scans, error } = await supabaseClient.from('qr_scans').select('*').order('scanned_at', { ascending: false }).limit(200);
+const { data: scans, error } = await supabaseClient.from('scans').select('*').order('scanned_at', { ascending: false }).limit(200);
 const tbody = document.getElementById('scansTableBody');
 tbody.innerHTML = '';
 
