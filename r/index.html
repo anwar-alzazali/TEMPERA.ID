@@ -13,7 +13,7 @@
 
 <script>
 const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJ3am1vdGlkZWxxZ2N5eXVqYWN1ZCIsInJvbGUiOiJhbm9uIiwiaWF0Ijoi..."; // Ganti dengan anon key Anda jika perlu
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJ3am1vdGlkZWxxZ2N5eXVqYWN1ZCIsInJvbGUiOiJhbm9uIiwiaWF0Ijoi..."; // Gunakan anon key Anda
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const urlParams = new URLSearchParams(location.search);
@@ -22,26 +22,27 @@ const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).
 async function trackAndRedirect() {
   if (slug) {
     try {
-      // Mengirim data sesuai dengan kolom yang ada di tabel scans (slug, user_agent, dll)
+      // Mengirim data menggunakan kolom "driver_slug" yang sesuai dengan tabel scans di Supabase
       const { error } = await supabase
-  .from('scans')
-  .insert([{ 
-    driver_slug: slug, 
-    user_agent: navigator.userAgent 
-  }]);
-
+        .from('scans')
+        .insert([{ 
+          driver_slug: slug, 
+          user_agent: navigator.userAgent 
+        }]);
 
       if (error) {
         console.error("Gagal mencatat scan:", error.message);
+      } else {
+        console.log("Scan berhasil dicatat!");
       }
     } catch (err) {
       console.error("Error sistem:", err);
     }
 
-    // Jeda sejenak agar data terkirim, lalu arahkan halaman
+    // Jeda sejenak agar data terkirim ke database, lalu arahkan halaman
     setTimeout(() => {
       location.href = "/?driver=" + slug;
-    }, 500);
+    }, 600);
   } else {
     location.href = "/";
   }
