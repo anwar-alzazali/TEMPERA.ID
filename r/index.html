@@ -9,15 +9,25 @@
 <body style="background:#000;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh">
 Mengarahkan...
 <script>
-const supabase = window.supabase.createClient("https://wjmotidelqgcyyujacud.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac")
-const slug = location.pathname.split("/").filter(Boolean).pop()
+const supabase = window.supabase.createClient("https://wjmotidelqgcyyujacud.supabase.co","eyJhGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJ3am1vdGlkZWxxZ2N5eXVqYWN1ZCIsInJvbGUiOiJhbm9uIiwiaWF0Ijoi...")
+
+// Mengambil slug dari parameter ?r= atau dari path folder
+const urlParams = new URLSearchParams(location.search);
+const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).pop();
+
 async function go(){
   if(slug){
-    try{await supabase.from('scans').insert({driver_slug: slug})}catch(e){}
-    location.href="/?driver="+slug
-  }else{location.href="/"}
+    try {
+      await supabase.from('scans').insert({driver_slug: slug});
+    } catch(e) {
+      console.log(e);
+    }
+    location.href = "/?driver=" + slug;
+  } else {
+    location.href = "/";
+  }
 }
-setTimeout(go,300)
+setTimeout(go, 300);
 </script>
 </body>
 </html>
