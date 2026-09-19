@@ -341,14 +341,27 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
 }
 </script>
-  <script>
+<script>
 // ===== PELACAK SCAN QR DRIVER =====
 async function trackScan() {
-  const urlParams = new URLSearchParams(location.search);
-  let slug = urlParams.get('r') || urlParams.get('driver') || '';
-  
-  // Membersihkan slug dari potensi karakter tambahan
-  slug = slug.replace('?r=', '').replace('?driver=', '').trim();
+  let searchStr = location.search; // Contoh: "?r=denis" atau "r=denis"
+  let slug = "";
+
+  if (searchStr) {
+    // Hilangkan tanda tanya jika ada
+    searchStr = searchStr.replace('?', '');
+    
+    // Jika formatnya mengandung parameter (misal r=denis atau driver=denis)
+    if (searchStr.includes('=')) {
+      const parts = searchStr.split('=');
+      slug = parts[1] || ''; // Ambil bagian setelah tanda sama dengan (=)
+    } else {
+      slug = searchStr;
+    }
+  }
+
+  // Bersihkan spasi ekstra jika ada
+  slug = slug.trim();
 
   if (!slug) return;
 
@@ -378,5 +391,6 @@ async function trackScan() {
 
 trackScan();
 </script>
+
 </body>
 </html>
