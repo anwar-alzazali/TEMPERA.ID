@@ -190,6 +190,7 @@
           <select id="selectWaTemplate" onchange="loadWaTemplateContent()" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white">
             <option value="driver_lunas">Driver (Pembayaran Lunas)</option>
             <option value="admin_lunas">Admin (Pembayaran Lunas)</option>
+            <option value="customer_lunas">Pelanggan (Pembayaran Lunas)</option>
           </select>
           <label class="block text-gray-400">Isi Template</label>
           <textarea id="waTemplateInput" rows="8" oninput="updateWaPreview()" class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white font-mono text-sm"></textarea>
@@ -968,6 +969,77 @@ async function sendWaDirect(orderId, recipient) {
   });
 
   window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ============================================================
+// 8. OTOMATIS KIRIM NOTIFIKASI KE 3 PIHAK (ADMIN, DRIVER, PELANGGAN)
+// ============================================================
+async function sendNotificationToAll(bookingData) {
+  // Cek apakah status sudah lunas (settlement atau paid)
+  if (bookingData.payment_status !== 'settlement' && bookingData.payment_status !== 'paid') {
+    return;
+  }
+
+  // Token Fonnte (Silakan ganti token di bawah dengan token asli dari dashboard Fonnte Anda)
+  const fonnteToken = "f6GTFUUR3zpxYWf8AUCY"; 
+
+  // Ambil data driver berdasarkan slug
+  const { data: driver } = await supabaseClient.from('drivers').select('name, phone').eq('slug', bookingData.driver_slug).maybeSingle();
+  const adminPhone = await getAdminPhone();
+
+  // Ambil template pesan dari database (jika ada) atau gunakan teks bawaan
+  const { data: templates } = await supabaseClient.from('wa_templates').select('key, template');
+  const templateMap = {};
+  (templates || []).forEach(t => templateMap[t.key] = t.template);
+
+  // Variabel pengganti untuk template
+  const vars = {
+    customer_name: bookingData.customer_name || '',
+    customer_phone: bookingData.customer_phone || '',
+    driver_name: driver?.name || '',
+    destination: bookingData.destination || '',
+    order_id: bookingData.order_id || '',
+    total_price: Number(bookingData.total_price || 0).toLocaleString('id-ID'),
+    driver_earning: Number(bookingData.driver_earning || 0).toLocaleString('id-ID'),
+    admin_cut_total: Number(bookingData.admin_cut_total || 0).toLocaleString('id-ID')
+  };
+
+  // Susun isi pesan untuk masing-masing pihak
+  const msgCustomer = fillTemplate(templateMap['customer_lunas'] || "Halo {customer_name}, pembayaran pesanan {order_id} sebesar Rp {total_price} telah BERHASIL (Lunas). Terima kasih!", vars);
+  const msgDriver = fillTemplate(templateMap['driver_lunas'] || "Halo {driver_name}, ada pesanan baru {order_id} dari {customer_name} yang sudah lunas. Silakan bersiap!", vars);
+  const msgAdmin = fillTemplate(templateMap['admin_lunas'] || "[ADMIN] Pembayaran sukses diterima! Pesanan {order_id} dari {customer_name} untuk driver {driver_name}.", vars);
+
+  // Fungsi pengiriman via Fonnte API
+  async function sendFonnte(targetPhone, messageText) {
+    const phone = normalizePhone(targetPhone);
+    if (!phone) return;
+    try {
+      const response = await fetch('https://api.fonnte.com/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': fonnteToken
+        },
+        body: JSON.stringify({
+          target: phone,
+          message: messageText,
+          countryCode: '62'
+        })
+      });
+      const result = await response.json();
+      if (!result.status) {
+        console.error('Fonnte gagal mengirim ke:', phone, result.reason);
+      }
+    } catch (err) {
+      console.error('Error koneksi API Fonnte:', err);
+    }
+  }
+
+  // Kirim pesan secara paralel ke Pelanggan, Driver, dan Admin
+  await Promise.all([
+    sendFonnte(bookingData.customer_phone, msgCustomer),
+    sendFonnte(driver?.phone, msgDriver),
+    sendFonnte(adminPhone, msgAdmin)
+  ]);
 }
 </script>
 </body>
