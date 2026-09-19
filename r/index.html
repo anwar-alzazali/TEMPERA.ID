@@ -8,7 +8,7 @@
 </head>
 <body style="background:#000; color:#fff; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
   <div style="text-align:center;">
-    <p>Memproses scan...</p>
+    <p>Mengarahkan...</p>
   </div>
 
 <script>
@@ -22,29 +22,25 @@ const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).
 async function trackAndRedirect() {
   if (slug) {
     try {
-      // Mencatat data ke tabel scans
-      const { data, error } = await supabase
+      // Kita masukkan data dengan menyertakan id random (UUID) agar tidak ditolak database
+      const { error } = await supabase
         .from('scans')
         .insert([{ 
+          id: crypto.randomUUID(),
           driver_slug: slug, 
           user_agent: navigator.userAgent 
         }]);
 
       if (error) {
-        // Jika gagal,unculkan pesan error-nya di layar HP Anda
-        alert("Gagal Simpan Database: " + error.message);
-        console.error("Supabase Error:", error);
-      } else {
-        console.log("Berhasil:", data);
+        console.error("Gagal mencatat scan:", error.message);
       }
     } catch (err) {
-      alert("Error Sistem: " + err.message);
+      console.error("Error sistem:", err);
     }
 
-    // Tetap melakukan redirect setelah beberapa detik
     setTimeout(() => {
       location.href = "/?driver=" + slug;
-    }, 1000);
+    }, 600);
   } else {
     location.href = "/";
   }
