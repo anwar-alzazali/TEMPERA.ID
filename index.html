@@ -341,10 +341,17 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js');
 }
 </script>
+  <script>
 // ===== PELACAK SCAN QR DRIVER =====
 async function trackScan() {
-  const slug = new URLSearchParams(location.search).get('r');
+  const urlParams = new URLSearchParams(location.search);
+  let slug = urlParams.get('r') || urlParams.get('driver') || '';
+  
+  // Membersihkan slug dari potensi karakter tambahan
+  slug = slug.replace('?r=', '').replace('?driver=', '').trim();
+
   if (!slug) return;
+
   try {
     const res = await fetch('https://wjmotidelqgcyyujacud.supabase.co/rest/v1/scans', {
       method: 'POST',
@@ -360,11 +367,16 @@ async function trackScan() {
         scanned_at: new Date().toISOString()
       })
     });
-    if (!res.ok) console.error('Gagal mencatat scan:', res.status, await res.text());
+    
+    if (!res.ok) {
+      console.error('Gagal mencatat scan:', res.status, await res.text());
+    }
   } catch (e) {
     console.error('Gagal mencatat scan:', e);
   }
 }
+
 trackScan();
+</script>
 </body>
 </html>
