@@ -384,17 +384,36 @@ async function handleFormSubmitMidtrans(event) {
       }, 
       body: JSON.stringify(payload) 
     });
-    const data = await res.json();
-    if(data.snap_token){
-      window.snap.pay(data.snap_token, {
-        onSuccess: (r)=>{
-          const msg = `Halo Admin Tempera, saya sudah bayar via Midtrans:%0A👤 Nama: ${nama}%0A📞 Kontak: ${kontak}%0A🚐 Armada: ${armada.name}%0A📅 Tgl: ${tanggal} ${jam}%0A👥 ${jumlah} org%0A📍 ${checked.join(', ')}%0A💳 Order: ${r.order_id}`;
-          window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
-        },
-        onPending: ()=>alert('Menunggu pembayaran'),
-        onError: ()=>alert('Pembayaran gagal'),
-        onClose: ()=>{}
-      });
+ const data = await res.json();
+if(data.snap_token){
+  window.snap.pay(data.snap_token, {
+    onSuccess: async (r)=>{
+      // 1. Siapkan data booking yang akan dikirim ke fungsi notifikasi
+      const bookingData = {
+        order_id: payload.order_id,
+        customer_name: nama,
+        customer_phone: kontak,
+        driver_slug: armada.slug,
+        destination: checked.join(', '),
+        total_price: grossAmount,
+        payment_status: 'settlement'
+      };
+
+      // 2. Pesan WhatsApp manual ke Admin (seperti sebelumnya)
+      const msg = `Halo Admin Tempera, saya sudah bayar via Midtrans:%0A👤 Nama: ${nama}%0A📞 Kontak: ${kontak}%0A🚐 Armada: ${armada.name}%0A📅 Tgl: ${tanggal} ${jam}%0A👥 ${jumlah} org%0A📍 ${checked.join(', ')}%0A💳 Order: ${r.order_id}`;
+      window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
+      
+      // 3. Jalankan fungsi otomatis kirim WhatsApp ke Pelanggan, Driver, dan Admin
+      await sendNotificationToAll(bookingData);
+    },
+    onPending: ()=>alert('Menunggu pembayaran'),
+    onError: ()=>alert('Pembayaran gagal'),
+    onClose: ()=>{}
+  });
+}
+
+      
+
     } else { alert('Gagal dapat token: '+JSON.stringify(data)); }
   }catch(e){ console.error(e); alert('Koneksi error ke server Midtrans'); }
   finally{ if(btn){ btn.textContent=oldText; btn.disabled=false; } }
