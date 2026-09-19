@@ -6,32 +6,47 @@
 <title>Redirecting...</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body style="background:#000;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh">
-Mengarahkan...
-<script>
-const supabase = window.supabase.createClient("https://wjmotidelqgcyyujacud.supabase.co","eyJhGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJ3am1vdGlkZWxxZ2N5eXVqYWN1ZCIsInJvbGUiOiJhbm9uIiwiaWF0Ijoi...")
+<body style="background:#000; color:#fff; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
+  <div style="text-align:center;">
+    <p>Mengarahkan...</p>
+  </div>
 
-// Mengambil slug dari parameter ?r= atau dari path folder
+<script>
+const SUPABASE_URL = "https://wjmotidelqgcyyujacud.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZWYiOiJ3am1vdGlkZWxxZ2N5eXVqYWN1ZCIsInJvbGUiOiJhbm9uIiwiaWF0Ijoi..."; // Ganti dengan anon key Anda jika perlu
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const urlParams = new URLSearchParams(location.search);
 const slug = urlParams.get('r') || location.pathname.split("/").filter(Boolean).pop();
 
-async function go(){
-  if(slug){
+async function trackAndRedirect() {
+  if (slug) {
     try {
-      const { error } = await supabase.from('scans').insert({driver_slug: slug});
+      // Mengirim data sesuai dengan kolom yang ada di tabel scans (slug, user_agent, dll)
+      const { error } = await supabase
+        .from('scans')
+        .insert([{ 
+          slug: slug, 
+          user_agent: navigator.userAgent 
+        }]);
+
       if (error) {
-        alert("Error Supabase: " + error.message);
+        console.error("Gagal mencatat scan:", error.message);
       }
-    } catch(e) {
-      alert("Error JS: " + e.message);
+    } catch (err) {
+      console.error("Error sistem:", err);
     }
-    location.href = "/?driver=" + slug;
+
+    // Jeda sejenak agar data terkirim, lalu arahkan halaman
+    setTimeout(() => {
+      location.href = "/?driver=" + slug;
+    }, 500);
   } else {
     location.href = "/";
   }
 }
 
-setTimeout(go, 300);
+trackAndRedirect();
 </script>
 </body>
 </html>
