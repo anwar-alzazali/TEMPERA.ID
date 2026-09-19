@@ -10,14 +10,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FIX: Updated QR Code Styling CDN -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.6.0/lib/qr-code-styling.js"></script>
+    <!-- FIX: Gunakan QRCode Generator Library yang Sangat Stabil -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0f172a;
             color: #f8fafc;
+        }
+        /* Memastikan QR code berada di tengah kotak putih */
+        #qr-code-udin img {
+            display: block;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -50,7 +55,7 @@
 
         <!-- Driver Card Grid / Management Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="driver-list-container">
-            <!-- Driver Card Example -->
+            <!-- Driver Card -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-4">
@@ -85,8 +90,8 @@
                 </div>
 
                 <div>
-                    <!-- FIX: QR Code Container Target -->
-                    <div id="qr-code-udin" class="bg-white p-3 rounded-xl flex justify-center items-center mb-4 shadow-inner min-h-[160px]"></div>
+                    <!-- Kotak QR Code -->
+                    <div id="qr-code-udin" class="bg-white p-3 rounded-xl flex justify-center items-center mb-4 shadow-inner min-h-[140px]"></div>
 
                     <div class="flex space-x-2">
                         <button class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-semibold transition border border-slate-700">Nonaktifkan</button>
@@ -105,7 +110,7 @@
         &copy; 2026 TEMPERA.ID - All Rights Reserved.
     </footer>
 
-    <!-- Modal Tambah Driver (Sudah tersedia & siap dipanggil) -->
+    <!-- Modal Tambah Driver -->
     <div id="addDriverModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
             <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
@@ -133,49 +138,33 @@
         </div>
     </div>
 
-    <!-- FIX: Script untuk Inisialisasi & Render QR Code dengan Aman -->
+    <!-- Script Render QR Code -->
     <script>
-        let qrCodeInstance;
-
-        function initQR() {
-            const container = document.getElementById("qr-code-udin");
-            if (!container) return;
-            
-            container.innerHTML = ""; // Bersihkan kontainer sebelum render
-
-            try {
-                qrCodeInstance = new QRCodeStyling({
-                    width: 150,
-                    height: 150,
-                    type: "canvas",
-                    data: "https://tempera.id/driver/udin",
-                    dotsOptions: {
-                        color: "#0f172a",
-                        type: "rounded"
-                    },
-                    backgroundOptions: {
-                        color: "#ffffff",
-                    },
-                    cornersSquareOptions: {
-                        type: "extra-rounded",
-                        color: "#0f172a"
-                    },
-                    imageOptions: {
-                        crossOrigin: "anonymous",
-                        imageSize: 0.4,
-                        hideBackgroundDots: true
-                    }
+        document.addEventListener("DOMContentLoaded", function() {
+            // Render QR Code secara otomatis saat halaman terbuka
+            const qrContainer = document.getElementById("qr-code-udin");
+            if (qrContainer) {
+                qrContainer.innerHTML = ""; // Bersihkan kontainer
+                new QRCode(qrContainer, {
+                    text: "https://anwar-alzazali.github.io/TEMPERA.ID/?r=udin",
+                    width: 128,
+                    height: 128,
+                    colorDark: "#0f172a",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
                 });
-                qrCodeInstance.append(container);
-            } catch (e) {
-                console.error("Gagal merender QR Code:", e);
-                container.innerHTML = "<span class='text-xs text-red-500 font-semibold'>Gagal memuat QR Code</span>";
             }
-        }
+        });
 
         function downloadQR(name) {
-            if (qrCodeInstance) {
-                qrCodeInstance.download({ name: `QR-Driver-${name}`, extension: "png" });
+            const img = document.querySelector("#qr-code-udin img");
+            if (img) {
+                const link = document.createElement('a');
+                link.download = `QR-Driver-${name}.png`;
+                link.href = img.src;
+                link.click();
+            } else {
+                alert("QR Code belum siap diunduh.");
             }
         }
 
@@ -192,11 +181,6 @@
             alert('Fitur tambah driver berhasil diproses!');
             closeAddDriverModal();
         }
-
-        // Jalankan saat halaman siap
-        document.addEventListener("DOMContentLoaded", function() {
-            initQR();
-        });
     </script>
 </body>
 </html>
