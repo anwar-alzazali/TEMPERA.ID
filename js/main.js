@@ -343,6 +343,21 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   // Esc menutup modal kapasitas
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ closeCapacityModal(); } });
+
+  // HP: saat mengetik di form, sembunyikan bar total di bawah & tombol WA melayang
+  // supaya tidak menutupi / menghalangi kolom (Jumlah Peserta, Catatan, dll)
+  const formEl=document.getElementById('travelForm');
+  if(formEl){
+    const overlays=()=>[document.getElementById('mobileStickyBar'),document.getElementById('floatingWaBtn')].filter(Boolean);
+    formEl.addEventListener('focusin',(e)=>{
+      if(!e.target.matches('input,textarea,select')) return;
+      overlays().forEach(o=>{ o.style.display='none'; });
+      setTimeout(()=>{ try{ e.target.scrollIntoView({block:'center',behavior:'smooth'}); }catch(err){} },300);
+    });
+    formEl.addEventListener('focusout',()=>{
+      overlays().forEach(o=>{ o.style.display=''; });
+    });
+  }
 });
 
 
