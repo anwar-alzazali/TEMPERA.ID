@@ -329,7 +329,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   setInterval(()=>{ if(!userManuallyChangedTheme){ setTheme(themeByTime(), null); } }, 3600000);
   const waBtn=document.getElementById('floatingWaBtn'); if(waBtn){ waBtn.href=`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Admin Tempera saya mau konsultasi paket wisata')}`; }
   applyLanguage(currentLang); renderArmada(); calculateLive();
-  const today=new Date().toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} document.getElementById('footerYear').innerText=new Date().getFullYear();
+  // FIX: pakai tanggal lokal perangkat (bukan UTC) supaya tidak mundur 1 hari antara jam 00:00-07:00 WIB
+  const nowLocal=new Date(); const today=new Date(nowLocal.getTime()-nowLocal.getTimezoneOffset()*60000).toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} document.getElementById('footerYear').innerText=new Date().getFullYear();
   toggleAccordion('lembang');
 
   // Cuaca: fetch tiap 10 menit, tapi jeda saat tab tidak aktif biar hemat baterai/kuota
@@ -347,69 +348,97 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 /* ================================================================= *
  * MIDTRANS EXTENSION - FIXED dengan Anon Key
+ * Notifikasi WA (pelanggan + admin) dikirim otomatis oleh webhook Supabase
  * ================================================================= */
 const MIDTRANS_ENDPOINT = 'https://wjmotidelqgcyyujacud.supabase.co/functions/v1/create_transaction_midtrans';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 
+// Hitung jumlah wilayah & biaya cross langsung dari centang destinasi (tidak bergantung teks di layar)
+function getRegionInfo(){
+  const has=(k)=>document.querySelectorAll(`input[name="destinasi"][data-group="${k}"]:checked`).length>0;
+  let count=0;
+  if(has('lembang')||has('dago')) count++;
+  if(has('ciwidey')) count++;
+  if(has('pangalengan')) count++;
+  const cost = count===2 ? 400000 : (count===3 ? 800000 : 0);
+  return { count, cost };
+}
+
 async function handleFormSubmitMidtrans(event) {
   event.preventDefault();
+
+  // --- Validasi form ---
+  const nama = document.getElementById('formNama')?.value.trim() || '';
+  const kontakRaw = document.getElementById('formKontak')?.value.trim() || '';
+  const kontak = normalizeWA(kontakRaw);
+  if(!nama){ alert('Isi nama lengkap dulu!'); return; }
+  if(kontak.length<10 || kontak.length>15){ alert('Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxx'); return; }
+
   const armada = getSelectedArmada();
   if(!armada){ alert('Pilih armada dulu!'); return; }
-  const nama = document.getElementById('formNama')?.value.trim() || '';
-  const kontak = document.getElementById('formKontak')?.value.trim() || '';
+
+  const checked = [...document.querySelectorAll('input[name="destinasi"]:checked')].map(c=>c.value);
+  if(checked.length===0){ alert('Pilih minimal satu destinasi!'); return; }
+
+  const jumlahNum = parseInt(document.getElementById('formJumlah')?.value)||0;
+  if(jumlahNum<=0){ alert('Isi jumlah peserta dulu!'); return; }
+  if(jumlahNum>armada.capmax){ showCapacityModal('over_max',jumlahNum,armada); return; }
+  if(jumlahNum>armada.cap){
+    if(!confirm(`${jumlahNum} orang melebihi kapasitas nyaman ${armada.name} (${armada.cap}), tapi masih di bawah max ${armada.capmax}. Tetap lanjut?`)) return;
+  }
+
+  const region = getRegionInfo();
+  if(region.count>=2){
+    if(!confirm(`${region.count} WILAYAH = BIAYA CROSS Rp ${region.cost.toLocaleString('id-ID')}. Tetap lanjut?`)) return;
+  }
+
   const tanggal = document.getElementById('formTanggal')?.value || '';
   const jam = document.getElementById('formJam')?.value || '';
-  const jumlah = document.getElementById('formJumlah')?.value || '';
+  const jumlah = String(jumlahNum);
   const catatan = document.getElementById('formCatatan')?.value.trim() || '';
-  const checked = [...document.querySelectorAll('input[name="destinasi"]:checked')].map(c=>c.value);
-  const crossCost = parseInt((document.getElementById('resRegionCost')?.innerText || '0').replace(/[^0-9]/g,''))||0;
-  const grossAmount = armada.price + crossCost;
+  const grossAmount = armada.price + region.cost;
+
+  // Destinasi per wilayah (dikirim ke server sebagai data pendukung)
+  const by = { lembang:[], dago:[], ciwidey:[], pangalengan:[] };
+  document.querySelectorAll('input[name="destinasi"]:checked').forEach(cb=>{ by[cb.dataset.group].push(cb.value); });
+
   const payload = {
     order_id: 'TRIP-' + Date.now(),
     gross_amount: grossAmount,
     customer_details: { first_name: nama, phone: kontak },
     item_details: [{ id: armada.id, price: grossAmount, quantity: 1, name: `Sewa ${armada.shortName} 12 Jam` }],
-    custom_field: { tanggal, jam, pax: jumlah, destinasi: checked.join(', '), catatan, hargaDasar: armada.price, biaya: crossCost, regionCount: (document.querySelectorAll('input[name="destinasi"]:checked').length ? (()=>{let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]}; document.querySelectorAll('input[name="destinasi"]:checked').forEach(cb=>by[cb.dataset.group].push(cb.value)); let rc=0; if(by.lembang.length||by.dago.length)rc++; if(by.ciwidey.length)rc++; if(by.pangalengan.length)rc++; return rc;})() : 0), by: (()=>{let b={lembang:[],dago:[],ciwidey:[],pangalengan:[]}; document.querySelectorAll('input[name="destinasi"]:checked').forEach(cb=>b[cb.dataset.group].push(cb.value)); return b;})() } }
+    custom_field: {
+      tanggal, jam, pax: jumlah, destinasi: checked.join(', '), catatan,
+      hargaDasar: armada.price, biaya: region.cost, regionCount: region.count, by
+    }
   };
+
   const btn = document.getElementById('submitBtn');
   const oldText = btn ? btn.textContent : '';
   if(btn){ btn.textContent='Memproses...'; btn.disabled=true; }
   try{
-    const res = await fetch(MIDTRANS_ENDPOINT, { 
-      method:'POST', 
+    const res = await fetch(MIDTRANS_ENDPOINT, {
+      method:'POST',
       headers:{
         'Content-Type':'application/json',
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'apikey': SUPABASE_ANON_KEY
-      }, 
-      body: JSON.stringify(payload) 
+      },
+      body: JSON.stringify(payload)
     });
- const data = await res.json();
+    const data = await res.json();
     if(data.snap_token){
+      if(!window.snap){ alert('Sistem pembayaran belum siap. Muat ulang halaman lalu coba lagi.'); return; }
       window.snap.pay(data.snap_token, {
-        onSuccess: async (r)=>{
-          const bookingData = {
-            order_id: payload.order_id,
-            customer_name: nama,
-            customer_phone: kontak,
-            driver_slug: armada.id,
-            destination: checked.join(', '),
-            total_price: grossAmount,
-            payment_status: 'settlement'
-          };
+        onSuccess: (r)=>{
           const msg = `Halo Admin Tempera, saya sudah bayar via Midtrans:%0A👤 Nama: ${nama}%0A📞 Kontak: ${kontak}%0A🚐 Armada: ${armada.name}%0A📅 Tgl: ${tanggal} ${jam}%0A👥 ${jumlah} org%0A📍 ${checked.join(', ')}%0A💳 Order: ${r.order_id}`;
           window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
-          if(typeof sendNotificationToAll==='function'){
-            await sendNotificationToAll(bookingData);
-          }
         },
         onPending: ()=>alert('Menunggu pembayaran'),
         onError: ()=>alert('Pembayaran gagal'),
         onClose: ()=>{}
       });
-    } else {
-      alert('Gagal dapat token: '+JSON.stringify(data));
-    }
+    } else { alert('Gagal dapat token: '+JSON.stringify(data)); }
   }catch(e){ console.error(e); alert('Koneksi error ke server Midtrans'); }
   finally{ if(btn){ btn.textContent=oldText; btn.disabled=false; } }
 }
