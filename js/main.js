@@ -369,7 +369,7 @@ async function handleFormSubmitMidtrans(event) {
     gross_amount: grossAmount,
     customer_details: { first_name: nama, phone: kontak },
     item_details: [{ id: armada.id, price: grossAmount, quantity: 1, name: `Sewa ${armada.shortName} 12 Jam` }],
-    custom_field: { tanggal, jam, pax: jumlah, destinasi: checked.join(', '), catatan }
+    custom_field: { tanggal, jam, pax: jumlah, destinasi: checked.join(', '), catatan, hargaDasar: armada.price, biaya: crossCost, regionCount: (document.querySelectorAll('input[name="destinasi"]:checked').length ? (()=>{let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]}; document.querySelectorAll('input[name="destinasi"]:checked').forEach(cb=>by[cb.dataset.group].push(cb.value)); let rc=0; if(by.lembang.length||by.dago.length)rc++; if(by.ciwidey.length)rc++; if(by.pangalengan.length)rc++; return rc;})() : 0), by: (()=>{let b={lembang:[],dago:[],ciwidey:[],pangalengan:[]}; document.querySelectorAll('input[name="destinasi"]:checked').forEach(cb=>b[cb.dataset.group].push(cb.value)); return b;})() } }
   };
   const btn = document.getElementById('submitBtn');
   const oldText = btn ? btn.textContent : '';
