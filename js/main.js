@@ -90,6 +90,12 @@ function setTheme(themeKey, forceBlack=null){
   else{if(isNightNow()){document.documentElement.classList.add('is-night');}else{document.documentElement.classList.remove('is-night');}}
   if(window.lastWeatherIsDay!==undefined){applyWeatherThemeAdaptive(window.lastWeatherIsDay, window.lastWeatherCode||0);}
 }
+// Dipanggil tombol tema di navbar (sebelumnya diharapkan ada di theme.js yang tidak ada)
+function setThemeManual(themeKey){
+  userManuallyChangedTheme = true;
+  try{ localStorage.setItem('tempera_theme_manual',themeKey); }catch(e){}
+  setTheme(themeKey, null);
+}
 function toggleThemeMenu(e){e.stopPropagation();document.getElementById('themeMenu').classList.toggle('hidden');document.getElementById('langMenu').classList.add('hidden');}
 function toggleDropdown(e){e.stopPropagation();document.getElementById('langMenu').classList.toggle('hidden');document.getElementById('themeMenu').classList.add('hidden');}
 window.addEventListener('click',()=>{document.getElementById('langMenu')?.classList.add('hidden');document.getElementById('themeMenu')?.classList.add('hidden'); document.getElementById('mobileMenu')?.classList.add('hidden');});
@@ -98,13 +104,97 @@ function closeMobileMenu(){ document.getElementById('mobileMenu')?.classList.add
 function handlePesanSekarang(e){if(e)e.preventDefault();document.getElementById('pesan').scrollIntoView({behavior:'smooth'});}
 
 // FIX: ARMADA DATA - semua image ada di folder images/
-const ARMADA_DATA=[
+let ARMADA_DATA=[
 {id:'calya',name:'Toyota Calya / Sigra',shortName:'Calya / Sigra',badge:'Ekonomis • 4 Nyaman',image:'calya-black-gold.jpg',images:['calya-black-gold.jpg','calya-white.jpg'],capacity:'4 Nyaman',capacityNum:4,capacityMax:6,baggage:'2 koper kabin kecil',maxInfo:'Max 6 tanpa bagasi',note:'⚠ Tidak muat 6 + koper besar',noteClass:'text-amber-600',price:550000,cardClass:'armada-card-uniform'},
 {id:'avanza',name:'Toyota Avanza / Xenia New',shortName:'Avanza / Xenia New',badge:'Paling Laris • 5 Nyaman',image:'avanza-black-gold.jpg',images:['avanza-black-gold.jpg','avanza-white.jpg'],capacity:'5 Nyaman',capacityNum:5,capacityMax:6,baggage:'1 besar + 2 kecil',maxInfo:'Max 6 tanpa koper besar',note:'✅ Muat stroller lipat',noteClass:'text-emerald-600',price:650000,cardClass:'armada-card-uniform'},
 {id:'xpander',name:'Mitsubishi Xpander',shortName:'Xpander',badge:'MPV Nyaman • 6 Nyaman',image:'xpander-black.jpg',images:['xpander-black.jpg','xpander-white.jpg'],capacity:'6 Nyaman',capacityNum:6,capacityMax:7,baggage:'1 besar + 2 kecil',maxInfo:'Max 7 tanpa bagasi besar',note:'✅ Kabin paling lega',noteClass:'text-emerald-600',price:800000,cardClass:'armada-card-uniform'},
 {id:'innova',name:'Toyota Innova Reborn / Zenix',shortName:'Innova Reborn / Zenix',badge:'Best Seller • 6 Nyaman',image:'innova-black-gold.jpg',images:['innova-black-gold.jpg','innova-white.jpg'],capacity:'6 Nyaman',capacityNum:6,capacityMax:7,baggage:'2 besar + 2 kecil',maxInfo:'Max 7 tipe G tanpa bagasi besar',note:'✅ Rekomendasi luar kota',noteClass:'text-emerald-600',price:950000,cardClass:'armada-card-uniform'},
 {id:'hiace',name:'Toyota Hiace Premio',shortName:'Hiace Premio',badge:'Premium • 11 Nyaman',image:'hiace-black-gold.jpg',images:['hiace-black-gold.jpg','hiace-white.jpg'],capacity:'11 Nyaman',capacityNum:11,capacityMax:14,baggage:'8-10 koper besar',maxInfo:'Max resmi 12, modif 14 tanpa bagasi besar',note:'ℹ 12 orang = lipat 2 kursi untuk koper',noteClass:'text-slate-500',price:1600000,cardClass:'armada-card-uniform'}
 ];
+
+/* ================================================================= *
+ * DATA DARI DATABASE: armada, pengaturan harga, banner, pencatatan kunjungan
+ * Kalau database tidak terjangkau, situs tetap jalan memakai data bawaan.
+ * ================================================================= */
+let CROSS_2=400000, CROSS_3=800000, TOLL_EST=100000;
+const SB_URL='https://wjmotidelqgcyyujacud.supabase.co';
+
+function imgSrc(img){ return /^https?:\/\//i.test(img) ? img : 'images/'+img; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function safeUrl(u){ u=String(u||'').trim(); return (/^(https?:\/\/|\/|#)/i.test(u) || /^[a-z0-9_.\-\/?=&#%]+$/i.test(u)) ? u : ''; }
+
+async function sbGet(path){
+  const r=await fetch(`${SB_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`}});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+// Baris tabel fleet -> bentuk data yang dipakai tampilan
+function mapFleetRow(f){
+  const note=f.note||'';
+  const noteClass=note.startsWith('⚠')?'text-amber-600':(note.startsWith('ℹ')?'text-slate-500':'text-emerald-600');
+  const imgs=Array.isArray(f.images)?f.images:[];
+  return {id:f.id,name:f.name,shortName:f.short_name,badge:f.badge||'',image:imgs[0]||'',images:imgs,
+    capacity:`${f.capacity_comfort} Nyaman`,capacityNum:f.capacity_comfort,capacityMax:f.capacity_max,
+    baggage:f.baggage||'',maxInfo:f.max_info||'',note,noteClass,price:f.price,cardClass:'armada-card-uniform'};
+}
+function fleetSig(a){
+  return a.map(u=>[u.id,u.name,u.shortName,u.badge,u.price,u.capacityNum,u.capacityMax,u.baggage,u.maxInfo,u.note,(u.images||[]).join('|')].join('~')).join('#');
+}
+
+function renderBanners(rows){
+  const now=Date.now();
+  const list=(rows||[]).filter(b=>b.is_active!==false&&(!b.starts_at||new Date(b.starts_at)<=now)&&(!b.ends_at||new Date(b.ends_at)>=now));
+  let box=document.getElementById('promo-banners');
+  if(!list.length){ if(box) box.innerHTML=''; return; }
+  if(!box){
+    // Belum ada tempat khusus: taruh tepat sebelum bagian form pemesanan
+    const anchor=document.getElementById('pesan');
+    if(!anchor||!anchor.parentNode) return;
+    box=document.createElement('section'); box.id='promo-banners';
+    anchor.parentNode.insertBefore(box,anchor);
+  }
+  box.className='px-4 py-6';
+  box.innerHTML='<div class="max-w-6xl mx-auto grid gap-4 sm:grid-cols-2 lg:grid-cols-3">'+list.map(b=>{
+    const img=b.image_url?`<img src="${esc(imgSrc(b.image_url))}" alt="${esc(b.title)}" loading="lazy" class="w-full h-40 object-cover">`:'';
+    const link=safeUrl(b.button_url);
+    const btn=(b.button_text&&link)?`<a href="${esc(link)}" class="inline-block mt-3 px-4 py-2 rounded-full text-[11px] font-bold" style="background:var(--accent);color:white">${esc(b.button_text)}</a>`:'';
+    const sub=b.subtitle?`<p class="text-[12px] mt-1" style="color:var(--text-secondary)">${esc(b.subtitle)}</p>`:'';
+    return `<div class="rounded-[20px] overflow-hidden border" style="background:var(--bg-card);border-color:var(--border-soft)">${img}<div class="p-5"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(b.title)}</h3>${sub}${btn}</div></div>`;
+  }).join('')+'</div>';
+}
+
+// Catat kunjungan: scan (datang lewat link/QR driver) atau visit (lainnya), sekali per sesi
+function logTraffic(){
+  try{
+    if(sessionStorage.getItem('tempera_logged')) return;
+    sessionStorage.setItem('tempera_logged','1');
+    const fresh=new URLSearchParams(location.search).get('r');
+    const kind=(fresh&&/^[a-z0-9_-]{1,40}$/i.test(fresh))?'scan':'visit';
+    fetch(`${SB_URL}/rest/v1/traffic`,{method:'POST',
+      headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({kind,driver_slug:getRef()||null})}).catch(()=>{});
+  }catch(e){}
+}
+
+async function initRemoteData(){
+  logTraffic();
+  try{
+    const rows=await sbGet('fleet?select=*&is_active=eq.true&order=sort_order.asc');
+    if(Array.isArray(rows)&&rows.length){
+      const mapped=rows.map(mapFleetRow);
+      if(fleetSig(mapped)!==fleetSig(ARMADA_DATA)){ ARMADA_DATA=mapped; renderArmada(); calculateLive(); }
+    }
+  }catch(e){ console.warn('fleet:',e); }
+  try{
+    const rows=await sbGet('app_settings?select=key,value&is_public=eq.true');
+    const s={}; (rows||[]).forEach(r=>{ s[r.key]=r.value; });
+    const n=(v,d)=>{ const x=parseInt(v); return isNaN(x)?d:x; };
+    CROSS_2=n(s.cross_cost_2,CROSS_2); CROSS_3=n(s.cross_cost_3,CROSS_3); TOLL_EST=n(s.toll_parking_estimate,TOLL_EST);
+    calculateLive();
+  }catch(e){ console.warn('settings:',e); }
+  try{ renderBanners(await sbGet('banners?select=*&order=sort_order.asc')); }catch(e){ console.warn('banners:',e); }
+}
 
 const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
 function formatPrice(p){return 'Rp '+p.toLocaleString('id-ID');}
@@ -133,7 +223,7 @@ sel.appendChild(placeholder);
 ARMADA_DATA.forEach(unit=>{
 const card=document.createElement('div');card.className=`${unit.cardClass} rounded-[24px] overflow-hidden flex flex-col h-full theme-card border`;
 // FIX UTAMA DISINI: pakai images/ di depan
-card.innerHTML=`<div class="h-48 bg-black relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${(unit.images||[unit.image]).map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}"><img src="images/${img}" loading="lazy" alt="Sewa ${unit.name} Bandung" class="w-full h-full object-contain p-2"></div>`).join('')}</div><div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:white"><span class="text-[9px] font-bold uppercase">${unit.badge}</span></div><div class="absolute top-3 right-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[8px] px-2 py-1 rounded-full uppercase font-bold z-10">🟢 Ready</div><div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${(unit.images||[unit.image]).map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join('')}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${unit.name}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${unit.capacity} • Max ${unit.capacityMax}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>👥 <b style="color:var(--text-primary)">${unit.capacity}</b> + driver • Max ${unit.capacityMax}</li><li>🧳 ${unit.baggage}</li><li>💺 ${unit.maxInfo}</li><li class="${unit.noteClass}">${unit.note}</li></ul><button type="button" onclick="selectUnitFromCard('${unit.id}')" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:white">Pilih Unit - ${formatPrice(unit.price)} / 12 Jam</button></div>`;
+card.innerHTML=`<div class="h-48 bg-black relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${(unit.images||[unit.image]).map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}"><img src="${imgSrc(img)}" loading="lazy" alt="Sewa ${unit.name} Bandung" class="w-full h-full object-contain p-2"></div>`).join('')}</div><div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:white"><span class="text-[9px] font-bold uppercase">${unit.badge}</span></div><div class="absolute top-3 right-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[8px] px-2 py-1 rounded-full uppercase font-bold z-10">🟢 Ready</div><div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${(unit.images||[unit.image]).map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join('')}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${unit.name}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${unit.capacity} • Max ${unit.capacityMax}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>👥 <b style="color:var(--text-primary)">${unit.capacity}</b> + driver • Max ${unit.capacityMax}</li><li>🧳 ${unit.baggage}</li><li>💺 ${unit.maxInfo}</li><li class="${unit.noteClass}">${unit.note}</li></ul><button type="button" onclick="selectUnitFromCard('${unit.id}')" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:white">Pilih Unit - ${formatPrice(unit.price)} / 12 Jam</button></div>`;
 cards.appendChild(card);
 const tr=document.createElement('tr');tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${unit.name}</td><td class="py-5 px-6 text-center"><b>${unit.capacityNum}</b> / Max ${unit.capacityMax}</td><td class="py-5 px-6 text-xs">${unit.baggage}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">${formatPrice(unit.price)}</td><td class="py-5 px-6 text-center"><button onclick="selectUnitFromCard('${unit.id}')" class="border text-[10px] px-4 py-1.5 rounded-full" style="background:var(--bg-card);border-color:var(--border-color)">Pilih</button></td>`;tbody.appendChild(tr);
 const opt=document.createElement('option');opt.value=unit.price;opt.dataset.id=unit.id;opt.dataset.name=unit.shortName;opt.dataset.cap=unit.capacityNum;opt.dataset.capmax=unit.capacityMax;opt.textContent=`${unit.name} - ${formatPrice(unit.price)} / 12 Jam`;sel.appendChild(opt);
@@ -157,12 +247,12 @@ let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPa
 let cost=0;let labelCost="";let crossType="none";
 if(regionCount===2){
   if(hasCiwidey && hasPangalengan){
-    cost=400000; labelCost=" (Beda Lembah Selatan)"; crossType="beda_lembah";
+    cost=CROSS_2; labelCost=" (Beda Lembah Selatan)"; crossType="beda_lembah";
   } else {
-    cost=400000; labelCost=" (Lintas Utara-Selatan)"; crossType="utara_selatan";
+    cost=CROSS_2; labelCost=" (Lintas Utara-Selatan)"; crossType="utara_selatan";
   }
 } else if(regionCount===3){
-  cost=800000; labelCost=" (3 Penjuru)"; crossType="tiga_penjuru";
+  cost=CROSS_3; labelCost=" (3 Penjuru)"; crossType="tiga_penjuru";
 }
 const armada=getSelectedArmada();
 if(!hasArmada){
@@ -182,7 +272,7 @@ if(!hasArmada){
   document.getElementById('resRegionCost').innerText='Rp '+cost.toLocaleString('id-ID');
   document.getElementById('resRegionLabel').innerText=labelCost;
   document.getElementById('resTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');
-  document.getElementById('resGrandTotal').innerText='Rp '+(base+cost+100000).toLocaleString('id-ID');
+  document.getElementById('resGrandTotal').innerText='Rp '+(base+cost+TOLL_EST).toLocaleString('id-ID');
   document.getElementById('mobileArmadaName').innerText=armada?armada.name:'Avanza';
   document.getElementById('mobileTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');
   document.getElementById('mobileStickyBar').classList.remove('hidden');
@@ -261,8 +351,8 @@ if(regionCount>=2){
 
 function normalizeWA(input){let num=input.replace(/[^0-9]/g,'');if(num.startsWith('0'))num='62'+num.substring(1);if(num.startsWith('8'))num='62'+num;return num;}
 let pendingBooking=null;
-function handleFormSubmit(e){e.preventDefault();const nama=document.getElementById('formNama').value.trim();const kontakRaw=document.getElementById('formKontak').value.trim();const kontak=normalizeWA(kontakRaw);if(!kontak){alert('Nomor WA tidak valid');return;}const sel=document.getElementById('calcUnit');if(!sel.value){alert('Pilih armada dulu!'); sel.focus(); return;}const hargaDasar=parseInt(sel.value);const jumlah=parseInt(document.getElementById('formJumlah').value)||0;const tanggal=document.getElementById('formTanggal').value,jam=document.getElementById('formJam').value,catatan=document.getElementById('formCatatan').value;const checked=document.querySelectorAll('input[name="destinasi"]:checked');if(checked.length==0){alert('Pilih minimal satu destinasi!');return;}const armada=getSelectedArmada();if(jumlah>armada.capmax){showCapacityModal('over_max',jumlah,armada);return;}let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]};checked.forEach(cb=>{by[cb.dataset.group].push(cb.value);});const hasUtara=by.lembang.length>0||by.dago.length>0;const hasCiwidey=by.ciwidey.length>0;const hasPangalengan=by.pangalengan.length>0;let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;let biaya=0;if(regionCount===2)biaya=400000; else if(regionCount===3)biaya=800000; else biaya=0;pendingBooking={nama,kontak,hargaDasar,jumlah,tanggal,jam,catatan,by,regionCount,biaya,armada};if(jumlah>armada.cap&&jumlah<=armada.capmax){showCapacityModal('over_comfort',jumlah,armada);return;}if(regionCount>=2){if(!confirm(`${regionCount} WILAYAH = BIAYA CROSS Rp ${biaya.toLocaleString('id-ID')}. Tetap lanjut?`))return;}sendToWA(pendingBooking,false);}
-function sendToWA(data,forced){let ruteTeks='';if(data.by.lembang.length)ruteTeks+=`\n- Lembang: ${data.by.lembang.join(', ')}`;if(data.by.dago.length)ruteTeks+=`\n- Dago: ${data.by.dago.join(', ')}`;if(data.by.ciwidey.length)ruteTeks+=`\n- Ciwidey: ${data.by.ciwidey.join(', ')}`;if(data.by.pangalengan.length)ruteTeks+=`\n- Pangalengan: ${data.by.pangalengan.join(', ')}`;let msg=`Halo Admin Tempera, saya ingin memesan:\n\n* NAMA: ${data.nama}\n* KONTAK: ${data.kontak}\n* ARMADA: ${data.armada.name}\n* DESTINASI:${ruteTeks}\n\nRINCIAN:\n- Armada: Rp ${data.hargaDasar.toLocaleString('id-ID')}${data.biaya>0?`\n- Cross: Rp ${data.biaya.toLocaleString('id-ID')}`:''}\nTOTAL: Rp ${(data.hargaDasar+data.biaya).toLocaleString('id-ID')}\nGRAND TOTAL ± Rp ${(data.hargaDasar+data.biaya+100000).toLocaleString('id-ID')}\n\n* PESERTA: ${data.jumlah}\n* TANGGAL: ${data.tanggal}\n* JAM: ${data.jam}\n* CATATAN: ${data.catatan}`;window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');}
+function handleFormSubmit(e){e.preventDefault();const nama=document.getElementById('formNama').value.trim();const kontakRaw=document.getElementById('formKontak').value.trim();const kontak=normalizeWA(kontakRaw);if(!kontak){alert('Nomor WA tidak valid');return;}const sel=document.getElementById('calcUnit');if(!sel.value){alert('Pilih armada dulu!'); sel.focus(); return;}const hargaDasar=parseInt(sel.value);const jumlah=parseInt(document.getElementById('formJumlah').value)||0;const tanggal=document.getElementById('formTanggal').value,jam=document.getElementById('formJam').value,catatan=document.getElementById('formCatatan').value;const checked=document.querySelectorAll('input[name="destinasi"]:checked');if(checked.length==0){alert('Pilih minimal satu destinasi!');return;}const armada=getSelectedArmada();if(jumlah>armada.capmax){showCapacityModal('over_max',jumlah,armada);return;}let by={lembang:[],dago:[],ciwidey:[],pangalengan:[]};checked.forEach(cb=>{by[cb.dataset.group].push(cb.value);});const hasUtara=by.lembang.length>0||by.dago.length>0;const hasCiwidey=by.ciwidey.length>0;const hasPangalengan=by.pangalengan.length>0;let regionCount=0;if(hasUtara)regionCount++;if(hasCiwidey)regionCount++;if(hasPangalengan)regionCount++;let biaya=0;if(regionCount===2)biaya=CROSS_2; else if(regionCount===3)biaya=CROSS_3; else biaya=0;pendingBooking={nama,kontak,hargaDasar,jumlah,tanggal,jam,catatan,by,regionCount,biaya,armada};if(jumlah>armada.cap&&jumlah<=armada.capmax){showCapacityModal('over_comfort',jumlah,armada);return;}if(regionCount>=2){if(!confirm(`${regionCount} WILAYAH = BIAYA CROSS Rp ${biaya.toLocaleString('id-ID')}. Tetap lanjut?`))return;}sendToWA(pendingBooking,false);}
+function sendToWA(data,forced){let ruteTeks='';if(data.by.lembang.length)ruteTeks+=`\n- Lembang: ${data.by.lembang.join(', ')}`;if(data.by.dago.length)ruteTeks+=`\n- Dago: ${data.by.dago.join(', ')}`;if(data.by.ciwidey.length)ruteTeks+=`\n- Ciwidey: ${data.by.ciwidey.join(', ')}`;if(data.by.pangalengan.length)ruteTeks+=`\n- Pangalengan: ${data.by.pangalengan.join(', ')}`;let msg=`Halo Admin Tempera, saya ingin memesan:\n\n* NAMA: ${data.nama}\n* KONTAK: ${data.kontak}\n* ARMADA: ${data.armada.name}\n* DESTINASI:${ruteTeks}\n\nRINCIAN:\n- Armada: Rp ${data.hargaDasar.toLocaleString('id-ID')}${data.biaya>0?`\n- Cross: Rp ${data.biaya.toLocaleString('id-ID')}`:''}\nTOTAL: Rp ${(data.hargaDasar+data.biaya).toLocaleString('id-ID')}\nGRAND TOTAL ± Rp ${(data.hargaDasar+data.biaya+TOLL_EST).toLocaleString('id-ID')}\n\n* PESERTA: ${data.jumlah}\n* TANGGAL: ${data.tanggal}\n* JAM: ${data.jam}\n* CATATAN: ${data.catatan}`;window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');}
 let capacityModalLastFocus=null;
 function showCapacityModal(type,jumlah,armada){const modal=document.getElementById('capacityModal');const box=document.getElementById('capacityModalBox');const icon=document.getElementById('capacityModalIcon');const title=document.getElementById('capacityModalTitle');const text=document.getElementById('capacityModalText');const list=document.getElementById('capacityModalList');const actions=document.getElementById('capacityModalActions');if(type==='over_comfort'){icon.innerText='⚠';title.innerText='Melebihi Kapasitas Nyaman';text.innerText=`Anda pesan ${jumlah} orang, nyaman hanya ${armada.cap} orang (max ${armada.capmax}).`;actions.innerHTML=`<button onclick="closeCapacityModal()" class="bg-gray-100 border py-3 rounded-full text-[10px] uppercase">Batal</button><button onclick="forceContinueBooking()" class="bg-amber-500 text-white py-3 rounded-full text-[10px] uppercase">Tetap Lanjut</button>`;}else{icon.innerText='🚫';title.innerText='Melebihi Kapasitas MAX';text.innerText=`TIDAK BISA! ${jumlah} orang melebihi MAX ${armada.name} (${armada.capmax}). Wajib upgrade.`;actions.innerHTML=`<button onclick="closeCapacityModal()" class="bg-gray-100 border py-3 rounded-full text-[10px] uppercase">Ubah Jumlah</button><button onclick="upgradeArmada()" class="py-3 rounded-full text-[10px] uppercase" style="background:var(--accent);color:white">Upgrade</button>`;}
   box.setAttribute('role','dialog');box.setAttribute('aria-modal','true');box.setAttribute('aria-labelledby','capacityModalTitle');box.setAttribute('tabindex','-1');
@@ -328,7 +418,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{ if(!userManuallyChangedTheme){ setTheme(themeByTime(), null); } }, 30 * 1000);
   setInterval(()=>{ if(!userManuallyChangedTheme){ setTheme(themeByTime(), null); } }, 3600000);
   const waBtn=document.getElementById('floatingWaBtn'); if(waBtn){ waBtn.href=`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Admin Tempera saya mau konsultasi paket wisata')}`; }
-  applyLanguage(currentLang); renderArmada(); calculateLive();
+  applyLanguage(currentLang); renderArmada(); calculateLive(); initRemoteData();
   // FIX: pakai tanggal lokal perangkat (bukan UTC) supaya tidak mundur 1 hari antara jam 00:00-07:00 WIB
   const nowLocal=new Date(); const today=new Date(nowLocal.getTime()-nowLocal.getTimezoneOffset()*60000).toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} document.getElementById('footerYear').innerText=new Date().getFullYear();
   toggleAccordion('lembang');
@@ -343,6 +433,12 @@ window.addEventListener('DOMContentLoaded',()=>{
 
   // Esc menutup modal kapasitas
   document.addEventListener('keydown',(e)=>{ if(e.key==='Escape'){ closeCapacityModal(); } });
+
+  // Pengaman CSS: pastikan kolom form selalu bisa diketuk & diketik,
+  // walaupun ada aturan CSS lain (misal css/driver.css) yang memblokirnya
+  const fixStyle=document.createElement('style');
+  fixStyle.textContent='#travelForm input,#travelForm textarea,#travelForm select{pointer-events:auto!important;-webkit-user-select:text!important;user-select:text!important;-webkit-user-modify:read-write!important;touch-action:manipulation}#capacityModal.hidden{display:none!important}';
+  document.head.appendChild(fixStyle);
 
   // HP: saat mengetik di form, sembunyikan bar total di bawah & tombol WA melayang
   // supaya tidak menutupi / menghalangi kolom (Jumlah Peserta, Catatan, dll)
@@ -362,10 +458,31 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 
 /* ================================================================= *
+ * ASAL PENGUNJUNG: link/QR driver (?r=slug) vs langsung dari web
+ * Disimpan 30 hari di HP pengunjung, lalu ikut terkirim saat order dibuat
+ * ================================================================= */
+function captureRef(){
+  try{
+    const ref=new URLSearchParams(location.search).get('r');
+    if(ref && /^[a-z0-9_-]{1,40}$/i.test(ref)){
+      localStorage.setItem('tempera_ref',JSON.stringify({slug:ref.toLowerCase(),t:Date.now()}));
+    }
+  }catch(e){}
+}
+function getRef(){
+  try{
+    const o=JSON.parse(localStorage.getItem('tempera_ref')||'null');
+    if(o && o.slug && Date.now()-o.t < 30*86400000) return o.slug;
+  }catch(e){}
+  return '';
+}
+captureRef();
+
+/* ================================================================= *
  * MIDTRANS EXTENSION - FIXED dengan Anon Key
  * Notifikasi WA (pelanggan + admin) dikirim otomatis oleh webhook Supabase
  * ================================================================= */
-const MIDTRANS_ENDPOINT = 'https://wjmotidelqgcyyujacud.supabase.co/functions/v1/create_transaction_midtrans';
+const MIDTRANS_ENDPOINT = 'https://wjmotidelqgcyyujacud.supabase.co/functions/v1/create-order';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 
 // Hitung jumlah wilayah & biaya cross langsung dari centang destinasi (tidak bergantung teks di layar)
@@ -375,7 +492,7 @@ function getRegionInfo(){
   if(has('lembang')||has('dago')) count++;
   if(has('ciwidey')) count++;
   if(has('pangalengan')) count++;
-  const cost = count===2 ? 400000 : (count===3 ? 800000 : 0);
+  const cost = count===2 ? CROSS_2 : (count===3 ? CROSS_3 : 0);
   return { count, cost };
 }
 
@@ -411,21 +528,22 @@ async function handleFormSubmitMidtrans(event) {
   const jam = document.getElementById('formJam')?.value || '';
   const jumlah = String(jumlahNum);
   const catatan = document.getElementById('formCatatan')?.value.trim() || '';
-  const grossAmount = armada.price + region.cost;
 
   // Destinasi per wilayah (dikirim ke server sebagai data pendukung)
   const by = { lembang:[], dago:[], ciwidey:[], pangalengan:[] };
   document.querySelectorAll('input[name="destinasi"]:checked').forEach(cb=>{ by[cb.dataset.group].push(cb.value); });
 
+  // Harga TIDAK dikirim dari browser: server menghitungnya dari database
   const payload = {
-    order_id: 'TRIP-' + Date.now(),
-    gross_amount: grossAmount,
-    customer_details: { first_name: nama, phone: kontak },
-    item_details: [{ id: armada.id, price: grossAmount, quantity: 1, name: `Sewa ${armada.shortName} 12 Jam` }],
-    custom_field: {
-      tanggal, jam, pax: jumlah, destinasi: checked.join(', '), catatan,
-      hargaDasar: armada.price, biaya: region.cost, regionCount: region.count, by
-    }
+    fleet_id: armada.id,
+    customer_name: nama,
+    customer_wa: kontak,
+    trip_date: tanggal,
+    trip_time: jam,
+    pax: jumlahNum,
+    pickup_note: catatan,
+    destinations: by,
+    ref: getRef()
   };
 
   const btn = document.getElementById('submitBtn');
@@ -445,15 +563,12 @@ async function handleFormSubmitMidtrans(event) {
     if(data.snap_token){
       if(!window.snap){ alert('Sistem pembayaran belum siap. Muat ulang halaman lalu coba lagi.'); return; }
       window.snap.pay(data.snap_token, {
-        onSuccess: (r)=>{
-          const msg = `Halo Admin Tempera, saya sudah bayar via Midtrans:%0A👤 Nama: ${nama}%0A📞 Kontak: ${kontak}%0A🚐 Armada: ${armada.name}%0A📅 Tgl: ${tanggal} ${jam}%0A👥 ${jumlah} org%0A📍 ${checked.join(', ')}%0A💳 Order: ${r.order_id}`;
-          window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
-        },
-        onPending: ()=>alert('Menunggu pembayaran'),
-        onError: ()=>alert('Pembayaran gagal'),
+        onSuccess: ()=>alert('Pembayaran berhasil! Konfirmasi dan invoice akan dikirim ke WhatsApp Anda.'),
+        onPending: ()=>alert('Menunggu pembayaran. Invoice dikirim ke WhatsApp setelah pembayaran diterima.'),
+        onError: ()=>alert('Pembayaran gagal. Silakan coba lagi.'),
         onClose: ()=>{}
       });
-    } else { alert('Gagal dapat token: '+JSON.stringify(data)); }
+    } else { alert(data.error ? ('Gagal membuat pesanan: '+data.error) : 'Gagal membuat pesanan. Coba lagi.'); }
   }catch(e){ console.error(e); alert('Koneksi error ke server Midtrans'); }
   finally{ if(btn){ btn.textContent=oldText; btn.disabled=false; } }
 }
