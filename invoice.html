@@ -201,7 +201,7 @@ async function savePdf() {
   btn.disabled = true; const old = btn.textContent; btn.textContent = 'Menyiapkan…';
   // Salin ke ukuran A4 (794px) di luar layar supaya hasil PDF rapi walau dibuka di HP
   const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;background:#fff';
+  wrap.style.cssText = 'position:fixed;left:0;top:0;width:794px;background:#fff;z-index:-1;pointer-events:none';
   const clone = src.cloneNode(true);
   clone.style.width = '794px'; clone.style.margin = '0'; clone.style.boxShadow = 'none'; clone.style.borderRadius = '0';
   wrap.appendChild(clone); document.body.appendChild(wrap);
@@ -211,7 +211,7 @@ async function savePdf() {
       margin: 10,
       filename: (window.__inv || 'invoice') + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(clone).save();
   } catch (e) {
