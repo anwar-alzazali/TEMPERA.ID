@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Panel Admin Tempera</title>
+<style>
+  :root{--accent:#0891b2;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--danger:#dc2626}
+  *{box-sizing:border-box}
+  [hidden]{display:none!important}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
+  button,input,select,textarea{font:inherit}
+  .btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;background:var(--accent);color:#fff;cursor:pointer}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.danger{background:var(--danger)}
+  .btn.sm{padding:6px 12px;font-size:12px}
+  .btn:disabled{opacity:.6;cursor:wait}
+  input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+  textarea{resize:vertical}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px}
+  label input,label select,label textarea{margin-top:4px;font-weight:400;color:var(--ink);font-size:14px}
+  label.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px}
+  label.chk input{width:auto;margin:0}
+  .help{font-size:11px;color:var(--muted);margin:-6px 0 10px}
+
+  #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .loginbox{background:var(--card);padding:28px;border-radius:16px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(15,23,42,.1)}
+  .loginbox h1{margin:0 0 4px;font-size:22px}
+  .loginbox p{margin:0 0 18px;color:var(--muted)}
+  .err{color:var(--danger);font-size:13px;margin:8px 0 0}
+
+  header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
+  .brand{font-weight:800;letter-spacing:.02em}
+  nav{display:flex;gap:4px;padding:0 12px 10px;overflow-x:auto}
+  nav button{border:0;background:transparent;padding:8px 14px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+  nav button.on{background:var(--accent);color:#fff}
+  main{max-width:1100px;margin:0 auto;padding:16px}
+  h2{margin:0 0 12px;font-size:18px}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .bar select,.bar input{width:auto;flex:1 1 150px}
+  .card{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:640px}
+  th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  td.num,th.num{text-align:right;white-space:nowrap}
+  tr.click{cursor:pointer}
+  tr.click:hover{background:#f8fafc}
+  .small{font-size:12px;color:var(--muted)}
+  .empty{padding:30px;text-align:center;color:var(--muted)}
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155;white-space:nowrap}
+  .b-pending{background:#fef3c7;color:#92400e}
+  .b-paid{background:#dcfce7;color:#166534}
+  .b-confirmed{background:#dbeafe;color:#1e40af}
+  .b-completed{background:#ede9fe;color:#5b21b6}
+  .b-cancelled,.b-expired{background:#fee2e2;color:#991b1b}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+  .stat{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+  .stat .v{font-size:20px;font-weight:800}
+  .stat .l{font-size:12px;color:var(--muted)}
+  .setrow{display:grid;grid-template-columns:1fr 1.2fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+  .setrow small{display:block;color:var(--muted)}
+
+  #modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto}
+  .mcard{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:640px}
+  .mcard h2{margin-top:0}
+  .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .fgrid .full{grid-column:1/-1}
+  .mbtns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+  dl.det{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:0 0 14px}
+  dl.det dt{color:var(--muted);font-size:12px}
+  dl.det dd{margin:0}
+  .act{border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+  .row2{display:flex;gap:8px;align-items:end;margin-bottom:10px}
+  .row2 label{flex:1;margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+  .chip{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;background:#f1f5f9;border-radius:6px;padding:2px 6px}
+
+  #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:90vw;text-align:center}
+  #toast.show{opacity:1}
+  #toast.err{background:var(--danger)}
+
+  @media (max-width:560px){.fgrid{grid-template-columns:1fr}.setrow{grid-template-columns:1fr}dl.det{grid-template-columns:100px 1fr}}
+</style>
+</head>
+<body>
+
+<div id="login" hidden>
+  <div class="loginbox">
+    <h1>Panel Admin</h1>
+    <p>Tempera — masuk dengan akun admin</p>
+    <form id="loginForm">
+      <label>Email<input id="lEmail" type="email" autocomplete="username" required></label>
+      <label>Password<input id="lPass" type="password" autocomplete="current-password" required></label>
+      <button class="btn" id="lBtn" style="width:100%" type="submit">Masuk</button>
+      <div class="err" id="lErr"></div>
+    </form>
+  </div>
+</div>
+
+<div id="shell" hidden>
+  <header>
+    <div class="topbar">
+      <div class="brand">TEMPERA · Admin</div>
+      <button class="btn ghost sm" id="btnLogout" type="button">Keluar</button>
+    </div>
+    <nav id="nav"></nav>
+  </header>
+  <main id="view"></main>
+</div>
+
+<div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+/* ---------- helper ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+const p2 = (n) => String(n).padStart(2, '0');
+function tglPendek(s) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? `${m[3]}-${m[2]}-${m[1]}` : (s || '-'); }
+function waktu(iso) {
+  if (!iso) return '-';
+  try { return new Date(iso).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+  catch (_e) { return String(iso); }
+}
+function isoToLocal(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`;
+}
+function normWA(n) {
+  let x = String(n || '').replace(/\D/g, '');
+  if (x.startsWith('0')) x = '62' + x.slice(1); else if (x.startsWith('8')) x = '62' + x;
+  return x;
+}
+let toastTimer;
+function toast(msg, err) {
+  const t = $('#toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ''; }, 4000);
+}
+function openModal(html) { $('#modalBody').innerHTML = html; $('#modal').hidden = false; }
+function closeModal() { $('#modal').hidden = true; $('#modalBody').innerHTML = ''; }
+$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  if (!b.dataset.copy) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
+  navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Tersalin'), () => toast('Gagal menyalin', true));
+});
+
+const S = { drivers: [], siteUrl: '' };
+const STATUS = { pending: 'Menunggu bayar', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
+const PAID_SET = ['paid', 'confirmed', 'completed'];
+const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
+const badge = (st) => `<span class="badge b-${esc(st)}">${esc(STATUS[st] || st)}</span>`;
+const drv = (o) => o.assigned_driver || o.driver_slug || '';
+const driverName = (slug) => { const d = S.drivers.find((x) => x.slug === slug); return d ? d.name : (slug || '-'); };
+function destText(o) {
+  const d = o.destinations || {};
+  const lines = Object.keys(WILAYAH).filter((k) => Array.isArray(d[k]) && d[k].length).map((k) => `${WILAYAH[k]}: ${d[k].join(', ')}`);
+  return lines.length ? lines.join('\n') : '-';
+}
+
+/* ---------- login ---------- */
+function showLogin(msg) {
+  $('#shell').hidden = true; $('#login').hidden = false;
+  $('#lErr').textContent = msg || '';
+}
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#lBtn'); btn.disabled = true; $('#lErr').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email: $('#lEmail').value.trim(), password: $('#lPass').value });
+  btn.disabled = false;
+  if (error) { $('#lErr').textContent = 'Email atau password salah.'; return; }
+  await enter();
+});
+$('#btnLogout').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(); });
+
+async function enter() {
+  const { data, error } = await sb.rpc('is_admin');
+  if (error || data !== true) { await sb.auth.signOut(); showLogin('Akun ini bukan admin.'); return; }
+  $('#login').hidden = true; $('#shell').hidden = false;
+  await loadShared();
+  nav(location.hash.replace('#', '') || 'pesanan');
+}
+async function loadShared() {
+  const d = await sb.from('drivers').select('*').order('name');
+  S.drivers = d.data || [];
+  const s = await sb.from('app_settings').select('value').eq('key', 'site_url').maybeSingle();
+  S.siteUrl = String((s.data && s.data.value) || '').replace(/\/+$/, '');
+}
+
+/* ---------- navigasi ---------- */
+const VIEWS = {};
+const NAVS = [['pesanan', 'Pesanan'], ['laporan', 'Laporan'], ['armada', 'Armada'], ['pengaturan', 'Pengaturan'], ['template', 'Template WA'], ['banner', 'Banner'], ['driver', 'Driver']];
+function nav(key) {
+  if (!VIEWS[key]) key = 'pesanan';
+  location.hash = key;
+  $('#nav').innerHTML = NAVS.map(([k, l]) => `<button type="button" data-k="${k}" class="${k === key ? 'on' : ''}">${l}</button>`).join('');
+  $$('#nav button').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
+  $('#view').innerHTML = '<div class="empty">Memuat…</div>';
+  VIEWS[key]();
+}
+
+/* ---------- PESANAN ---------- */
+let ORDERS = [];
+VIEWS.pesanan = async function () {
+  $('#view').innerHTML = `
+    <h2>Pesanan</h2>
+    <div class="bar">
+      <select id="fStatus"><option value="">Semua status</option>${Object.keys(STATUS).map((k) => `<option value="${k}">${STATUS[k]}</option>`).join('')}</select>
+      <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option></select>
+      <input id="fQ" placeholder="Cari nama / order / invoice / WA">
+      <button class="btn" id="fGo" type="button">Muat ulang</button>
+    </div>
+    <div class="card" id="list"></div>`;
+  $('#fGo').addEventListener('click', loadOrders);
+  $('#fStatus').addEventListener('change', loadOrders);
+  $('#fSumber').addEventListener('change', loadOrders);
+  $('#fQ').addEventListener('input', renderOrders);
+  await loadOrders();
+};
+async function loadOrders() {
+  let q = sb.from('orders').select('*').order('created_at', { ascending: false }).limit(300);
+  const st = $('#fStatus').value; if (st) q = q.eq('status', st);
+  const so = $('#fSumber').value; if (so) q = q.eq('source', so);
+  const { data, error } = await q;
+  if (error) { toast(error.message, true); $('#list').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  ORDERS = data || [];
+  renderOrders();
+}
+function renderOrders() {
+  const q = ($('#fQ').value || '').toLowerCase().trim();
+  const rows = ORDERS.filter((o) => !q || [o.customer_name, o.order_id, o.invoice_no, o.customer_wa, o.fleet_name].join(' ').toLowerCase().includes(q));
+  if (!rows.length) { $('#list').innerHTML = '<div class="empty">Belum ada pesanan.</div>'; return; }
+  $('#list').innerHTML = `<div class="tablewrap"><table>
+    <thead><tr><th>Dibuat</th><th>Pesanan</th><th>Pelanggan</th><th>Trip</th><th class="num">Total</th><th>Status</th><th>Driver</th></tr></thead>
+    <tbody>${rows.map((o) => `<tr class="click" data-id="${esc(o.id)}">
+      <td class="small">${esc(waktu(o.created_at))}</td>
+      <td><b>${esc(o.invoice_no || '—')}</b><div class="small">${esc(o.order_id)}</div></td>
+      <td>${esc(o.customer_name)}<div class="small">${esc(o.customer_wa)}</div></td>
+      <td>${esc(tglPendek(o.trip_date))} ${esc(o.trip_time || '')}<div class="small">${esc(o.fleet_name || '')}</div></td>
+      <td class="num">${rp(o.total)}</td>
+      <td>${badge(o.status)}<div class="small">${o.source === 'driver' ? 'Link driver' : 'Langsung'}</div></td>
+      <td>${esc(driverName(drv(o)))}</td></tr>`).join('')}</tbody></table></div>`;
+  $$('#list tr.click').forEach((tr) => tr.addEventListener('click', () => openOrder(tr.dataset.id)));
+}
+function driverMsg(o, d) {
+  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}`;
+}
+function openOrder(id) {
+  const o = ORDERS.find((x) => x.id === id); if (!o) return;
+  const cur = drv(o);
+  const stOpts = Object.keys(STATUS).map((k) => `<option value="${k}" ${k === o.status ? 'selected' : ''}>${STATUS[k]}</option>`).join('');
+  const drOpts = '<option value="">— belum ditentukan —</option>' + S.drivers.filter((d) => d.is_active !== false || d.slug === cur)
+    .map((d) => `<option value="${esc(d.slug)}" ${d.slug === cur ? 'selected' : ''}>${esc(d.name)} (${esc(d.slug)})</option>`).join('');
+  const invLink = (S.siteUrl && o.invoice_token && PAID_SET.includes(o.status)) ? `${S.siteUrl}/invoice.html?t=${o.invoice_token}` : '';
+  const dObj = S.drivers.find((d) => d.slug === cur);
+  const waDriver = (dObj && dObj.phone) ? `https://wa.me/${normWA(dObj.phone)}?text=${encodeURIComponent(driverMsg(o, dObj))}` : '';
+  openModal(`
+    <h2>${esc(o.invoice_no || o.order_id)} ${badge(o.status)}</h2>
+    <dl class="det">
+      <dt>Order</dt><dd>${esc(o.order_id)}</dd>
+      <dt>Pelanggan</dt><dd>${esc(o.customer_name)} · <a href="https://wa.me/${esc(normWA(o.customer_wa))}" target="_blank" rel="noopener">${esc(o.customer_wa)}</a></dd>
+      <dt>Armada</dt><dd>${esc(o.fleet_name || '-')}</dd>
+      <dt>Jadwal</dt><dd>${esc(tglPendek(o.trip_date))}, jam ${esc(o.trip_time || '-')} · ${esc(o.pax || '-')} peserta</dd>
+      <dt>Titik jemput</dt><dd>${esc(o.pickup_note || '-')}</dd>
+      <dt>Destinasi</dt><dd style="white-space:pre-line">${esc(destText(o))}</dd>
+      <dt>Biaya</dt><dd>Armada ${rp(o.base_price)}${Number(o.cross_cost) > 0 ? ` + lintas ${rp(o.cross_cost)}` : ''}${Number(o.discount) > 0 ? ` − diskon ${rp(o.discount)}` : ''} = <b>${rp(o.total)}</b></dd>
+      <dt>Potongan admin</dt><dd>${rp(o.admin_cut_amount)} (${esc(o.admin_cut_value)}${o.admin_cut_type === 'flat' ? ' Rp' : '%'})</dd>
+      <dt>Pendapatan driver</dt><dd>${rp(o.driver_earning)}</dd>
+      <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : 'Langsung dari web'}</dd>
+      <dt>Pembayaran</dt><dd>${esc(o.midtrans_status || '-')} · ${esc(o.payment_type || '-')} · ${esc(waktu(o.paid_at))}</dd>
+      <dt>Invoice dikirim</dt><dd>${esc(waktu(o.invoice_sent_at))}</dd>
+    </dl>
+    <div class="act">
+      <div class="row2"><label>Status<select id="oStatus">${stOpts}</select></label><button class="btn" id="oSaveStatus" type="button">Simpan status</button></div>
+      <div class="row2"><label>Driver bertugas<select id="oDriver">${drOpts}</select></label><button class="btn" id="oSaveDriver" type="button">Simpan driver</button></div>
+      <div class="mbtns" style="justify-content:flex-start">
+        ${invLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(invLink)}">Salin link invoice</button><a class="btn ghost sm" href="${esc(invLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka invoice</a>` : ''}
+        ${waDriver ? `<a class="btn ghost sm" href="${esc(waDriver)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim detail ke driver (WA)</a>` : ''}
+        <button class="btn ghost sm" type="button" id="oClose">Tutup</button>
+      </div>
+    </div>`);
+  $('#oClose').addEventListener('click', closeModal);
+  $('#oSaveStatus').addEventListener('click', async () => {
+    const st = $('#oStatus').value;
+    if (st === o.status) { toast('Status tidak berubah'); return; }
+    if ((st === 'cancelled' || st === 'expired') && PAID_SET.includes(o.status) &&
+        !confirm('Pesanan ini sudah LUNAS. Mengubahnya menjadi batal TIDAK mengembalikan uang pelanggan (lakukan refund manual di dashboard Midtrans). Lanjutkan?')) return;
+    const r = await sb.from('orders').update({ status: st }).eq('id', o.id);
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Status disimpan'); closeModal(); loadOrders();
+  });
+  $('#oSaveDriver').addEventListener('click', async () => {
+    const v = $('#oDriver').value || null;
+    const r = await sb.from('orders').update({ assigned_driver: v }).eq('id', o.id);
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Driver disimpan'); closeModal(); loadOrders();
+  });
+}
+
+/* ---------- LAPORAN ---------- */
+VIEWS.laporan = async function () {
+  $('#view').innerHTML = `
+    <h2>Laporan</h2>
+    <div class="bar"><select id="rPer">
+      <option value="7">7 hari terakhir</option><option value="30" selected>30 hari terakhir</option>
+      <option value="bulan">Bulan ini</option><option value="all">Semua waktu</option></select></div>
+    <div id="rOut"><div class="empty">Memuat…</div></div>`;
+  $('#rPer').addEventListener('change', loadLaporan);
+  await loadLaporan();
+};
+async function loadLaporan() {
+  const per = $('#rPer').value;
+  let q = sb.from('orders').select('*').in('status', PAID_SET).limit(3000);
+  const now = new Date();
+  if (per === '7' || per === '30') q = q.gte('paid_at', new Date(now.getTime() - Number(per) * 86400000).toISOString());
+  if (per === 'bulan') q = q.gte('paid_at', new Date(now.getFullYear(), now.getMonth(), 1).toISOString());
+  const [o, f] = await Promise.all([q, sb.from('v_funnel').select('*')]);
+  if (o.error) { $('#rOut').innerHTML = `<div class="empty">Gagal memuat: ${esc(o.error.message)}</div>`; return; }
+  const rows = o.data || [];
+  const sum = (arr, k) => arr.reduce((a, x) => a + (Number(x[k]) || 0), 0);
+  const byDrv = {};
+  rows.forEach((x) => { const k = drv(x) || '(belum ditentukan)'; (byDrv[k] = byDrv[k] || []).push(x); });
+  const drvRows = Object.keys(byDrv).map((k) => `<tr><td>${esc(k === '(belum ditentukan)' ? k : driverName(k))}</td><td class="num">${byDrv[k].length}</td><td class="num">${rp(sum(byDrv[k], 'total'))}</td><td class="num">${rp(sum(byDrv[k], 'driver_earning'))}</td></tr>`).join('');
+  const fun = (f.data || []).map((x) => `<tr><td>${esc(x.sumber === 'direct' ? 'Langsung dari web' : driverName(x.sumber))}</td><td class="num">${x.visit}</td><td class="num">${x.scan}</td><td class="num">${x.order_dibuat}</td><td class="num">${x.closing}</td><td class="num">${rp(x.omzet)}</td></tr>`).join('');
+  $('#rOut').innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="v">${rows.length}</div><div class="l">Pesanan lunas</div></div>
+      <div class="stat"><div class="v">${rp(sum(rows, 'total'))}</div><div class="l">Omzet</div></div>
+      <div class="stat"><div class="v">${rp(sum(rows, 'admin_cut_amount'))}</div><div class="l">Potongan admin</div></div>
+      <div class="stat"><div class="v">${rp(sum(rows, 'driver_earning'))}</div><div class="l">Pendapatan driver</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h2>Per driver</h2><div class="tablewrap"><table>
+      <thead><tr><th>Driver</th><th class="num">Trip</th><th class="num">Omzet</th><th class="num">Pendapatan driver</th></tr></thead>
+      <tbody>${drvRows || '<tr><td colspan="4" class="empty">Belum ada data.</td></tr>'}</tbody></table></div></div>
+    <div class="card"><h2>Kunjungan → closing (semua waktu)</h2><div class="tablewrap"><table>
+      <thead><tr><th>Sumber</th><th class="num">Visit</th><th class="num">Scan</th><th class="num">Order dibuat</th><th class="num">Closing</th><th class="num">Omzet</th></tr></thead>
+      <tbody>${fun || '<tr><td colspan="6" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
+      <div class="help" style="margin-top:8px">Visit = hanya berkunjung. Scan = lewat link/QR driver. Closing = pesanan yang sudah dibayar.</div></div>`;
+}
+
+/* ---------- CRUD umum ---------- */
+const PLACEHOLDERS = ['{nama}', '{customer_wa}', '{order_id}', '{invoice_no}', '{link_invoice}', '{armada}', '{tanggal}', '{jam}', '{peserta}', '{jemput}', '{destinasi}', '{rincian}', '{total}', '{potongan}', '{pendapatan_driver}', '{sumber}', '{driver_name}', '{driver_phone}'];
+const RES = {
+  armada: {
+    table: 'fleet', title: 'Armada', pk: 'id', order: { col: 'sort_order', asc: true },
+    defaults: { is_active: true, sort_order: 0 },
+    cols: [{ key: 'name', label: 'Armada' }, { key: 'price', label: 'Harga', num: true, render: (r) => rp(r.price) },
+      { key: 'capacity_comfort', label: 'Kapasitas', render: (r) => `${r.capacity_comfort} nyaman / max ${r.capacity_max}` },
+      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active ? 'Ya' : 'Tidak' }],
+    fields: [
+      { key: 'id', label: 'ID (huruf kecil, tanpa spasi)', type: 'text', required: true, createOnly: true },
+      { key: 'name', label: 'Nama lengkap', type: 'text', required: true },
+      { key: 'short_name', label: 'Nama pendek', type: 'text', required: true },
+      { key: 'badge', label: 'Label (mis. Best Seller)', type: 'text' },
+      { key: 'price', label: 'Harga sewa 12 jam (Rp)', type: 'number', required: true },
+      { key: 'capacity_comfort', label: 'Kapasitas nyaman', type: 'number', required: true },
+      { key: 'capacity_max', label: 'Kapasitas maksimal', type: 'number', required: true },
+      { key: 'baggage', label: 'Info bagasi', type: 'text' },
+      { key: 'max_info', label: 'Info kapasitas maks', type: 'text' },
+      { key: 'note', label: 'Catatan (awali ⚠ / ✅ / ℹ)', type: 'text', full: true },
+      { key: 'images', label: 'Foto', type: 'array', full: true, help: 'Nama file di folder images situs, pisahkan dengan koma. Boleh juga alamat penuh https://...' },
+      { key: 'sort_order', label: 'Urutan tampil', type: 'number' },
+      { key: 'is_active', label: 'Tampil di web', type: 'bool' }]
+  },
+  banner: {
+    table: 'banners', title: 'Banner', pk: 'id', order: { col: 'sort_order', asc: true }, canDelete: true,
+    defaults: { is_active: true, sort_order: 0 },
+    cols: [{ key: 'title', label: 'Judul' },
+      { key: 'starts_at', label: 'Tayang', render: (r) => `${r.starts_at ? waktu(r.starts_at) : 'langsung'} → ${r.ends_at ? waktu(r.ends_at) : 'tanpa batas'}` },
+      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active ? 'Ya' : 'Tidak' }],
+    fields: [
+      { key: 'title', label: 'Judul', type: 'text', required: true, full: true },
+      { key: 'subtitle', label: 'Teks singkat', type: 'text', full: true },
+      { key: 'image_url', label: 'Gambar (nama file di folder images, atau alamat https://...)', type: 'text', full: true },
+      { key: 'button_text', label: 'Teks tombol', type: 'text' },
+      { key: 'button_url', label: 'Tujuan tombol (alamat / #pesan)', type: 'text' },
+      { key: 'starts_at', label: 'Mulai tayang', type: 'datetime' },
+      { key: 'ends_at', label: 'Selesai tayang', type: 'datetime' },
+      { key: 'sort_order', label: 'Urutan', type: 'number' },
+      { key: 'is_active', label: 'Aktif', type: 'bool' }]
+  },
+  driver: {
+    table: 'drivers', title: 'Driver', pk: 'id', order: { col: 'name', asc: true },
+    defaults: { is_active: true },
+    cols: [{ key: 'name', label: 'Nama' }, { key: 'slug', label: 'Slug' }, { key: 'phone', label: 'WA' },
+      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
+      { key: 'x', label: 'Link', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin link</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } }],
+    fields: [
+      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true },
+      { key: 'name', label: 'Nama', type: 'text', required: true },
+      { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
+      { key: 'base', label: 'Basis / kota', type: 'text' },
+      { key: 'vehicle_type', label: 'Jenis kendaraan', type: 'text' },
+      { key: 'motto', label: 'Motto', type: 'text' },
+      { key: 'photo_url', label: 'Foto (alamat)', type: 'text', full: true },
+      { key: 'is_active', label: 'Aktif', type: 'bool' }]
+  },
+  template: {
+    table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
+    cols: [{ key: 'id', label: 'ID' }, { key: 'title', label: 'Untuk' }, { key: 'updated_at', label: 'Diubah', render: (r) => waktu(r.updated_at) }],
+    fields: [
+      { key: 'title', label: 'Judul', type: 'text', full: true },
+      { key: 'template_text', label: 'Isi pesan', type: 'textarea', rows: 16, full: true }],
+    note: `<div class="help">Penanda yang bisa dipakai (diisi otomatis saat pesan dikirim):</div><div class="chips">${PLACEHOLDERS.map((p) => `<span class="chip">${p}</span>`).join('')}</div><div class="help">Template yang dipakai sistem: <b>order_paid_customer</b>, <b>order_paid_admin</b>, <b>order_paid_driver</b>. Template lain (admin_lunas, driver_lunas) adalah sisa versi lama.</div>`
+  }
+};
+for (const key of Object.keys(RES)) VIEWS[key] = () => viewCrud(key);
+
+let ROWS = {};
+async function viewCrud(key) {
+  const R = RES[key];
+  const { data, error } = await sb.from(R.table).select('*').order(R.order.col, { ascending: R.order.asc });
+  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  ROWS[key] = data || [];
+  $('#view').innerHTML = `
+    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">${esc(R.title)}</h2>${R.noCreate ? '' : '<button class="btn" id="btnNew" type="button">+ Tambah</button>'}</div>
+    <div class="card"><div class="tablewrap"><table>
+      <thead><tr>${R.cols.map((c) => `<th class="${c.num ? 'num' : ''}">${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${ROWS[key].map((r, i) => `<tr>${R.cols.map((c) => `<td class="${c.num ? 'num' : ''}">${c.render ? c.render(r) : esc(r[c.key])}</td>`).join('')}<td class="num"><button class="btn ghost sm" type="button" data-i="${i}">Ubah</button></td></tr>`).join('') || `<tr><td colspan="${R.cols.length + 1}" class="empty">Belum ada data.</td></tr>`}</tbody>
+    </table></div></div>`;
+  if (!R.noCreate) $('#btnNew').addEventListener('click', () => openForm(key, null));
+  $$('#view button[data-i]').forEach((b) => b.addEventListener('click', () => openForm(key, ROWS[key][Number(b.dataset.i)])));
+}
+function fieldHTML(f, val, disabled) {
+  const id = 'f_' + f.key, cls = f.full ? ' class="full"' : '';
+  if (f.type === 'bool') return `<div${cls}><label class="chk"><input type="checkbox" id="${id}" ${val ? 'checked' : ''}> ${esc(f.label)}</label></div>`;
+  if (f.type === 'textarea') return `<div${cls}><label>${esc(f.label)}<textarea id="${id}" rows="${f.rows || 4}">${esc(val == null ? '' : val)}</textarea></label></div>`;
+  const type = f.type === 'number' ? 'number' : (f.type === 'datetime' ? 'datetime-local' : 'text');
+  const v = f.type === 'array' ? (Array.isArray(val) ? val.join(', ') : '') : (f.type === 'datetime' ? isoToLocal(val) : (val == null ? '' : val));
+  return `<div${cls}><label>${esc(f.label)}${f.required ? ' *' : ''}<input id="${id}" type="${type}" value="${esc(v)}" ${f.type === 'number' ? 'step="any"' : ''} ${disabled ? 'disabled' : ''}></label>${f.help ? `<div class="help">${esc(f.help)}</div>` : ''}</div>`;
+}
+function readField(f, required) {
+  const el = $('#f_' + f.key);
+  if (f.type === 'bool') return el.checked;
+  const v = el.value.trim();
+  if (f.type === 'number') return v === '' ? (required ? null : 0) : Number(v);
+  if (f.type === 'array') return v ? v.split(',').map((x) => x.trim()).filter(Boolean) : [];
+  if (f.type === 'datetime') return v ? new Date(v).toISOString() : null;
+  return v === '' ? null : v;
+}
+function openForm(key, row) {
+  const R = RES[key], isNew = !row;
+  const src = row || R.defaults || {};
+  openModal(`
+    <h2>${isNew ? 'Tambah' : 'Ubah'} ${esc(R.title)}</h2>
+    ${R.note || ''}
+    <div class="fgrid">${R.fields.map((f) => fieldHTML(f, src[f.key], f.createOnly && !isNew)).join('')}</div>
+    <div class="mbtns">
+      ${(!isNew && R.canDelete) ? '<button class="btn danger" id="mDel" type="button">Hapus</button>' : ''}
+      <button class="btn ghost" id="mCancel" type="button">Batal</button>
+      <button class="btn" id="mSave" type="button">Simpan</button>
+    </div>`);
+  $('#mCancel').addEventListener('click', closeModal);
+  $('#mSave').addEventListener('click', () => saveForm(key, row));
+  if ($('#mDel')) $('#mDel').addEventListener('click', async () => {
+    if (!confirm('Hapus data ini?')) return;
+    const r = await sb.from(R.table).delete().eq(R.pk, row[R.pk]);
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Dihapus'); closeModal(); nav(key);
+  });
+}
+async function saveForm(key, row) {
+  const R = RES[key], isNew = !row, payload = {};
+  for (const f of R.fields) {
+    if (f.createOnly && !isNew) continue;
+    const v = readField(f, f.required);
+    if (f.required && (v === null || v === '' || (Array.isArray(v) && !v.length))) { toast(`${f.label} wajib diisi`, true); return; }
+    payload[f.key] = v;
+  }
+  if (R.stamp) payload.updated_at = new Date().toISOString();
+  const btn = $('#mSave'); btn.disabled = true;
+  const res = isNew ? await sb.from(R.table).insert(payload) : await sb.from(R.table).update(payload).eq(R.pk, row[R.pk]);
+  btn.disabled = false;
+  if (res.error) { toast(res.error.message, true); return; }
+  toast('Tersimpan'); closeModal();
+  if (key === 'driver') await loadShared();
+  nav(key);
+}
+
+/* ---------- PENGATURAN ---------- */
+VIEWS.pengaturan = async function () {
+  const { data, error } = await sb.from('app_settings').select('*').order('key');
+  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  $('#view').innerHTML = `<h2>Pengaturan</h2><div class="card">${(data || []).map((r) => `
+    <div class="setrow">
+      <div><b>${esc(r.label || r.key)}</b><small>${esc(r.key)}${r.is_public ? ' · tampil ke publik' : ''}</small></div>
+      <input data-key="${esc(r.key)}" value="${esc(r.value)}">
+      <button class="btn sm" type="button" data-save="${esc(r.key)}">Simpan</button>
+    </div>`).join('')}</div>
+    <div class="help" style="margin-top:10px">Potongan admin: isi <b>percent</b> atau <b>flat</b> di "Jenis potongan". Nomor admin diawali 62 tanpa spasi. Perubahan berlaku untuk pesanan berikutnya; pesanan lama tidak berubah.</div>`;
+  $$('#view button[data-save]').forEach((b) => b.addEventListener('click', async () => {
+    const k = b.dataset.save, v = $(`#view input[data-key="${k}"]`).value.trim();
+    const r = await sb.from('app_settings').update({ value: v }).eq('key', k);
+    if (r.error) { toast(r.error.message, true); return; }
+    if (k === 'site_url') S.siteUrl = v.replace(/\/+$/, '');
+    toast('Tersimpan');
+  }));
+};
+
+/* ---------- mulai ---------- */
+(async function boot() {
+  const { data } = await sb.auth.getSession();
+  if (data && data.session) await enter(); else showLogin();
+})();
+</script>
+</body>
+</html>
