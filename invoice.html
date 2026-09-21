@@ -199,16 +199,14 @@ async function savePdf() {
   const src = document.getElementById('invoice');
   if (!src) return;
   btn.disabled = true; const old = btn.textContent; btn.textContent = 'Menyiapkan…';
-  // Salin ke ukuran A4 (794px) di luar layar supaya hasil PDF rapi walau dibuka di HP
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:fixed;left:0;top:0;width:794px;background:#fff;z-index:-1;pointer-events:none';
+  // Kertas A4 penuh tanpa margin kertas (lebar 210mm = 794px); jarak tepi diberikan oleh padding invoice.
+  // html2pdf menata ulang salinan ini pada lebar kertas, jadi lebar tidak boleh dipaksa lebih besar.
   const clone = src.cloneNode(true);
-  clone.style.width = '794px'; clone.style.margin = '0'; clone.style.boxShadow = 'none'; clone.style.borderRadius = '0';
-  wrap.appendChild(clone); document.body.appendChild(wrap);
+  clone.style.margin = '0'; clone.style.boxShadow = 'none'; clone.style.borderRadius = '0'; clone.style.padding = '40px';
   try {
     if (typeof html2pdf === 'undefined') throw new Error('html2pdf tidak termuat');
     await html2pdf().set({
-      margin: 10,
+      margin: 0,
       filename: (window.__inv || 'invoice') + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, windowWidth: 794, scrollX: 0, scrollY: 0 },
@@ -218,7 +216,7 @@ async function savePdf() {
     console.error(e);
     window.print(); // cadangan: pilih "Simpan sebagai PDF" di jendela cetak
   } finally {
-    wrap.remove(); btn.disabled = false; btn.textContent = old;
+    btn.disabled = false; btn.textContent = old;
   }
 }
 
