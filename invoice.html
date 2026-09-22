@@ -101,6 +101,42 @@ function waktuBayar(iso) {
 }
 function imgSrc(u) { return /^https?:\/\//i.test(u) ? u : u; }
 
+// Logo dijadikan satu warna (warna aksen, karena di sini logo duduk di atas latar putih).
+// false = pakai warna asli logo.
+const LOGO_WARNA = true;
+
+// Logo PNG transparan digambar ulang di kanvas: ruang kosong di tepinya dipangkas lalu diberi satu warna.
+// Hasilnya berupa gambar biasa, jadi ikut terbawa saat disimpan ke PDF.
+function tintLogo(url, color) {
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const k = Math.min(1, 400 / Math.max(im.naturalWidth, im.naturalHeight));
+        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d');
+        x.drawImage(im, 0, 0, w, h);
+        const px = x.getImageData(0, 0, w, h).data;
+        let x0 = w, y0 = h, x1 = -1, y1 = -1;
+        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
+          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+        }
+        if (x1 < 0) return resolve('');
+        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
+        const x2 = c2.getContext('2d');
+        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
+        x2.globalCompositeOperation = 'source-in';
+        x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
+        resolve(c2.toDataURL('image/png'));
+      } catch (_e) { resolve(''); }   // gagal (mis. dilarang lintas situs): pakai logo asli
+    };
+    im.onerror = () => resolve('');
+    im.src = url;
+  });
+}
+
 function buildInvoice(d) {
   const inv = d.invoice, co = d.company;
 
@@ -185,6 +221,8 @@ async function load() {
       return;
     }
     root.innerHTML = buildInvoice(d);
+    const lg = root.querySelector('.brand img');
+    if (LOGO_WARNA && lg) { const u = await tintLogo(lg.src, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0891b2'); if (u) lg.src = u; }
     document.title = 'Invoice ' + (d.invoice.invoice_no || '');
     document.getElementById('actions').style.display = 'flex';
     window.__inv = d.invoice.invoice_no || 'invoice';
