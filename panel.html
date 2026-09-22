@@ -151,13 +151,30 @@ document.addEventListener('click', (e) => {
   if (!b.dataset.copy) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
   navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Tersalin'), () => toast('Gagal menyalin', true));
 });
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-rotate]');
+  if (!b) return;
+  const slug = b.dataset.rotate;
+  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya.')) return;
+  b.disabled = true;
+  const r = await sb.rpc('rotate_driver_card', { p_slug: slug });
+  b.disabled = false;
+  if (r.error) { toast(r.error.message, true); return; }
+  S.cards[slug] = r.data;
+  toast('Token diganti. Kirim link ID card yang baru ke driver.');
+  if (VIEWS.driver && location.hash === '#driver') nav('driver');
+});
 
-const S = { drivers: [], siteUrl: '' };
+const S = { drivers: [], siteUrl: '', cards: {} };
 const STATUS = { pending: 'Menunggu bayar', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
 const PAID_SET = ['paid', 'confirmed', 'completed'];
 const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
 const badge = (st) => `<span class="badge b-${esc(st)}">${esc(STATUS[st] || st)}</span>`;
+// Pelaksana trip (tampil di daftar pesanan & surat jalan): yang ditugaskan, atau pembawa bila belum ditugaskan.
 const drv = (o) => o.assigned_driver || o.driver_slug || '';
+// Pemilik pendapatan (dipakai di Laporan): pembawa pesanan (link/QR-nya) lebih diutamakan;
+// bila pesanan langsung dari web, pendapatan jatuh ke yang ditugaskan menjalankan trip.
+const earner = (o) => o.driver_slug || o.assigned_driver || '';
 const driverName = (slug) => { const d = S.drivers.find((x) => x.slug === slug); return d ? d.name : (slug || '-'); };
 function destText(o) {
   const d = o.destinations || {};
@@ -192,6 +209,9 @@ async function loadShared() {
   S.drivers = d.data || [];
   const s = await sb.from('app_settings').select('value').eq('key', 'site_url').maybeSingle();
   S.siteUrl = String((s.data && s.data.value) || '').replace(/\/+$/, '');
+  const c = await sb.from('driver_cards').select('driver_slug,token');
+  S.cards = {};
+  (c.data || []).forEach((x) => { S.cards[x.driver_slug] = x.token; });
 }
 
 /* ---------- navigasi ---------- */
@@ -249,18 +269,30 @@ function renderOrders() {
       <td>${esc(driverName(drv(o)))}</td></tr>`).join('')}</tbody></table></div>`;
   $$('#list tr.click').forEach((tr) => tr.addEventListener('click', () => openOrder(tr.dataset.id)));
 }
-function driverMsg(o, d) {
-  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}`;
+function driverMsg(o, d, sjLink) {
+  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}${sjLink ? `\n\nSurat jalan: ${sjLink}` : ''}`;
 }
-function openOrder(id) {
+async function openOrder(id) {
   const o = ORDERS.find((x) => x.id === id); if (!o) return;
   const cur = drv(o);
   const stOpts = Object.keys(STATUS).map((k) => `<option value="${k}" ${k === o.status ? 'selected' : ''}>${STATUS[k]}</option>`).join('');
   const drOpts = '<option value="">— belum ditentukan —</option>' + S.drivers.filter((d) => d.is_active !== false || d.slug === cur)
     .map((d) => `<option value="${esc(d.slug)}" ${d.slug === cur ? 'selected' : ''}>${esc(d.name)} (${esc(d.slug)})</option>`).join('');
   const invLink = (S.siteUrl && o.invoice_token && PAID_SET.includes(o.status)) ? `${S.siteUrl}/invoice.html?t=${o.invoice_token}` : '';
+  const sjLink = (S.siteUrl && o.sj_no && o.sj_token) ? `${S.siteUrl}/surat-jalan.html?t=${o.sj_token}` : '';
   const dObj = S.drivers.find((d) => d.slug === cur);
-  const waDriver = (dObj && dObj.phone) ? `https://wa.me/${normWA(dObj.phone)}?text=${encodeURIComponent(driverMsg(o, dObj))}` : '';
+  const waDriver = (dObj && dObj.phone) ? `https://wa.me/${normWA(dObj.phone)}?text=${encodeURIComponent(driverMsg(o, dObj, sjLink))}` : '';
+
+  // cek apakah data pesanan sudah berbeda dari surat jalan yang terbit (perlu revisi)
+  let sjChanged = false;
+  if (o.sj_no) {
+    const r = await sb.rpc('sj_changed', { p_order: o.id });
+    sjChanged = r.data === true;
+  }
+  const sjInfo = o.sj_no
+    ? `${esc(o.sj_no)} · Rev ${esc(o.sj_rev)}${sjChanged ? ' <span class="badge b-pending">Data berubah, perlu revisi</span>' : ''}`
+    : '<span class="small">Belum terbit — perlu status lunas &amp; driver bertugas</span>';
+
   openModal(`
     <h2>${esc(o.invoice_no || o.order_id)} ${badge(o.status)}</h2>
     <dl class="det">
@@ -276,12 +308,15 @@ function openOrder(id) {
       <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : 'Langsung dari web'}</dd>
       <dt>Pembayaran</dt><dd>${esc(o.midtrans_status || '-')} · ${esc(o.payment_type || '-')} · ${esc(waktu(o.paid_at))}</dd>
       <dt>Invoice dikirim</dt><dd>${esc(waktu(o.invoice_sent_at))}</dd>
+      <dt>Surat jalan</dt><dd>${sjInfo}</dd>
     </dl>
     <div class="act">
       <div class="row2"><label>Status<select id="oStatus">${stOpts}</select></label><button class="btn" id="oSaveStatus" type="button">Simpan status</button></div>
       <div class="row2"><label>Driver bertugas<select id="oDriver">${drOpts}</select></label><button class="btn" id="oSaveDriver" type="button">Simpan driver</button></div>
       <div class="mbtns" style="justify-content:flex-start">
         ${invLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(invLink)}">Salin link invoice</button><a class="btn ghost sm" href="${esc(invLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka invoice</a>` : ''}
+        ${sjLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(sjLink)}">Salin link surat</button><a class="btn ghost sm" href="${esc(sjLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka surat jalan</a>` : ''}
+        ${sjChanged ? `<button class="btn sm" type="button" id="oRevisi">Terbitkan revisi</button>` : ''}
         ${waDriver ? `<a class="btn ghost sm" href="${esc(waDriver)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim detail ke driver (WA)</a>` : ''}
         <button class="btn ghost sm" type="button" id="oClose">Tutup</button>
       </div>
@@ -301,6 +336,15 @@ function openOrder(id) {
     const r = await sb.from('orders').update({ assigned_driver: v }).eq('id', o.id);
     if (r.error) { toast(r.error.message, true); return; }
     toast('Driver disimpan'); closeModal(); loadOrders();
+  });
+  if ($('#oRevisi')) $('#oRevisi').addEventListener('click', async () => {
+    if (!confirm(`Terbitkan revisi baru surat jalan ${o.sj_no} dengan data pesanan saat ini? Revisi sebelumnya tidak berlaku lagi.`)) return;
+    const r = await sb.rpc('issue_sj_revision', { p_order: o.id });
+    if (r.error) { toast(r.error.message, true); return; }
+    o.sj_rev = r.data.sj_rev;
+    toast('Revisi diterbitkan. Link surat tidak berubah — cukup kirim ke driver bila ia belum pernah menerimanya.');
+    loadOrders();       // sinkron daftar di belakang layar
+    openOrder(o.id);    // buka ulang jendela yang sama, dengan tombol WA siap ditekan
   });
 }
 
@@ -326,7 +370,7 @@ async function loadLaporan() {
   const rows = o.data || [];
   const sum = (arr, k) => arr.reduce((a, x) => a + (Number(x[k]) || 0), 0);
   const byDrv = {};
-  rows.forEach((x) => { const k = drv(x) || '(belum ditentukan)'; (byDrv[k] = byDrv[k] || []).push(x); });
+  rows.forEach((x) => { const k = earner(x) || '(belum ditentukan)'; (byDrv[k] = byDrv[k] || []).push(x); });
   const drvRows = Object.keys(byDrv).map((k) => `<tr><td>${esc(k === '(belum ditentukan)' ? k : driverName(k))}</td><td class="num">${byDrv[k].length}</td><td class="num">${rp(sum(byDrv[k], 'total'))}</td><td class="num">${rp(sum(byDrv[k], 'driver_earning'))}</td></tr>`).join('');
   const fun = (f.data || []).map((x) => `<tr><td>${esc(x.sumber === 'direct' ? 'Langsung dari web' : driverName(x.sumber))}</td><td class="num">${x.visit}</td><td class="num">${x.scan}</td><td class="num">${x.order_dibuat}</td><td class="num">${x.closing}</td><td class="num">${rp(x.omzet)}</td></tr>`).join('');
   $('#rOut').innerHTML = `
@@ -336,9 +380,10 @@ async function loadLaporan() {
       <div class="stat"><div class="v">${rp(sum(rows, 'admin_cut_amount'))}</div><div class="l">Potongan admin</div></div>
       <div class="stat"><div class="v">${rp(sum(rows, 'driver_earning'))}</div><div class="l">Pendapatan driver</div></div>
     </div>
-    <div class="card" style="margin-bottom:14px"><h2>Per driver</h2><div class="tablewrap"><table>
-      <thead><tr><th>Driver</th><th class="num">Trip</th><th class="num">Omzet</th><th class="num">Pendapatan driver</th></tr></thead>
-      <tbody>${drvRows || '<tr><td colspan="4" class="empty">Belum ada data.</td></tr>'}</tbody></table></div></div>
+    <div class="card" style="margin-bottom:14px"><h2>Per pembawa pesanan</h2><div class="tablewrap"><table>
+      <thead><tr><th>Pembawa pesanan</th><th class="num">Trip</th><th class="num">Omzet</th><th class="num">Pendapatan</th></tr></thead>
+      <tbody>${drvRows || '<tr><td colspan="4" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
+      <div class="help" style="margin-top:8px">Pendapatan dicatat untuk yang membawa pesanan (pemilik link/QR). Bila driver itu melemparkan trip ke orang lain, pendapatan tetap di sini &mdash; pembagian dengan pelaksana adalah urusan mereka sendiri.</div></div>
     <div class="card"><h2>Kunjungan → closing (semua waktu)</h2><div class="tablewrap"><table>
       <thead><tr><th>Sumber</th><th class="num">Visit</th><th class="num">Scan</th><th class="num">Order dibuat</th><th class="num">Closing</th><th class="num">Omzet</th></tr></thead>
       <tbody>${fun || '<tr><td colspan="6" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
@@ -390,18 +435,29 @@ const RES = {
   driver: {
     table: 'drivers', title: 'Driver', pk: 'id', order: { col: 'name', asc: true },
     defaults: { is_active: true },
-    cols: [{ key: 'name', label: 'Nama' }, { key: 'slug', label: 'Slug' }, { key: 'phone', label: 'WA' },
+    cols: [
+      { key: 'driver_code', label: 'ID', render: (r) => r.driver_code || '-' },
+      { key: 'name', label: 'Nama' },
+      { key: 'phone', label: 'WA', render: (r) => r.phone ? `${esc(r.phone)} <a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none;margin-left:4px">Kirim pesan</a>` : '-' },
+      { key: 'plate', label: 'Plat', render: (r) => r.plate || '-' },
       { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
-      { key: 'x', label: 'Link', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin link</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } }],
+      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } },
+      { key: 'card', label: 'ID Card', render: (r) => {
+          const tok = S.cards[r.slug];
+          const u = (S.siteUrl && tok) ? `${S.siteUrl}/kartu.html?t=${tok}` : '';
+          return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin link</button> <button class="btn ghost sm" type="button" data-rotate="${esc(r.slug)}">Ganti token</button>`;
+        } }],
     fields: [
       { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true },
       { key: 'name', label: 'Nama', type: 'text', required: true },
       { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
+      { key: 'plate', label: 'Plat nomor kendaraan', type: 'text' },
       { key: 'base', label: 'Basis / kota', type: 'text' },
       { key: 'vehicle_type', label: 'Jenis kendaraan', type: 'text' },
       { key: 'motto', label: 'Motto', type: 'text' },
       { key: 'photo_url', label: 'Foto (alamat)', type: 'text', full: true },
-      { key: 'is_active', label: 'Aktif', type: 'bool' }]
+      { key: 'is_active', label: 'Aktif', type: 'bool' }],
+    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama.</div>'
   },
   template: {
     table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
