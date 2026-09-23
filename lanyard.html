@@ -4,64 +4,64 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Desain Lanyard TEMPERA.ID — Siap Cetak</title>
+<title>Desain Lanyard V2 — TEMPERA.ID</title>
 <style>
   :root{
+    --bg-dark:#090d16;
     --accent:#0891b2; --accent-dk:#0e7490; --accent-lt:#22b8d0;
-    --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --ink:#ffffff; --muted:#94a3b8; --line:#1e293b;
     --logo-url:url('images/logo_sky_blue_transparent.png');
   }
   *{box-sizing:border-box}
-  body{margin:0;background:#f1f5f9;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:22px 14px 60px}
+  body{margin:0;background:#f1f5f9;color:#0f172a;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:22px 14px 60px}
 
-  .wrap{max-width:800px;margin:0 auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  .wrap{max-width:850px;margin:0 auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
   h2{margin:0 0 6px;font-size:18px}
-  p.hint{margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.5}
+  p.hint{margin:0 0 20px;color:#64748b;font-size:13px;line-height:1.5}
 
   .actions{display:flex;gap:10px;margin-bottom:28px}
   .btn{border:0;border-radius:999px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn-primary{background:var(--accent-dk);color:#fff}
+  .btn-ghost{background:#fff;color:#0f172a;border:1px solid #e2e8f0}
 
   .preview-section{margin-bottom:24px}
-  .preview-section h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px}
+  .preview-section h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:10px}
 
-  /* Simulasi Jalur Lanyard (Panjang berulang) */
+  /* Track Lanyard V2 - Dark Mode Elegan */
   .lanyard-track{
     width:100%;
-    height:35mm; /* Representasi proporsi lebar lanyard */
-    background: linear-gradient(135deg, var(--accent-dk), var(--accent-lt));
-    border-radius:6px;
+    height:38mm;
+    background: linear-gradient(90deg, #090d16 0%, #0e7490 50%, #090d16 100%);
+    border-radius:8px;
     display:flex;
     align-items:center;
     overflow:hidden;
     position:relative;
-    box-shadow:inset 0 2px 6px rgba(0,0,0,.2);
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.4);
+    border: 1px solid rgba(255,255,255,.1);
   }
 
-  /* Pola isi lanyard yang berulang */
   .lanyard-pattern{
     display:flex;
     align-items:center;
-    gap:40px;
+    gap:45px;
     white-space:nowrap;
-    animation: none;
-    padding: 0 20px;
-    width: 100%;
-    justify-content: space-around;
+    padding:0 20px;
+    width:100%;
+    justify-content:space-around;
   }
 
   .l-item{
     display:flex;
     align-items:center;
-    gap:12px;
-    color:#fff;
+    gap:14px;
+    color:var(--ink);
   }
 
   .l-logo{
-    width:8mm;
-    height:8mm;
-    background-color:#ffffff;
+    width:8.5mm;
+    height:8.5mm;
+    background-color:var(--accent-lt);
     -webkit-mask-image:var(--logo-url);
     mask-image:var(--logo-url);
     -webkit-mask-repeat:no-repeat;
@@ -71,6 +71,7 @@
     -webkit-mask-position:center;
     mask-position:center;
     flex:none;
+    filter: drop-shadow(0 2px 4px rgba(34,184,208,.4));
   }
 
   .l-text-group{
@@ -79,20 +80,22 @@
   }
 
   .l-brand{
-    font-weight:800;
-    font-size:3.5mm;
-    letter-spacing:.1em;
+    font-weight:900;
+    font-size:3.8mm;
+    letter-spacing:.15em;
+    color:#fff;
   }
 
   .l-tagline{
-    font-size:2.2mm;
-    opacity:.9;
-    font-style:italic;
-    letter-spacing:.03em;
+    font-size:2.1mm;
+    color:var(--accent-lt);
+    font-weight:600;
+    letter-spacing:.08em;
+    text-transform:uppercase;
   }
 
-  .spec-box{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:16px;font-size:13px;line-height:1.6;color:#475569}
-  .spec-box b{color:var(--ink)}
+  .spec-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;font-size:13px;line-height:1.6;color:#475569}
+  .spec-box b{color:#0f172a}
   .spec-box ul{margin:6px 0 0 20px;padding:0}
 
   @media print{
@@ -106,37 +109,37 @@
 <body>
 
 <div class="wrap">
-  <h2>Desain Cetak Lanyard TEMPERA.ID</h2>
-  <p class="hint">Pratinjau visual pola cetak tali ID card (lanyard) yang selaras dengan tema warna, logo mask putih bersih, dan slogan kartu anggota.</p>
+  <h2>Desain Lanyard V2 (Dark Elegant Style)</h2>
+  <p class="hint">Model alternatif dengan kombinasi warna dasar gelap elegan, aksen toska terang, dan tipografi tebal yang memberikan kesan profesional.</p>
 
   <div class="actions">
-    <button class="btn btn-primary" id="btnPrint" type="button">Cetak / Simpan PDF Lanyard</button>
-    <button class="btn btn-ghost" onclick="window.location.href='23_kartu-anggota.html'" type="button">&larr; Kembali ke Kartu Anggota</button>
+    <button class="btn btn-primary" onclick="window.print()" type="button">Cetak / Simpan PDF Lanyard V2</button>
+    <button class="btn btn-ghost" onclick="window.location.href='index.html'" type="button">&larr; Kembali ke Beranda</button>
   </div>
 
   <div class="preview-section">
-    <h3>Simulasi Pola Tali (Panjang Berulang 90cm - 100cm)</h3>
+    <h3>Pratinjau Pola Tali Lanyard</h3>
     <div class="lanyard-track">
       <div class="lanyard-pattern">
         <div class="l-item">
           <div class="l-logo"></div>
           <div class="l-text-group">
             <span class="l-brand">TEMPERA.ID</span>
-            <span class="l-tagline">Your journey is my responsibility.</span>
+            <span class="l-tagline">Verified Member</span>
           </div>
         </div>
         <div class="l-item">
           <div class="l-logo"></div>
           <div class="l-text-group">
             <span class="l-brand">TEMPERA.ID</span>
-            <span class="l-tagline">Your journey is my responsibility.</span>
+            <span class="l-tagline">Verified Member</span>
           </div>
         </div>
         <div class="l-item">
           <div class="l-logo"></div>
           <div class="l-text-group">
             <span class="l-brand">TEMPERA.ID</span>
-            <span class="l-tagline">Your journey is my responsibility.</span>
+            <span class="l-tagline">Verified Member</span>
           </div>
         </div>
       </div>
@@ -144,20 +147,13 @@
   </div>
 
   <div class="spec-box">
-    <b>Panduan untuk Vendor Percetakan:</b>
+    <b>Catatan Produksi Vendor:</b>
     <ul>
-      <li><b>Lebar Bahan:</b> 2 cm atau 2.5 cm (standar lanyard ID card).</li>
-      <li><b>Warna Dasar:</b> Gradasi / Solid Toska Gelap menyesuaikan tema kartu (`#0e7490` hingga `#22b8d0`).</li>
-      <li><b>Warna Teks & Logo:</b> Putih bersih (*solid white*).</li>
-      <li><b>Teknik Cetak:</b> Sablon Tisu / Printing Sublimasi bolak-balik (2 sisi) agar pola terus berulang secara rapi sepanjang tali.</li>
+      <li><b>Warna Latar:</b> Gradasi hitam arang (*dark charcoal*) ke biru toska gelap.</li>
+      <li><b>Warna Logo & Aksen:</b> Toska terang bercahaya (`#22b8d0`) dan teks putih solid.</li>
+      <li><b>Rekomendasi Bahan:</b> Tisu grade A bertekstur lembut agar cetakan gelap terlihat pekat dan tajam.</li>
     </ul>
   </div>
 </div>
-
-<script>
-document.getElementById('btnPrint').addEventListener('click', () => {
-  window.print();
-});
-</script>
 </body>
 </html>
