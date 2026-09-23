@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Kartu Anggota TEMPERA.ID — Cetak</title>
-<!-- Pindahkan pustaka html2pdf ke bagian head agar siap lebih awal -->
+<!-- Pemuatan pustaka html2pdf di bagian head agar siap lebih awal -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
@@ -50,13 +50,14 @@
     -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);
     -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
 
-  /* header bergelombang, warna & bentuk mengikuti referensi */
+  /* header bergelombang */
   .wave{position:relative;height:24mm}
   .wave svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
   .wave .hdr{position:relative;z-index:1;padding:4mm 4mm 0;color:#fff;text-align:left;display:flex;align-items:center;gap:2mm}
-  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;background:#fff;
-    -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-    -webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:0 -12%;mask-position:0 -12%}
+  
+  /* Perbaikan Logo Header Menggunakan Gambar Biasa (Aman untuk PDF) */
+  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;object-fit:contain;}
+
   .wave .hname{font-weight:800;font-size:3mm;letter-spacing:.03em}
   .wave .htag{font-size:1.7mm;opacity:.92;margin-top:.3mm}
 
@@ -126,6 +127,7 @@
 </div>
 
 <div class="sheet" id="sheet">
+  <!-- KARTU DEPAN -->
   <div class="piece"><div class="lbl">Tampak depan</div><div class="card front" id="cardFront">
     <div class="wm"></div>
     <div class="wave">
@@ -135,7 +137,10 @@
         </linearGradient></defs>
         <path fill="url(#gwave)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
-      <div class="hdr"><span class="hlogo"></span><div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div></div>
+      <div class="hdr">
+        <img src="images/logo_sky_blue_transparent.png" class="hlogo" alt="Logo">
+        <div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div>
+      </div>
     </div>
     <div class="fbody">
       <div class="photo"><span class="init" id="frontInit">EH</span><img id="frontPhoto" style="display:none"></div>
@@ -150,6 +155,7 @@
     </div>
   </div></div>
 
+  <!-- KARTU BELAKANG -->
   <div class="piece"><div class="lbl">Tampak belakang</div><div class="card back" id="cardBack">
     <div class="wm"></div>
     <div class="wave">
@@ -159,7 +165,10 @@
         </linearGradient></defs>
         <path fill="url(#gwave2)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
-      <div class="hdr"><span class="hlogo"></span><div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div></div>
+      <div class="hdr">
+        <img src="images/logo_sky_blue_transparent.png" class="hlogo" alt="Logo">
+        <div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div>
+      </div>
     </div>
     <div class="bbody">
       <div class="perf"><span>Verifikasi</span></div>
@@ -229,7 +238,7 @@ fFoto.addEventListener('change', () => {
 
 document.getElementById('btnPrint').addEventListener('click', () => window.print());
 
-// Perbaikan tombol Simpan PDF agar elemen foto & logo tidak hilang
+// Tombol Simpan PDF (Aman untuk foto, QR, dan logo)
 document.getElementById('btnPdf').addEventListener('click', async () => {
   const btn = document.getElementById('btnPdf'); 
   btn.disabled = true; 
@@ -269,6 +278,10 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
   }
 });
 
+refresh();
+</script>
+</body>
+</html>
 refresh();
 </script>
 </body>
