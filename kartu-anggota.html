@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Kartu Anggota TEMPERA.ID — Cetak</title>
+<!-- Pindahkan pustaka html2pdf ke bagian head agar siap lebih awal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  :root{
+    --accent:#0891b2; --accent-dk:#0e7490; --accent-lt:#22b8d0;
+    --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
+    --card-w:54mm; --card-h:85.6mm;
+    --logo-url:url('images/logo_sky_blue_transparent.png');
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f1f5f9;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:22px 14px 60px}
+
+  /* ---------- formulir ---------- */
+  .formwrap{max-width:420px;margin:0 auto 26px;background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  .formwrap h2{margin:0 0 4px;font-size:16px}
+  .formwrap p.hint{margin:0 0 14px;color:var(--muted);font-size:12.5px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
+  .field input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit}
+  .field input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .photorow{display:flex;align-items:center;gap:12px}
+  .photorow .prev{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;font-size:16px}
+  .photorow .prev img{width:100%;height:100%;object-fit:cover}
+  .photorow input[type=file]{flex:1;font-size:12.5px}
+
+  .actions{display:flex;gap:10px;justify-content:center;margin-bottom:22px}
+  .btn{border:0;border-radius:999px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+
+  /* ---------- kartu ---------- */
+  .sheet{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
+  .piece{text-align:center}
+  .piece .lbl{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
+
+  .card{width:var(--card-w);height:var(--card-h);border-radius:3mm;position:relative;overflow:hidden;
+    background:#fff;box-shadow:0 6px 22px rgba(15,23,42,.14)}
+  .card::after{content:"";position:absolute;inset:0;border-radius:3mm;pointer-events:none;border:.25mm solid rgba(15,23,42,.08)}
+
+  .wm{position:absolute;left:50%;top:60%;width:120%;transform:translate(-50%,-50%);z-index:0;opacity:.05;
+    aspect-ratio:1328/1552;background:var(--accent);
+    -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);
+    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
+
+  /* header bergelombang, warna & bentuk mengikuti referensi */
+  .wave{position:relative;height:24mm}
+  .wave svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+  .wave .hdr{position:relative;z-index:1;padding:4mm 4mm 0;color:#fff;text-align:left;display:flex;align-items:center;gap:2mm}
+  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;background:#fff;
+    -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:0 -12%;mask-position:0 -12%}
+  .wave .hname{font-weight:800;font-size:3mm;letter-spacing:.03em}
+  .wave .htag{font-size:1.7mm;opacity:.92;margin-top:.3mm}
+
+  .front .fbody{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4mm 4mm;margin-top:-9mm}
+  .photo{width:23mm;height:23mm;border-radius:50%;flex:none;overflow:hidden;
+    border:.7mm solid #fff;box-shadow:0 0 0 .3mm var(--line),0 1.2mm 3mm rgba(15,23,42,.25);
+    background:var(--accent);display:flex;align-items:center;justify-content:center}
+  .photo img{width:100%;height:100%;object-fit:cover}
+  .photo .init{color:#fff;font-size:8mm;font-weight:800}
+
+  .mname{font-weight:800;font-size:4.3mm;line-height:1.2;margin-top:3.5mm}
+  .role{margin-top:2mm;background:var(--accent);color:#fff;font-size:1.85mm;font-weight:800;letter-spacing:.08em;
+    padding:1mm 3.2mm;border-radius:99mm}
+
+  .fields{margin-top:5mm;width:100%;text-align:left;border-top:.25mm solid var(--line);padding-top:3.6mm}
+  .frow{display:grid;grid-template-columns:15mm 1fr;gap:1mm;font-size:2.3mm;padding:1mm 0}
+  .frow .k{color:var(--muted);font-weight:700;letter-spacing:.03em}
+  .frow .v{color:var(--ink);font-weight:700;word-break:break-word}
+
+  .motto{margin-top:auto;padding-top:3mm;color:var(--muted);font-size:1.8mm;font-style:italic}
+
+  /* belakang */
+  .back .bbody{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 4mm 4mm;gap:1.8mm;margin-top:-9mm}
+  .perf{position:relative;width:100%;border-top:.3mm dashed var(--line);margin:2mm 0 1mm}
+  .perf span{position:absolute;top:-2.1mm;left:50%;transform:translateX(-50%);background:#fff;padding:0 1.8mm;
+    font-size:1.7mm;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+  .qrbox{width:22mm;height:22mm;border:.3mm solid var(--line);border-radius:1.8mm;padding:1.1mm;background:#fff;margin-top:2mm}
+  .qrbox img{width:100%;height:100%;image-rendering:pixelated;display:block}
+  .backcode{color:var(--accent-dk);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:2.5mm;letter-spacing:.05em;margin-top:1mm}
+  .terms{color:var(--muted);font-size:1.75mm;line-height:1.55;text-align:center;margin-top:1mm}
+  .backfoot{margin-top:auto;text-align:center;padding-top:1.6mm;border-top:.25mm solid var(--line);width:100%}
+  .backfoot .co{font-weight:800;font-size:2.5mm;letter-spacing:.06em;color:var(--ink)}
+  .backfoot .contact{color:var(--muted);font-size:1.8mm;margin-top:.5mm}
+
+  .note{max-width:700px;margin:26px auto 0;background:#fff;border-radius:12px;padding:16px 18px;font-size:12.5px;color:#475569;line-height:1.6;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+  .note b{color:#0f172a}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .actions,.note,.piece .lbl,.formwrap{display:none}
+    .sheet{gap:6mm}
+    .card{box-shadow:none}
+    .wave,.wm{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="formwrap">
+  <h2>Data anggota</h2>
+  <p class="hint">Isi data di bawah, kartu di layar langsung berubah. Untuk anggota berikutnya, ganti isian ini lalu cetak lagi &mdash; tidak perlu mengedit file.</p>
+  <div class="field"><label>Nama lengkap</label><input id="fNama" value="Erfan Hafid"></div>
+  <div class="field"><label>ID Anggota</label><input id="fId" value="TMP-0001"></div>
+  <div class="field"><label>No. Telepon / WA</label><input id="fTelp" value="0851-8338-1188"></div>
+  <div class="field">
+    <label>Foto</label>
+    <div class="photorow">
+      <div class="prev" id="photoPrev"><span id="photoInit">EH</span></div>
+      <input type="file" id="fFoto" accept="image/*">
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn btn-ghost" id="btnPrint" type="button">Cetak</button>
+  <button class="btn btn-primary" id="btnPdf" type="button">Simpan PDF</button>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="piece"><div class="lbl">Tampak depan</div><div class="card front" id="cardFront">
+    <div class="wm"></div>
+    <div class="wave">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs><linearGradient id="gwave" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22b8d0"/>
+        </linearGradient></defs>
+        <path fill="url(#gwave)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
+      </svg>
+      <div class="hdr"><span class="hlogo"></span><div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div></div>
+    </div>
+    <div class="fbody">
+      <div class="photo"><span class="init" id="frontInit">EH</span><img id="frontPhoto" style="display:none"></div>
+      <div class="mname" id="outNama">Erfan Hafid</div>
+      <div class="role">ANGGOTA TEMPERA</div>
+      <div class="fields">
+        <div class="frow"><div class="k">NAMA</div><div class="v" id="rowNama">Erfan Hafid</div></div>
+        <div class="frow"><div class="k">ID</div><div class="v" id="rowId">TMP-0001</div></div>
+        <div class="frow"><div class="k">NO TLP</div><div class="v" id="rowTelp">0851-8338-1188</div></div>
+      </div>
+      <div class="motto">Your journey is my responsibility.</div>
+    </div>
+  </div></div>
+
+  <div class="piece"><div class="lbl">Tampak belakang</div><div class="card back" id="cardBack">
+    <div class="wm"></div>
+    <div class="wave">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs><linearGradient id="gwave2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22b8d0"/>
+        </linearGradient></defs>
+        <path fill="url(#gwave2)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
+      </svg>
+      <div class="hdr"><span class="hlogo"></span><div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div></div>
+    </div>
+    <div class="bbody">
+      <div class="perf"><span>Verifikasi</span></div>
+      <div class="qrbox"><img id="qrimg" alt="QR verifikasi"></div>
+      <div class="backcode" id="backId">TMP-0001</div>
+      <div class="terms">Kartu ini milik TEMPERA.ID dan wajib dikembalikan bila keanggotaan berakhir. Bila ditemukan, hubungi kontak di bawah.</div>
+      <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0812-0000-0000 &middot; tempera.id</div></div>
+    </div>
+  </div></div>
+</div>
+
+<div class="note">
+  <b>Cara pakai:</b> isi formulir di atas untuk tiap anggota baru (nama, ID, nomor telepon, foto), lalu tekan
+  <b>Cetak</b> atau <b>Simpan PDF</b>. Isian tidak tersimpan otomatis, jadi cetak dulu sebelum berpindah ke
+  anggota berikutnya. QR di belakang mengarah ke kode statis berdasarkan ID &mdash; halaman verifikasinya perlu
+  disesuaikan lebih lanjut supaya benar-benar mengenali ID anggota.
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+function initials(name) {
+  const w = String(name || '').trim().split(/\s+/).filter(Boolean);
+  return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
+}
+function qrDataUrl(text) {
+  try { const q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createDataURL(8, 0); }
+  catch (e) { console.error(e); return ''; }
+}
+
+const fNama = document.getElementById('fNama');
+const fId = document.getElementById('fId');
+const fTelp = document.getElementById('fTelp');
+const fFoto = document.getElementById('fFoto');
+
+function refresh() {
+  const nama = fNama.value.trim() || '-';
+  const id = fId.value.trim() || '-';
+  const telp = fTelp.value.trim() || '-';
+
+  document.getElementById('outNama').textContent = nama;
+  document.getElementById('rowNama').textContent = nama;
+  document.getElementById('rowId').textContent = id;
+  document.getElementById('rowTelp').textContent = telp;
+  document.getElementById('backId').textContent = id;
+  document.getElementById('frontInit').textContent = initials(nama);
+  document.getElementById('photoInit').textContent = initials(nama);
+
+  document.getElementById('qrimg').src = qrDataUrl(
+    'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html?d=' + encodeURIComponent(id)
+  );
+}
+[fNama, fId, fTelp].forEach((el) => el.addEventListener('input', refresh));
+
+fFoto.addEventListener('change', () => {
+  const file = fFoto.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const url = reader.result;
+    const fp = document.getElementById('frontPhoto');
+    fp.src = url; fp.style.display = 'block';
+    document.getElementById('frontInit').style.display = 'none';
+    document.getElementById('photoPrev').innerHTML = `<img src="${url}">`;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('btnPrint').addEventListener('click', () => window.print());
+
+// Perbaikan tombol Simpan PDF agar elemen foto & logo tidak hilang
+document.getElementById('btnPdf').addEventListener('click', async () => {
+  const btn = document.getElementById('btnPdf'); 
+  btn.disabled = true; 
+  const oldText = btn.textContent; 
+  btn.textContent = 'Menyiapkan PDF…';
+
+  try {
+    if (typeof html2pdf === 'undefined') {
+      alert('Pustaka PDF belum siap, silakan coba beberapa saat lagi.');
+      btn.disabled = false;
+      btn.textContent = oldText;
+      return;
+    }
+
+    const element = document.getElementById('sheet');
+
+    const options = {
+      margin: 5,
+      filename: (fId.value.trim() || 'kartu-anggota') + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 3, 
+        useCORS: true, 
+        letterRendering: true 
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    await html2pdf().set(options).from(element).save();
+  } catch (e) { 
+    console.error(e); 
+    alert('Gagal menyimpan otomatis. Dialihkan ke dialog cetak browser.');
+    window.print(); 
+  } finally { 
+    btn.disabled = false; 
+    btn.textContent = oldText; 
+  }
+});
+
+refresh();
+</script>
+</body>
+</html>
