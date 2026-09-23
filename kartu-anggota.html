@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Kartu Anggota TEMPERA.ID — Cetak</title>
-<!-- Pemuatan pustaka html2pdf di bagian head agar siap lebih awal -->
+<!-- Pustaka html2pdf dimuat di head agar siap lebih awal -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
@@ -45,8 +45,9 @@
     background:#fff;box-shadow:0 6px 22px rgba(15,23,42,.14)}
   .card::after{content:"";position:absolute;inset:0;border-radius:3mm;pointer-events:none;border:.25mm solid rgba(15,23,42,.08)}
 
+  /* Watermark Transparan di Tengah (Diperbaiki agar aman untuk PDF) */
   .wm{position:absolute;left:50%;top:60%;width:120%;transform:translate(-50%,-50%);z-index:0;opacity:.05;
-    aspect-ratio:1328/1552;background:var(--accent);
+    aspect-ratio:1328/1552;background-color:var(--accent);
     -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);
     -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
 
@@ -55,8 +56,10 @@
   .wave svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
   .wave .hdr{position:relative;z-index:1;padding:4mm 4mm 0;color:#fff;text-align:left;display:flex;align-items:center;gap:2mm}
   
-  /* Perbaikan Logo Header Menggunakan Gambar Biasa (Aman untuk PDF) */
-  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;object-fit:contain;}
+  /* Logo Header Menggunakan Mask agar Warna Selaras & Putih Bersih */
+  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;background-color:#ffffff;
+    -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+    -webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
 
   .wave .hname{font-weight:800;font-size:3mm;letter-spacing:.03em}
   .wave .htag{font-size:1.7mm;opacity:.92;margin-top:.3mm}
@@ -138,7 +141,7 @@
         <path fill="url(#gwave)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
       <div class="hdr">
-        <img src="images/logo_sky_blue_transparent.png" class="hlogo" alt="Logo">
+        <span class="hlogo"></span>
         <div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div>
       </div>
     </div>
@@ -166,7 +169,7 @@
         <path fill="url(#gwave2)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
       <div class="hdr">
-        <img src="images/logo_sky_blue_transparent.png" class="hlogo" alt="Logo">
+        <span class="hlogo"></span>
         <div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div>
       </div>
     </div>
@@ -238,7 +241,7 @@ fFoto.addEventListener('change', () => {
 
 document.getElementById('btnPrint').addEventListener('click', () => window.print());
 
-// Tombol Simpan PDF (Aman untuk foto, QR, dan logo)
+// Tombol Simpan PDF (Aman untuk foto, QR, logo mask, dan watermark)
 document.getElementById('btnPdf').addEventListener('click', async () => {
   const btn = document.getElementById('btnPdf'); 
   btn.disabled = true; 
@@ -278,10 +281,6 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
   }
 });
 
-refresh();
-</script>
-</body>
-</html>
 refresh();
 </script>
 </body>
