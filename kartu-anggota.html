@@ -45,7 +45,7 @@
     background:#fff;box-shadow:0 6px 22px rgba(15,23,42,.14)}
   .card::after{content:"";position:absolute;inset:0;border-radius:3mm;pointer-events:none;border:.25mm solid rgba(15,23,42,.08)}
 
-  /* Watermark Transparan di Tengah (Diperbaiki agar aman untuk PDF) */
+  /* Watermark Transparan di Tengah */
   .wm{position:absolute;left:50%;top:60%;width:120%;transform:translate(-50%,-50%);z-index:0;opacity:.05;
     aspect-ratio:1328/1552;background-color:var(--accent);
     -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);
@@ -178,7 +178,10 @@
       <div class="qrbox"><img id="qrimg" alt="QR verifikasi"></div>
       <div class="backcode" id="backId">TMP-0001</div>
       <div class="terms">Kartu ini milik TEMPERA.ID dan wajib dikembalikan bila keanggotaan berakhir. Bila ditemukan, hubungi kontak di bawah.</div>
-      <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0812-0000-0000 &middot; tempera.id</div></div>
+      <div class="backfoot">
+        <div class="co">TEMPERA.ID</div>
+        <div class="contact">WA <span id="rowTelpBack">0851-8338-1188</span> &middot; tempera.id</div>
+      </div>
     </div>
   </div></div>
 </div>
@@ -215,6 +218,7 @@ function refresh() {
   document.getElementById('rowNama').textContent = nama;
   document.getElementById('rowId').textContent = id;
   document.getElementById('rowTelp').textContent = telp;
+  document.getElementById('rowTelpBack').textContent = telp;
   document.getElementById('backId').textContent = id;
   document.getElementById('frontInit').textContent = initials(nama);
   document.getElementById('photoInit').textContent = initials(nama);
