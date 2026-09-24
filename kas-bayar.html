@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Setor Kas Mitra</title>
+<style>
+  :root{ --accent:#0891b2; --accent-dk:#0e7490; --ink:#0f172a; --muted:#64748b; --line:#e2e8f0; }
+  *{box-sizing:border-box}
+  body{margin:0;background:#f1f5f9;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.5;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 14px}
+  .card{background:#fff;border-radius:18px;padding:26px 22px;max-width:380px;width:100%;box-shadow:0 4px 24px rgba(15,23,42,.1)}
+  h1{font-size:19px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+  label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px}
+  .amt{position:relative;margin-bottom:14px}
+  .amt span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700}
+  .amt input{width:100%;padding:12px 14px 12px 38px;border:1px solid var(--line);border-radius:11px;font-size:18px;font-weight:700;font-family:inherit}
+  .amt input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .quick{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .quick button{flex:1;min-width:70px;border:1px solid var(--line);background:#f8fafc;border-radius:9px;padding:8px 6px;font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer}
+  .quick button:active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn{width:100%;border:0;border-radius:12px;padding:14px;font-weight:800;font-size:15px;background:var(--accent);color:#fff;cursor:pointer}
+  .btn:disabled{opacity:.6;cursor:wait}
+  .msg{margin-top:14px;padding:11px 13px;border-radius:10px;font-size:13.5px;text-align:center;display:none}
+  .msg.show{display:block}
+  .msg.ok{background:#dcfce7;color:#166534}
+  .msg.warn{background:#fef3c7;color:#92400e}
+  .msg.err{background:#fee2e2;color:#991b1b}
+  .foot{text-align:center;color:var(--muted);font-size:11.5px;margin-top:16px}
+  .state-page{background:#fff;border-radius:18px;padding:40px 22px;text-align:center;color:var(--muted);max-width:380px}
+  .state-page.err{color:#b91c1c}
+</style>
+</head>
+<body>
+<div id="root">
+  <div class="card">
+    <h1>Setor Kas Mitra</h1>
+    <p class="sub" id="greet">Masukkan jumlah setoran, lalu bayar lewat QRIS, transfer, atau e-wallet.</p>
+    <label>Jumlah setoran</label>
+    <div class="amt"><span>Rp</span><input id="jumlah" type="number" inputmode="numeric" placeholder="50000" min="1000" step="1000"></div>
+    <div class="quick">
+      <button type="button" data-amt="25000">25rb</button>
+      <button type="button" data-amt="50000">50rb</button>
+      <button type="button" data-amt="100000">100rb</button>
+      <button type="button" data-amt="200000">200rb</button>
+    </div>
+    <button class="btn" id="btnBayar" type="button">Bayar Sekarang</button>
+    <div class="msg" id="msg"></div>
+    <div class="foot">Pembayaran diproses oleh Midtrans. Setoran tercatat otomatis ke kas setelah pembayaran dikonfirmasi sah.</div>
+  </div>
+</div>
+
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-W43YJb2YDRcRFv6F"></script>
+<script>
+const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+const T = new URLSearchParams(location.search).get('t') || '';
+
+function showMsg(kind, text) {
+  const m = document.getElementById('msg');
+  m.className = 'msg show ' + kind;
+  m.textContent = text;
+}
+
+async function callFn(name, body) {
+  const r = await fetch(`${SB_URL}/functions/v1/${name}`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return r.json();
+}
+
+async function konfirmasiUlang(orderId, percobaan) {
+  const d = await callFn('confirm-kas-payment', { order_id: orderId });
+  if (!d.ok) { showMsg('err', d.error || 'Gagal memeriksa status pembayaran.'); return; }
+  if (d.state === 'selesai') {
+    showMsg('ok', `${d.pesan || 'Setoran berhasil dicatat.'} (${rp(d.jumlah)})`);
+    document.getElementById('jumlah').value = '';
+    return;
+  }
+  if (d.state === 'gagal') { showMsg('err', d.pesan || 'Pembayaran tidak berhasil.'); return; }
+  // masih menunggu (mis. transfer bank belum masuk): coba lagi beberapa kali dengan jeda
+  if (percobaan < 5) {
+    showMsg('warn', 'Menunggu konfirmasi pembayaran…');
+    setTimeout(() => konfirmasiUlang(orderId, percobaan + 1), 4000);
+  } else {
+    showMsg('warn', 'Pembayaran belum terkonfirmasi. Muat ulang halaman ini setelah beberapa saat bila sudah membayar.');
+  }
+}
+
+async function bayar() {
+  const btn = document.getElementById('btnBayar');
+  const jumlahEl = document.getElementById('jumlah');
+  const jumlah = Math.round(Number(jumlahEl.value));
+  document.getElementById('msg').className = 'msg';
+  if (!Number.isFinite(jumlah) || jumlah < 1000) { showMsg('err', 'Masukkan jumlah minimal Rp1.000.'); return; }
+  if (typeof snap === 'undefined') { showMsg('err', 'Modul pembayaran belum termuat. Periksa koneksi internet lalu muat ulang.'); return; }
+
+  btn.disabled = true; const old = btn.textContent; btn.textContent = 'Menyiapkan…';
+  try {
+    const d = await callFn('create-kas-payment', { t: T, jumlah });
+    if (!d.ok) { showMsg('err', d.error || 'Gagal membuat transaksi.'); return; }
+    document.getElementById('greet').textContent = `Halo, ${d.driver_name || 'Mitra'}. Selesaikan pembayaran di jendela berikut.`;
+
+    snap.pay(d.snap_token, {
+      onSuccess: () => konfirmasiUlang(d.order_id, 0),
+      onPending: () => konfirmasiUlang(d.order_id, 0),
+      onError: () => showMsg('err', 'Pembayaran gagal. Silakan coba lagi.'),
+      onClose: () => {
+        // popup ditutup tanpa status jelas dari sisi browser -- tetap cek ke server, siapa tahu sebenarnya sudah bayar
+        showMsg('warn', 'Memeriksa status pembayaran…');
+        konfirmasiUlang(d.order_id, 0);
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    showMsg('err', 'Gagal menghubungi server. Periksa koneksi internet lalu coba lagi.');
+  } finally {
+    btn.disabled = false; btn.textContent = old;
+  }
+}
+
+document.querySelectorAll('[data-amt]').forEach((b) => {
+  b.addEventListener('click', () => { document.getElementById('jumlah').value = b.dataset.amt; });
+});
+document.getElementById('btnBayar').addEventListener('click', bayar);
+
+if (!/^[a-f0-9]{32}$/i.test(T)) {
+  document.getElementById('root').innerHTML = '<div class="state-page err">Link tidak valid.</div>';
+}
+</script>
+</body>
+</html>
