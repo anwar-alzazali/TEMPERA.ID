@@ -4,354 +4,667 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Kartu Anggota TEMPERA.ID — Cetak</title>
-<!-- Pustaka html2pdf dimuat di head agar siap lebih awal -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<title>Panel Admin Tempera</title>
+<link rel="icon" type="image/png" href="images/logo_sky_blue_transparent.png">
 <style>
-  :root{
-    --accent:#0891b2; --accent-dk:#0e7490; --accent-lt:#22b8d0;
-    --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
-    --card-w:54mm; --card-h:85.6mm;
-    --logo-url:url('images/logo_sky_blue_transparent.png');
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:#f1f5f9;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:22px 14px 60px}
-
-  /* ---------- formulir ---------- */
-  .formwrap{max-width:420px;margin:0 auto 26px;background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
-  .formwrap h2{margin:0 0 4px;font-size:16px}
-  .formwrap p.hint{margin:0 0 14px;color:var(--muted);font-size:12.5px}
-  .field{margin-bottom:12px}
-  .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
-  .field input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit}
-  .field input:focus{outline:2px solid var(--accent);outline-offset:1px}
-  .photorow{display:flex;align-items:center;gap:12px}
-  .photorow .prev{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;
-    display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;font-size:16px}
-  .photorow .prev img{width:100%;height:100%;object-fit:cover}
-  .photorow input[type=file]{flex:1;font-size:12.5px}
-
-  .actions{display:flex;gap:10px;justify-content:center;margin-bottom:22px}
-  .btn{border:0;border-radius:999px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
-
-  /* ---------- kartu ---------- */
-  .sheet{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
-  .piece{text-align:center}
-  .piece .lbl{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
-
-  .card{width:var(--card-w);height:var(--card-h);border-radius:3mm;position:relative;overflow:hidden;
-    background:#fff;box-shadow:0 6px 22px rgba(15,23,42,.14)}
-  .card::after{content:"";position:absolute;inset:0;border-radius:3mm;pointer-events:none;border:.25mm solid rgba(15,23,42,.08)}
-
-  /* Watermark Transparan di Tengah */
-  .wm{position:absolute;left:50%;top:60%;width:120%;transform:translate(-50%,-50%);z-index:0;opacity:.05;
-    aspect-ratio:1328/1552;background-color:var(--accent);
-    -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);
-    -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
-
-  /* header bergelombang */
-  .wave{position:relative;height:24mm}
-  .wave svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
-  .wave .hdr{position:relative;z-index:1;padding:4mm 4mm 0;color:#fff;text-align:left;display:flex;align-items:center;gap:2mm}
-  
-  /* Logo Header Menggunakan Mask agar Warna Selaras & Putih Bersih */
-  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;background-color:#ffffff;
-    -webkit-mask-image:var(--logo-url);mask-image:var(--logo-url);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
-    -webkit-mask-size:contain;mask-size:contain;-webkit-mask-position:center;mask-position:center}
-
-  .wave .hname{font-weight:800;font-size:3mm;letter-spacing:.03em}
-  .wave .htag{font-size:1.7mm;opacity:.92;margin-top:.3mm}
-
-  .front .fbody{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 4mm 4mm;margin-top:-9mm}
-  .photo{width:23mm;height:23mm;border-radius:50%;flex:none;overflow:hidden;
-    border:.7mm solid #fff;box-shadow:0 0 0 .3mm var(--line),0 1.2mm 3mm rgba(15,23,42,.25);
-    background:var(--accent);display:flex;align-items:center;justify-content:center}
-  .photo img{width:100%;height:100%;object-fit:cover}
-  .photo .init{color:#fff;font-size:8mm;font-weight:800}
-
-  .mname{font-weight:800;font-size:4.3mm;line-height:1.2;margin-top:3.5mm}
-  .role{margin-top:2mm;background:var(--accent);color:#fff;font-size:1.85mm;font-weight:800;letter-spacing:.08em;
-    padding:1mm 3.2mm;border-radius:99mm}
-
-  .fields{margin-top:5mm;width:100%;text-align:left;border-top:.25mm solid var(--line);padding-top:3.6mm}
-  .frow{display:grid;grid-template-columns:15mm 1fr;gap:1mm;font-size:2.3mm;padding:1mm 0}
-  .frow .k{color:var(--muted);font-weight:700;letter-spacing:.03em}
-  .frow .v{color:var(--ink);font-weight:700;word-break:break-word}
-
-  .motto{margin-top:auto;padding-top:3mm;color:var(--muted);font-size:1.8mm;font-style:italic}
-
-  /* belakang */
-  .back .bbody{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 4mm 4mm;gap:1.8mm;margin-top:-9mm}
-  .perf{position:relative;width:100%;border-top:.3mm dashed var(--line);margin:2mm 0 1mm}
-  .perf span{position:absolute;top:-2.1mm;left:50%;transform:translateX(-50%);background:#fff;padding:0 1.8mm;
-    font-size:1.7mm;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
-  .qrbox{width:22mm;height:22mm;border:.3mm solid var(--line);border-radius:1.8mm;padding:1.1mm;background:#fff;margin-top:2mm}
-  .qrbox img{width:100%;height:100%;image-rendering:pixelated;display:block}
-  .backcode{color:var(--accent-dk);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:2.5mm;letter-spacing:.05em;margin-top:1mm}
-  .terms{color:var(--muted);font-size:1.75mm;line-height:1.55;text-align:center;margin-top:1mm}
-  .backfoot{margin-top:auto;text-align:center;padding-top:1.6mm;border-top:.25mm solid var(--line);width:100%}
-  .backfoot .co{font-weight:800;font-size:2.5mm;letter-spacing:.06em;color:var(--ink)}
-  .backfoot .contact{color:var(--muted);font-size:1.8mm;margin-top:.5mm}
-
-  .note{max-width:700px;margin:26px auto 0;background:#fff;border-radius:12px;padding:16px 18px;font-size:12.5px;color:#475569;line-height:1.6;box-shadow:0 1px 3px rgba(15,23,42,.06)}
-  .note b{color:#0f172a}
-
-  @media print{
-    body{background:#fff;padding:0}
-    .actions,.note,.piece .lbl,.formwrap{display:none}
-    .sheet{gap:6mm}
-    .card{box-shadow:none}
-    .wave,.wm{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  }
+:root{--accent:#0891b2;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--danger:#dc2626}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;background:var(--accent);color:#fff;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.danger{background:var(--danger)}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn:disabled{opacity:.6;cursor:wait}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+textarea{resize:vertical}
+label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px}
+label input,label select,label textarea{margin-top:4px;font-weight:400;color:var(--ink);font-size:14px}
+label.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px}
+label.chk input{width:auto;margin:0}
+.help{font-size:11px;color:var(--muted);margin:-6px 0 10px}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginbox{background:var(--card);padding:28px;border-radius:16px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(15,23,42,.1)}
+.loginbox h1{margin:0 0 4px;font-size:22px}
+.loginbox p{margin:0 0 18px;color:var(--muted)}
+.err{color:var(--danger);font-size:13px;margin:8px 0 0}
+header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em}
+.logo{--w:34px;display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
+nav{display:flex;gap:4px;padding:0 12px 10px;overflow-x:auto}
+nav button{border:0;background:transparent;padding:8px 14px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--accent);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h2{margin:0 0 12px;font-size:18px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.bar select,.bar input{width:auto;flex:1 1 150px}
+.card{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.num,th.num{text-align:right;white-space:nowrap}
+tr.click{cursor:pointer}
+tr.click:hover{background:#f8fafc}
+.small{font-size:12px;color:var(--muted)}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155;white-space:nowrap}
+.b-pending{background:#fef3c7;color:#92400e}
+.b-paid{background:#dcfce7;color:#166534}
+.b-confirmed{background:#dbeafe;color:#1e40af}
+.b-completed{background:#ede9fe;color:#5b21b6}
+.b-cancelled,.b-expired{background:#fee2e2;color:#991b1b}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.stat .v{font-size:20px;font-weight:800}
+.stat .l{font-size:12px;color:var(--muted)}
+.setrow{display:grid;grid-template-columns:1fr 1.2fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.setrow small{display:block;color:var(--muted)}
+#modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto}
+.mcard{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:640px}
+.mcard h2{margin-top:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.fgrid .full{grid-column:1/-1}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+dl.det{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:0 0 14px}
+dl.det dt{color:var(--muted);font-size:12px}
+dl.det dd{margin:0}
+.act{border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+.row2{display:flex;gap:8px;align-items:end;margin-bottom:10px}
+.row2 label{flex:1;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.chip{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;background:#f1f5f9;border-radius:6px;padding:2px 6px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+#toast.err{background:var(--danger)}
+@media (max-width:560px){.fgrid{grid-template-columns:1fr}.setrow{grid-template-columns:1fr}dl.det{grid-template-columns:100px 1fr}}
 </style>
 </head>
 <body>
-
-<div class="formwrap">
-  <h2>Data anggota</h2>
-  <p class="hint">Isi data di bawah, kartu di layar langsung berubah. Untuk anggota berikutnya, ganti isian ini lalu cetak lagi &mdash; tidak perlu mengedit file.</p>
-  <div class="field"><label>Nama lengkap</label><input id="fNama" value="Erfan Hafid"></div>
-  <div class="field"><label>ID Anggota</label><input id="fId" value="TMP-0001"></div>
-  <div class="field"><label>No. Telepon / WA</label><input id="fTelp" value="0851-8338-1188"></div>
-  <div class="field">
-    <label>Foto</label>
-    <div class="photorow">
-      <div class="prev" id="photoPrev"><span id="photoInit">EH</span></div>
-      <input type="file" id="fFoto" accept="image/*">
-    </div>
-  </div>
+<div id="login" hidden>
+<div class="loginbox">
+<span class="logo" style="--w:56px;margin-bottom:12px"></span>
+<h1>Panel Admin</h1>
+<p>Tempera — masuk dengan akun admin</p>
+<form id="loginForm">
+<label>Email<input id="lEmail" type="email" autocomplete="username" required></label>
+<label>Password<input id="lPass" type="password" autocomplete="current-password" required></label>
+<button class="btn" id="lBtn" style="width:100%" type="submit">Masuk</button>
+<div class="err" id="lErr"></div>
+</form>
 </div>
-
-<div class="actions">
-  <button class="btn btn-ghost" id="btnPrint" type="button">Cetak</button>
-  <button class="btn btn-primary" id="btnPdf" type="button">Simpan PDF</button>
 </div>
-
-<div class="sheet" id="sheet">
-  <!-- KARTU DEPAN -->
-  <div class="piece"><div class="lbl">Tampak depan</div><div class="card front" id="cardFront">
-    <div class="wm"></div>
-    <div class="wave">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs><linearGradient id="gwave" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22b8d0"/>
-        </linearGradient></defs>
-        <path fill="url(#gwave)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
-      </svg>
-      <div class="hdr">
-        <span class="hlogo"></span>
-        <div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div>
-      </div>
-    </div>
-    <div class="fbody">
-      <div class="photo"><span class="init" id="frontInit">EH</span><img id="frontPhoto" style="display:none"></div>
-      <div class="mname" id="outNama">Erfan Hafid</div>
-      <div class="role">ANGGOTA TEMPERA</div>
-      <div class="fields">
-        <div class="frow"><div class="k">NAMA</div><div class="v" id="rowNama">Erfan Hafid</div></div>
-        <div class="frow"><div class="k">ID</div><div class="v" id="rowId">TMP-0001</div></div>
-        <div class="frow"><div class="k">NO TLP</div><div class="v" id="rowTelp">0851-8338-1188</div></div>
-      </div>
-      <div class="motto">Your journey is my responsibility.</div>
-    </div>
-  </div></div>
-
-  <!-- KARTU BELAKANG -->
-  <div class="piece"><div class="lbl">Tampak belakang</div><div class="card back" id="cardBack">
-    <div class="wm"></div>
-    <div class="wave">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs><linearGradient id="gwave2" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22b8d0"/>
-        </linearGradient></defs>
-        <path fill="url(#gwave2)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
-      </svg>
-      <div class="hdr">
-        <span class="hlogo"></span>
-        <div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div>
-      </div>
-    </div>
-    <div class="bbody">
-      <div class="perf"><span>Verifikasi</span></div>
-      <div class="qrbox"><img id="qrimg" alt="QR verifikasi"></div>
-      <div class="backcode" id="backId">TMP-0001</div>
-      <div class="terms">Kartu ini milik TEMPERA.ID dan wajib dikembalikan bila keanggotaan berakhir. Bila ditemukan, hubungi kontak di bawah.</div>
-      <div class="backfoot">
-        <div class="co">TEMPERA.ID</div>
-        <div class="contact">WA <span id="rowTelpBack">0851-8338-1188</span> &middot; tempera.id</div>
-      </div>
-    </div>
-  </div></div>
+<div id="shell" hidden>
+<header>
+<div class="topbar">
+<div class="brand"><span class="logo"></span>TEMPERA · Admin</div>
+<button class="btn ghost sm" id="btnLogout" type="button">Keluar</button>
 </div>
-
-<div class="note">
-  <b>Cara pakai:</b> isi formulir di atas untuk tiap anggota baru (nama, ID, nomor telepon, foto), lalu tekan
-  <b>Cetak</b> atau <b>Simpan PDF</b>. Isian tidak tersimpan otomatis, jadi cetak dulu sebelum berpindah ke
-  anggota berikutnya. QR di belakang mengarah ke kode statis berdasarkan ID &mdash; halaman verifikasinya perlu
-  disesuaikan lebih lanjut supaya benar-benar mengenali ID anggota.
+<nav id="nav"></nav>
+</header>
+<main id="view"></main>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
+<div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-function initials(name) {
-  const w = String(name || '').trim().split(/\s+/).filter(Boolean);
-  return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
+const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+/* ---------- helper ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+const p2 = (n) => String(n).padStart(2, '0');
+function tglPendek(s) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? `${m[3]}-${m[2]}-${m[1]}` : (s || '-'); }
+function waktu(iso) {
+  if (!iso) return '-';
+  try { return new Date(iso).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+  catch (_e) { return String(iso); }
+}
+function isoToLocal(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`;
+}
+function normWA(n) {
+  let x = String(n || '').replace(/\D/g, '');
+  if (x.startsWith('0')) x = '62' + x.slice(1); else if (x.startsWith('8')) x = '62' + x;
+  return x;
+}
+let toastTimer;
+function toast(msg, err) {
+  const t = $('#toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ''; }, 4000);
+}
+function openModal(html) { $('#modalBody').innerHTML = html; $('#modal').hidden = false; }
+function closeModal() { $('#modal').hidden = true; $('#modalBody').innerHTML = ''; }
+$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-copy]');
+  if (!b) return;
+  if (!b.dataset.copy) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
+  navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Tersalin'), () => toast('Gagal menyalin', true));
+});
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-rotate]');
+  if (!b) return;
+  const slug = b.dataset.rotate;
+  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya.')) return;
+  b.disabled = true;
+  const r = await sb.rpc('rotate_driver_card', { p_slug: slug });
+  b.disabled = false;
+  if (r.error) { toast(r.error.message, true); return; }
+  S.cards[slug] = r.data;
+  toast('Token diganti. Kirim link ID card yang baru ke driver.');
+  if (VIEWS.driver && location.hash === '#driver') nav('driver');
+});
+
+const S = { drivers: [], siteUrl: '', cards: {} };
+const STATUS = { pending: 'Menunggu bayar', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
+const PAID_SET = ['paid', 'confirmed', 'completed'];
+const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
+const badge = (st) => `<span class="badge b-${esc(st)}">${esc(STATUS[st] || st)}</span>`;
+// Pelaksana trip (tampil di daftar pesanan & surat jalan): yang ditugaskan, atau pembawa bila belum ditugaskan.
+const drv = (o) => o.assigned_driver || o.driver_slug || '';
+// Pemilik pendapatan (dipakai di Laporan): pembawa pesanan (link/QR-nya) lebih diutamakan;
+// bila pesanan langsung dari web, pendapatan jatuh ke yang ditugaskan menjalankan trip.
+const earner = (o) => o.driver_slug || o.assigned_driver || '';
+const driverName = (slug) => { const d = S.drivers.find((x) => x.slug === slug); return d ? d.name : (slug || '-'); };
+function destText(o) {
+  const d = o.destinations || {};
+  const lines = Object.keys(WILAYAH).filter((k) => Array.isArray(d[k]) && d[k].length).map((k) => `${WILAYAH[k]}: ${d[k].join(', ')}`);
+  return lines.length ? lines.join('\n') : '-';
 }
 
-// Logo satu warna dari file logo situs (sama file yang dipakai header/watermark kartu ini).
-// Dipangkas pas ke tepi lalu diberi warna, supaya presisi saat ditumpuk di tengah QR.
-function tintLogo(url, color) {
-  return new Promise((resolve) => {
-    const im = new Image();
-    im.crossOrigin = 'anonymous';
-    im.onload = () => {
-      try {
-        const k = Math.min(1, 300 / Math.max(im.naturalWidth, im.naturalHeight));
-        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
-        const c = document.createElement('canvas'); c.width = w; c.height = h;
-        const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
-        const px = x.getImageData(0, 0, w, h).data;
-        let x0 = w, y0 = h, x1 = -1, y1 = -1;
-        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
-          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
-        }
-        if (x1 < 0) return resolve('');
-        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
-        const x2 = c2.getContext('2d');
-        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
-        x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
-        resolve(c2.toDataURL('image/png'));
-      } catch (_e) { resolve(''); }
-    };
-    im.onerror = () => resolve('');
-    im.src = url;
+/* ---------- login ---------- */
+function showLogin(msg) {
+  $('#shell').hidden = true; $('#login').hidden = false;
+  $('#lErr').textContent = msg || '';
+}
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = $('#lBtn'); btn.disabled = true; $('#lErr').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email: $('#lEmail').value.trim(), password: $('#lPass').value });
+  btn.disabled = false;
+  if (error) { $('#lErr').textContent = 'Email atau password salah.'; return; }
+  await enter();
+});
+$('#btnLogout').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(); });
+
+async function enter() {
+  const { data, error } = await sb.rpc('is_admin');
+  if (error || data !== true) { await sb.auth.signOut(); showLogin('Akun ini bukan admin.'); return; }
+  $('#login').hidden = true; $('#shell').hidden = false;
+  await loadShared();
+  nav(location.hash.replace('#', '') || 'pesanan');
+}
+async function loadShared() {
+  const d = await sb.from('drivers').select('*').order('name');
+  S.drivers = d.data || [];
+  const s = await sb.from('app_settings').select('key,value').in('key', ['site_url', 'kas_token']);
+  const sm = {}; (s.data || []).forEach((x) => { sm[x.key] = x.value; });
+  S.siteUrl = String(sm.site_url || '').replace(/\/+$/, '');
+  S.kasToken = sm.kas_token || '';
+  const c = await sb.from('driver_cards').select('driver_slug,token');
+  S.cards = {};
+  (c.data || []).forEach((x) => { S.cards[x.driver_slug] = x.token; });
+}
+
+/* ---------- navigasi ---------- */
+const VIEWS = {};
+const NAVS = [['pesanan', 'Pesanan'], ['laporan', 'Laporan'], ['kas', 'Kas'], ['armada', 'Armada'], ['pengaturan', 'Pengaturan'], ['template', 'Template WA'], ['banner', 'Banner'], ['driver', 'Driver']];
+function nav(key) {
+  if (!VIEWS[key]) key = 'pesanan';
+  location.hash = key;
+  $('#nav').innerHTML = NAVS.map(([k, l]) => `<button type="button" data-k="${k}" class="${k === key ? 'on' : ''}">${l}</button>`).join('');
+  $$('#nav button').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
+  $('#view').innerHTML = '<div class="empty">Memuat…</div>';
+  VIEWS[key]();
+}
+
+/* ---------- PESANAN ---------- */
+let ORDERS = [];
+VIEWS.pesanan = async function () {
+  $('#view').innerHTML = `
+    <h2>Pesanan</h2>
+    <div class="bar">
+      <select id="fStatus"><option value="">Semua status</option>${Object.keys(STATUS).map((k) => `<option value="${k}">${STATUS[k]}</option>`).join('')}</select>
+      <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option></select>
+      <input id="fQ" placeholder="Cari nama / order / invoice / WA">
+      <button class="btn" id="fGo" type="button">Muat ulang</button>
+    </div>
+    <div class="card" id="list"></div>`;
+  $('#fGo').addEventListener('click', loadOrders);
+  $('#fStatus').addEventListener('change', loadOrders);
+  $('#fSumber').addEventListener('change', loadOrders);
+  $('#fQ').addEventListener('input', renderOrders);
+  await loadOrders();
+};
+async function loadOrders() {
+  let q = sb.from('orders').select('*').order('created_at', { ascending: false }).limit(300);
+  const st = $('#fStatus').value; if (st) q = q.eq('status', st);
+  const so = $('#fSumber').value; if (so) q = q.eq('source', so);
+  const { data, error } = await q;
+  if (error) { toast(error.message, true); $('#list').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  ORDERS = data || [];
+  renderOrders();
+}
+function renderOrders() {
+  const q = ($('#fQ').value || '').toLowerCase().trim();
+  const rows = ORDERS.filter((o) => !q || [o.customer_name, o.order_id, o.invoice_no, o.customer_wa, o.fleet_name].join(' ').toLowerCase().includes(q));
+  if (!rows.length) { $('#list').innerHTML = '<div class="empty">Belum ada pesanan.</div>'; return; }
+  $('#list').innerHTML = `<div class="tablewrap"><table>
+    <thead><tr><th>Dibuat</th><th>Pesanan</th><th>Pelanggan</th><th>Trip</th><th class="num">Total</th><th>Status</th><th>Driver</th></tr></thead>
+    <tbody>${rows.map((o) => `<tr class="click" data-id="${esc(o.id)}">
+      <td class="small">${esc(waktu(o.created_at))}</td>
+      <td><b>${esc(o.invoice_no || '—')}</b><div class="small">${esc(o.order_id)}</div></td>
+      <td>${esc(o.customer_name)}<div class="small">${esc(o.customer_wa)}</div></td>
+      <td>${esc(tglPendek(o.trip_date))} ${esc(o.trip_time || '')}<div class="small">${esc(o.fleet_name || '')}</div></td>
+      <td class="num">${rp(o.total)}</td>
+      <td>${badge(o.status)}<div class="small">${o.source === 'driver' ? 'Link driver' : 'Langsung'}</div></td>
+      <td>${esc(driverName(drv(o)))}</td></tr>`).join('')}</tbody></table></div>`;
+  $$('#list tr.click').forEach((tr) => tr.addEventListener('click', () => openOrder(tr.dataset.id)));
+}
+function driverMsg(o, d, sjLink) {
+  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}${sjLink ? `\n\nSurat jalan: ${sjLink}` : ''}`;
+}
+async function openOrder(id) {
+  const o = ORDERS.find((x) => x.id === id); if (!o) return;
+  const cur = drv(o);
+  const stOpts = Object.keys(STATUS).map((k) => `<option value="${k}" ${k === o.status ? 'selected' : ''}>${STATUS[k]}</option>`).join('');
+  const drOpts = '<option value="">— belum ditentukan —</option>' + S.drivers.filter((d) => d.is_active !== false || d.slug === cur)
+    .map((d) => `<option value="${esc(d.slug)}" ${d.slug === cur ? 'selected' : ''}>${esc(d.name)} (${esc(d.slug)})</option>`).join('');
+  const invLink = (S.siteUrl && o.invoice_token && PAID_SET.includes(o.status)) ? `${S.siteUrl}/invoice.html?t=${o.invoice_token}` : '';
+  const sjLink = (S.siteUrl && o.sj_no && o.sj_token) ? `${S.siteUrl}/surat-jalan.html?t=${o.sj_token}` : '';
+  const dObj = S.drivers.find((d) => d.slug === cur);
+  const waDriver = (dObj && dObj.phone) ? `https://wa.me/${normWA(dObj.phone)}?text=${encodeURIComponent(driverMsg(o, dObj, sjLink))}` : '';
+
+  // cek apakah data pesanan sudah berbeda dari surat jalan yang terbit (perlu revisi)
+  let sjChanged = false;
+  if (o.sj_no) {
+    const r = await sb.rpc('sj_changed', { p_order: o.id });
+    sjChanged = r.data === true;
+  }
+  const sjInfo = o.sj_no
+    ? `${esc(o.sj_no)} · Rev ${esc(o.sj_rev)}${sjChanged ? ' <span class="badge b-pending">Data berubah, perlu revisi</span>' : ''}`
+    : '<span class="small">Belum terbit — perlu status lunas &amp; driver bertugas</span>';
+
+  openModal(`
+    <h2>${esc(o.invoice_no || o.order_id)} ${badge(o.status)}</h2>
+    <dl class="det">
+      <dt>Order</dt><dd>${esc(o.order_id)}</dd>
+      <dt>Pelanggan</dt><dd>${esc(o.customer_name)} · <a href="https://wa.me/${esc(normWA(o.customer_wa))}" target="_blank" rel="noopener">${esc(o.customer_wa)}</a></dd>
+      <dt>Armada</dt><dd>${esc(o.fleet_name || '-')}</dd>
+      <dt>Jadwal</dt><dd>${esc(tglPendek(o.trip_date))}, jam ${esc(o.trip_time || '-')} · ${esc(o.pax || '-')} peserta</dd>
+      <dt>Titik jemput</dt><dd>${esc(o.pickup_note || '-')}</dd>
+      <dt>Destinasi</dt><dd style="white-space:pre-line">${esc(destText(o))}</dd>
+      <dt>Biaya</dt><dd>Armada ${rp(o.base_price)}${Number(o.cross_cost) > 0 ? ` + lintas ${rp(o.cross_cost)}` : ''}${Number(o.discount) > 0 ? ` − diskon ${rp(o.discount)}` : ''} = <b>${rp(o.total)}</b></dd>
+      <dt>Potongan admin</dt><dd>${rp(o.admin_cut_amount)} (${esc(o.admin_cut_value)}${o.admin_cut_type === 'flat' ? ' Rp' : '%'})</dd>
+      <dt>Pendapatan driver</dt><dd>${rp(o.driver_earning)}</dd>
+      <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : 'Langsung dari web'}</dd>
+      <dt>Pembayaran</dt><dd>${esc(o.midtrans_status || '-')} · ${esc(o.payment_type || '-')} · ${esc(waktu(o.paid_at))}</dd>
+      <dt>Invoice dikirim</dt><dd>${esc(waktu(o.invoice_sent_at))}</dd>
+      <dt>Surat jalan</dt><dd>${sjInfo}</dd>
+    </dl>
+    <div class="act">
+      <div class="row2"><label>Status<select id="oStatus">${stOpts}</select></label><button class="btn" id="oSaveStatus" type="button">Simpan status</button></div>
+      <div class="row2"><label>Driver bertugas<select id="oDriver">${drOpts}</select></label><button class="btn" id="oSaveDriver" type="button">Simpan driver</button></div>
+      <div class="mbtns" style="justify-content:flex-start">
+        ${invLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(invLink)}">Salin link invoice</button><a class="btn ghost sm" href="${esc(invLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka invoice</a>` : ''}
+        ${sjLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(sjLink)}">Salin link surat</button><a class="btn ghost sm" href="${esc(sjLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka surat jalan</a>` : ''}
+        ${sjChanged ? `<button class="btn sm" type="button" id="oRevisi">Terbitkan revisi</button>` : ''}
+        ${waDriver ? `<a class="btn ghost sm" href="${esc(waDriver)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim detail ke driver (WA)</a>` : ''}
+        <button class="btn ghost sm" type="button" id="oClose">Tutup</button>
+      </div>
+    </div>`);
+  $('#oClose').addEventListener('click', closeModal);
+  $('#oSaveStatus').addEventListener('click', async () => {
+    const st = $('#oStatus').value;
+    if (st === o.status) { toast('Status tidak berubah'); return; }
+    if ((st === 'cancelled' || st === 'expired') && PAID_SET.includes(o.status) &&
+        !confirm('Pesanan ini sudah LUNAS. Mengubahnya menjadi batal TIDAK mengembalikan uang pelanggan (lakukan refund manual di dashboard Midtrans). Lanjutkan?')) return;
+    const r = await sb.from('orders').update({ status: st }).eq('id', o.id);
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Status disimpan'); closeModal(); loadOrders();
+  });
+  $('#oSaveDriver').addEventListener('click', async () => {
+    const v = $('#oDriver').value || null;
+    const r = await sb.from('orders').update({ assigned_driver: v }).eq('id', o.id);
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Driver disimpan'); closeModal(); loadOrders();
+  });
+  if ($('#oRevisi')) $('#oRevisi').addEventListener('click', async () => {
+    if (!confirm(`Terbitkan revisi baru surat jalan ${o.sj_no} dengan data pesanan saat ini? Revisi sebelumnya tidak berlaku lagi.`)) return;
+    const r = await sb.rpc('issue_sj_revision', { p_order: o.id });
+    if (r.error) { toast(r.error.message, true); return; }
+    o.sj_rev = r.data.sj_rev;
+    toast('Revisi diterbitkan. Link surat tidak berubah — cukup kirim ke driver bila ia belum pernah menerimanya.');
+    loadOrders();       // sinkron daftar di belakang layar
+    openOrder(o.id);    // buka ulang jendela yang sama, dengan tombol WA siap ditekan
   });
 }
 
-// Logo teal untuk tengah QR, dimuat sekali di awal (file logo tetap, tidak berubah tiap ketik formulir).
-let qrLogoImg = null;
-async function siapkanLogoQr() {
-  try {
-    const tinted = await tintLogo('images/logo_sky_blue_transparent.png', '#0891b2');
-    if (!tinted) return;
-    const im = new Image();
-    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = tinted; });
-    if (im.naturalWidth) qrLogoImg = im;
-  } catch (_e) { /* logo gagal disiapkan: QR tetap valid tanpa logo */ }
+/* ---------- LAPORAN ---------- */
+VIEWS.laporan = async function () {
+  $('#view').innerHTML = `
+    <h2>Laporan</h2>
+    <div class="bar"><select id="rPer">
+      <option value="7">7 hari terakhir</option><option value="30" selected>30 hari terakhir</option>
+      <option value="bulan">Bulan ini</option><option value="all">Semua waktu</option></select></div>
+    <div id="rOut"><div class="empty">Memuat…</div></div>`;
+  $('#rPer').addEventListener('change', loadLaporan);
+  await loadLaporan();
+};
+async function loadLaporan() {
+  const per = $('#rPer').value;
+  let q = sb.from('orders').select('*').in('status', PAID_SET).limit(3000);
+  const now = new Date();
+  if (per === '7' || per === '30') q = q.gte('paid_at', new Date(now.getTime() - Number(per) * 86400000).toISOString());
+  if (per === 'bulan') q = q.gte('paid_at', new Date(now.getFullYear(), now.getMonth(), 1).toISOString());
+  const [o, f] = await Promise.all([q, sb.from('v_funnel').select('*')]);
+  if (o.error) { $('#rOut').innerHTML = `<div class="empty">Gagal memuat: ${esc(o.error.message)}</div>`; return; }
+  const rows = o.data || [];
+  const sum = (arr, k) => arr.reduce((a, x) => a + (Number(x[k]) || 0), 0);
+  const byDrv = {};
+  rows.forEach((x) => { const k = earner(x) || '(belum ditentukan)'; (byDrv[k] = byDrv[k] || []).push(x); });
+  const drvRows = Object.keys(byDrv).map((k) => `<tr><td>${esc(k === '(belum ditentukan)' ? k : driverName(k))}</td><td class="num">${byDrv[k].length}</td><td class="num">${rp(sum(byDrv[k], 'total'))}</td><td class="num">${rp(sum(byDrv[k], 'driver_earning'))}</td></tr>`).join('');
+  const fun = (f.data || []).map((x) => `<tr><td>${esc(x.sumber === 'direct' ? 'Langsung dari web' : driverName(x.sumber))}</td><td class="num">${x.visit}</td><td class="num">${x.scan}</td><td class="num">${x.order_dibuat}</td><td class="num">${x.closing}</td><td class="num">${rp(x.omzet)}</td></tr>`).join('');
+  $('#rOut').innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="v">${rows.length}</div><div class="l">Pesanan lunas</div></div>
+      <div class="stat"><div class="v">${rp(sum(rows, 'total'))}</div><div class="l">Omzet</div></div>
+      <div class="stat"><div class="v">${rp(sum(rows, 'admin_cut_amount'))}</div><div class="l">Potongan admin</div></div>
+      <div class="stat"><div class="v">${rp(sum(rows, 'driver_earning'))}</div><div class="l">Pendapatan driver</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h2>Per pembawa pesanan</h2><div class="tablewrap"><table>
+      <thead><tr><th>Pembawa pesanan</th><th class="num">Trip</th><th class="num">Omzet</th><th class="num">Pendapatan</th></tr></thead>
+      <tbody>${drvRows || '<tr><td colspan="4" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
+      <div class="help" style="margin-top:8px">Pendapatan dicatat untuk yang membawa pesanan (pemilik link/QR). Bila driver itu melemparkan trip ke orang lain, pendapatan tetap di sini &mdash; pembagian dengan pelaksana adalah urusan mereka sendiri.</div></div>
+    <div class="card"><h2>Kunjungan → closing (semua waktu)</h2><div class="tablewrap"><table>
+      <thead><tr><th>Sumber</th><th class="num">Visit</th><th class="num">Scan</th><th class="num">Order dibuat</th><th class="num">Closing</th><th class="num">Omzet</th></tr></thead>
+      <tbody>${fun || '<tr><td colspan="6" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
+      <div class="help" style="margin-top:8px">Visit = hanya berkunjung. Scan = lewat link/QR driver. Closing = pesanan yang sudah dibayar.</div></div>`;
 }
 
-// QR digambar sendiri di kanvas supaya logo bisa dicap di tengahnya. Level H karena tengah tertutup logo.
-function qrDataUrl(text) {
-  try {
-    const q = qrcode(0, 'H'); q.addData(text); q.make();
-    const n = q.getModuleCount(), quiet = 2, cell = 8;
-    const total = cell * (n + quiet * 2);
-    const c = document.createElement('canvas'); c.width = c.height = total;
-    const x = c.getContext('2d');
-    x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
-    x.fillStyle = '#000';
-    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
-      if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
-    }
-    if (qrLogoImg) {
-      const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
-      const lh = Math.round((plate - pad * 2) * (qrLogoImg.naturalHeight / qrLogoImg.naturalWidth));
-      const lw = plate - pad * 2;
-      const px = Math.round((total - plate) / 2);
-      x.fillStyle = '#fff'; x.beginPath();
-      if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
-      x.fill();
-      x.drawImage(qrLogoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
-    }
-    return c.toDataURL('image/png');
-  } catch (e) { console.error(e); return ''; }
+/* ---------- KAS ---------- */
+const KAS_JENIS = { setoran_driver: 'Setoran driver', komisi_admin: 'Komisi admin (otomatis)', pengeluaran: 'Pengeluaran', lainnya: 'Lainnya' };
+let KAS_ROWS = [];
+VIEWS.kas = async function () {
+  const { data, error } = await sb.from('kas_transaksi').select('*').order('tanggal', { ascending: true }).order('created_at', { ascending: true });
+  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  let saldo = 0;
+  KAS_ROWS = (data || []).map((r) => { saldo += Number(r.jumlah); return { ...r, saldoSaat: saldo }; }).reverse();
+  const totalMasuk = (data || []).filter((r) => r.jumlah > 0).reduce((a, r) => a + Number(r.jumlah), 0);
+  const totalKeluar = (data || []).filter((r) => r.jumlah < 0).reduce((a, r) => a + Number(r.jumlah), 0);
+
+  const kasLink = (S.siteUrl && S.kasToken) ? `${S.siteUrl}/kas.html?t=${S.kasToken}` : '';
+
+  $('#view').innerHTML = `
+    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Kas</h2><button class="btn" id="btnKasNew" type="button">+ Tambah</button></div>
+    <div class="stats">
+      <div class="stat"><div class="v">${rp(saldo)}</div><div class="l">Saldo kas saat ini</div></div>
+      <div class="stat"><div class="v">${rp(totalMasuk)}</div><div class="l">Total masuk</div></div>
+      <div class="stat"><div class="v">${rp(Math.abs(totalKeluar))}</div><div class="l">Total keluar</div></div>
+      <div class="stat"><div class="v">${KAS_ROWS.length}</div><div class="l">Jumlah transaksi</div></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h2>Link kas untuk anggota</h2>
+      <div class="mbtns" style="justify-content:flex-start">
+        ${kasLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(kasLink)}">Salin link</button><a class="btn ghost sm" href="${esc(kasLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka</a>` : '<span class="small">Alamat situs belum diisi di Pengaturan (site_url)</span>'}
+        <button class="btn ghost sm" type="button" id="btnKasRotate">Ganti token</button>
+      </div>
+      <div class="help" style="margin-top:8px">Satu link sama untuk semua anggota &mdash; semua orang melihat pembukuan yang sama persis. Ganti token akan langsung mematikan link lama.</div>
+    </div>
+    <div class="card"><div class="tablewrap"><table>
+      <thead><tr><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th class="num">Jumlah</th><th class="num">Saldo</th></tr></thead>
+      <tbody>${KAS_ROWS.map((r, i) => `<tr>
+        <td class="small">${esc(tglPendek(r.tanggal))}</td>
+        <td>${esc(KAS_JENIS[r.jenis] || r.jenis)}${r.driver_slug ? `<div class="small">${esc(driverName(r.driver_slug))}</div>` : ''}</td>
+        <td>${esc(r.keterangan || '-')}</td>
+        <td class="num" style="color:${r.jumlah < 0 ? 'var(--danger)' : '#166534'}">${r.jumlah < 0 ? '- ' : '+ '}${rp(Math.abs(r.jumlah))}</td>
+        <td class="num">${rp(r.saldoSaat)}</td>
+      </tr>`).join('') || `<tr><td colspan="5" class="empty">Belum ada transaksi.</td></tr>`}</tbody>
+    </table></div></div>`;
+
+  $('#btnKasNew').addEventListener('click', openKasForm);
+  $('#btnKasRotate').addEventListener('click', async () => {
+    if (!confirm('Ganti token link kas? Link lama akan langsung berhenti berfungsi, jadi anggota perlu link barunya.')) return;
+    const r = await sb.rpc('rotate_kas_token');
+    if (r.error) { toast(r.error.message, true); return; }
+    S.kasToken = r.data;
+    toast('Token diganti. Bagikan link kas yang baru ke anggota.');
+    nav('kas');
+  });
+};
+
+function openKasForm() {
+  const drOpts = S.drivers.map((d) => `<option value="${esc(d.slug)}">${esc(d.name)}</option>`).join('');
+  const today = new Date().toISOString().slice(0, 10);
+  openModal(`
+    <h2>Tambah transaksi kas</h2>
+    <div class="fgrid">
+      <div><label>Jenis<select id="kJenis">
+        <option value="setoran_driver">Setoran driver (masuk)</option>
+        <option value="pengeluaran">Pengeluaran (keluar)</option>
+        <option value="lainnya">Lainnya (masuk)</option>
+      </select></label></div>
+      <div><label>Tanggal<input id="kTanggal" type="date" value="${today}"></label></div>
+      <div id="kDriverWrap"><label>Driver<select id="kDriver">${drOpts}</select></label></div>
+      <div><label>Jumlah (Rp)<input id="kJumlah" type="number" step="any" placeholder="mis. 50000"></label></div>
+      <div class="full"><label>Keterangan<input id="kKet" type="text" placeholder="mis. Setoran kas bulan Oktober"></label></div>
+    </div>
+    <div class="mbtns">
+      <button class="btn ghost" id="kCancel" type="button">Batal</button>
+      <button class="btn" id="kSave" type="button">Simpan</button>
+    </div>`);
+  const jenisSel = $('#kJenis');
+  const toggleDriver = () => { $('#kDriverWrap').style.display = jenisSel.value === 'setoran_driver' ? '' : 'none'; };
+  jenisSel.addEventListener('change', toggleDriver); toggleDriver();
+  $('#kCancel').addEventListener('click', closeModal);
+  $('#kSave').addEventListener('click', async () => {
+    const jenis = jenisSel.value;
+    const tanggal = $('#kTanggal').value || today;
+    let jumlah = Number($('#kJumlah').value);
+    const keterangan = $('#kKet').value.trim();
+    const driver_slug = jenis === 'setoran_driver' ? ($('#kDriver').value || null) : null;
+    if (!jumlah || jumlah <= 0) { toast('Jumlah harus lebih dari 0', true); return; }
+    if (jenis === 'setoran_driver' && !driver_slug) { toast('Pilih drivernya', true); return; }
+    if (jenis === 'pengeluaran') jumlah = -Math.abs(jumlah);
+    const r = await sb.from('kas_transaksi').insert({ jenis, tanggal, jumlah, keterangan: keterangan || null, driver_slug });
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Tersimpan'); closeModal(); nav('kas');
+  });
 }
 
-const fNama = document.getElementById('fNama');
-const fId = document.getElementById('fId');
-const fTelp = document.getElementById('fTelp');
-const fFoto = document.getElementById('fFoto');
+/* ---------- CRUD umum ---------- */
+const PLACEHOLDERS = ['{nama}', '{customer_wa}', '{order_id}', '{invoice_no}', '{link_invoice}', '{armada}', '{tanggal}', '{jam}', '{peserta}', '{jemput}', '{destinasi}', '{rincian}', '{total}', '{potongan}', '{pendapatan_driver}', '{sumber}', '{driver_name}', '{driver_phone}'];
 
-function refresh() {
-  const nama = fNama.value.trim() || '-';
-  const id = fId.value.trim() || '-';
-  const telp = fTelp.value.trim() || '-';
-
-  document.getElementById('outNama').textContent = nama;
-  document.getElementById('rowNama').textContent = nama;
-  document.getElementById('rowId').textContent = id;
-  document.getElementById('rowTelp').textContent = telp;
-  document.getElementById('rowTelpBack').textContent = telp;
-  document.getElementById('backId').textContent = id;
-  document.getElementById('frontInit').textContent = initials(nama);
-  document.getElementById('photoInit').textContent = initials(nama);
-
-  document.getElementById('qrimg').src = qrDataUrl(
-    'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html?d=' + encodeURIComponent(id)
-  );
-}
-[fNama, fId, fTelp].forEach((el) => el.addEventListener('input', refresh));
-
-fFoto.addEventListener('change', () => {
-  const file = fFoto.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const url = reader.result;
-    const fp = document.getElementById('frontPhoto');
-    fp.src = url; fp.style.display = 'block';
-    document.getElementById('frontInit').style.display = 'none';
-    document.getElementById('photoPrev').innerHTML = `<img src="${url}">`;
-  };
-  reader.readAsDataURL(file);
-});
-
-document.getElementById('btnPrint').addEventListener('click', () => window.print());
-
-// Tombol Simpan PDF (Aman untuk foto, QR, logo mask, dan watermark)
-document.getElementById('btnPdf').addEventListener('click', async () => {
-  const btn = document.getElementById('btnPdf'); 
-  btn.disabled = true; 
-  const oldText = btn.textContent; 
-  btn.textContent = 'Menyiapkan PDF…';
-
-  try {
-    if (typeof html2pdf === 'undefined') {
-      alert('Pustaka PDF belum siap, silakan coba beberapa saat lagi.');
-      btn.disabled = false;
-      btn.textContent = oldText;
-      return;
-    }
-
-    const element = document.getElementById('sheet');
-
-    const options = {
-      margin: 5,
-      filename: (fId.value.trim() || 'kartu-anggota') + '.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { 
-        scale: 3, 
-        useCORS: true, 
-        letterRendering: true 
-      },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    await html2pdf().set(options).from(element).save();
-  } catch (e) { 
-    console.error(e); 
-    alert('Gagal menyimpan otomatis. Dialihkan ke dialog cetak browser.');
-    window.print(); 
-  } finally { 
-    btn.disabled = false; 
-    btn.textContent = oldText; 
+const RES = {
+  armada: {
+    table: 'fleet', title: 'Armada', pk: 'id', order: { col: 'sort_order', asc: true },
+    defaults: { is_active: true, sort_order: 0 },
+    cols: [{ key: 'name', label: 'Armada' }, { key: 'price', label: 'Harga', num: true, render: (r) => rp(r.price) },
+      { key: 'capacity_comfort', label: 'Kapasitas', render: (r) => `${r.capacity_comfort} nyaman / max ${r.capacity_max}` },
+      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active ? 'Ya' : 'Tidak' }],
+    fields: [
+      { key: 'id', label: 'ID (huruf kecil, tanpa spasi)', type: 'text', required: true, createOnly: true },
+      { key: 'name', label: 'Nama lengkap', type: 'text', required: true },
+      { key: 'short_name', label: 'Nama pendek', type: 'text', required: true },
+      { key: 'badge', label: 'Label (mis. Best Seller)', type: 'text' },
+      { key: 'price', label: 'Harga sewa 12 jam (Rp)', type: 'number', required: true },
+      { key: 'capacity_comfort', label: 'Kapasitas nyaman', type: 'number', required: true },
+      { key: 'capacity_max', label: 'Kapasitas maksimal', type: 'number', required: true },
+      { key: 'baggage', label: 'Info bagasi', type: 'text' },
+      { key: 'max_info', label: 'Info kapasitas maks', type: 'text' },
+      { key: 'note', label: 'Catatan (awali ⚠ / ✅ / ℹ)', type: 'text', full: true },
+      { key: 'images', label: 'Foto', type: 'array', full: true, help: 'Nama file di folder images situs, pisahkan dengan koma. Boleh juga alamat penuh https://...' },
+      { key: 'sort_order', label: 'Urutan tampil', type: 'number' },
+      { key: 'is_active', label: 'Tampil di web', type: 'bool' }]
+  },
+  banner: {
+    table: 'banners', title: 'Banner', pk: 'id', order: { col: 'sort_order', asc: true }, canDelete: true,
+    defaults: { is_active: true, sort_order: 0 },
+    cols: [{ key: 'title', label: 'Judul' },
+      { key: 'starts_at', label: 'Tayang', render: (r) => `${r.starts_at ? waktu(r.starts_at) : 'langsung'} → ${r.ends_at ? waktu(r.ends_at) : 'tanpa batas'}` },
+      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active ? 'Ya' : 'Tidak' }],
+    fields: [
+      { key: 'title', label: 'Judul', type: 'text', required: true, full: true },
+      { key: 'subtitle', label: 'Teks singkat', type: 'text', full: true },
+      { key: 'image_url', label: 'Gambar (nama file di folder images, atau alamat https://...)', type: 'text', full: true },
+      { key: 'button_text', label: 'Teks tombol', type: 'text' },
+      { key: 'button_url', label: 'Tujuan tombol (alamat / #pesan)', type: 'text' },
+      { key: 'starts_at', label: 'Mulai tayang', type: 'datetime' },
+      { key: 'ends_at', label: 'Selesai tayang', type: 'datetime' },
+      { key: 'sort_order', label: 'Urutan', type: 'number' },
+      { key: 'is_active', label: 'Aktif', type: 'bool' }]
+  },
+  driver: {
+    table: 'drivers', title: 'Driver', pk: 'id', order: { col: 'name', asc: true },
+    defaults: { is_active: true },
+    cols: [
+      { key: 'driver_code', label: 'ID', render: (r) => r.driver_code || '-' },
+      { key: 'name', label: 'Nama' },
+      { key: 'phone', label: 'WA', render: (r) => r.phone ? `${esc(r.phone)} <a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none;margin-left:4px">Kirim pesan</a>` : '-' },
+      { key: 'plate', label: 'Plat', render: (r) => r.plate || '-' },
+      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
+      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } },
+      { key: 'card', label: 'ID Card', render: (r) => {
+          const tok = S.cards[r.slug];
+          const u = (S.siteUrl && tok) ? `${S.siteUrl}/kartu.html?t=${tok}` : '';
+          return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin link</button> <button class="btn ghost sm" type="button" data-rotate="${esc(r.slug)}">Ganti token</button>`;
+        } },
+      { key: 'cetak', label: 'Kartu Cetak', render: (r) => {
+          if (!S.siteUrl) return '<span class="small">Isi site_url dulu</span>';
+          if (!r.driver_code) return '<span class="small">-</span>';
+          const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '' });
+          if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
+          return `<a class="btn ghost sm" href="${esc(S.siteUrl)}/kartu-anggota.html?${p.toString()}" target="_blank" rel="noopener" style="text-decoration:none">Cetak kartu</a>`;
+        } }],
+    fields: [
+      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true },
+      { key: 'name', label: 'Nama', type: 'text', required: true },
+      { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
+      { key: 'plate', label: 'Plat nomor kendaraan', type: 'text' },
+      { key: 'base', label: 'Basis / kota', type: 'text' },
+      { key: 'vehicle_type', label: 'Jenis kendaraan', type: 'text' },
+      { key: 'motto', label: 'Motto', type: 'text' },
+      { key: 'photo_url', label: 'Foto (alamat)', type: 'text', full: true },
+      { key: 'is_active', label: 'Aktif', type: 'bool' }],
+    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama.</div>'
+  },
+  template: {
+    table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
+    cols: [{ key: 'id', label: 'ID' }, { key: 'title', label: 'Untuk' }, { key: 'updated_at', label: 'Diubah', render: (r) => waktu(r.updated_at) }],
+    fields: [
+      { key: 'title', label: 'Judul', type: 'text', full: true },
+      { key: 'template_text', label: 'Isi pesan', type: 'textarea', rows: 16, full: true }],
+    note: `<div class="help">Penanda yang bisa dipakai (diisi otomatis saat pesan dikirim):</div><div class="chips">${PLACEHOLDERS.map((p) => `<span class="chip">${p}</span>`).join('')}</div><div class="help">Template yang dipakai sistem: <b>order_paid_customer</b>, <b>order_paid_admin</b>, <b>order_paid_driver</b>. Template lain (admin_lunas, driver_lunas) adalah sisa versi lama.</div>`
   }
-});
+};
+for (const key of Object.keys(RES)) VIEWS[key] = () => viewCrud(key);
 
-siapkanLogoQr().then(refresh);
-refresh();
+let ROWS = {};
+async function viewCrud(key) {
+  const R = RES[key];
+  const { data, error } = await sb.from(R.table).select('*').order(R.order.col, { ascending: R.order.asc });
+  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  ROWS[key] = data || [];
+  $('#view').innerHTML = `
+    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">${esc(R.title)}</h2>${R.noCreate ? '' : '<button class="btn" id="btnNew" type="button">+ Tambah</button>'}</div>
+    <div class="card"><div class="tablewrap"><table>
+      <thead><tr>${R.cols.map((c) => `<th class="${c.num ? 'num' : ''}">${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
+      <tbody>${ROWS[key].map((r, i) => `<tr>${R.cols.map((c) => `<td class="${c.num ? 'num' : ''}">${c.render ? c.render(r) : esc(r[c.key])}</td>`).join('')}<td class="num"><button class="btn ghost sm" type="button" data-i="${i}">Ubah</button></td></tr>`).join('') || `<tr><td colspan="${R.cols.length + 1}" class="empty">Belum ada data.</td></tr>`}</tbody>
+    </table></div></div>`;
+  if (!R.noCreate) $('#btnNew').addEventListener('click', () => openForm(key, null));
+  $$('#view button[data-i]').forEach((b) => b.addEventListener('click', () => openForm(key, ROWS[key][Number(b.dataset.i)])));
+}
+function fieldHTML(f, val, disabled) {
+  const id = 'f_' + f.key, cls = f.full ? ' class="full"' : '';
+  if (f.type === 'bool') return `<div${cls}><label class="chk"><input type="checkbox" id="${id}" ${val ? 'checked' : ''}> ${esc(f.label)}</label></div>`;
+  if (f.type === 'textarea') return `<div${cls}><label>${esc(f.label)}<textarea id="${id}" rows="${f.rows || 4}">${esc(val == null ? '' : val)}</textarea></label></div>`;
+  const type = f.type === 'number' ? 'number' : (f.type === 'datetime' ? 'datetime-local' : 'text');
+  const v = f.type === 'array' ? (Array.isArray(val) ? val.join(', ') : '') : (f.type === 'datetime' ? isoToLocal(val) : (val == null ? '' : val));
+  return `<div${cls}><label>${esc(f.label)}${f.required ? ' *' : ''}<input id="${id}" type="${type}" value="${esc(v)}" ${f.type === 'number' ? 'step="any"' : ''} ${disabled ? 'disabled' : ''}></label>${f.help ? `<div class="help">${esc(f.help)}</div>` : ''}</div>`;
+}
+function readField(f, required) {
+  const el = $('#f_' + f.key);
+  if (f.type === 'bool') return el.checked;
+  const v = el.value.trim();
+  if (f.type === 'number') return v === '' ? (required ? null : 0) : Number(v);
+  if (f.type === 'array') return v ? v.split(',').map((x) => x.trim()).filter(Boolean) : [];
+  if (f.type === 'datetime') return v ? new Date(v).toISOString() : null;
+  return v === '' ? null : v;
+}
+function openForm(key, row) {
+  const R = RES[key], isNew = !row;
+  const src = row || R.defaults || {};
+  openModal(`
+    <h2>${isNew ? 'Tambah' : 'Ubah'} ${esc(R.title)}</h2>
+    ${R.note || ''}
+    <div class="fgrid">${R.fields.map((f) => fieldHTML(f, src[f.key], f.createOnly && !isNew)).join('')}</div>
+    <div class="mbtns">
+      ${(!isNew && R.canDelete) ? '<button class="btn danger" id="mDel" type="button">Hapus</button>' : ''}
+      <button class="btn ghost" id="mCancel" type="button">Batal</button>
+      <button class="btn" id="mSave" type="button">Simpan</button>
+    </div>`);
+  $('#mCancel').addEventListener('click', closeModal);
+  $('#mSave').addEventListener('click', () => saveForm(key, row));
+  if ($('#mDel')) $('#mDel').addEventListener('click', async () => {
+    if (!confirm('Hapus data ini?')) return;
+    const r = await sb.from(R.table).delete().eq(R.pk, row[R.pk]);
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Dihapus'); closeModal(); nav(key);
+  });
+}
+async function saveForm(key, row) {
+  const R = RES[key], isNew = !row, payload = {};
+  for (const f of R.fields) {
+    if (f.createOnly && !isNew) continue;
+    const v = readField(f, f.required);
+    if (f.required && (v === null || v === '' || (Array.isArray(v) && !v.length))) { toast(`${f.label} wajib diisi`, true); return; }
+    payload[f.key] = v;
+  }
+  if (R.stamp) payload.updated_at = new Date().toISOString();
+  const btn = $('#mSave'); btn.disabled = true;
+  const res = isNew ? await sb.from(R.table).insert(payload) : await sb.from(R.table).update(payload).eq(R.pk, row[R.pk]);
+  btn.disabled = false;
+  if (res.error) { toast(res.error.message, true); return; }
+  toast('Tersimpan'); closeModal();
+  if (key === 'driver') await loadShared();
+  nav(key);
+}
+
+/* ---------- PENGATURAN ---------- */
+VIEWS.pengaturan = async function () {
+  const { data, error } = await sb.from('app_settings').select('*').order('key');
+  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
+  $('#view').innerHTML = `<h2>Pengaturan</h2><div class="card">${(data || []).map((r) => `
+    <div class="setrow">
+      <div><b>${esc(r.label || r.key)}</b><small>${esc(r.key)}${r.is_public ? ' · tampil ke publik' : ''}</small></div>
+      <input data-key="${esc(r.key)}" value="${esc(r.value)}">
+      <button class="btn sm" type="button" data-save="${esc(r.key)}">Simpan</button>
+    </div>`).join('')}</div>
+    <div class="help" style="margin-top:10px">Potongan admin: isi <b>percent</b> atau <b>flat</b> di "Jenis potongan". Nomor admin diawali 62 tanpa spasi. Perubahan berlaku untuk pesanan berikutnya; pesanan lama tidak berubah.</div>`;
+  $$('#view button[data-save]').forEach((b) => b.addEventListener('click', async () => {
+    const k = b.dataset.save, v = $(`#view input[data-key="${k}"]`).value.trim();
+    const r = await sb.from('app_settings').update({ value: v }).eq('key', k);
+    if (r.error) { toast(r.error.message, true); return; }
+    if (k === 'site_url') S.siteUrl = v.replace(/\/+$/, '');
+    toast('Tersimpan');
+  }));
+};
+
+/* ---------- mulai ---------- */
+(async function boot() {
+  const { data } = await sb.auth.getSession();
+  if (data && data.session) await enter(); else showLogin();
+})();
 </script>
 </body>
 </html>
