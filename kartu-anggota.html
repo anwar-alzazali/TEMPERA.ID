@@ -199,9 +199,74 @@ function initials(name) {
   const w = String(name || '').trim().split(/\s+/).filter(Boolean);
   return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
 }
+
+// Logo satu warna dari file logo situs (sama file yang dipakai header/watermark kartu ini).
+// Dipangkas pas ke tepi lalu diberi warna, supaya presisi saat ditumpuk di tengah QR.
+function tintLogo(url, color) {
+  return new Promise((resolve) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const k = Math.min(1, 300 / Math.max(im.naturalWidth, im.naturalHeight));
+        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
+        const px = x.getImageData(0, 0, w, h).data;
+        let x0 = w, y0 = h, x1 = -1, y1 = -1;
+        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
+          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+        }
+        if (x1 < 0) return resolve('');
+        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
+        const x2 = c2.getContext('2d');
+        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
+        x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
+        resolve(c2.toDataURL('image/png'));
+      } catch (_e) { resolve(''); }
+    };
+    im.onerror = () => resolve('');
+    im.src = url;
+  });
+}
+
+// Logo teal untuk tengah QR, dimuat sekali di awal (file logo tetap, tidak berubah tiap ketik formulir).
+let qrLogoImg = null;
+async function siapkanLogoQr() {
+  try {
+    const tinted = await tintLogo('images/logo_sky_blue_transparent.png', '#0891b2');
+    if (!tinted) return;
+    const im = new Image();
+    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = tinted; });
+    if (im.naturalWidth) qrLogoImg = im;
+  } catch (_e) { /* logo gagal disiapkan: QR tetap valid tanpa logo */ }
+}
+
+// QR digambar sendiri di kanvas supaya logo bisa dicap di tengahnya. Level H karena tengah tertutup logo.
 function qrDataUrl(text) {
-  try { const q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createDataURL(8, 0); }
-  catch (e) { console.error(e); return ''; }
+  try {
+    const q = qrcode(0, 'H'); q.addData(text); q.make();
+    const n = q.getModuleCount(), quiet = 2, cell = 8;
+    const total = cell * (n + quiet * 2);
+    const c = document.createElement('canvas'); c.width = c.height = total;
+    const x = c.getContext('2d');
+    x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
+    x.fillStyle = '#000';
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+      if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+    }
+    if (qrLogoImg) {
+      const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
+      const lh = Math.round((plate - pad * 2) * (qrLogoImg.naturalHeight / qrLogoImg.naturalWidth));
+      const lw = plate - pad * 2;
+      const px = Math.round((total - plate) / 2);
+      x.fillStyle = '#fff'; x.beginPath();
+      if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+      x.fill();
+      x.drawImage(qrLogoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+    }
+    return c.toDataURL('image/png');
+  } catch (e) { console.error(e); return ''; }
 }
 
 const fNama = document.getElementById('fNama');
@@ -285,6 +350,7 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
   }
 });
 
+siapkanLogoQr().then(refresh);
 refresh();
 </script>
 </body>
