@@ -109,7 +109,6 @@ dl.det dd{margin:0}
 <div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
 <div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
@@ -164,63 +163,6 @@ document.addEventListener('click', async (e) => {
   S.cards[slug] = r.data;
   toast('Token diganti. Kirim link ID card yang baru ke driver.');
   if (VIEWS.driver && location.hash === '#driver') nav('driver');
-});
-
-/* ---------- QR referral dengan logo (dibuat langsung di panel) ---------- */
-const QR_LOGO_SRC = 'images/logo_sky_blue_transparent.png';
-function loadImg(src) {
-  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
-}
-async function makeQR(text, size) {
-  const q = qrcode(0, 'H');            // level H: tahan logo di tengah
-  q.addData(text); q.make();
-  const n = q.getModuleCount(), quiet = 4;
-  const cell = Math.floor(size / (n + quiet * 2)), total = cell * (n + quiet * 2);
-  const c = document.createElement('canvas'); c.width = c.height = total;
-  const x = c.getContext('2d');
-  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
-  x.fillStyle = '#000';
-  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
-    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
-  }
-  try {
-    const img = await loadImg(QR_LOGO_SRC);
-    const t = document.createElement('canvas'); t.width = 1328; t.height = 1287;
-    const tx = t.getContext('2d');
-    tx.drawImage(img, 0, 151, 1328, 1287, 0, 0, 1328, 1287);   // potong bagian kosong atas
-    tx.globalCompositeOperation = 'source-in';
-    tx.fillStyle = '#0891b2'; tx.fillRect(0, 0, 1328, 1287);    // warnai teal
-    const plate = Math.round(total * 0.20), pad = Math.round(plate * 0.06);
-    const lw = plate - pad * 2, lh = Math.round(lw * 1287 / 1328);
-    const px = Math.round((total - plate) / 2);
-    x.fillStyle = '#fff'; x.beginPath();
-    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
-    x.fill();
-    x.drawImage(t, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
-  } catch (_e) { /* logo gagal dimuat: QR tetap valid tanpa logo */ }
-  return c;
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-qr]');
-  if (!b) return;
-  const url = b.dataset.qr;
-  if (!url) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
-  if (typeof qrcode !== 'function') { toast('Pustaka QR belum termuat, muat ulang halaman', true); return; }
-  const c = await makeQR(url, 720);
-  const nama = b.dataset.qrname || 'driver';
-  openModal(`
-    <h2>QR referral</h2>
-    <div style="text-align:center"><div id="qrHolder"></div>
-    <div class="small" style="word-break:break-all;margin-top:8px">${esc(url)}</div></div>
-    <div class="mbtns"><button class="btn ghost" id="qrClose" type="button">Tutup</button><button class="btn" id="qrDl" type="button">Unduh PNG</button></div>`);
-  c.style.width = '100%'; c.style.maxWidth = '320px'; c.style.height = 'auto';
-  $('#qrHolder').appendChild(c);
-  $('#qrClose').addEventListener('click', closeModal);
-  $('#qrDl').addEventListener('click', () => {
-    const a = document.createElement('a');
-    a.href = c.toDataURL('image/png'); a.download = `qr-${nama}.png`;
-    document.body.appendChild(a); a.click(); a.remove();
-  });
 });
 
 const S = { drivers: [], siteUrl: '', cards: {} };
@@ -591,11 +533,18 @@ const RES = {
       { key: 'phone', label: 'WA', render: (r) => r.phone ? `${esc(r.phone)} <a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none;margin-left:4px">Kirim pesan</a>` : '-' },
       { key: 'plate', label: 'Plat', render: (r) => r.plate || '-' },
       { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
-      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u)}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`; } },
+      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } },
       { key: 'card', label: 'ID Card', render: (r) => {
           const tok = S.cards[r.slug];
           const u = (S.siteUrl && tok) ? `${S.siteUrl}/kartu.html?t=${tok}` : '';
           return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin link</button> <button class="btn ghost sm" type="button" data-rotate="${esc(r.slug)}">Ganti token</button>`;
+        } },
+      { key: 'cetak', label: 'Kartu Cetak', render: (r) => {
+          if (!S.siteUrl) return '<span class="small">Isi site_url dulu</span>';
+          if (!r.driver_code) return '<span class="small">-</span>';
+          const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '' });
+          if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
+          return `<a class="btn ghost sm" href="${esc(S.siteUrl)}/kartu-anggota.html?${p.toString()}" target="_blank" rel="noopener" style="text-decoration:none">Cetak kartu</a>`;
         } }],
     fields: [
       { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true },
