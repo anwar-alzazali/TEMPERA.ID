@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Kartu Anggota TEMPERA.ID — Cetak</title>
+<!-- Pustaka html2pdf dimuat di head agar siap lebih awal -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
     --accent:#0891b2; --accent-dk:#0e7490; --accent-lt:#22b8d0;
@@ -160,16 +162,19 @@
       <div class="qrbox"><img id="qrimg" alt="QR verifikasi"></div>
       <div class="backcode" id="backId">TMP-0001</div>
       <div class="terms">Kartu ini milik TEMPERA.ID dan wajib dikembalikan bila keanggotaan berakhir. Bila ditemukan, hubungi kontak di bawah.</div>
-      <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0812-0000-0000 &middot; tempera.id</div></div>
+      <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0851-9675-5972 &middot; tempera.id</div></div>
     </div>
   </div></div>
 </div>
 
 <div class="note">
-  <b>Cara pakai:</b> isi formulir di atas untuk tiap anggota baru (nama, ID, nomor telepon, foto), lalu tekan
+  <p><b>Cara pakai:</b> isi formulir di atas untuk tiap anggota baru (nama, ID, nomor telepon, foto), lalu tekan
   <b>Cetak</b> atau <b>Simpan PDF</b>. Isian tidak tersimpan otomatis, jadi cetak dulu sebelum berpindah ke
-  anggota berikutnya. QR di belakang mengarah ke kode statis berdasarkan ID &mdash; halaman verifikasinya perlu
-  disesuaikan lebih lanjut supaya benar-benar mengenali ID anggota.
+  anggota berikutnya.</p>
+  <p id="verifHint">Kartu yang dibuka lewat tombol <b>"Cetak kartu"</b> di panel (tab Driver) sudah membawa kode
+  tanda tangan otomatis, jadi QR di belakangnya bisa diverifikasi asli lewat halaman verifikasi. Kartu yang
+  diisi manual di sini (tanpa dibuka dari panel) QR-nya belum bisa diverifikasi &mdash; hanya untuk pratinjau
+  tampilan.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
@@ -202,6 +207,8 @@ function tintLogo(url, color) {
     im.src = url;
   });
 }
+// Logo teal siap-pakai untuk dicap di tengah QR (dibuat sekali dari logo yang sama dengan watermark).
+let qrLogoImg = null;
 async function pasangLogo() {
   const logoUrl = getComputedStyle(document.documentElement).getPropertyValue('--logo-url').trim().replace(/^url\((['"]?)(.*)\1\)$/, '$2');
   const [white, accent] = await Promise.all([
@@ -209,17 +216,42 @@ async function pasangLogo() {
     tintLogo(logoUrl, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0891b2'),
   ]);
   if (white) document.querySelectorAll('.hlogo').forEach((el) => { el.src = white; });
-  if (accent) document.querySelectorAll('.wm').forEach((el) => { el.src = accent; });
+  if (accent) {
+    document.querySelectorAll('.wm').forEach((el) => { el.src = accent; });
+    const im = new Image();
+    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = accent; });
+    if (im.naturalWidth) qrLogoImg = im;
+  }
 }
-pasangLogo();
 
 function initials(name) {
   const w = String(name || '').trim().split(/\s+/).filter(Boolean);
   return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
 }
-function qrDataUrl(text) {
-  try { const q = qrcode(0, 'M'); q.addData(text); q.make(); return q.createDataURL(8, 0); }
-  catch (e) { console.error(e); return ''; }
+// QR digambar sendiri di kanvas supaya logo bisa dicap di tengahnya. Level H karena tengah tertutup logo.
+function buildQrCanvas(text, size, logoImg) {
+  const q = qrcode(0, 'H'); q.addData(text); q.make();
+  const n = q.getModuleCount(), quiet = 2;
+  const cell = Math.max(1, Math.floor(size / (n + quiet * 2)));
+  const total = cell * (n + quiet * 2);
+  const c = document.createElement('canvas'); c.width = c.height = total;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
+  x.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+  }
+  if (logoImg) {
+    const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
+    const lh = Math.round((plate - pad * 2) * (logoImg.naturalHeight / logoImg.naturalWidth));
+    const lw = plate - pad * 2;
+    const px = Math.round((total - plate) / 2);
+    x.fillStyle = '#fff'; x.beginPath();
+    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+    x.fill();
+    x.drawImage(logoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+  }
+  return c;
 }
 
 const fNama = document.getElementById('fNama');
@@ -227,15 +259,20 @@ const fId = document.getElementById('fId');
 const fTelp = document.getElementById('fTelp');
 const fFoto = document.getElementById('fFoto');
 
+// Kode tanda tangan tetap dari panel (dibuat lewat tombol "Cetak kartu"). Tanpa ini,
+// QR di belakang kartu tidak bisa diverifikasi -- hanya berisi ID tanpa bukti keasliannya.
+let KARTU_K = '';
+
 // Kalau dibuka dari panel (tombol "Cetak kartu" di tab Driver), data asli driver
 // sudah dikirim lewat alamat, jadi tidak perlu ketik ulang -- ID selalu persis sama
 // dengan driver_code di database, supaya QR di belakang kartu pasti bisa diverifikasi.
 (function isiDariPanel() {
   const q = new URLSearchParams(location.search);
-  const nama = q.get('nama'), id = q.get('id'), telp = q.get('telp'), foto = q.get('foto');
+  const nama = q.get('nama'), id = q.get('id'), telp = q.get('telp'), foto = q.get('foto'), k = q.get('k');
   if (nama) fNama.value = nama;
   if (id) fId.value = id;
   if (telp) fTelp.value = telp;
+  if (k) KARTU_K = k;
   if (foto) {
     const fp = document.getElementById('frontPhoto');
     fp.src = foto; fp.style.display = 'block';
@@ -264,9 +301,12 @@ function refresh() {
   document.getElementById('frontInit').textContent = initials(nama);
   document.getElementById('photoInit').textContent = initials(nama);
 
-  document.getElementById('qrimg').src = qrDataUrl(
-    'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html?d=' + encodeURIComponent(id)
-  );
+  const base = 'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html';
+  const target = KARTU_K
+    ? `${base}?d=${encodeURIComponent(id)}&k=${encodeURIComponent(KARTU_K)}`
+    : `${base}?d=${encodeURIComponent(id)}`;
+  const c = buildQrCanvas(target, 220, qrLogoImg);
+  document.getElementById('qrimg').src = c.toDataURL('image/png');
 }
 [fNama, fId, fTelp].forEach((el) => el.addEventListener('input', refresh));
 
@@ -300,8 +340,8 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
   finally { btn.disabled = false; btn.textContent = old; }
 });
 
+pasangLogo().then(refresh);
 refresh();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 </html>
