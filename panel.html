@@ -109,6 +109,7 @@ dl.det dd{margin:0}
 <div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
 <div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
@@ -155,7 +156,7 @@ document.addEventListener('click', async (e) => {
   const b = e.target.closest('[data-rotate]');
   if (!b) return;
   const slug = b.dataset.rotate;
-  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya.')) return;
+  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya (termasuk kartu cetak yang sudah ada).')) return;
   b.disabled = true;
   const r = await sb.rpc('rotate_driver_card', { p_slug: slug });
   b.disabled = false;
@@ -163,6 +164,73 @@ document.addEventListener('click', async (e) => {
   S.cards[slug] = r.data;
   toast('Token diganti. Kirim link ID card yang baru ke driver.');
   if (VIEWS.driver && location.hash === '#driver') nav('driver');
+});
+
+/* ---------- HMAC (sama persis dengan yang dipakai function verifikasi) ---------- */
+// Dipakai untuk membuat kode QR referral (opsional, kosmetik) dan kode tetap kartu cetak
+// (wajib sama supaya verifikasi.html bisa mengenalinya). token driver_cards dipakai sebagai kunci.
+const encHmac = new TextEncoder();
+async function hmacHex(key, msg) {
+  const k = await crypto.subtle.importKey('raw', encHmac.encode(key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', k, encHmac.encode(msg));
+  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* ---------- QR referral dengan logo (dibuat langsung di panel) ---------- */
+const QR_LOGO_SRC = 'images/logo_sky_blue_transparent.png';
+function loadImg(src) {
+  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+}
+async function makeQR(text, size) {
+  const q = qrcode(0, 'H');            // level H: tahan logo di tengah
+  q.addData(text); q.make();
+  const n = q.getModuleCount(), quiet = 4;
+  const cell = Math.floor(size / (n + quiet * 2)), total = cell * (n + quiet * 2);
+  const c = document.createElement('canvas'); c.width = c.height = total;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
+  x.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+  }
+  try {
+    const img = await loadImg(QR_LOGO_SRC);
+    const t = document.createElement('canvas'); t.width = 1328; t.height = 1287;
+    const tx = t.getContext('2d');
+    tx.drawImage(img, 0, 151, 1328, 1287, 0, 0, 1328, 1287);   // potong bagian kosong atas
+    tx.globalCompositeOperation = 'source-in';
+    tx.fillStyle = '#0891b2'; tx.fillRect(0, 0, 1328, 1287);    // warnai teal
+    const plate = Math.round(total * 0.20), pad = Math.round(plate * 0.06);
+    const lw = plate - pad * 2, lh = Math.round(lw * 1287 / 1328);
+    const px = Math.round((total - plate) / 2);
+    x.fillStyle = '#fff'; x.beginPath();
+    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+    x.fill();
+    x.drawImage(t, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+  } catch (_e) { /* logo gagal dimuat: QR tetap valid tanpa logo */ }
+  return c;
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-qr]');
+  if (!b) return;
+  const url = b.dataset.qr;
+  if (!url) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
+  if (typeof qrcode !== 'function') { toast('Pustaka QR belum termuat, muat ulang halaman', true); return; }
+  const c = await makeQR(url, 720);
+  const nama = b.dataset.qrname || 'driver';
+  openModal(`
+    <h2>QR referral</h2>
+    <div style="text-align:center"><div id="qrHolder"></div>
+    <div class="small" style="word-break:break-all;margin-top:8px">${esc(url)}</div></div>
+    <div class="mbtns"><button class="btn ghost" id="qrClose" type="button">Tutup</button><button class="btn" id="qrDl" type="button">Unduh PNG</button></div>`);
+  c.style.width = '100%'; c.style.maxWidth = '320px'; c.style.height = 'auto';
+  $('#qrHolder').appendChild(c);
+  $('#qrClose').addEventListener('click', closeModal);
+  $('#qrDl').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = c.toDataURL('image/png'); a.download = `qr-${nama}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+  });
 });
 
 const S = { drivers: [], siteUrl: '', cards: {} };
@@ -533,7 +601,7 @@ const RES = {
       { key: 'phone', label: 'WA', render: (r) => r.phone ? `${esc(r.phone)} <a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none;margin-left:4px">Kirim pesan</a>` : '-' },
       { key: 'plate', label: 'Plat', render: (r) => r.plate || '-' },
       { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
-      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } },
+      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u)}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`; } },
       { key: 'card', label: 'ID Card', render: (r) => {
           const tok = S.cards[r.slug];
           const u = (S.siteUrl && tok) ? `${S.siteUrl}/kartu.html?t=${tok}` : '';
@@ -541,22 +609,20 @@ const RES = {
         } },
       { key: 'cetak', label: 'Kartu Cetak', render: (r) => {
           if (!S.siteUrl) return '<span class="small">Isi site_url dulu</span>';
-          if (!r.driver_code) return '<span class="small">-</span>';
-          const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '' });
-          if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
-          return `<a class="btn ghost sm" href="${esc(S.siteUrl)}/kartu-anggota.html?${p.toString()}" target="_blank" rel="noopener" style="text-decoration:none">Cetak kartu</a>`;
+          if (!r.driver_code || !S.cards[r.slug]) return '<span class="small">Kode ID/token belum ada</span>';
+          return `<button class="btn ghost sm" type="button" data-print="${esc(r.slug)}">Cetak kartu</button>`;
         } }],
     fields: [
-      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true },
+      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true, createOnly: true },
       { key: 'name', label: 'Nama', type: 'text', required: true },
       { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
       { key: 'plate', label: 'Plat nomor kendaraan', type: 'text' },
       { key: 'base', label: 'Basis / kota', type: 'text' },
       { key: 'vehicle_type', label: 'Jenis kendaraan', type: 'text' },
       { key: 'motto', label: 'Motto', type: 'text' },
-      { key: 'photo_url', label: 'Foto (alamat)', type: 'text', full: true },
+      { key: 'photo_url', label: 'Foto (pilih dari galeri HP)', type: 'photo', full: true },
       { key: 'is_active', label: 'Aktif', type: 'bool' }],
-    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama.</div>'
+    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama dan kartu cetak yang sudah dibuat.</div>'
   },
   template: {
     table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
@@ -568,6 +634,24 @@ const RES = {
   }
 };
 for (const key of Object.keys(RES)) VIEWS[key] = () => viewCrud(key);
+
+// Tombol "Cetak kartu": buka kartu-anggota.html dengan data driver + kode tanda tangan tetap,
+// supaya QR di kartu bisa diverifikasi (lihat function verifikasi, jenis "kartu cetak").
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-print]');
+  if (!b) return;
+  const slug = b.dataset.print;
+  const r = S.drivers.find((x) => x.slug === slug);
+  const tok = S.cards[slug];
+  if (!r || !tok || !r.driver_code || !S.siteUrl) { toast('Data driver, kode ID, token kartu, atau alamat situs belum lengkap', true); return; }
+  b.disabled = true;
+  try {
+    const k = (await hmacHex(tok, `${r.driver_code}.cetak`)).slice(0, 20);
+    const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '', k });
+    if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
+    window.open(`${S.siteUrl}/kartu-anggota.html?${p.toString()}`, '_blank');
+  } finally { b.disabled = false; }
+});
 
 let ROWS = {};
 async function viewCrud(key) {
@@ -586,6 +670,14 @@ async function viewCrud(key) {
 }
 function fieldHTML(f, val, disabled) {
   const id = 'f_' + f.key, cls = f.full ? ' class="full"' : '';
+  if (f.type === 'photo') {
+    const prev = val ? `<img src="${esc(val)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">` : '';
+    return `<div${cls}><label>${esc(f.label)}</label>
+      <div id="${id}_prev">${prev}</div>
+      <input type="file" id="${id}_file" accept="image/*">
+      <input type="hidden" id="${id}" value="${esc(val || '')}">
+      <div class="help" id="${id}_status">&nbsp;</div></div>`;
+  }
   if (f.type === 'bool') return `<div${cls}><label class="chk"><input type="checkbox" id="${id}" ${val ? 'checked' : ''}> ${esc(f.label)}</label></div>`;
   if (f.type === 'textarea') return `<div${cls}><label>${esc(f.label)}<textarea id="${id}" rows="${f.rows || 4}">${esc(val == null ? '' : val)}</textarea></label></div>`;
   const type = f.type === 'number' ? 'number' : (f.type === 'datetime' ? 'datetime-local' : 'text');
@@ -613,6 +705,33 @@ function openForm(key, row) {
       <button class="btn ghost" id="mCancel" type="button">Batal</button>
       <button class="btn" id="mSave" type="button">Simpan</button>
     </div>`);
+  if (key === 'driver' && isNew) {
+    const nameEl = $('#f_name'), slugEl = $('#f_slug');
+    let slugTouched = false;
+    slugEl.addEventListener('input', () => { slugTouched = true; });
+    nameEl.addEventListener('input', () => {
+      if (slugTouched) return;
+      slugEl.value = nameEl.value.toLowerCase().trim()
+        .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+    });
+  }
+  const photoField = R.fields.find((f) => f.type === 'photo');
+  if (photoField) {
+    const pid = 'f_' + photoField.key;
+    const fileEl = $('#' + pid + '_file'), hiddenEl = $('#' + pid), statusEl = $('#' + pid + '_status');
+    fileEl.addEventListener('change', async () => {
+      const file = fileEl.files[0]; if (!file) return;
+      statusEl.textContent = 'Mengunggah…';
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const up = await sb.storage.from('driver-photos').upload(path, file, { upsert: false });
+      if (up.error) { statusEl.textContent = 'Gagal unggah: ' + up.error.message; return; }
+      const pub = sb.storage.from('driver-photos').getPublicUrl(path).data.publicUrl;
+      hiddenEl.value = pub;
+      $('#' + pid + '_prev').innerHTML = `<img src="${esc(pub)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">`;
+      statusEl.textContent = 'Terunggah';
+    });
+  }
   $('#mCancel').addEventListener('click', closeModal);
   $('#mSave').addEventListener('click', () => saveForm(key, row));
   if ($('#mDel')) $('#mDel').addEventListener('click', async () => {
