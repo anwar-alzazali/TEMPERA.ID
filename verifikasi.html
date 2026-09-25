@@ -1,27 +1,40 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Verifikasi</title>
 <style>
-  :root{
-    --accent:#0891b2;
-    --ink:#0f172a;
-    --muted:#64748b;
-    --line:#e2e8f0;
-    --bg:#f1f5f9;
-  }
+  :root{--accent:#0891b2;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
   .wrap{max-width:480px;margin:0 auto;padding:20px 16px 40px}
   #card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(15,23,42,.08)}
-
   .band{background:var(--accent);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px}
   .band img{height:26px;width:auto;max-width:70px;object-fit:contain}
   .band span{font-size:11px;font-weight:800;letter-spacing:.1em;opacity:.92}
-
   .hero{padding:26px 20px 18px;text-align:center}
   .icon{width:64px;height:64px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:30px}
   .icon.ok{background:#dcfce7;color:#166534}
@@ -30,12 +43,10 @@
   .icon.grey{background:#e2e8f0;color:#475569}
   .title{font-size:18px;font-weight:800}
   .sub{color:var(--muted);font-size:12.5px;margin-top:4px}
-
   .body{padding:0 20px 22px}
   .photo{width:76px;height:76px;border-radius:50%;margin:0 auto 10px;overflow:hidden;border:3px solid var(--accent);background:var(--accent);display:flex;align-items:center;justify-content:center}
   .photo img{width:100%;height:100%;object-fit:cover}
   .photo .init{color:#fff;font-size:26px;font-weight:800}
-
   dl.det{display:grid;grid-template-columns:110px 1fr;gap:7px 12px;margin:0}
   dl.det dt{color:var(--muted);font-size:11.5px}
   dl.det dd{margin:0;font-weight:600}
@@ -44,9 +55,7 @@
   .route{list-style:none;margin:0;padding:0;font-size:13px}
   .route li{padding:3px 0}
   .route b{color:var(--accent)}
-
   .plate{display:inline-block;margin-top:2px;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:14px;letter-spacing:.06em;border:2px solid var(--ink);border-radius:7px;padding:2px 10px}
-
   .foot{padding:14px 20px;background:#f8fafc;text-align:center;color:var(--muted);font-size:11px}
   .time{text-align:center;color:var(--muted);font-size:11px;margin-top:14px}
   .state-page{background:#fff;border-radius:18px;padding:40px 20px;text-align:center;color:var(--muted)}
@@ -55,161 +64,40 @@
 </head>
 <body>
 <div class="wrap"><div id="root"><div class="state-page">Memeriksa&hellip;</div></div></div>
-
 <script>
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
 const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const FALLBACK_CO = { name: 'Tempera', tagline: '', logo_url: '', site_url: '' };
-
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function imgSrc(u, site) {
-  if (!u) return '';
-  if (/^(https?:|data:)/i.test(u)) return u;
-  return (site ? site + '/' : '') + u.replace(/^\/+/, '');
-}
-function initials(name) {
-  const w = String(name || '').trim().split(/\s+/).filter(Boolean);
-  return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
-}
-function tglPanjang(iso) {
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || ''));
-  return m ? `${+m[3]} ${BULAN[+m[2] - 1]} ${m[1]}` : (iso || '-');
-}
-function waktuWIB(iso) {
-  if (!iso) return '-';
-  try { return new Date(iso).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' WIB'; }
-  catch (_e) { return String(iso); }
-}
-// Logo satu warna putih di atas band, sama seperti surat jalan & kartu.
-function tintLogo(url, color) {
-  return new Promise((resolve) => {
-    const im = new Image(); im.crossOrigin = 'anonymous';
-    im.onload = () => {
-      try {
-        const k = Math.min(1, 300 / Math.max(im.naturalWidth, im.naturalHeight));
-        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
-        const c = document.createElement('canvas'); c.width = w; c.height = h;
-        const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
-        const px = x.getImageData(0, 0, w, h).data;
-        let x0 = w, y0 = h, x1 = -1, y1 = -1;
-        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
-          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
-        }
-        if (x1 < 0) return resolve('');
-        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
-        const x2 = c2.getContext('2d');
-        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
-        x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
-        resolve(c2.toDataURL('image/png'));
-      } catch (_e) { resolve(''); }
-    };
-    im.onerror = () => resolve('');
-    im.src = url;
-  });
-}
-
-function band(co) {
-  const logo = co.logo_url ? `<img id="bandlogo" src="${esc(imgSrc(co.logo_url, co.site_url))}" crossorigin="anonymous" alt="">` : '';
-  return `<div class="band">${logo}<span>VERIFIKASI ${esc((co.name || 'TEMPERA').toUpperCase())}</span></div>`;
-}
+function imgSrc(u, site) { if (!u) return ''; if (/^(https?:|data:)/i.test(u)) return u; return (site ? site + '/' : '') + u.replace(/^\/+/, ''); }
+function initials(name) { const w = String(name || '').trim().split(/\s+/).filter(Boolean); return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase(); }
+function tglPanjang(iso) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || '')); return m ? `${+m[3]} ${BULAN[+m[2] - 1]} ${m[1]}` : (iso || '-'); }
+function waktuWIB(iso) { if (!iso) return '-'; try { return new Date(iso).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' WIB'; } catch (_e) { return String(iso); } }
+function tintLogo(url, color) { return new Promise((resolve) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => { try { const k = Math.min(1, 300 / Math.max(im.naturalWidth, im.naturalHeight)); const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k)); const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h); const px = x.getImageData(0, 0, w, h).data; let x0 = w, y0 = h, x1 = -1, y1 = -1; for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) { if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; } } if (x1 < 0) return resolve(''); const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1; const x2 = c2.getContext('2d'); x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height); x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height); resolve(c2.toDataURL('image/png')); } catch (_e) { resolve(''); } }; im.onerror = () => resolve(''); im.src = url; }); }
+function band(co) { const logo = co.logo_url ? `<img id="bandlogo" src="${esc(imgSrc(co.logo_url, co.site_url))}" crossorigin="anonymous" alt="">` : ''; return `<div class="band">${logo}<span>VERIFIKASI ${esc((co.name || 'TEMPERA').toUpperCase())}</span></div>`; }
 function heroIcon(kind, glyph) { return `<div class="icon ${kind}">${glyph}</div>`; }
-
-// ---------- tampilan hasil verifikasi SURAT JALAN ----------
 function suratView(d) {
   const co = d.company || FALLBACK_CO;
-  if (d.status === 'tidak_valid' || d.status === 'kedaluwarsa_qr') {
-    return `${band(co)}<div class="hero">${heroIcon('bad', '&times;')}<div class="title">Kode Tidak Valid</div><div class="sub">Surat jalan ini tidak dapat diverifikasi. Kemungkinan tautan salah atau rusak.</div></div>`;
-  }
-  if (d.status === 'diganti') {
-    return `${band(co)}<div class="hero">${heroIcon('warn', '&#8635;')}<div class="title">Surat Sudah Diganti</div>
-      <div class="sub">${esc(d.sj_no)} revisi ${esc(d.rev)} sudah tidak berlaku.<br>Revisi terbaru: <b>Rev ${esc(d.rev_terbaru)}</b>. Minta driver menunjukkan surat terbaru.</div></div>`;
-  }
-
+  if (d.status === 'tidak_valid' || d.status === 'kedaluwarsa_qr') { return `${band(co)}<div class="hero">${heroIcon('bad', '&times;')}<div class="title">Kode Tidak Valid</div><div class="sub">Surat jalan ini tidak dapat diverifikasi.</div></div>`; }
+  if (d.status === 'diganti') { return `${band(co)}<div class="hero">${heroIcon('warn', '&#8635;')}<div class="title">Surat Sudah Diganti</div><div class="sub">${esc(d.sj_no)} revisi ${esc(d.rev)} sudah tidak berlaku.<br>Revisi terbaru: <b>Rev ${esc(d.rev_terbaru)}</b></div></div>`; }
   const s = d.surat, dr = d.driver;
-  const cfg = {
-    sah:            { kind: 'ok',   glyph: '&#10003;', title: 'Surat Jalan Sah' },
-    dibatalkan:     { kind: 'bad',  glyph: '&times;',  title: 'Dibatalkan' },
-    tidak_berlaku:  { kind: 'bad',  glyph: '&times;',  title: 'Tidak Berlaku' },
-    lewat:          { kind: 'grey', glyph: '&#8987;',  title: 'Trip Sudah Lewat' },
-    driver_nonaktif:{ kind: 'warn', glyph: '&#9888;',  title: 'Driver Tidak Aktif' },
-  }[d.status] || { kind: 'grey', glyph: '?', title: d.status };
-
-  const nodes = Object.keys(WILAYAH)
-    .filter((k) => Array.isArray(s.destinations[k]) && s.destinations[k].length)
-    .map((k) => `<li><b>${WILAYAH[k]}:</b> ${s.destinations[k].map(esc).join(', ')}</li>`).join('');
-
-  const photo = dr.photo_url
-    ? `<img src="${esc(imgSrc(dr.photo_url, co.site_url))}" alt="" crossorigin="anonymous">`
-    : `<span class="init">${esc(initials(dr.name))}</span>`;
-
-  return `${band(co)}
-    <div class="hero">${heroIcon(cfg.kind, cfg.glyph)}<div class="title">${cfg.title}</div>
-      <div class="sub">${esc(s.sj_no)} &middot; Rev ${esc(s.rev)}${d.hari_ini ? ' &middot; Trip hari ini' : ''}</div></div>
-    <div class="body">
-      <div class="photo">${photo}</div>
-      <dl class="det">
-        <dt>Mitra pengemudi</dt><dd>${esc(dr.name || '-')} (${esc(dr.code || '-')})</dd>
-        <dt>Kendaraan</dt><dd>${esc(dr.vehicle_type || '-')}</dd>
-        <dt>Plat nomor</dt><dd><span class="plate">${esc(dr.plate || '-')}</span></dd>
-      </dl>
-      <div class="sec">
-        <h3>Perjalanan</h3>
-        <dl class="det">
-          <dt>Pemesan</dt><dd>${esc(s.customer_name || '-')}</dd>
-          <dt>Tanggal</dt><dd>${esc(tglPanjang(s.trip_date))}, ${esc(s.trip_time || '-')}</dd>
-          <dt>Peserta</dt><dd>${esc(s.pax != null ? s.pax : '-')} orang</dd>
-          <dt>Armada</dt><dd>${esc(s.fleet_name || '-')}</dd>
-        </dl>
-      </div>
-      ${nodes ? `<div class="sec"><h3>Destinasi</h3><ul class="route">${nodes}</ul></div>` : ''}
-    </div>
-    <div class="time">Diperiksa ${esc(waktuWIB(d.cek_pada))}</div>`;
+  const cfg = { sah: { kind: 'ok', glyph: '&#10003;', title: 'Surat Jalan Sah' }, dibatalkan: { kind: 'bad', glyph: '&times;', title: 'Dibatalkan' }, tidak_berlaku: { kind: 'bad', glyph: '&times;', title: 'Tidak Berlaku' }, lewat: { kind: 'grey', glyph: '&#8987;', title: 'Trip Sudah Lewat' }, driver_nonaktif:{ kind: 'warn', glyph: '&#9888;', title: 'Driver Tidak Aktif' }, }[d.status] || { kind: 'grey', glyph: '?', title: d.status };
+  const nodes = Object.keys(WILAYAH).filter((k) => Array.isArray(s.destinations[k]) && s.destinations[k].length).map((k) => `<li><b>${WILAYAH[k]}:</b> ${s.destinations[k].map(esc).join(', ')}</li>`).join('');
+  const photo = dr.photo_url ? `<img src="${esc(imgSrc(dr.photo_url, co.site_url))}" alt="" crossorigin="anonymous">` : `<span class="init">${esc(initials(dr.name))}</span>`;
+  return `${band(co)}<div class="hero">${heroIcon(cfg.kind, cfg.glyph)}<div class="title">${cfg.title}</div><div class="sub">${esc(s.sj_no)} &middot; Rev ${esc(s.rev)}${d.hari_ini ? ' &middot; Trip hari ini' : ''}</div></div><div class="body"><div class="photo">${photo}</div><dl class="det"><dt>Mitra pengemudi</dt><dd>${esc(dr.name || '-')} (${esc(dr.code || '-')})</dd><dt>Kendaraan</dt><dd>${esc(dr.vehicle_type || '-')}</dd><dt>Plat nomor</dt><dd><span class="plate">${esc(dr.plate || '-')}</span></dd></dl><div class="sec"><h3>Perjalanan</h3><dl class="det"><dt>Pemesan</dt><dd>${esc(s.customer_name || '-')}</dd><dt>Tanggal</dt><dd>${esc(tglPanjang(s.trip_date))}, ${esc(s.trip_time || '-')}</dd><dt>Peserta</dt><dd>${esc(s.pax != null ? s.pax : '-')} orang</dd><dt>Armada</dt><dd>${esc(s.fleet_name || '-')}</dd></dl></div>${nodes ? `<div class="sec"><h3>Destinasi</h3><ul class="route">${nodes}</ul></div>` : ''}</div><div class="time">Diperiksa ${esc(waktuWIB(d.cek_pada))}</div>`;
 }
-
-// ---------- tampilan hasil verifikasi ID CARD DRIVER ----------
 function driverView(d) {
   const co = d.company || FALLBACK_CO;
-  if (d.status === 'tidak_valid') {
-    return `${band(co)}<div class="hero">${heroIcon('bad', '&times;')}<div class="title">Kode Tidak Valid</div><div class="sub">Kartu ini tidak dapat diverifikasi.</div></div>`;
-  }
-  if (d.status === 'kedaluwarsa_qr') {
-    return `${band(co)}<div class="hero">${heroIcon('grey', '&#8987;')}<div class="title">Kode Sudah Kedaluwarsa</div><div class="sub">Minta driver membuka ulang kartunya lalu pindai kode yang baru.</div></div>`;
-  }
-
+  if (d.status === 'tidak_valid') { return `${band(co)}<div class="hero">${heroIcon('bad', '&times;')}<div class="title">Kode Tidak Valid</div><div class="sub">Kartu ini tidak dapat diverifikasi.</div></div>`; }
+  if (d.status === 'kedaluwarsa_qr') { return `${band(co)}<div class="hero">${heroIcon('grey', '&#8987;')}<div class="title">Kode Sudah Kedaluwarsa</div><div class="sub">Minta driver membuka ulang kartunya.</div></div>`; }
   const dr = d.driver;
-  const cfg = {
-    aktif:      { kind: 'ok',   glyph: '&#10003;', title: 'Mitra Aktif' },
-    nonaktif:   { kind: 'bad',  glyph: '&times;',  title: 'Mitra Tidak Aktif' },
-    masa_habis: { kind: 'warn', glyph: '&#9888;',  title: 'Masa Berlaku Kartu Habis' },
-  }[d.status] || { kind: 'grey', glyph: '?', title: d.status };
-
-  const photo = dr.photo_url
-    ? `<img src="${esc(imgSrc(dr.photo_url, co.site_url))}" alt="" crossorigin="anonymous">`
-    : `<span class="init">${esc(initials(dr.name))}</span>`;
-
-  return `${band(co)}
-    <div class="hero">${heroIcon(cfg.kind, cfg.glyph)}<div class="title">${cfg.title}</div></div>
-    <div class="body">
-      <div class="photo">${photo}</div>
-      <dl class="det">
-        <dt>Nama</dt><dd>${esc(dr.name || '-')}</dd>
-        <dt>ID Mitra</dt><dd>${esc(dr.code || '-')}</dd>
-        <dt>Kendaraan</dt><dd>${esc(dr.vehicle_type || '-')}</dd>
-        <dt>Plat nomor</dt><dd><span class="plate">${esc(dr.plate || '-')}</span></dd>
-      </dl>
-    </div>
-    <div class="time">Diperiksa ${esc(waktuWIB(d.cek_pada))}</div>`;
+  const cfg = { aktif: { kind: 'ok', glyph: '&#10003;', title: 'Mitra Aktif' }, nonaktif: { kind: 'bad', glyph: '&times;', title: 'Mitra Tidak Aktif' }, masa_habis: { kind: 'warn', glyph: '&#9888;', title: 'Masa Berlaku Kartu Habis' }, }[d.status] || { kind: 'grey', glyph: '?', title: d.status };
+  const photo = dr.photo_url ? `<img src="${esc(imgSrc(dr.photo_url, co.site_url))}" alt="" crossorigin="anonymous">` : `<span class="init">${esc(initials(dr.name))}</span>`;
+  return `${band(co)}<div class="hero">${heroIcon(cfg.kind, cfg.glyph)}<div class="title">${cfg.title}</div></div><div class="body"><div class="photo">${photo}</div><dl class="det"><dt>Nama</dt><dd>${esc(dr.name || '-')}</dd><dt>ID Mitra</dt><dd>${esc(dr.code || '-')}</dd><dt>Kendaraan</dt><dd>${esc(dr.vehicle_type || '-')}</dd><dt>Plat nomor</dt><dd><span class="plate">${esc(dr.plate || '-')}</span></dd></dl></div><div class="time">Diperiksa ${esc(waktuWIB(d.cek_pada))}</div>`;
 }
-
-async function tintAll() {
-  const lg = document.getElementById('bandlogo');
-  if (!lg) return;
-  const u = await tintLogo(lg.src, '#ffffff');
-  if (u) lg.src = u;
-}
-
+async function tintAll() { const lg = document.getElementById('bandlogo'); if (!lg) return; const u = await tintLogo(lg.src, '#ffffff'); if (u) lg.src = u; }
 async function load() {
   const root = document.getElementById('root');
   const p = new URLSearchParams(location.search);
@@ -217,7 +105,10 @@ async function load() {
   if (p.get('n')) {
     url = `${SB_URL}/functions/v1/verifikasi?n=${encodeURIComponent(p.get('n'))}&r=${encodeURIComponent(p.get('r') || '')}&c=${encodeURIComponent(p.get('c') || '')}`;
   } else if (p.get('d')) {
-    url = `${SB_URL}/functions/v1/verifikasi?d=${encodeURIComponent(p.get('d'))}&w=${encodeURIComponent(p.get('w') || '')}&s=${encodeURIComponent(p.get('s') || '')}`;
+    // FIX: support k (cetak lama) sebagai alias s, dan w sebagai alias k juga
+    const sParam = p.get('s') || p.get('k') || p.get('c') || '';
+    const wParam = p.get('w') || '';
+    url = `${SB_URL}/functions/v1/verifikasi?d=${encodeURIComponent(p.get('d'))}&w=${encodeURIComponent(wParam)}&s=${encodeURIComponent(sParam)}&k=${encodeURIComponent(sParam)}`;
   } else {
     root.innerHTML = '<div id="card"><div class="state-page err">Kode verifikasi tidak lengkap.</div></div>';
     return;
@@ -236,5 +127,5 @@ async function load() {
 }
 load();
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
