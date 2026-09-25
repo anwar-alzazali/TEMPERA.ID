@@ -189,15 +189,43 @@ function tintLogo(url, color) {
   });
 }
 
-// QR sebagai gambar (data URL). Bila pustaka gagal dimuat, kembalikan '' agar ada cadangan teks.
-function qrDataUrl(text) {
+// Menyiapkan logo teal sekali (dipakai di tengah QR). Mengembalikan Image siap-pakai, atau null bila gagal.
+async function siapkanLogoQr(co, site) {
+  if (!co || !co.logo_url) return null;
   try {
-    if (typeof qrcode !== 'function') return '';
-    const q = qrcode(0, 'M');
-    q.addData(text);
-    q.make();
-    return q.createDataURL(6, 0);
-  } catch (e) { console.error('QR gagal', e); return ''; }
+    const tinted = await tintLogo(imgSrc(co.logo_url, site), '#0891b2');
+    if (!tinted) return null;
+    const im = new Image();
+    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = tinted; });
+    return im.naturalWidth ? im : null;
+  } catch (_e) { return null; }
+}
+
+// QR digambar sendiri di kanvas (bukan lewat createDataURL) supaya logo bisa dicap di tengahnya.
+// Level H dipakai karena tengah QR tertutup logo.
+function buildQrCanvas(text, size, logoImg) {
+  const q = qrcode(0, 'H'); q.addData(text); q.make();
+  const n = q.getModuleCount(), quiet = 2;
+  const cell = Math.max(1, Math.floor(size / (n + quiet * 2)));
+  const total = cell * (n + quiet * 2);
+  const c = document.createElement('canvas'); c.width = c.height = total;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
+  x.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+  }
+  if (logoImg) {
+    const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
+    const lh = Math.round((plate - pad * 2) * (logoImg.naturalHeight / logoImg.naturalWidth));
+    const lw = plate - pad * 2;
+    const px = Math.round((total - plate) / 2);
+    x.fillStyle = '#fff'; x.beginPath();
+    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+    x.fill();
+    x.drawImage(logoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+  }
+  return c;
 }
 
 // Kota di lengkungan bawah stempel (ubah di sini bila pindah kota)
@@ -250,7 +278,7 @@ function stampSvg(co, s, state) {
   </svg>`;
 }
 
-function buildSurat(d) {
+function buildSurat(d, qrLogoImg) {
   const s = d.surat, co = d.company, sg = d.signer, site = d.site_url || '';
 
   const logo = co.logo_url ? `<img src="${esc(imgSrc(co.logo_url, site))}" alt="${esc(co.name)}" crossorigin="anonymous">` : '';
@@ -281,10 +309,13 @@ function buildSurat(d) {
   if (!verifyUrl) {
     verifyUrl = new URL(`verifikasi.html?n=${encodeURIComponent(d.verify.n)}&r=${d.verify.r}&c=${d.verify.c}`, location.href).href;
   }
-  const qr = qrDataUrl(verifyUrl);
-  const qrBlock = qr
-    ? `<img src="${qr}" alt="QR verifikasi">`
-    : `<div class="noqr">${esc(verifyUrl)}</div>`;
+  let qrBlock;
+  if (typeof qrcode === 'function') {
+    const c = buildQrCanvas(verifyUrl, 240, qrLogoImg);
+    qrBlock = `<img src="${c.toDataURL('image/png')}" alt="QR verifikasi">`;
+  } else {
+    qrBlock = `<div class="noqr">${esc(verifyUrl)}</div>`;
+  }
 
   // stempel: gambar milikmu (bila diisi di Pengaturan) atau stempel bawaan
   const stamp = sg.stamp_url
@@ -371,7 +402,8 @@ async function load() {
       root.innerHTML = `<div class="state-page err">${esc(d.error || 'Surat jalan tidak dapat dibuka.')}</div>`;
       return;
     }
-    root.innerHTML = buildSurat(d);
+    const qrLogoImg = await siapkanLogoQr(d.company, d.site_url || '');
+    root.innerHTML = buildSurat(d, qrLogoImg);
     const lg = root.querySelector('.brand img');
     if (LOGO_WARNA && lg) { const u = await tintLogo(lg.src, '#ffffff'); if (u) lg.src = u; }
     document.title = 'Surat Jalan ' + d.surat.sj_no + ' rev ' + d.surat.rev;
