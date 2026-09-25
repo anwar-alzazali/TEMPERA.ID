@@ -190,10 +190,12 @@ async function makeQR(text, size) {
     tx.drawImage(img, 0, 151, 1328, 1287, 0, 0, 1328, 1287);   // potong bagian kosong atas
     tx.globalCompositeOperation = 'source-in';
     tx.fillStyle = '#0891b2'; tx.fillRect(0, 0, 1328, 1287);    // warnai teal
-    const plate = Math.round(total * 0.24), pad = Math.round(plate * 0.14);
+    const plate = Math.round(total * 0.20), pad = Math.round(plate * 0.06);
     const lw = plate - pad * 2, lh = Math.round(lw * 1287 / 1328);
     const px = Math.round((total - plate) / 2);
-    x.fillStyle = '#fff'; x.fillRect(px, px, plate, plate);
+    x.fillStyle = '#fff'; x.beginPath();
+    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+    x.fill();
     x.drawImage(t, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
   } catch (_e) { /* logo gagal dimuat: QR tetap valid tanpa logo */ }
   return c;
