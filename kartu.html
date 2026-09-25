@@ -88,14 +88,7 @@ function initials(name) {
   const w = String(name || '').trim().split(/\s+/).filter(Boolean);
   return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
 }
-function qrDataUrl(text) {
-  try {
-    if (typeof qrcode !== 'function') return '';
-    const q = qrcode(0, 'M'); q.addData(text); q.make();
-    return q.createDataURL(6, 0);
-  } catch (e) { console.error('QR gagal', e); return ''; }
-}
-// Logo satu warna (putih), sama seperti surat jalan.
+// Logo satu warna, dipakai untuk header (putih) dan untuk tengah QR (teal), tersimpan terpotong pas.
 function tintLogo(url, color) {
   return new Promise((resolve) => {
     const im = new Image(); im.crossOrigin = 'anonymous';
@@ -121,6 +114,45 @@ function tintLogo(url, color) {
     im.onerror = () => resolve('');
     im.src = url;
   });
+}
+
+// Logo teal untuk tengah QR: dimuat sekali per kunjungan, dipakai berulang tiap kode QR berganti.
+let qrLogoImg = null;
+async function prepQrLogo(co, site) {
+  if (!co || !co.logo_url) return;
+  try {
+    const tinted = await tintLogo(imgSrc(co.logo_url, site), '#0891b2');
+    if (!tinted) return;
+    const im = new Image();
+    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = tinted; });
+    if (im.naturalWidth) qrLogoImg = im;
+  } catch (_e) { /* logo gagal disiapkan: QR tetap valid tanpa logo */ }
+}
+// QR digambar sendiri (bukan lewat createDataURL) supaya logo bisa dicap di tengahnya.
+// Level H dipakai karena tengah QR tertutup logo.
+function buildQrCanvas(text, size) {
+  const q = qrcode(0, 'H'); q.addData(text); q.make();
+  const n = q.getModuleCount(), quiet = 2;
+  const cell = Math.max(1, Math.floor(size / (n + quiet * 2)));
+  const total = cell * (n + quiet * 2);
+  const c = document.createElement('canvas'); c.width = c.height = total;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
+  x.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+  }
+  if (qrLogoImg) {
+    const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
+    const lh = Math.round((plate - pad * 2) * (qrLogoImg.naturalHeight / qrLogoImg.naturalWidth));
+    const lw = plate - pad * 2;
+    const px = Math.round((total - plate) / 2);
+    x.fillStyle = '#fff'; x.beginPath();
+    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+    x.fill();
+    x.drawImage(qrLogoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+  }
+  return c;
 }
 
 const T = new URLSearchParams(location.search).get('t') || '';
@@ -198,7 +230,10 @@ function render() {
 
   document.getElementById('wm').textContent = `${dr.name} \u00B7 ${dr.code}`;
 
-  if (d.status === 'aktif' && d.qr.codes && d.qr.codes.length) tick();
+  if (d.status === 'aktif' && d.qr.codes && d.qr.codes.length) {
+    if (!qrLogoImg) prepQrLogo(co, site);  // disiapkan sekali; tick berikutnya otomatis pakai logo begitu siap
+    tick();
+  }
 }
 
 async function tintLogoInPlace() {
@@ -224,9 +259,9 @@ function tick() {
   }
   const w = d.qr.w0 + idx;
   const url = `${d.verify_base}?d=${encodeURIComponent(d.driver.code)}&w=${w}&s=${d.qr.codes[idx]}`;
-  const qr = qrDataUrl(url);
-  if (qr) {
-    img.src = qr; img.style.display = 'block';
+  if (typeof qrcode === 'function') {
+    const c = buildQrCanvas(url, 240);
+    img.src = c.toDataURL('image/png'); img.style.display = 'block';
     const old = img.parentElement.querySelector('.noqr'); if (old) old.remove();
   } else if (!img.parentElement.querySelector('.noqr')) {
     img.style.display = 'none';
