@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex,nofollow">
+<title>Kartu Mitra</title>
+<style>
+  :root{
+    --accent:#0891b2;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --bg:#0f172a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    margin:0;background:linear-gradient(180deg,#0f172a,#1e293b 60%,#0f172a);
+    color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px 14px;
+  }
+  img{-webkit-user-drag:none;pointer-events:none}
+  .wrap{width:100%;max-width:380px}
+
+  #card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+  .band{background:var(--accent);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:10px}
+  .band img{height:26px;width:auto;max-width:70px;object-fit:contain}
+  .band .t{font-size:11px;font-weight:800;letter-spacing:.14em}
+  .band .sub{font-size:10px;opacity:.85}
+
+  .state{padding:9px 18px;text-align:center;font-weight:800;font-size:12px;letter-spacing:.05em}
+  .state.ok{background:#dcfce7;color:#166534}
+  .state.bad{background:#fee2e2;color:#991b1b}
+  .state.warn{background:#fef3c7;color:#92400e}
+
+  .idbody{padding:22px 22px 18px;text-align:center}
+  .photo{width:104px;height:104px;border-radius:50%;margin:0 auto 12px;overflow:hidden;border:3px solid var(--accent);background:var(--accent);display:flex;align-items:center;justify-content:center}
+  .photo img{width:100%;height:100%;object-fit:cover}
+  .photo .init{color:#fff;font-size:34px;font-weight:800;letter-spacing:.02em}
+  .name{font-size:19px;font-weight:800;line-height:1.25}
+  .code{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--accent);font-weight:700;font-size:13px;letter-spacing:.06em;margin-top:2px}
+  .meta{color:var(--muted);font-size:12.5px;margin-top:6px}
+  .plate{display:inline-block;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:15px;letter-spacing:.08em;border:2px solid var(--ink);border-radius:8px;padding:3px 14px}
+
+  .perf{position:relative;border-top:2px dashed #cbd5e1;margin:0 22px}
+  .perf span{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#fff;padding:0 8px;font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+
+  .qrzone{padding:18px 22px 20px;text-align:center}
+  .qrbox{width:170px;height:170px;margin:0 auto;border:1px solid var(--line);border-radius:12px;padding:8px;position:relative;background:#fff}
+  .qrbox img{width:100%;height:100%;image-rendering:pixelated;display:block}
+  .qrbox .noqr{font-size:9.5px;color:var(--muted);word-break:break-all;padding:4px;overflow:hidden;max-height:100%}
+  .qrbox .clock{position:absolute;left:0;right:0;bottom:-22px;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .ring{width:14px;height:14px;margin:26px auto 0;border-radius:50%;border:2.5px solid var(--line);border-top-color:var(--accent);animation:spin 30s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hint{color:var(--muted);font-size:11.5px;margin-top:10px}
+  .valid{color:var(--muted);font-size:11px;margin-top:4px}
+
+  .foot{padding:12px 18px 18px;text-align:center;color:var(--muted);font-size:10.5px;background:#f8fafc}
+  .foot b{color:var(--ink)}
+
+  .state-page{background:#fff;border-radius:20px;padding:44px 20px;text-align:center;color:var(--muted)}
+  .state-page.err{color:#b91c1c}
+  .wm{position:fixed;left:0;right:0;bottom:6px;text-align:center;color:rgba(255,255,255,.35);font-size:9px;letter-spacing:.06em}
+</style>
+</head>
+<body oncontextmenu="return false">
+<div class="wrap">
+  <div id="root"><div class="state-page">Memuat kartu…</div></div>
+</div>
+<div class="wm" id="wm"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+const REQUEST_HOURS = 13;     // diminta sekali muat; server membatasi maks. 14 jam
+const REFRESH_MARGIN = 1200;  // ambil ulang bila sisa kode < 20 menit (detik)
+
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function imgSrc(u, site) {
+  if (!u) return '';
+  if (/^(https?:|data:)/i.test(u)) return u;
+  return (site ? site + '/' : '') + u.replace(/^\/+/, '');
+}
+function initials(name) {
+  const w = String(name || '').trim().split(/\s+/).filter(Boolean);
+  return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
+}
+function qrDataUrl(text) {
+  try {
+    if (typeof qrcode !== 'function') return '';
+    const q = qrcode(0, 'M'); q.addData(text); q.make();
+    return q.createDataURL(6, 0);
+  } catch (e) { console.error('QR gagal', e); return ''; }
+}
+// Logo satu warna (putih), sama seperti surat jalan.
+function tintLogo(url, color) {
+  return new Promise((resolve) => {
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const k = Math.min(1, 300 / Math.max(im.naturalWidth, im.naturalHeight));
+        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
+        const px = x.getImageData(0, 0, w, h).data;
+        let x0 = w, y0 = h, x1 = -1, y1 = -1;
+        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
+          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+        }
+        if (x1 < 0) return resolve('');
+        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
+        const x2 = c2.getContext('2d');
+        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
+        x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
+        resolve(c2.toDataURL('image/png'));
+      } catch (_e) { resolve(''); }
+    };
+    im.onerror = () => resolve('');
+    im.src = url;
+  });
+}
+
+const T = new URLSearchParams(location.search).get('t') || '';
+let clockOffset = 0;   // detik server dikurangi detik HP, supaya jam HP yang meleset tetap benar
+let state = null;      // respons terakhir dari get-driver-card
+let timer = null;
+let fetching = false;
+
+function nowSec() { return Math.floor(Date.now() / 1000) + clockOffset; }
+
+async function ambilKartu() {
+  const r = await fetch(`${SB_URL}/functions/v1/get-driver-card?t=${encodeURIComponent(T)}&h=${REQUEST_HOURS}`, {
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+  });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || 'Kartu tidak dapat dibuka');
+  return d;
+}
+
+function shell(inner, bandOnly) {
+  return `<div id="card">
+    <div class="band" id="band"><span class="t">KARTU MITRA</span></div>
+    ${inner}
+  </div>`;
+}
+
+function render() {
+  const root = document.getElementById('root');
+  const d = state, dr = d.driver, co = d.company, site = d.site_url || '';
+  const logo = co.logo_url ? `<img id="bandlogo" src="${esc(imgSrc(co.logo_url, site))}" alt="${esc(co.name)}" crossorigin="anonymous">` : '';
+
+  let banner = '';
+  if (d.status === 'nonaktif') banner = '<div class="state bad">MITRA TIDAK AKTIF</div>';
+  else if (d.status === 'masa_habis') banner = '<div class="state warn">MASA BERLAKU KARTU HABIS</div>';
+
+  const photo = dr.photo_url
+    ? `<img src="${esc(imgSrc(dr.photo_url, site))}" alt="${esc(dr.name)}" crossorigin="anonymous">`
+    : `<span class="init">${esc(initials(dr.name))}</span>`;
+
+  const meta = [dr.vehicle_type].filter(Boolean).map(esc).join(' &middot; ');
+  const validTxt = dr.valid_until
+    ? `Berlaku sampai ${esc(new Date(dr.valid_until).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }))}`
+    : '';
+
+  let qrSection;
+  if (d.status === 'aktif' && d.qr.codes && d.qr.codes.length) {
+    qrSection = `
+      <div class="perf"><span>Verifikasi mitra</span></div>
+      <div class="qrzone">
+        <div class="qrbox"><img id="qrimg" alt="QR verifikasi"><div class="clock" id="clk"></div></div>
+        <div class="ring" aria-hidden="true"></div>
+        <div class="hint">Kode berganti otomatis. Tunjukkan layar ini ke petugas untuk dipindai.</div>
+      </div>`;
+  } else {
+    qrSection = `<div class="qrzone"><div class="hint">Kode verifikasi tidak tersedia untuk status kartu ini.</div></div>`;
+  }
+
+  root.innerHTML = shell(`
+    ${banner}
+    <div class="idbody">
+      <div class="photo">${photo}</div>
+      <div class="name">${esc(dr.name)}</div>
+      <div class="code">ID ${esc(dr.code)}</div>
+      ${meta ? `<div class="meta">${meta}</div>` : ''}
+      ${dr.plate ? `<div class="plate">${esc(dr.plate)}</div>` : ''}
+    </div>
+    ${qrSection}
+    <div class="foot"><b>${esc(co.name)}</b>${co.tagline ? ' &middot; ' + esc(co.tagline) : ''}${validTxt ? '<br>' + validTxt : ''}<br>Tautan ini pribadi &mdash; jangan dibagikan ke orang lain.</div>
+  `);
+
+  const band = document.getElementById('band');
+  if (logo) { band.insertAdjacentHTML('afterbegin', logo); }
+  else { band.insertAdjacentHTML('beforeend', `<span class="sub">${esc(co.name)}</span>`); }
+  tintLogoInPlace();
+
+  document.getElementById('wm').textContent = `${dr.name} \u00B7 ${dr.code}`;
+
+  if (d.status === 'aktif' && d.qr.codes && d.qr.codes.length) tick();
+}
+
+async function tintLogoInPlace() {
+  const lg = document.getElementById('bandlogo');
+  if (!lg) return;
+  const u = await tintLogo(lg.src, '#ffffff');
+  if (u) lg.src = u;
+}
+
+function tick() {
+  clearTimeout(timer);
+  const d = state;
+  const n = nowSec();
+  const idx = Math.floor(n / d.qr.step) - d.qr.w0;
+  const img = document.getElementById('qrimg');
+  const clk = document.getElementById('clk');
+  if (!img) return; // tampilan sudah berganti (mis. status berubah)
+
+  if (idx < 0 || idx >= d.qr.codes.length) {
+    // kehabisan kode tersimpan: coba ambil lagi bila ada internet, kalau tidak tampilkan pesan
+    ambilUlangJikaPerlu(true);
+    return;
+  }
+  const w = d.qr.w0 + idx;
+  const url = `${d.verify_base}?d=${encodeURIComponent(d.driver.code)}&w=${w}&s=${d.qr.codes[idx]}`;
+  const qr = qrDataUrl(url);
+  if (qr) {
+    img.src = qr; img.style.display = 'block';
+    const old = img.parentElement.querySelector('.noqr'); if (old) old.remove();
+  } else if (!img.parentElement.querySelector('.noqr')) {
+    img.style.display = 'none';
+    img.insertAdjacentHTML('afterend', `<div class="noqr">${esc(url)}</div>`);
+  }
+
+  const sisaDetik = (idx + 1) * d.qr.step - (n - d.qr.w0 * d.qr.step);
+  if (clk) clk.textContent = 'Kode baru dalam ' + Math.max(1, sisaDetik) + ' detik';
+
+  // ambil kode baru lebih awal bila sisa simpanan menipis (dan ada internet)
+  const sisaSimpanan = (d.qr.w0 + d.qr.codes.length - Math.floor(n / d.qr.step)) * d.qr.step;
+  if (sisaSimpanan < REFRESH_MARGIN) ambilUlangJikaPerlu(false);
+
+  timer = setTimeout(tick, 1000);
+}
+
+async function ambilUlangJikaPerlu(paksa) {
+  if (fetching) return;
+  fetching = true;
+  try {
+    const d2 = await ambilKartu();
+    clockOffset = Math.round(d2.qr.server_now / 1000) - Math.floor(Date.now() / 1000);
+    state = d2;
+    if (d2.status !== 'aktif' || !d2.qr.codes || !d2.qr.codes.length) { render(); }
+    else if (paksa) { render(); }
+    // bila tidak dipaksa dan masih aktif, biarkan tick() jalan dengan data baru pada putaran berikutnya
+  } catch (e) {
+    console.error('gagal mengambil ulang kode', e);
+    const clk = document.getElementById('clk');
+    if (clk && paksa) clk.textContent = 'Tidak ada internet untuk memperbarui kode';
+  } finally {
+    fetching = false;
+    if (paksa) timer = setTimeout(tick, 1000);
+  }
+}
+
+async function load() {
+  const root = document.getElementById('root');
+  if (!/^[a-f0-9]{32}$/i.test(T)) { root.innerHTML = '<div class="state-page err">Link kartu tidak valid.</div>'; return; }
+  try {
+    const d = await ambilKartu();
+    clockOffset = Math.round(d.qr.server_now / 1000) - Math.floor(Date.now() / 1000);
+    state = d;
+    render();
+  } catch (e) {
+    console.error(e);
+    root.innerHTML = `<div class="state-page err">${esc(String(e.message || 'Gagal memuat kartu. Periksa koneksi internet lalu muat ulang.'))}</div>`;
+  }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && state) tick(); });
+load();
+</script>
+</body>
+</html>
