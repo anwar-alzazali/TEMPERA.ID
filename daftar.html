@@ -1,27 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daftar Driver - TEMPERA.ID</title>
@@ -35,7 +14,7 @@ h1{font-size:20px;margin:0 0 4px}
 label{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
 input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;font-size:15px}
 .preview{width:110px;height:110px;border-radius:50%;object-fit:cover;display:none;margin-top:10px;border:3px solid #eee}
-.btn{width:100%;margin-top:18px;background:#111;color:#fff;border:0;padding:14px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer}
+.btn{width:100%;margin-top:18px;background:#0891b2;color:#fff;border:0;padding:14px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer}
 .btn:disabled{opacity:.5}
 .ok{background:#e6f9ec;color:#0a7a2a;padding:12px;border-radius:12px;margin-top:14px;display:none;text-align:center}
 </style>
@@ -43,7 +22,7 @@ input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;fo
 <body>
 <div class="card">
 <h1>Daftar Mitra Driver TEMPERA.ID</h1>
-<div class="sub">Slug otomatis jadi <b>nama-pakai-strip</b>, TMP urut pas Approve (bukan acak).</div>
+<div class="sub">Isi data di bawah. Kode ID dan link driver dibuat otomatis oleh admin saat pendaftaranmu disetujui.</div>
 
 <label>Nama Lengkap</label>
 <input id="name" placeholder="Anwar Alzazali">
@@ -69,19 +48,19 @@ input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;fo
 <img id="preview" class="preview">
 
 <button class="btn" id="btnSubmit" type="button">Kirim Pendaftaran</button>
-<div class="ok" id="okMsg">✅ Terkirim! Foto masuk ke bucket driver-photos. Menunggu approve Admin.</div>
+<div class="ok" id="okMsg">✅ Terkirim! Menunggu persetujuan Admin.</div>
 </div>
 
 <script>
-const supabaseUrl = "https://wjmotidelhgcyyujacud.supabase.co";
-const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbGhnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac";
+const supabaseUrl = "https://wjmotidelqgcyyujacud.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 const photoInput = document.getElementById('photo');
 const preview = document.getElementById('preview');
 photoInput.addEventListener('change', () => {
   const f = photoInput.files[0];
-  if(!f) return;
+  if (!f) return;
   preview.src = URL.createObjectURL(f);
   preview.style.display = 'block';
 });
@@ -92,42 +71,42 @@ document.getElementById('btnSubmit').addEventListener('click', async () => {
   const vehicle = document.getElementById('vehicle').value;
   const plate = document.getElementById('plate').value.trim();
   const file = photoInput.files[0];
-  
-  if(!name || !phone || !file){ alert('Lengkapi nama, WA, dan foto!'); return; }
-  
-  const btn = document.getElementById('btnSubmit');
-  btn.disabled = true; btn.textContent = 'Uploading ke driver-photos...';
 
-  try{
-    const ext = file.name.split('.').pop();
-    const safeName = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-    const fileName = Date.now() + '-' + safeName + '.' + ext;
-    
+  if (!name || !phone || !file) { alert('Lengkapi nama, WA, dan foto!'); return; }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true; btn.textContent = 'Mengunggah foto...';
+
+  try {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const safeName = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    // Awalan "pending-" wajib -- itu yang membuat izin unggah publik berlaku (lihat policy Storage).
+    const fileName = 'pending-' + Date.now() + '-' + safeName + '.' + ext;
+
     const { error: upErr } = await supabaseClient.storage.from('driver-photos').upload(fileName, file);
-    if(upErr) throw upErr;
+    if (upErr) throw upErr;
 
     const { data: urlData } = supabaseClient.storage.from('driver-photos').getPublicUrl(fileName);
     const photo_url = urlData.publicUrl;
 
-    // Insert pending - slug TIDAK dibuat di sini, dibuat otomatis pas approve biar tidak pakai spasi
+    btn.textContent = 'Mengirim pendaftaran...';
     const { error: dbErr } = await supabaseClient.from('drivers_pending').insert({
       name: name,
       phone: phone,
       vehicle_type: vehicle,
       plate: plate,
-      photo_url: photo_url,
-      status: 'pending'
+      photo_url: photo_url
     });
-    if(dbErr) throw dbErr;
+    if (dbErr) throw dbErr;
 
     document.getElementById('okMsg').style.display = 'block';
     btn.textContent = '✅ Terkirim';
-  }catch(e){
+  } catch (e) {
     alert('Gagal: ' + e.message);
     console.error(e);
     btn.disabled = false; btn.textContent = 'Kirim Pendaftaran';
   }
 });
 </script>
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</body>
 </html>
