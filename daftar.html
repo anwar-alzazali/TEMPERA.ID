@@ -1,10 +1,31 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daftar Driver - TEMPERA.ID</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Daftar Driver - TEMPERA.ID - HQ 0.82</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
 <style>
 *{box-sizing:border-box;font-family:system-ui, -apple-system, sans-serif}
 body{background:#f6f7f9;margin:0;padding:16px}
@@ -17,6 +38,7 @@ input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;fo
 .btn{width:100%;margin-top:18px;background:#0891b2;color:#fff;border:0;padding:14px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer}
 .btn:disabled{opacity:.5}
 .ok{background:#e6f9ec;color:#0a7a2a;padding:12px;border-radius:12px;margin-top:14px;display:none;text-align:center}
+.hint{font-size:11px;color:#888;margin-top:6px}
 </style>
 </head>
 <body>
@@ -24,13 +46,13 @@ input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;fo
 <h1>Daftar Mitra Driver TEMPERA.ID</h1>
 <div class="sub">Isi data di bawah. Kode ID dan link driver dibuat otomatis oleh admin saat pendaftaranmu disetujui.</div>
 
-<label>Nama Lengkap</label>
-<input id="name" placeholder="Anwar Alzazali">
+<label for="name">Nama Lengkap</label>
+<input id="name" placeholder="Anwar Alzazali" maxlength="40" autocomplete="name">
 
-<label>No WA</label>
-<input id="phone" placeholder="0812xxxx">
+<label for="phone">No WA</label>
+<input id="phone" placeholder="0812xxxx" inputmode="numeric" maxlength="18">
 
-<label>Tipe Mobil</label>
+<label for="vehicle">Tipe Mobil</label>
 <select id="vehicle">
 <option>Avanza</option>
 <option>Xenia</option>
@@ -40,95 +62,107 @@ input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;fo
 <option>Bus Medium</option>
 </select>
 
-<label>Plat Nomor</label>
-<input id="plate" placeholder="D 1234 AA">
+<label for="plate">Plat Nomor</label>
+<input id="plate" placeholder="D 1234 AA" maxlength="12">
 
-<label>Foto Selfie (buat kartu ID) *wajib</label>
-<input type="file" id="photo" accept="image/*" capture="user">
-<img id="preview" class="preview">
+<label for="photo">Foto Selfie (buat kartu ID) *wajib</label>
+<input type="file" id="photo" accept="image/jpeg,image/jpg,image/png,image/webp">
+<div class="hint">Bisa dari Kamera atau Galeri. Foto besar (20MB+) otomatis dikompres kualitas tinggi 0.82 — tetap tajam saat dicetak 300 DPI.</div>
+<img id="preview" class="preview" alt="Preview foto">
 
 <button class="btn" id="btnSubmit" type="button">Kirim Pendaftaran</button>
 <div class="ok" id="okMsg">✅ Terkirim! Menunggu persetujuan Admin.</div>
 </div>
 
 <script>
+(function(){
+'use strict';
 const supabaseUrl = "https://wjmotidelqgcyyujacud.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac";
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 const photoInput = document.getElementById('photo');
 const preview = document.getElementById('preview');
+let currentPreviewUrl = null;
+
+function sanitizeText(s, max){ return String(s||'').trim().slice(0,max).replace(/[<>"]/g,''); }
+function sanitizePhone(s){ return String(s||'').replace(/[^0-9+]/g,'').slice(0,18); }
+
 photoInput.addEventListener('change', () => {
   const f = photoInput.files[0];
   if (!f) return;
-  preview.src = URL.createObjectURL(f);
+  if (!f.type.startsWith('image/')){ alert('File harus gambar.'); photoInput.value=''; return; }
+  if (currentPreviewUrl) URL.revokeObjectURL(currentPreviewUrl);
+  currentPreviewUrl = URL.createObjectURL(f);
+  preview.src = currentPreviewUrl;
   preview.style.display = 'block';
 });
 
-// Foto kamera HP bisa 8-20 MB dan melebihi batas ukuran Supabase. Diperkecil dulu di HP
-// (maks. 1200px, kualitas 82%) sebelum diunggah, hasilnya biasanya di bawah 1-2 MB.
-function kecilkanFoto(file) {
-  return new Promise((resolve) => {
+async function kecilkanFoto(file){
+  const QUALITY = 0.82;
+  const MAX_SISI = 1200;
+  try{
+    if(window.createImageBitmap){
+      const bmp = await createImageBitmap(file, {imageOrientation:'from-image'});
+      const skala = Math.min(1, MAX_SISI / Math.max(bmp.width, bmp.height));
+      const w = Math.round(bmp.width * skala), h = Math.round(bmp.height * skala);
+      const c = document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(bmp,0,0,w,h);
+      bmp.close();
+      const blob = await new Promise(res=>c.toBlob(res,'image/jpeg',QUALITY));
+      return blob || file;
+    }
+  }catch(_e){}
+  return new Promise((resolve)=>{
     const img = new Image();
     const url = URL.createObjectURL(file);
-    img.onload = () => {
+    img.onload = ()=>{
       URL.revokeObjectURL(url);
-      const maxSisi = 1200;
-      const skala = Math.min(1, maxSisi / Math.max(img.naturalWidth, img.naturalHeight));
-      const w = Math.round(img.naturalWidth * skala), h = Math.round(img.naturalHeight * skala);
-      const c = document.createElement('canvas'); c.width = w; c.height = h;
-      c.getContext('2d').drawImage(img, 0, 0, w, h);
-      c.toBlob((blob) => resolve(blob || file), 'image/jpeg', 0.82);
+      const skala = Math.min(1, MAX_SISI / Math.max(img.naturalWidth, img.naturalHeight));
+      const w = Math.round(img.naturalWidth*skala), h = Math.round(img.naturalHeight*skala);
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      c.toBlob((blob)=>resolve(blob||file),'image/jpeg',QUALITY);
     };
-    img.onerror = () => resolve(file); // gagal diproses: pakai file asli apa adanya
+    img.onerror = ()=>{ URL.revokeObjectURL(url); resolve(file); };
     img.src = url;
   });
 }
 
-document.getElementById('btnSubmit').addEventListener('click', async () => {
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
+document.getElementById('btnSubmit').addEventListener('click', async ()=>{
+  const name = sanitizeText(document.getElementById('name').value,40);
+  const phone = sanitizePhone(document.getElementById('phone').value);
   const vehicle = document.getElementById('vehicle').value;
-  const plate = document.getElementById('plate').value.trim();
+  const plate = sanitizeText(document.getElementById('plate').value,12).toUpperCase();
   const file = photoInput.files[0];
-
-  if (!name || !phone || !file) { alert('Lengkapi nama, WA, dan foto!'); return; }
-
+  if(!name || phone.length<10 || !file){ alert('Lengkapi nama, WA minimal 10 digit, dan foto!'); return; }
   const btn = document.getElementById('btnSubmit');
-  btn.disabled = true; btn.textContent = 'Mengunggah foto...';
-
-  try {
+  btn.disabled = true; 
+  btn.textContent = `Mengompres foto ${(file.size/1024/1024).toFixed(1)}MB ke kualitas 0.82...`;
+  let fileName = null;
+  try{
     const kecil = await kecilkanFoto(file);
-    const safeName = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-    // Awalan "pending-" wajib -- itu yang membuat izin unggah publik berlaku (lihat policy Storage).
-    // Selalu .jpg karena kecilkanFoto() mengubah semua foto jadi JPEG.
-    const fileName = 'pending-' + Date.now() + '-' + safeName + '.jpg';
-
-    const { error: upErr } = await supabaseClient.storage.from('driver-photos')
-      .upload(fileName, kecil, { contentType: 'image/jpeg' });
-    if (upErr) throw upErr;
-
+    console.log(`Asli: ${(file.size/1024/1024).toFixed(1)}MB -> Kompres 0.82: ${(kecil.size/1024/1024).toFixed(1)}MB`);
+    const safeName = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'').slice(0,20);
+    fileName = 'pending-' + Date.now() + '-' + safeName + '.jpg';
+    btn.textContent = 'Mengunggah foto...';
+    const { error: upErr } = await supabaseClient.storage.from('driver-photos').upload(fileName, kecil, { contentType: 'image/jpeg', upsert:false });
+    if(upErr) throw upErr;
     const { data: urlData } = supabaseClient.storage.from('driver-photos').getPublicUrl(fileName);
     const photo_url = urlData.publicUrl;
-
     btn.textContent = 'Mengirim pendaftaran...';
-    const { error: dbErr } = await supabaseClient.from('drivers_pending').insert({
-      name: name,
-      phone: phone,
-      vehicle_type: vehicle,
-      plate: plate,
-      photo_url: photo_url
-    });
-    if (dbErr) throw dbErr;
-
+    const { error: dbErr } = await supabaseClient.from('drivers_pending').insert({ name, phone, vehicle_type: vehicle, plate, photo_url });
+    if(dbErr){ await supabaseClient.storage.from('driver-photos').remove([fileName]); throw dbErr; }
     document.getElementById('okMsg').style.display = 'block';
     btn.textContent = '✅ Terkirim';
-  } catch (e) {
-    alert('Gagal: ' + e.message);
+  }catch(e){
+    alert('Gagal: ' + (e.message||e));
     console.error(e);
+    if(fileName){ try{ await supabaseClient.storage.from('driver-photos').remove([fileName]); }catch(_){} }
     btn.disabled = false; btn.textContent = 'Kirim Pendaftaran';
   }
 });
+})();
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
