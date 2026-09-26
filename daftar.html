@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daftar Driver - TEMPERA.ID</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;font-family:system-ui, -apple-system, sans-serif}
+body{background:#f6f7f9;margin:0;padding:16px}
+.card{max-width:480px;margin:0 auto;background:#fff;border-radius:20px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:#666;font-size:13px;margin-bottom:16px}
+label{display:block;font-weight:600;font-size:13px;margin:14px 0 6px}
+input,select{width:100%;padding:12px;border:1px solid #ddd;border-radius:12px;font-size:15px}
+.preview{width:110px;height:110px;border-radius:50%;object-fit:cover;display:none;margin-top:10px;border:3px solid #eee}
+.btn{width:100%;margin-top:18px;background:#111;color:#fff;border:0;padding:14px;border-radius:12px;font-weight:700;font-size:15px}
+.btn:disabled{opacity:.5}
+.ok{background:#e6f9ec;color:#0a7a2a;padding:12px;border-radius:12px;margin-top:14px;display:none;text-align:center}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Daftar Mitra Driver TEMPERA.ID</h1>
+<div class="sub">Isi data, upload foto selfie. TMP akan dibuat otomatis pas Admin approve, bukan acak.</div>
+
+<label>Nama Lengkap</label>
+<input id="name" placeholder="Anwar Alzazali">
+
+<label>No WA</label>
+<input id="phone" placeholder="0812xxxx">
+
+<label>Tipe Mobil yang biasa dibawa</label>
+<select id="vehicle">
+<option>Avanza</option>
+<option>Xenia</option>
+<option>Innova</option>
+<option>Hiace 15 Seat</option>
+<option>Elf Long</option>
+<option>Bus Medium</option>
+</select>
+
+<label>Plat Nomor</label>
+<input id="plate" placeholder="D 1234 AA">
+
+<label>Foto Selfie (buat kartu ID)</label>
+<input type="file" id="photo" accept="image/*" capture="user">
+<img id="preview" class="preview">
+
+<button class="btn" id="btnSubmit">Kirim Pendaftaran</button>
+<div class="ok" id="okMsg">✅ Pendaftaran terkirim! Menunggu verifikasi Admin. Foto sudah masuk ke bucket driver-photos.</div>
+</div>
+
+<script>
+// GANTI 2 INI PAKAI PUNYA KAMU (dari screenshot project Web travel)
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const photoInput = document.getElementById('photo');
+const preview = document.getElementById('preview');
+photoInput.onchange = () => {
+  const f = photoInput.files[0];
+  if(!f) return;
+  preview.src = URL.createObjectURL(f);
+  preview.style.display = 'block';
+}
+
+document.getElementById('btnSubmit').onclick = async () => {
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const vehicle = document.getElementById('vehicle').value;
+  const plate = document.getElementById('plate').value.trim();
+  const file = photoInput.files[0];
+  
+  if(!name || !phone || !file){ alert('Lengkapi nama, WA, dan foto!'); return; }
+  
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true; btn.textContent = 'Uploading...';
+
+  try{
+    // 1. Upload ke bucket driver-photos (yang sudah kamu bikin, isinya 5 foto tadi)
+    const ext = file.name.split('.').pop();
+    const fileName = Date.now() + '-' + name.toLowerCase().replace(/\s+/g,'-') + '.' + ext;
+    
+    const { error: upErr } = await supabase.storage.from('driver-photos').upload(fileName, file);
+    if(upErr) throw upErr;
+
+    const { data: urlData } = supabase.storage.from('driver-photos').getPublicUrl(fileName);
+    const photo_url = urlData.publicUrl;
+
+    // 2. Insert ke drivers_pending - TANPA driver_code (biar tidak acak, TMP dibuat pas approve)
+    const { error: dbErr } = await supabase.from('drivers_pending').insert({
+      name: name,
+      phone: phone,
+      vehicle_type: vehicle,
+      plate: plate,
+      photo_url: photo_url,
+      status: 'pending'
+    });
+    if(dbErr) throw dbErr;
+
+    document.getElementById('okMsg').style.display = 'block';
+    btn.textContent = 'Terkirim';
+  }catch(e){
+    alert('Gagal: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Kirim Pendaftaran';
+    console.error(e);
+  }
+}
+</script>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
