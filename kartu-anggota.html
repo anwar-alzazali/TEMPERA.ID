@@ -18,6 +18,22 @@
       flex-direction: column;
       align-items: center;
     }
+    .form-container {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      width: 320px;
+    }
+    .form-container input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
     .action-bar {
       margin-bottom: 20px;
       display: flex;
@@ -109,6 +125,15 @@
 </head>
 <body>
 
+  <!-- Form Isian Manual (Opsional, jika dibuka langsung tanpa panel) -->
+  <div class="form-container" id="formInputArea">
+    <label><b>Isi Data Manual:</b></label><br><br>
+    <input type="text" id="inNama" placeholder="Nama" oninput="updateManual()">
+    <input type="text" id="inId" placeholder="ID (contoh: TMP-010)" oninput="updateManual()">
+    <input type="text" id="inTelp" placeholder="No Telepon" oninput="updateManual()">
+    <input type="text" id="inFoto" placeholder="Link Foto / URL" oninput="updateManual()">
+  </div>
+
   <div class="action-bar">
     <button class="btn btn-print" onclick="window.print()">Cetak</button>
     <button class="btn btn-save" onclick="simpanPDF()">Simpan PDF</button>
@@ -151,16 +176,34 @@
 
   <script>
     const q = new URLSearchParams(location.search);
-    const nama = q.get('nama') || '';
-    const id = q.get('id') || '';
-    const telp = q.get('telp') || '';
-    const foto = q.get('foto') || '';
+    let nama = q.get('nama') || '';
+    let id = q.get('id') || '';
+    let telp = q.get('telp') || '';
+    let foto = q.get('foto') || '';
     const KARTU_K = q.get('k') || q.get('s') || '';
 
-    document.getElementById('lNama').innerText = nama;
-    document.getElementById('lId').innerText = id;
-    document.getElementById('lTelp').innerText = telp;
-    if (foto) document.getElementById('fFoto').src = foto;
+    // Jika dibuka langsung tanpa parameter URL (manual), isi form dari input
+    if (!nama && !id) {
+      document.getElementById('formInputArea').style.display = 'block';
+    } else {
+      // Jika dibuka dari panel, form input disembunyikan agar bersih saat dicetak
+      document.getElementById('formInputArea').style.display = 'none';
+    }
+
+    function renderKartu(n, i, t, f) {
+      document.getElementById('lNama').innerText = n || '-';
+      document.getElementById('lId').innerText = i || '-';
+      document.getElementById('lTelp').innerText = t || '-';
+      if (f) document.getElementById('fFoto').src = f;
+
+      const base = 'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html';
+      const target = KARTU_K
+        ? `${base}?d=${encodeURIComponent(i)}&k=${encodeURIComponent(KARTU_K)}&s=${encodeURIComponent(KARTU_K)}`
+        : `${base}?d=${encodeURIComponent(i)}`;
+
+      const c = buildQrCanvas(target, 200, qrLogoImg);
+      document.getElementById('qrimg').src = c.toDataURL('image/png');
+    }
 
     let qrLogoImg = null;
 
@@ -175,7 +218,8 @@
     }
 
     function buildQrCanvas(text, size, logoImg) {
-      const q = qrcode(0, 'H'); 
+      const q = (typeof qrcode === 'function') ? qrcode(0, 'H') : null;
+      if (!q) return document.createElement('canvas');
       q.addData(text); 
       q.make();
       
@@ -217,26 +261,32 @@
       return c;
     }
 
-    function refresh() {
-      const base = 'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html';
-      const target = KARTU_K
-        ? `${base}?d=${encodeURIComponent(id)}&k=${encodeURIComponent(KARTU_K)}&s=${encodeURIComponent(KARTU_K)}`
-        : `${base}?d=${encodeURIComponent(id)}`;
-
-      const c = buildQrCanvas(target, 200, qrLogoImg);
-      document.getElementById('qrimg').src = c.toDataURL('image/png');
+    function updateManual() {
+      const n = document.getElementById('inNama').value;
+      const i = document.getElementById('inId').value;
+      const t = document.getElementById('inTelp').value;
+      const f = document.getElementById('inFoto').value;
+      renderKartu(n, i, t, f);
     }
 
     function simpanPDF() {
       html2canvas(document.getElementById('captureArea'), { scale: 2, useCORS: true }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `Kartu-${id}.png`;
+        link.download = `Kartu-${id || 'anggota'}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       });
     }
 
-    pasangLogo().then(refresh);
+    // Inisialisasi awal saat halaman dimuat
+    pasangLogo().then(() => {
+      if (nama || id) {
+        renderKartu(nama, id, telp, foto);
+      } else {
+        // Mode kosong jika diisi manual
+        renderKartu('', '', '', '');
+      }
+    });
   </script>
 </body>
 </html>
