@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Kartu Anggota TEMPERA.ID — Cetak</title>
-<!-- Pustaka html2pdf dimuat di head agar siap lebih awal -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <style>
   :root{
     --accent:#0891b2; --accent-dk:#0e7490; --accent-lt:#22b8d0;
@@ -17,7 +37,6 @@
   *{box-sizing:border-box}
   body{margin:0;background:#f1f5f9;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:22px 14px 60px}
 
-  /* ---------- formulir ---------- */
   .formwrap{max-width:420px;margin:0 auto 26px;background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
   .formwrap h2{margin:0 0 4px;font-size:16px}
   .formwrap p.hint{margin:0 0 14px;color:var(--muted);font-size:12.5px}
@@ -25,6 +44,7 @@
   .field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
   .field input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit}
   .field input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .field input[readonly]{background:#f1f5f9}
   .photorow{display:flex;align-items:center;gap:12px}
   .photorow .prev{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;font-weight:800;
     display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;font-size:16px}
@@ -33,11 +53,11 @@
 
   .actions{display:flex;gap:10px;justify-content:center;margin-bottom:22px}
   .btn{border:0;border-radius:999px;padding:10px 20px;font-weight:700;font-size:13px;cursor:pointer}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
   .btn-primary{background:var(--accent);color:#fff}
   .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 
-  /* ---------- kartu ---------- */
-  .sheet{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
+  .sheet{display:flex;flex-wrap:wrap;gap:28px;justify-content:center;overflow-x:auto;padding-bottom:10px}
   .piece{text-align:center}
   .piece .lbl{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
 
@@ -48,7 +68,6 @@
   .wm{position:absolute;left:50%;top:60%;width:120%;transform:translate(-50%,-50%);z-index:0;opacity:.05;
     aspect-ratio:1328/1552;object-fit:contain}
 
-  /* header bergelombang, warna & bentuk mengikuti referensi */
   .wave{position:relative;height:24mm}
   .wave svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
   .wave .hdr{position:relative;z-index:1;padding:4mm 4mm 0;color:#fff;text-align:left;display:flex;align-items:center;gap:2mm}
@@ -63,7 +82,7 @@
   .photo img{width:100%;height:100%;object-fit:cover}
   .photo .init{color:#fff;font-size:8mm;font-weight:800}
 
-  .mname{font-weight:800;font-size:4.3mm;line-height:1.2;margin-top:3.5mm}
+  .mname{font-weight:800;font-size:4.3mm;line-height:1.2;margin-top:3.5mm;max-width:46mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .role{margin-top:2mm;background:var(--accent);color:#fff;font-size:1.85mm;font-weight:800;letter-spacing:.08em;
     padding:1mm 3.2mm;border-radius:99mm}
 
@@ -74,7 +93,6 @@
 
   .motto{margin-top:auto;padding-top:3mm;color:var(--muted);font-size:1.8mm;font-style:italic}
 
-  /* belakang */
   .back .bbody{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 4mm 4mm;gap:1.8mm;margin-top:-9mm}
   .perf{position:relative;width:100%;border-top:.3mm dashed var(--line);margin:2mm 0 1mm}
   .perf span{position:absolute;top:-2.1mm;left:50%;transform:translateX(-50%);background:#fff;padding:0 1.8mm;
@@ -92,8 +110,8 @@
 
   @media print{
     body{background:#fff;padding:0}
-    .actions,.note,.piece .lbl,.formwrap{display:none}
-    .sheet{gap:6mm}
+    .actions,.note,.piece .lbl,.formwrap{display:none !important}
+    .sheet{gap:6mm;padding:0}
     .card{box-shadow:none}
     .wave,.wm{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
@@ -103,12 +121,12 @@
 
 <div class="formwrap">
   <h2>Data anggota</h2>
-  <p class="hint">Isi data di bawah, kartu di layar langsung berubah. Untuk anggota berikutnya, ganti isian ini lalu cetak lagi &mdash; tidak perlu mengedit file.</p>
-  <div class="field"><label>Nama lengkap</label><input id="fNama" value="Erfan Hafid"></div>
-  <div class="field"><label>ID Anggota</label><input id="fId" value="TMP-0001"></div>
-  <div class="field"><label>No. Telepon / WA</label><input id="fTelp" value="0851-8338-1188"></div>
+  <p class="hint" id="formHint">Isi data di bawah, kartu di layar langsung berubah. Untuk anggota berikutnya, ganti isian ini lalu cetak lagi — tidak perlu mengedit file.</p>
+  <div class="field"><label for="fNama">Nama lengkap</label><input id="fNama" value="Erfan Hafid" maxlength="40" autocomplete="name"></div>
+  <div class="field"><label for="fId">ID Anggota</label><input id="fId" value="TMP-0001" maxlength="20"></div>
+  <div class="field"><label for="fTelp">No. Telepon / WA</label><input id="fTelp" value="0851-8338-1188" maxlength="18" inputmode="numeric"></div>
   <div class="field">
-    <label>Foto</label>
+    <label for="fFoto">Foto (max 2MB)</label>
     <div class="photorow">
       <div class="prev" id="photoPrev"><span id="photoInit">EH</span></div>
       <input type="file" id="fFoto" accept="image/*">
@@ -123,18 +141,18 @@
 
 <div class="sheet" id="sheet">
   <div class="piece"><div class="lbl">Tampak depan</div><div class="card front" id="cardFront">
-    <img class="wm" crossorigin="anonymous">
+    <img class="wm" crossorigin="anonymous" alt="">
     <div class="wave">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <defs><linearGradient id="gwave" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22b8d0"/>
         </linearGradient></defs>
         <path fill="url(#gwave)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
-      <div class="hdr"><img class="hlogo" crossorigin="anonymous"><div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div></div>
+      <div class="hdr"><img class="hlogo" crossorigin="anonymous" alt=""><div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div></div>
     </div>
     <div class="fbody">
-      <div class="photo"><span class="init" id="frontInit">EH</span><img id="frontPhoto" style="display:none"></div>
+      <div class="photo"><span class="init" id="frontInit">EH</span><img id="frontPhoto" style="display:none" alt=""></div>
       <div class="mname" id="outNama">Erfan Hafid</div>
       <div class="role">ANGGOTA TEMPERA</div>
       <div class="fields">
@@ -147,22 +165,22 @@
   </div></div>
 
   <div class="piece"><div class="lbl">Tampak belakang</div><div class="card back" id="cardBack">
-    <img class="wm" crossorigin="anonymous">
+    <img class="wm" crossorigin="anonymous" alt="">
     <div class="wave">
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <defs><linearGradient id="gwave2" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" stop-color="#0e7490"/><stop offset="1" stop-color="#22b8d0"/>
         </linearGradient></defs>
         <path fill="url(#gwave2)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
-      <div class="hdr"><img class="hlogo" crossorigin="anonymous"><div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div></div>
+      <div class="hdr"><img class="hlogo" crossorigin="anonymous" alt=""><div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div></div>
     </div>
     <div class="bbody">
       <div class="perf"><span>Verifikasi</span></div>
       <div class="qrbox"><img id="qrimg" alt="QR verifikasi" style="display:none"><div id="qrStatus" style="font-size:9px;color:var(--muted);text-align:center;padding:2px"></div></div>
       <div class="backcode" id="backId">TMP-0001</div>
       <div class="terms">Kartu ini milik TEMPERA.ID dan wajib dikembalikan bila keanggotaan berakhir. Bila ditemukan, hubungi kontak di bawah.</div>
-      <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0851-9675-5972 &middot; tempera.id</div></div>
+      <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0851-9675-5972 · tempera.id</div></div>
     </div>
   </div></div>
 </div>
@@ -172,214 +190,252 @@
   <b>Cetak</b> atau <b>Simpan PDF</b>. Isian tidak tersimpan otomatis, jadi cetak dulu sebelum berpindah ke
   anggota berikutnya.</p>
   <p id="verifHint">Kartu yang dibuka lewat tombol <b>"Cetak kartu"</b> di panel (tab Driver) sudah membawa kode
-  tanda tangan otomatis, jadi QR di belakangnya bisa diverifikasi asli lewat halaman verifikasi. Kartu yang
-  diisi manual di sini (tanpa dibuka dari panel) QR-nya belum bisa diverifikasi &mdash; hanya untuk pratinjau
-  tampilan.</p>
+  tanda tangan otomatis, jadi QR di belakangnya bisa diverifikasi asli lewat halaman verifikasi.</p>
 </div>
 
 <script>
-// Memuat pustaka QR lewat JS (bukan tag <script src> statis) supaya kalau gagal
-// (diblokir browser/ekstensi, atau jaringan bermasalah) itu KETAHUAN dan ada
-// tombol coba lagi -- tidak diam-diam menyisakan gambar kosong seperti sebelumnya.
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
-    const s = document.createElement('script');
-    s.src = src; s.async = true;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error('Gagal memuat ' + src));
+(function(){
+'use strict';
+
+function loadScript(src){
+  return new Promise((resolve,reject)=>{
+    const exist = document.querySelector(`script[src="${src}"]`);
+    if(exist && exist.dataset.loaded==='1'){ resolve(); return; }
+    const s=document.createElement('script');
+    s.src=src; s.async=true;
+    s.onload=()=>{ s.dataset.loaded='1'; resolve(); };
+    s.onerror=()=>reject(new Error('Gagal memuat '+src));
     document.head.appendChild(s);
   });
 }
 let qrcodeReady = loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js');
 
-// Logo dijadikan gambar biasa (bukan CSS mask) supaya dijamin ikut muncul saat disimpan ke PDF,
-// sama seperti teknik yang dipakai di invoice.html & surat-jalan.html.
-function tintLogo(url, color) {
-  return new Promise((resolve) => {
-    const im = new Image(); im.crossOrigin = 'anonymous';
-    im.onload = () => {
-      try {
-        const k = Math.min(1, 400 / Math.max(im.naturalWidth, im.naturalHeight));
-        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
-        const c = document.createElement('canvas'); c.width = w; c.height = h;
-        const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
-        const px = x.getImageData(0, 0, w, h).data;
-        let x0 = w, y0 = h, x1 = -1, y1 = -1;
-        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
-          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+// --- Logo tinting tetap sama, tapi di-cache & aman ---
+function tintLogo(url,color){
+  return new Promise((resolve)=>{
+    const im=new Image(); im.crossOrigin='anonymous';
+    im.onload=()=>{
+      try{
+        const k=Math.min(1,400/Math.max(im.naturalWidth,im.naturalHeight));
+        const w=Math.max(1,Math.round(im.naturalWidth*k)), h=Math.max(1,Math.round(im.naturalHeight*k));
+        const c=document.createElement('canvas'); c.width=w; c.height=h;
+        const x=c.getContext('2d'); x.drawImage(im,0,0,w,h);
+        const px=x.getImageData(0,0,w,h).data;
+        let x0=w,y0=h,x1=-1,y1=-1;
+        for(let yy=0;yy<h;yy++) for(let xx=0;xx<w;xx++){
+          if(px[(yy*w+xx)*4+3]>8){ if(xx<x0)x0=xx; if(xx>x1)x1=xx; if(yy<y0)y0=yy; if(yy>y1)y1=yy; }
         }
-        if (x1 < 0) return resolve('');
-        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
-        const x2 = c2.getContext('2d');
-        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
-        x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
+        if(x1<0) return resolve('');
+        const c2=document.createElement('canvas'); c2.width=x1-x0+1; c2.height=y1-y0+1;
+        const x2=c2.getContext('2d');
+        x2.drawImage(c,x0,y0,c2.width,c2.height,0,0,c2.width,c2.height);
+        x2.globalCompositeOperation='source-in'; x2.fillStyle=color; x2.fillRect(0,0,c2.width,c2.height);
         resolve(c2.toDataURL('image/png'));
-      } catch (_e) { resolve(''); }   // gagal memuat/mewarnai: biarkan kosong, tidak mematikan halaman
+      }catch(_e){ resolve(''); }
     };
-    im.onerror = () => resolve('');
-    im.src = url;
+    im.onerror=()=>resolve('');
+    im.src=url;
   });
 }
-// Logo teal siap-pakai untuk dicap di tengah QR (dibuat sekali dari logo yang sama dengan watermark).
-let qrLogoImg = null;
-async function pasangLogo() {
-  const logoUrl = getComputedStyle(document.documentElement).getPropertyValue('--logo-url').trim().replace(/^url\((['"]?)(.*)\1\)$/, '$2');
-  const [white, accent] = await Promise.all([
-    tintLogo(logoUrl, '#ffffff'),
-    tintLogo(logoUrl, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0891b2'),
-  ]);
-  if (white) document.querySelectorAll('.hlogo').forEach((el) => { el.src = white; });
-  if (accent) {
-    document.querySelectorAll('.wm').forEach((el) => { el.src = accent; });
-    const im = new Image();
-    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = accent; });
-    if (im.naturalWidth) qrLogoImg = im;
+let qrLogoImg=null;
+async function pasangLogo(){
+  const logoUrl=getComputedStyle(document.documentElement).getPropertyValue('--logo-url').trim().replace(/^url\((['"]?)(.*)\1\)$/, '$2');
+  if(!logoUrl) return;
+  const accentColor=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0891b2';
+  const [white,accent]=await Promise.all([tintLogo(logoUrl,'#ffffff'),tintLogo(logoUrl,accentColor)]);
+  if(white) document.querySelectorAll('.hlogo').forEach(el=>{ el.src=white; });
+  if(accent){
+    document.querySelectorAll('.wm').forEach(el=>{ el.src=accent; });
+    const im=new Image();
+    await new Promise(res=>{ im.onload=res; im.onerror=res; im.src=accent; });
+    if(im.naturalWidth) qrLogoImg=im;
   }
 }
 
-function initials(name) {
-  const w = String(name || '').trim().split(/\s+/).filter(Boolean);
-  return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
+function initials(name){
+  const w=String(name||'').trim().split(/\s+/).filter(Boolean);
+  if(w.length===0) return '?';
+  if(w.length===1) return (w[0][0]||'?').toUpperCase();
+  return (w[0][0]+ (w[w.length-1][0]||'')).toUpperCase();
 }
-// QR digambar sendiri di kanvas supaya logo bisa dicap di tengahnya. Level H karena tengah tertutup logo.
-function buildQrCanvas(text, size, logoImg) {
-  const q = qrcode(0, 'H'); q.addData(text); q.make();
-  const n = q.getModuleCount(), quiet = 2;
-  const cell = Math.max(1, Math.floor(size / (n + quiet * 2)));
-  const total = cell * (n + quiet * 2);
-  const c = document.createElement('canvas'); c.width = c.height = total;
-  const x = c.getContext('2d');
-  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
-  x.fillStyle = '#000';
-  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
-    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+function buildQrCanvas(text,size,logoImg){
+  const q=qrcode(0,'H'); q.addData(text); q.make();
+  const n=q.getModuleCount(), quiet=2;
+  const cell=Math.max(1,Math.floor(size/(n+quiet*2)));
+  const total=cell*(n+quiet*2);
+  const c=document.createElement('canvas'); c.width=c.height=total;
+  const x=c.getContext('2d');
+  x.fillStyle='#fff'; x.fillRect(0,0,total,total);
+  x.fillStyle='#000';
+  for(let r=0;r<n;r++) for(let k=0;k<n;k++){
+    if(q.isDark(r,k)) x.fillRect((k+quiet)*cell,(r+quiet)*cell,cell,cell);
   }
-  if (logoImg) {
-    const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
-    const lh = Math.round((plate - pad * 2) * (logoImg.naturalHeight / logoImg.naturalWidth));
-    const lw = plate - pad * 2;
-    const px = Math.round((total - plate) / 2);
-    x.fillStyle = '#fff'; x.beginPath();
-    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+  if(logoImg){
+    const plate=Math.round(total*0.22), pad=Math.round(plate*0.08);
+    const lh=Math.round((plate-pad*2)*(logoImg.naturalHeight/logoImg.naturalWidth));
+    const lw=plate-pad*2;
+    const px=Math.round((total-plate)/2);
+    x.fillStyle='#fff'; x.beginPath();
+    if(x.roundRect) x.roundRect(px,px,plate,plate,plate*0.18); else x.rect(px,px,plate,plate);
     x.fill();
-    x.drawImage(logoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+    x.drawImage(logoImg, px+pad, px+Math.round((plate-lh)/2), lw, lh);
   }
   return c;
 }
 
-const fNama = document.getElementById('fNama');
-const fId = document.getElementById('fId');
-const fTelp = document.getElementById('fTelp');
-const fFoto = document.getElementById('fFoto');
+// --- DOM refs ---
+const fNama=document.getElementById('fNama');
+const fId=document.getElementById('fId');
+const fTelp=document.getElementById('fTelp');
+const fFoto=document.getElementById('fFoto');
+let KARTU_K='';
 
-// Kode tanda tangan tetap dari panel (dibuat lewat tombol "Cetak kartu"). Tanpa ini,
-// QR di belakang kartu tidak bisa diverifikasi -- hanya berisi ID tanpa bukti keasliannya.
-let KARTU_K = '';
+function sanitizeParam(v, max){
+  if(!v) return '';
+  let s=String(v).trim().slice(0,max);
+  s=s.replace(/[<>"]/g,'');
+  return s;
+}
 
-// Kalau dibuka dari panel (tombol "Cetak kartu" di tab Driver), data asli driver
-// sudah dikirim lewat alamat, jadi tidak perlu ketik ulang -- ID selalu persis sama
-// dengan driver_code di database, supaya QR di belakang kartu pasti bisa diverifikasi.
-(function isiDariPanel() {
-  const q = new URLSearchParams(location.search);
-  const nama = q.get('nama'), id = q.get('id'), telp = q.get('telp'), foto = q.get('foto'), k = q.get('k');
-  if (nama) fNama.value = nama;
-  if (id) fId.value = id;
-  if (telp) fTelp.value = telp;
-  if (k) KARTU_K = k;
-  if (foto) {
-    const fp = document.getElementById('frontPhoto');
-    fp.src = foto; fp.style.display = 'block';
-    fp.onerror = () => { fp.style.display = 'none'; document.getElementById('frontInit').style.display = ''; };
-    document.getElementById('frontInit').style.display = 'none';
-    document.getElementById('photoPrev').innerHTML = `<img src="${foto}">`;
+// Isi dari panel
+(function isiDariPanel(){
+  const q=new URLSearchParams(location.search);
+  const nama=sanitizeParam(q.get('nama'),40);
+  const id=sanitizeParam(q.get('id'),20);
+  const telp=sanitizeParam(q.get('telp'),18);
+  const foto=q.get('foto'); // URL foto dari panel, biarkan apa adanya tapi validasi skema
+  const k=sanitizeParam(q.get('k'),100);
+  if(nama) fNama.value=nama;
+  if(id) fId.value=id;
+  if(telp) fTelp.value=telp;
+  if(k) KARTU_K=k;
+  if(foto && /^https?:\/\//.test(foto)){
+    const fp=document.getElementById('frontPhoto');
+    fp.src=foto; fp.style.display='block';
+    fp.onerror=()=>{ fp.style.display='none'; document.getElementById('frontInit').style.display=''; };
+    document.getElementById('frontInit').style.display='none';
+    const prev=document.getElementById('photoPrev');
+    prev.textContent='';
+    const img=document.createElement('img');
+    img.src=foto; img.alt='Foto anggota';
+    img.onerror=()=>{ prev.textContent=initials(fNama.value); };
+    prev.appendChild(img);
   }
-  if (id) {
-    fId.readOnly = true;
-    fId.style.background = '#f1f5f9';
-    const hint = document.querySelector('.formwrap p.hint');
-    if (hint) hint.textContent = 'Data sudah terisi otomatis dari data driver di panel. ID dikunci (mengikuti driver_code asli) supaya QR tetap bisa diverifikasi.';
+  if(id){
+    fId.readOnly=true;
+    const hint=document.getElementById('formHint');
+    if(hint) hint.textContent='Data sudah terisi otomatis dari panel Driver. ID dikunci supaya QR tetap bisa diverifikasi.';
   }
 })();
 
-async function refresh() {
-  const nama = fNama.value.trim() || '-';
-  const id = fId.value.trim() || '-';
-  const telp = fTelp.value.trim() || '-';
+function setSafeImage(container, srcUrl){
+  const prev=container;
+  prev.textContent='';
+  if(!srcUrl){
+    const span=document.createElement('span');
+    span.textContent=initials(fNama.value);
+    prev.appendChild(span);
+    return;
+  }
+  const img=document.createElement('img');
+  img.src=srcUrl; img.alt='Foto anggota';
+  img.onerror=()=>{
+    prev.textContent='';
+    const s=document.createElement('span');
+    s.textContent=initials(fNama.value);
+    prev.appendChild(s);
+  };
+  prev.appendChild(img);
+}
 
-  document.getElementById('outNama').textContent = nama;
-  document.getElementById('rowNama').textContent = nama;
-  document.getElementById('rowId').textContent = id;
-  document.getElementById('rowTelp').textContent = telp;
-  document.getElementById('backId').textContent = id;
-  document.getElementById('frontInit').textContent = initials(nama);
-  document.getElementById('photoInit').textContent = initials(nama);
+async function refresh(){
+  const nama=fNama.value.trim() || '-';
+  const id=fId.value.trim() || '-';
+  const telp=fTelp.value.trim() || '-';
 
-  const img = document.getElementById('qrimg');
-  const status = document.getElementById('qrStatus');
-  img.style.display = 'none';
-  status.textContent = 'Memuat kode QR…';
+  document.getElementById('outNama').textContent=nama;
+  document.getElementById('rowNama').textContent=nama;
+  document.getElementById('rowId').textContent=id;
+  document.getElementById('rowTelp').textContent=telp;
+  document.getElementById('backId').textContent=id;
+  document.getElementById('frontInit').textContent=initials(nama);
+  const pInit=document.getElementById('photoInit');
+  if(pInit) pInit.textContent=initials(nama);
 
-  try {
-    await qrcodeReady;
-  } catch (e) {
+  const img=document.getElementById('qrimg');
+  const status=document.getElementById('qrStatus');
+  img.style.display='none';
+  status.textContent='Memuat kode QR…';
+
+  try{ await qrcodeReady; }
+  catch(e){
     console.error(e);
-    status.innerHTML = 'Gagal memuat QR. <a href="#" id="qrRetry">Coba lagi</a>';
-    document.getElementById('qrRetry').addEventListener('click', (ev) => {
+    status.textContent='';
+    const a=document.createElement('a');
+    a.href='#'; a.textContent='Gagal memuat QR. Coba lagi';
+    a.addEventListener('click',(ev)=>{
       ev.preventDefault();
-      qrcodeReady = loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js');
+      qrcodeReady=loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js');
       refresh();
     });
+    status.appendChild(document.createTextNode('Gagal memuat QR. '));
+    status.appendChild(a);
     return;
   }
 
-  const base = 'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html';
-  const target = KARTU_K
+  const base='https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html';
+  const target=KARTU_K
     ? `${base}?d=${encodeURIComponent(id)}&k=${encodeURIComponent(KARTU_K)}`
     : `${base}?d=${encodeURIComponent(id)}`;
-  try {
-    img.src = buildQrCanvas(target, 220, qrLogoImg).toDataURL('image/png');
-    img.style.display = 'block';
-    status.textContent = '';
-  } catch (e) {
-    console.error('QR gagal dibuat:', e);
-    status.textContent = 'QR gagal dibuat. Muat ulang halaman.';
+  try{
+    img.src=buildQrCanvas(target,220,qrLogoImg).toDataURL('image/png');
+    img.style.display='block';
+    status.textContent='';
+  }catch(e){
+    console.error('QR gagal dibuat:',e);
+    status.textContent='QR gagal dibuat. Muat ulang halaman.';
   }
 }
-[fNama, fId, fTelp].forEach((el) => el.addEventListener('input', refresh));
 
-fFoto.addEventListener('change', () => {
-  const file = fFoto.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const url = reader.result;
-    const fp = document.getElementById('frontPhoto');
-    fp.src = url; fp.style.display = 'block';
-    document.getElementById('frontInit').style.display = 'none';
-    document.getElementById('photoPrev').innerHTML = `<img src="${url}">`;
+[fNama,fId,fTelp].forEach(el=>el.addEventListener('input',refresh));
+
+fFoto.addEventListener('change',()=>{
+  const file=fFoto.files[0];
+  if(!file) return;
+  if(file.size>2*1024*1024){ alert('Foto max 2MB ya.'); fFoto.value=''; return; }
+  if(!file.type.startsWith('image/')){ alert('File harus gambar.'); fFoto.value=''; return; }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const url=reader.result;
+    const fp=document.getElementById('frontPhoto');
+    fp.src=url; fp.style.display='block';
+    document.getElementById('frontInit').style.display='none';
+    setSafeImage(document.getElementById('photoPrev'), url);
   };
   reader.readAsDataURL(file);
 });
 
-document.getElementById('btnPrint').addEventListener('click', () => window.print());
-document.getElementById('btnPdf').addEventListener('click', async () => {
-  const btn = document.getElementById('btnPdf'); btn.disabled = true; const old = btn.textContent; btn.textContent = 'Menyiapkan…';
-  const clone = document.getElementById('sheet').cloneNode(true);
-  clone.querySelectorAll('.lbl').forEach((e) => e.remove());
-  try {
+document.getElementById('btnPrint').addEventListener('click',()=>window.print());
+document.getElementById('btnPdf').addEventListener('click',async()=>{
+  const btn=document.getElementById('btnPdf');
+  btn.disabled=true; const old=btn.textContent; btn.textContent='Menyiapkan…';
+  const clone=document.getElementById('sheet').cloneNode(true);
+  clone.querySelectorAll('.lbl').forEach(e=>e.remove());
+  try{
+    if(typeof html2pdf==='undefined'){ window.print(); return; }
     await html2pdf().set({
-      margin: 5, filename: (fId.value.trim() || 'kartu-anggota') + '.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 4, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      margin:5, filename:(fId.value.trim() || 'kartu-anggota')+'.pdf',
+      image:{type:'jpeg',quality:0.92},
+      html2canvas:{scale:2,useCORS:true,logging:false},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
     }).from(clone).save();
-  } catch (e) { console.error(e); window.print(); }
-  finally { btn.disabled = false; btn.textContent = old; }
+  }catch(e){ console.error(e); window.print(); }
+  finally{ btn.disabled=false; btn.textContent=old; }
 });
 
 pasangLogo().then(refresh);
-refresh();
+
+})();
 </script>
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
