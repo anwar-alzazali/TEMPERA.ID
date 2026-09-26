@@ -65,6 +65,26 @@ photoInput.addEventListener('change', () => {
   preview.style.display = 'block';
 });
 
+// Foto kamera HP bisa 8-20 MB dan melebihi batas ukuran Supabase. Diperkecil dulu di HP
+// (maks. 1200px, kualitas 82%) sebelum diunggah, hasilnya biasanya di bawah 1-2 MB.
+function kecilkanFoto(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const maxSisi = 1200;
+      const skala = Math.min(1, maxSisi / Math.max(img.naturalWidth, img.naturalHeight));
+      const w = Math.round(img.naturalWidth * skala), h = Math.round(img.naturalHeight * skala);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      c.toBlob((blob) => resolve(blob || file), 'image/jpeg', 0.82);
+    };
+    img.onerror = () => resolve(file); // gagal diproses: pakai file asli apa adanya
+    img.src = url;
+  });
+}
+
 document.getElementById('btnSubmit').addEventListener('click', async () => {
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
@@ -78,12 +98,14 @@ document.getElementById('btnSubmit').addEventListener('click', async () => {
   btn.disabled = true; btn.textContent = 'Mengunggah foto...';
 
   try {
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const kecil = await kecilkanFoto(file);
     const safeName = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
     // Awalan "pending-" wajib -- itu yang membuat izin unggah publik berlaku (lihat policy Storage).
-    const fileName = 'pending-' + Date.now() + '-' + safeName + '.' + ext;
+    // Selalu .jpg karena kecilkanFoto() mengubah semua foto jadi JPEG.
+    const fileName = 'pending-' + Date.now() + '-' + safeName + '.jpg';
 
-    const { error: upErr } = await supabaseClient.storage.from('driver-photos').upload(fileName, file);
+    const { error: upErr } = await supabaseClient.storage.from('driver-photos')
+      .upload(fileName, kecil, { contentType: 'image/jpeg' });
     if (upErr) throw upErr;
 
     const { data: urlData } = supabaseClient.storage.from('driver-photos').getPublicUrl(fileName);
