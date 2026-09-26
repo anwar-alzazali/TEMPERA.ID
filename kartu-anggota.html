@@ -5,16 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Kartu Anggota TEMPERA.ID — Cetak</title>
+<!-- Pustaka html2pdf dimuat di head agar siap lebih awal -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
     --accent:#0891b2; --accent-dk:#0e7490; --accent-lt:#22b8d0;
     --ink:#0f172a; --muted:#64748b; --line:#e2e8f0;
     --card-w:54mm; --card-h:85.6mm;
+    --logo-url:url('images/logo_sky_blue_transparent.png');
   }
   *{box-sizing:border-box}
   body{margin:0;background:#f1f5f9;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;padding:22px 14px 60px}
 
+  /* ---------- formulir ---------- */
   .formwrap{max-width:420px;margin:0 auto 26px;background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(15,23,42,.08)}
   .formwrap h2{margin:0 0 4px;font-size:16px}
   .formwrap p.hint{margin:0 0 14px;color:var(--muted);font-size:12.5px}
@@ -33,6 +36,7 @@
   .btn-primary{background:var(--accent);color:#fff}
   .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 
+  /* ---------- kartu ---------- */
   .sheet{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
   .piece{text-align:center}
   .piece .lbl{font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
@@ -44,10 +48,11 @@
   .wm{position:absolute;left:50%;top:60%;width:120%;transform:translate(-50%,-50%);z-index:0;opacity:.05;
     aspect-ratio:1328/1552;object-fit:contain}
 
+  /* header bergelombang, warna & bentuk mengikuti referensi */
   .wave{position:relative;height:24mm}
   .wave svg{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
   .wave .hdr{position:relative;z-index:1;padding:4mm 4mm 0;color:#fff;text-align:left;display:flex;align-items:center;gap:2mm}
-  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;object-fit:contain}
+  .wave .hlogo{width:6.4mm;height:6.4mm;flex:none;object-fit:contain;object-position:0 -12%}
   .wave .hname{font-weight:800;font-size:3mm;letter-spacing:.03em}
   .wave .htag{font-size:1.7mm;opacity:.92;margin-top:.3mm}
 
@@ -69,14 +74,13 @@
 
   .motto{margin-top:auto;padding-top:3mm;color:var(--muted);font-size:1.8mm;font-style:italic}
 
+  /* belakang */
   .back .bbody{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:0 4mm 4mm;gap:1.8mm;margin-top:-9mm}
   .perf{position:relative;width:100%;border-top:.3mm dashed var(--line);margin:2mm 0 1mm}
   .perf span{position:absolute;top:-2.1mm;left:50%;transform:translateX(-50%);background:#fff;padding:0 1.8mm;
     font-size:1.7mm;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
-  
-  .qrbox{width:22mm;height:22mm;border:.3mm solid var(--line);border-radius:1.8mm;padding:1.1mm;background:#fff;margin-top:2mm;display:flex;align-items:center;justify-content:center}
+  .qrbox{width:22mm;height:22mm;border:.3mm solid var(--line);border-radius:1.8mm;padding:1.1mm;background:#fff;margin-top:2mm}
   .qrbox img{width:100%;height:100%;image-rendering:pixelated;display:block}
-
   .backcode{color:var(--accent-dk);font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;font-size:2.5mm;letter-spacing:.05em;margin-top:1mm}
   .terms{color:var(--muted);font-size:1.75mm;line-height:1.55;text-align:center;margin-top:1mm}
   .backfoot{margin-top:auto;text-align:center;padding-top:1.6mm;border-top:.25mm solid var(--line);width:100%}
@@ -99,14 +103,14 @@
 
 <div class="formwrap">
   <h2>Data anggota</h2>
-  <p class="hint">Isi data di bawah, kartu di layar langsung berubah.</p>
-  <div class="field"><label>Nama lengkap</label><input id="fNama" value="Dodi purnama"></div>
-  <div class="field"><label>ID Anggota</label><input id="fId" value="TMP-010"></div>
-  <div class="field"><label>No. Telepon / WA</label><input id="fTelp" value="08123556786"></div>
+  <p class="hint">Isi data di bawah, kartu di layar langsung berubah. Untuk anggota berikutnya, ganti isian ini lalu cetak lagi &mdash; tidak perlu mengedit file.</p>
+  <div class="field"><label>Nama lengkap</label><input id="fNama" value="Erfan Hafid"></div>
+  <div class="field"><label>ID Anggota</label><input id="fId" value="TMP-0001"></div>
+  <div class="field"><label>No. Telepon / WA</label><input id="fTelp" value="0851-8338-1188"></div>
   <div class="field">
     <label>Foto</label>
     <div class="photorow">
-      <div class="prev" id="photoPrev"><span id="photoInit">DP</span></div>
+      <div class="prev" id="photoPrev"><span id="photoInit">EH</span></div>
       <input type="file" id="fFoto" accept="image/*">
     </div>
   </div>
@@ -119,7 +123,7 @@
 
 <div class="sheet" id="sheet">
   <div class="piece"><div class="lbl">Tampak depan</div><div class="card front" id="cardFront">
-    <img class="wm" src="images/logo_sky_blue_transparent.png" crossorigin="anonymous">
+    <img class="wm" crossorigin="anonymous">
     <div class="wave">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs><linearGradient id="gwave" x1="0" y1="0" x2="1" y2="1">
@@ -127,23 +131,23 @@
         </linearGradient></defs>
         <path fill="url(#gwave)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
-      <div class="hdr"><img class="hlogo" src="images/logo_sky_blue_transparent.png" crossorigin="anonymous"><div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div></div>
+      <div class="hdr"><img class="hlogo" crossorigin="anonymous"><div><div class="hname">TEMPERA.ID</div><div class="htag">Kartu Anggota</div></div></div>
     </div>
     <div class="fbody">
-      <div class="photo"><span class="init" id="frontInit">DP</span><img id="frontPhoto" style="display:none"></div>
-      <div class="mname" id="outNama">Dodi purnama</div>
+      <div class="photo"><span class="init" id="frontInit">EH</span><img id="frontPhoto" style="display:none"></div>
+      <div class="mname" id="outNama">Erfan Hafid</div>
       <div class="role">ANGGOTA TEMPERA</div>
       <div class="fields">
-        <div class="frow"><div class="k">NAMA</div><div class="v" id="rowNama">Dodi purnama</div></div>
-        <div class="frow"><div class="k">ID</div><div class="v" id="rowId">TMP-010</div></div>
-        <div class="frow"><div class="k">NO TLP</div><div class="v" id="rowTelp">08123556786</div></div>
+        <div class="frow"><div class="k">NAMA</div><div class="v" id="rowNama">Erfan Hafid</div></div>
+        <div class="frow"><div class="k">ID</div><div class="v" id="rowId">TMP-0001</div></div>
+        <div class="frow"><div class="k">NO TLP</div><div class="v" id="rowTelp">0851-8338-1188</div></div>
       </div>
       <div class="motto">Your journey is my responsibility.</div>
     </div>
   </div></div>
 
   <div class="piece"><div class="lbl">Tampak belakang</div><div class="card back" id="cardBack">
-    <img class="wm" src="images/logo_sky_blue_transparent.png" crossorigin="anonymous">
+    <img class="wm" crossorigin="anonymous">
     <div class="wave">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs><linearGradient id="gwave2" x1="0" y1="0" x2="1" y2="1">
@@ -151,12 +155,12 @@
         </linearGradient></defs>
         <path fill="url(#gwave2)" d="M0,0 L100,0 L100,55 C85,75 65,35 50,55 C35,75 15,35 0,55 Z"/>
       </svg>
-      <div class="hdr"><img class="hlogo" src="images/logo_sky_blue_transparent.png" crossorigin="anonymous"><div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div></div>
+      <div class="hdr"><img class="hlogo" crossorigin="anonymous"><div><div class="hname">TEMPERA.ID</div><div class="htag">Verifikasi Anggota</div></div></div>
     </div>
     <div class="bbody">
       <div class="perf"><span>Verifikasi</span></div>
       <div class="qrbox"><img id="qrimg" alt="QR verifikasi"></div>
-      <div class="backcode" id="backId">TMP-010</div>
+      <div class="backcode" id="backId">TMP-0001</div>
       <div class="terms">Kartu ini milik TEMPERA.ID dan wajib dikembalikan bila keanggotaan berakhir. Bila ditemukan, hubungi kontak di bawah.</div>
       <div class="backfoot"><div class="co">TEMPERA.ID</div><div class="contact">WA 0851-9675-5972 &middot; tempera.id</div></div>
     </div>
@@ -164,52 +168,107 @@
 </div>
 
 <div class="note">
-  <p><b>Cara pakai:</b> isi formulir di atas untuk tiap anggota baru (nama, ID, nomor telepon, foto), lalu tekan <b>Cetak</b> atau <b>Simpan PDF</b>. Isian tidak tersimpan otomatis, jadi cetak dulu sebelum berpindah ke anggota berikutnya.</p>
+  <p><b>Cara pakai:</b> isi formulir di atas untuk tiap anggota baru (nama, ID, nomor telepon, foto), lalu tekan
+  <b>Cetak</b> atau <b>Simpan PDF</b>. Isian tidak tersimpan otomatis, jadi cetak dulu sebelum berpindah ke
+  anggota berikutnya.</p>
+  <p id="verifHint">Kartu yang dibuka lewat tombol <b>"Cetak kartu"</b> di panel (tab Driver) sudah membawa kode
+  tanda tangan otomatis, jadi QR di belakangnya bisa diverifikasi asli lewat halaman verifikasi. Kartu yang
+  diisi manual di sini (tanpa dibuka dari panel) QR-nya belum bisa diverifikasi &mdash; hanya untuk pratinjau
+  tampilan.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
+// Logo dijadikan gambar biasa (bukan CSS mask) supaya dijamin ikut muncul saat disimpan ke PDF,
+// sama seperti teknik yang dipakai di invoice.html & surat-jalan.html.
+function tintLogo(url, color) {
+  return new Promise((resolve) => {
+    const im = new Image(); im.crossOrigin = 'anonymous';
+    im.onload = () => {
+      try {
+        const k = Math.min(1, 400 / Math.max(im.naturalWidth, im.naturalHeight));
+        const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h);
+        const px = x.getImageData(0, 0, w, h).data;
+        let x0 = w, y0 = h, x1 = -1, y1 = -1;
+        for (let yy = 0; yy < h; yy++) for (let xx = 0; xx < w; xx++) {
+          if (px[(yy * w + xx) * 4 + 3] > 8) { if (xx < x0) x0 = xx; if (xx > x1) x1 = xx; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+        }
+        if (x1 < 0) return resolve('');
+        const c2 = document.createElement('canvas'); c2.width = x1 - x0 + 1; c2.height = y1 - y0 + 1;
+        const x2 = c2.getContext('2d');
+        x2.drawImage(c, x0, y0, c2.width, c2.height, 0, 0, c2.width, c2.height);
+        x2.globalCompositeOperation = 'source-in'; x2.fillStyle = color; x2.fillRect(0, 0, c2.width, c2.height);
+        resolve(c2.toDataURL('image/png'));
+      } catch (_e) { resolve(''); }   // gagal memuat/mewarnai: biarkan kosong, tidak mematikan halaman
+    };
+    im.onerror = () => resolve('');
+    im.src = url;
+  });
+}
+// Logo teal siap-pakai untuk dicap di tengah QR (dibuat sekali dari logo yang sama dengan watermark).
+let qrLogoImg = null;
+async function pasangLogo() {
+  const logoUrl = getComputedStyle(document.documentElement).getPropertyValue('--logo-url').trim().replace(/^url\((['"]?)(.*)\1\)$/, '$2');
+  const [white, accent] = await Promise.all([
+    tintLogo(logoUrl, '#ffffff'),
+    tintLogo(logoUrl, getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#0891b2'),
+  ]);
+  if (white) document.querySelectorAll('.hlogo').forEach((el) => { el.src = white; });
+  if (accent) {
+    document.querySelectorAll('.wm').forEach((el) => { el.src = accent; });
+    const im = new Image();
+    await new Promise((res) => { im.onload = res; im.onerror = res; im.src = accent; });
+    if (im.naturalWidth) qrLogoImg = im;
+  }
+}
+
 function initials(name) {
   const w = String(name || '').trim().split(/\s+/).filter(Boolean);
   return ((w[0] || '')[0] || '?').toUpperCase() + ((w[1] || '')[0] || '').toUpperCase();
 }
-
-function buildQrCanvas(text, size) {
-  try {
-    const q = qrcode(0, 'M'); 
-    q.addData(text); 
-    q.make();
-    const n = q.getModuleCount(), quiet = 2;
-    const cell = Math.max(1, Math.floor(size / (n + quiet * 2)));
-    const total = cell * (n + quiet * 2);
-    const c = document.createElement('canvas'); 
-    c.width = c.height = total;
-    const x = c.getContext('2d');
-    x.fillStyle = '#fff'; 
-    x.fillRect(0, 0, total, total);
-    x.fillStyle = '#000';
-    for (let r = 0; r < n; r++) {
-      for (let k = 0; k < n; k++) {
-        if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
-      }
-    }
-    return c.toDataURL('image/png');
-  } catch (e) {
-    console.error('Gagal buat QR canvas:', e);
-    return '';
+// QR digambar sendiri di kanvas supaya logo bisa dicap di tengahnya. Level H karena tengah tertutup logo.
+function buildQrCanvas(text, size, logoImg) {
+  const q = qrcode(0, 'H'); q.addData(text); q.make();
+  const n = q.getModuleCount(), quiet = 2;
+  const cell = Math.max(1, Math.floor(size / (n + quiet * 2)));
+  const total = cell * (n + quiet * 2);
+  const c = document.createElement('canvas'); c.width = c.height = total;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
+  x.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
+    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
   }
+  if (logoImg) {
+    const plate = Math.round(total * 0.22), pad = Math.round(plate * 0.08);
+    const lh = Math.round((plate - pad * 2) * (logoImg.naturalHeight / logoImg.naturalWidth));
+    const lw = plate - pad * 2;
+    const px = Math.round((total - plate) / 2);
+    x.fillStyle = '#fff'; x.beginPath();
+    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
+    x.fill();
+    x.drawImage(logoImg, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
+  }
+  return c;
 }
 
 const fNama = document.getElementById('fNama');
 const fId = document.getElementById('fId');
 const fTelp = document.getElementById('fTelp');
 const fFoto = document.getElementById('fFoto');
+
+// Kode tanda tangan tetap dari panel (dibuat lewat tombol "Cetak kartu"). Tanpa ini,
+// QR di belakang kartu tidak bisa diverifikasi -- hanya berisi ID tanpa bukti keasliannya.
 let KARTU_K = '';
 
+// Kalau dibuka dari panel (tombol "Cetak kartu" di tab Driver), data asli driver
+// sudah dikirim lewat alamat, jadi tidak perlu ketik ulang -- ID selalu persis sama
+// dengan driver_code di database, supaya QR di belakang kartu pasti bisa diverifikasi.
 (function isiDariPanel() {
   const q = new URLSearchParams(location.search);
-  const nama = q.get('nama'), id = q.get('id'), telp = q.get('telp'), foto = q.get('foto');
-  const k = q.get('k') || q.get('s');
+  const nama = q.get('nama'), id = q.get('id'), telp = q.get('telp'), foto = q.get('foto'), k = q.get('k');
   if (nama) fNama.value = nama;
   if (id) fId.value = id;
   if (telp) fTelp.value = telp;
@@ -217,12 +276,15 @@ let KARTU_K = '';
   if (foto) {
     const fp = document.getElementById('frontPhoto');
     fp.src = foto; fp.style.display = 'block';
+    fp.onerror = () => { fp.style.display = 'none'; document.getElementById('frontInit').style.display = ''; };
     document.getElementById('frontInit').style.display = 'none';
     document.getElementById('photoPrev').innerHTML = `<img src="${foto}">`;
   }
   if (id) {
     fId.readOnly = true;
     fId.style.background = '#f1f5f9';
+    const hint = document.querySelector('.formwrap p.hint');
+    if (hint) hint.textContent = 'Data sudah terisi otomatis dari data driver di panel. ID dikunci (mengikuti driver_code asli) supaya QR tetap bisa diverifikasi.';
   }
 })();
 
@@ -241,15 +303,19 @@ function refresh() {
 
   const base = 'https://anwar-alzazali.github.io/TEMPERA.ID/verifikasi.html';
   const target = KARTU_K
-    ? `${base}?d=${encodeURIComponent(id)}&k=${encodeURIComponent(KARTU_K)}&s=${encodeURIComponent(KARTU_K)}`
+    ? `${base}?d=${encodeURIComponent(id)}&k=${encodeURIComponent(KARTU_K)}`
     : `${base}?d=${encodeURIComponent(id)}`;
-
-  const qrDataUrl = buildQrCanvas(target, 220);
-  if (qrDataUrl) {
-    document.getElementById('qrimg').src = qrDataUrl;
+  let src = '';
+  try {
+    if (typeof qrcode !== 'function') throw new Error('Pustaka QR belum termuat (koneksi lambat?)');
+    src = buildQrCanvas(target, 220, qrLogoImg).toDataURL('image/png');
+  } catch (e) {
+    console.error('QR dengan logo gagal, coba cara sederhana tanpa logo:', e);
+    try { const q2 = qrcode(0, 'M'); q2.addData(target); q2.make(); src = q2.createDataURL(6, 0); }
+    catch (e2) { console.error('QR benar-benar gagal dibuat:', e2); }
   }
+  document.getElementById('qrimg').src = src;
 }
-
 [fNama, fId, fTelp].forEach((el) => el.addEventListener('input', refresh));
 
 fFoto.addEventListener('change', () => {
@@ -278,10 +344,11 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
       html2canvas: { scale: 4, useCORS: true },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     }).from(clone).save();
-  } catch (e) { window.print(); }
+  } catch (e) { console.error(e); window.print(); }
   finally { btn.disabled = false; btn.textContent = old; }
 });
 
+pasangLogo().then(refresh);
 refresh();
 </script>
 </body>
