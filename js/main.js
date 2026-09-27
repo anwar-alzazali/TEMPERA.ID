@@ -116,7 +116,8 @@ let ARMADA_DATA=[
  * DATA DARI DATABASE: armada, pengaturan harga, banner, pencatatan kunjungan
  * Kalau database tidak terjangkau, situs tetap jalan memakai data bawaan.
  * ================================================================= */
-let CROSS_2=400000, CROSS_3=800000, TOLL_EST=100000;
+let CROSS_2=400000, CROSS_3=800000, TOLL_EST=100000, DP_PERCENT=30;
+let PAYMENT_MODE='lunas'; // 'lunas' atau 'dp' -- dipilih pelanggan lewat kotak pilihan pembayaran
 const SB_URL='https://wjmotidelqgcyyujacud.supabase.co';
 
 function imgSrc(img){ return /^https?:\/\//i.test(img) ? img : 'images/'+img; }
@@ -190,7 +191,7 @@ async function initRemoteData(){
     const rows=await sbGet('app_settings?select=key,value&is_public=eq.true');
     const s={}; (rows||[]).forEach(r=>{ s[r.key]=r.value; });
     const n=(v,d)=>{ const x=parseInt(v); return isNaN(x)?d:x; };
-    CROSS_2=n(s.cross_cost_2,CROSS_2); CROSS_3=n(s.cross_cost_3,CROSS_3); TOLL_EST=n(s.toll_parking_estimate,TOLL_EST);
+    CROSS_2=n(s.cross_cost_2,CROSS_2); CROSS_3=n(s.cross_cost_3,CROSS_3); TOLL_EST=n(s.toll_parking_estimate,TOLL_EST); DP_PERCENT=n(s.dp_percent,DP_PERCENT);
     calculateLive();
   }catch(e){ console.warn('settings:',e); }
   try{ renderBanners(await sbGet('banners?select=*&order=sort_order.asc')); }catch(e){ console.warn('banners:',e); }
@@ -277,6 +278,7 @@ if(!hasArmada){
   document.getElementById('mobileTotalPrice').innerText='Rp '+(base+cost).toLocaleString('id-ID');
   document.getElementById('mobileStickyBar').classList.remove('hidden');
 }
+if (typeof updatePaymentPreview === 'function') updatePaymentPreview(hasArmada ? (base + cost) : 0);
 const listEl=document.getElementById('resSelectedList');const all=document.querySelectorAll('input[name="destinasi"]:checked');if(all.length==0)listEl.innerText='Belum ada';else{let g={};all.forEach(cb=>{if(!g[cb.dataset.group])g[cb.dataset.group]=[];g[cb.dataset.group].push(cb.value);});let t='';for(let k in g){t+=`${k.toUpperCase()}: ${g[k].join(', ')} | `;}listEl.innerText=t.slice(0,-3);}
 const warn=document.getElementById('crossTripWarning');
 
@@ -418,7 +420,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{ if(!userManuallyChangedTheme){ setTheme(themeByTime(), null); } }, 30 * 1000);
   setInterval(()=>{ if(!userManuallyChangedTheme){ setTheme(themeByTime(), null); } }, 3600000);
   const waBtn=document.getElementById('floatingWaBtn'); if(waBtn){ waBtn.href=`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Admin Tempera saya mau konsultasi paket wisata')}`; }
-  applyLanguage(currentLang); renderArmada(); calculateLive(); initRemoteData();
+  applyLanguage(currentLang); renderArmada(); calculateLive(); initRemoteData(); initPaymentModeUI();
   // FIX: pakai tanggal lokal perangkat (bukan UTC) supaya tidak mundur 1 hari antara jam 00:00-07:00 WIB
   const nowLocal=new Date(); const today=new Date(nowLocal.getTime()-nowLocal.getTimezoneOffset()*60000).toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} document.getElementById('footerYear').innerText=new Date().getFullYear();
   toggleAccordion('lembang');
@@ -496,6 +498,66 @@ function getRegionInfo(){
   return { count, cost };
 }
 
+// ------------------------------------------------------------------
+// Kotak pilihan DP / Lunas -- dibuat lewat JS supaya tidak perlu edit
+// HTML sama sekali. Ditaruh tepat sebelum tombol submit.
+// ------------------------------------------------------------------
+function initPaymentModeUI() {
+  const btn = document.getElementById('submitBtn');
+  if (!btn || !btn.parentNode || document.getElementById('paymentModeBox')) return;
+
+  const box = document.createElement('div');
+  box.id = 'paymentModeBox';
+  box.style.cssText = 'margin:14px 0;padding:14px;border-radius:16px;border:1px solid var(--border-soft,#e5e7eb);background:var(--bg-card,#fff)';
+  box.innerHTML = `
+    <p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted,#64748b)">Cara Bayar</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <label style="display:block;cursor:pointer">
+        <input type="radio" name="paymentMode" value="lunas" checked style="position:absolute;opacity:0">
+        <span data-pm-card="lunas" style="display:block;padding:12px;border-radius:12px;border:2px solid var(--accent);background:var(--accent-glow,rgba(0,0,0,.03))">
+          <b style="display:block;font-size:13px">Bayar Lunas</b>
+          <small style="color:var(--text-muted,#64748b);font-size:11px">Selesai sekali bayar</small>
+        </span>
+      </label>
+      <label style="display:block;cursor:pointer">
+        <input type="radio" name="paymentMode" value="dp" style="position:absolute;opacity:0">
+        <span data-pm-card="dp" style="display:block;padding:12px;border-radius:12px;border:2px solid var(--border-soft,#e5e7eb)">
+          <b style="display:block;font-size:13px">Bayar DP <span id="pmDpPercent">30</span>%</b>
+          <small style="color:var(--text-muted,#64748b);font-size:11px">Sisa tunai ke driver</small>
+        </span>
+      </label>
+    </div>
+    <p id="pmPreview" style="margin:10px 0 0;font-size:13px;font-weight:700"></p>
+  `;
+  btn.parentNode.insertBefore(box, btn);
+
+  box.querySelectorAll('input[name="paymentMode"]').forEach((r) => {
+    r.addEventListener('change', () => {
+      PAYMENT_MODE = r.value;
+      box.querySelectorAll('[data-pm-card]').forEach((el) => {
+        const active = el.dataset.pmCard === r.value;
+        el.style.borderColor = active ? 'var(--accent)' : 'var(--border-soft,#e5e7eb)';
+        el.style.background = active ? 'var(--accent-glow,rgba(0,0,0,.03))' : 'transparent';
+      });
+      calculateLive();
+    });
+  });
+}
+
+// Dipanggil tiap kali harga dihitung ulang (pilih armada, destinasi, dst).
+// Diberi total sebelum estimasi tol/parkir -- itu yang dijadikan dasar DP.
+function updatePaymentPreview(totalBeforeToll) {
+  const pctEl = document.getElementById('pmDpPercent'); if (pctEl) pctEl.textContent = DP_PERCENT;
+  const prev = document.getElementById('pmPreview'); if (!prev) return;
+  if (!totalBeforeToll) { prev.textContent = ''; return; }
+  if (PAYMENT_MODE === 'dp') {
+    const dp = Math.round(totalBeforeToll * DP_PERCENT / 100);
+    prev.innerHTML = `Bayar sekarang: Rp ${dp.toLocaleString('id-ID')} &middot; Sisa tunai ke driver: Rp ${(totalBeforeToll - dp).toLocaleString('id-ID')}`;
+  } else {
+    prev.textContent = `Bayar sekarang: Rp ${totalBeforeToll.toLocaleString('id-ID')} (lunas)`;
+  }
+}
+
 async function handleFormSubmitMidtrans(event) {
   event.preventDefault();
 
@@ -543,7 +605,8 @@ async function handleFormSubmitMidtrans(event) {
     pax: jumlahNum,
     pickup_note: catatan,
     destinations: by,
-    ref: getRef()
+    ref: getRef(),
+    payment_mode: PAYMENT_MODE
   };
 
   const btn = document.getElementById('submitBtn');
@@ -562,9 +625,12 @@ async function handleFormSubmitMidtrans(event) {
     const data = await res.json();
     if(data.snap_token){
       if(!window.snap){ alert('Sistem pembayaran belum siap. Muat ulang halaman lalu coba lagi.'); return; }
+      const dpNote = data.payment_mode === 'dp' && data.dp_amount
+        ? ` Sisa Rp ${(data.total - data.dp_amount).toLocaleString('id-ID')} dibayar tunai langsung ke driver saat perjalanan.`
+        : '';
       window.snap.pay(data.snap_token, {
-        onSuccess: ()=>alert('Pembayaran berhasil! Konfirmasi dan invoice akan dikirim ke WhatsApp Anda.'),
-        onPending: ()=>alert('Menunggu pembayaran. Invoice dikirim ke WhatsApp setelah pembayaran diterima.'),
+        onSuccess: ()=>alert('Pembayaran berhasil!'+dpNote+' Konfirmasi dan invoice akan dikirim ke WhatsApp Anda.'),
+        onPending: ()=>alert('Menunggu pembayaran.'+dpNote+' Invoice dikirim ke WhatsApp setelah pembayaran diterima.'),
         onError: ()=>alert('Pembayaran gagal. Silakan coba lagi.'),
         onClose: ()=>{}
       });
