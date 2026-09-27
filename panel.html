@@ -53,6 +53,7 @@ tr.click:hover{background:#f8fafc}
 .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155;white-space:nowrap}
 .b-pending{background:#fef3c7;color:#92400e}
 .b-paid{background:#dcfce7;color:#166534}
+.b-dp_paid{background:#dbeafe;color:#1e40af}
 .b-confirmed{background:#dbeafe;color:#1e40af}
 .b-completed{background:#ede9fe;color:#5b21b6}
 .b-cancelled,.b-expired{background:#fee2e2;color:#991b1b}
@@ -109,7 +110,6 @@ dl.det dd{margin:0}
 <div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
 <div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
@@ -156,7 +156,7 @@ document.addEventListener('click', async (e) => {
   const b = e.target.closest('[data-rotate]');
   if (!b) return;
   const slug = b.dataset.rotate;
-  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya (termasuk kartu cetak yang sudah ada).')) return;
+  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya.')) return;
   b.disabled = true;
   const r = await sb.rpc('rotate_driver_card', { p_slug: slug });
   b.disabled = false;
@@ -166,76 +166,9 @@ document.addEventListener('click', async (e) => {
   if (VIEWS.driver && location.hash === '#driver') nav('driver');
 });
 
-/* ---------- HMAC (sama persis dengan yang dipakai function verifikasi) ---------- */
-// Dipakai untuk membuat kode QR referral (opsional, kosmetik) dan kode tetap kartu cetak
-// (wajib sama supaya verifikasi.html bisa mengenalinya). token driver_cards dipakai sebagai kunci.
-const encHmac = new TextEncoder();
-async function hmacHex(key, msg) {
-  const k = await crypto.subtle.importKey('raw', encHmac.encode(key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', k, encHmac.encode(msg));
-  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-/* ---------- QR referral dengan logo (dibuat langsung di panel) ---------- */
-const QR_LOGO_SRC = 'images/logo_sky_blue_transparent.png';
-function loadImg(src) {
-  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
-}
-async function makeQR(text, size) {
-  const q = qrcode(0, 'H');            // level H: tahan logo di tengah
-  q.addData(text); q.make();
-  const n = q.getModuleCount(), quiet = 4;
-  const cell = Math.floor(size / (n + quiet * 2)), total = cell * (n + quiet * 2);
-  const c = document.createElement('canvas'); c.width = c.height = total;
-  const x = c.getContext('2d');
-  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
-  x.fillStyle = '#000';
-  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
-    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
-  }
-  try {
-    const img = await loadImg(QR_LOGO_SRC);
-    const t = document.createElement('canvas'); t.width = 1328; t.height = 1287;
-    const tx = t.getContext('2d');
-    tx.drawImage(img, 0, 151, 1328, 1287, 0, 0, 1328, 1287);   // potong bagian kosong atas
-    tx.globalCompositeOperation = 'source-in';
-    tx.fillStyle = '#0891b2'; tx.fillRect(0, 0, 1328, 1287);    // warnai teal
-    const plate = Math.round(total * 0.20), pad = Math.round(plate * 0.06);
-    const lw = plate - pad * 2, lh = Math.round(lw * 1287 / 1328);
-    const px = Math.round((total - plate) / 2);
-    x.fillStyle = '#fff'; x.beginPath();
-    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
-    x.fill();
-    x.drawImage(t, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
-  } catch (_e) { /* logo gagal dimuat: QR tetap valid tanpa logo */ }
-  return c;
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-qr]');
-  if (!b) return;
-  const url = b.dataset.qr;
-  if (!url) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
-  if (typeof qrcode !== 'function') { toast('Pustaka QR belum termuat, muat ulang halaman', true); return; }
-  const c = await makeQR(url, 720);
-  const nama = b.dataset.qrname || 'driver';
-  openModal(`
-    <h2>QR referral</h2>
-    <div style="text-align:center"><div id="qrHolder"></div>
-    <div class="small" style="word-break:break-all;margin-top:8px">${esc(url)}</div></div>
-    <div class="mbtns"><button class="btn ghost" id="qrClose" type="button">Tutup</button><button class="btn" id="qrDl" type="button">Unduh PNG</button></div>`);
-  c.style.width = '100%'; c.style.maxWidth = '320px'; c.style.height = 'auto';
-  $('#qrHolder').appendChild(c);
-  $('#qrClose').addEventListener('click', closeModal);
-  $('#qrDl').addEventListener('click', () => {
-    const a = document.createElement('a');
-    a.href = c.toDataURL('image/png'); a.download = `qr-${nama}.png`;
-    document.body.appendChild(a); a.click(); a.remove();
-  });
-});
-
 const S = { drivers: [], siteUrl: '', cards: {} };
-const STATUS = { pending: 'Menunggu bayar', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
-const PAID_SET = ['paid', 'confirmed', 'completed'];
+const STATUS = { pending: 'Menunggu bayar', dp_paid: 'DP Diterima', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
+const PAID_SET = ['dp_paid', 'paid', 'confirmed', 'completed'];
 const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
 const badge = (st) => `<span class="badge b-${esc(st)}">${esc(STATUS[st] || st)}</span>`;
 // Pelaksana trip (tampil di daftar pesanan & surat jalan): yang ditugaskan, atau pembawa bila belum ditugaskan.
@@ -286,7 +219,7 @@ async function loadShared() {
 
 /* ---------- navigasi ---------- */
 const VIEWS = {};
-const NAVS = [['pesanan', 'Pesanan'], ['laporan', 'Laporan'], ['kas', 'Kas'], ['armada', 'Armada'], ['pengaturan', 'Pengaturan'], ['template', 'Template WA'], ['banner', 'Banner'], ['driver', 'Driver'], ['persetujuan', 'Persetujuan']];
+const NAVS = [['pesanan', 'Pesanan'], ['laporan', 'Laporan'], ['kas', 'Kas'], ['armada', 'Armada'], ['pengaturan', 'Pengaturan'], ['template', 'Template WA'], ['banner', 'Banner'], ['driver', 'Driver']];
 function nav(key) {
   if (!VIEWS[key]) key = 'pesanan';
   location.hash = key;
@@ -340,7 +273,10 @@ function renderOrders() {
   $$('#list tr.click').forEach((tr) => tr.addEventListener('click', () => openOrder(tr.dataset.id)));
 }
 function driverMsg(o, d, sjLink) {
-  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}${sjLink ? `\n\nSurat jalan: ${sjLink}` : ''}`;
+  const dpInfo = o.payment_mode === 'dp'
+    ? `\n\n💰 Pesanan ini DP (baru bayar ${rp(o.dp_amount)}).\nTagih TUNAI ke pelanggan: ${rp(Math.max(0, Number(o.total) - Number(o.dp_amount || 0)))}\nSisa akan ditransfer admin: ${rp(Math.max(0, Number(o.dp_amount || 0) - Number(o.admin_cut_amount || 0)))}`
+    : '';
+  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}${dpInfo}${sjLink ? `\n\nSurat jalan: ${sjLink}` : ''}`;
 }
 async function openOrder(id) {
   const o = ORDERS.find((x) => x.id === id); if (!o) return;
@@ -361,7 +297,7 @@ async function openOrder(id) {
   }
   const sjInfo = o.sj_no
     ? `${esc(o.sj_no)} · Rev ${esc(o.sj_rev)}${sjChanged ? ' <span class="badge b-pending">Data berubah, perlu revisi</span>' : ''}`
-    : '<span class="small">Belum terbit — perlu status lunas &amp; driver bertugas</span>';
+    : '<span class="small">Belum terbit — perlu status DP Diterima/Lunas &amp; driver bertugas</span>';
 
   openModal(`
     <h2>${esc(o.invoice_no || o.order_id)} ${badge(o.status)}</h2>
@@ -373,6 +309,9 @@ async function openOrder(id) {
       <dt>Titik jemput</dt><dd>${esc(o.pickup_note || '-')}</dd>
       <dt>Destinasi</dt><dd style="white-space:pre-line">${esc(destText(o))}</dd>
       <dt>Biaya</dt><dd>Armada ${rp(o.base_price)}${Number(o.cross_cost) > 0 ? ` + lintas ${rp(o.cross_cost)}` : ''}${Number(o.discount) > 0 ? ` − diskon ${rp(o.discount)}` : ''} = <b>${rp(o.total)}</b></dd>
+      ${o.payment_mode === 'dp' ? `<dt>DP</dt><dd>Diterima ${rp(o.dp_amount)}${o.dp_percent_applied ? ` (${o.dp_percent_applied}%)` : ''} lewat Midtrans.<br>
+        Tunai ditagih ke pelanggan: <b>${rp(Math.max(0, Number(o.total) - Number(o.dp_amount || 0)))}</b><br>
+        Sisa transfer admin ke driver dari DP: <b>${rp(Math.max(0, Number(o.dp_amount || 0) - Number(o.admin_cut_amount || 0)))}</b></dd>` : ''}
       <dt>Potongan admin</dt><dd>${rp(o.admin_cut_amount)} (${esc(o.admin_cut_value)}${o.admin_cut_type === 'flat' ? ' Rp' : '%'})</dd>
       <dt>Pendapatan driver</dt><dd>${rp(o.driver_earning)}</dd>
       <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : 'Langsung dari web'}</dd>
@@ -601,7 +540,7 @@ const RES = {
       { key: 'phone', label: 'WA', render: (r) => r.phone ? `${esc(r.phone)} <a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none;margin-left:4px">Kirim pesan</a>` : '-' },
       { key: 'plate', label: 'Plat', render: (r) => r.plate || '-' },
       { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
-      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u)}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`; } },
+      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<a class="small" href="https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(u)}" target="_blank" rel="noopener">QR</a>` : ''}`; } },
       { key: 'card', label: 'ID Card', render: (r) => {
           const tok = S.cards[r.slug];
           const u = (S.siteUrl && tok) ? `${S.siteUrl}/kartu.html?t=${tok}` : '';
@@ -609,20 +548,22 @@ const RES = {
         } },
       { key: 'cetak', label: 'Kartu Cetak', render: (r) => {
           if (!S.siteUrl) return '<span class="small">Isi site_url dulu</span>';
-          if (!r.driver_code || !S.cards[r.slug]) return '<span class="small">Kode ID/token belum ada</span>';
-          return `<button class="btn ghost sm" type="button" data-print="${esc(r.slug)}">Cetak kartu</button>`;
+          if (!r.driver_code) return '<span class="small">-</span>';
+          const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '' });
+          if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
+          return `<a class="btn ghost sm" href="${esc(S.siteUrl)}/kartu-anggota.html?${p.toString()}" target="_blank" rel="noopener" style="text-decoration:none">Cetak kartu</a>`;
         } }],
     fields: [
-      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true, createOnly: true },
+      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true },
       { key: 'name', label: 'Nama', type: 'text', required: true },
       { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
       { key: 'plate', label: 'Plat nomor kendaraan', type: 'text' },
       { key: 'base', label: 'Basis / kota', type: 'text' },
       { key: 'vehicle_type', label: 'Jenis kendaraan', type: 'text' },
       { key: 'motto', label: 'Motto', type: 'text' },
-      { key: 'photo_url', label: 'Foto (pilih dari galeri HP)', type: 'photo', full: true },
+      { key: 'photo_url', label: 'Foto (alamat)', type: 'text', full: true },
       { key: 'is_active', label: 'Aktif', type: 'bool' }],
-    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama dan kartu cetak yang sudah dibuat.</div>'
+    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama.</div>'
   },
   template: {
     table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
@@ -634,24 +575,6 @@ const RES = {
   }
 };
 for (const key of Object.keys(RES)) VIEWS[key] = () => viewCrud(key);
-
-// Tombol "Cetak kartu": buka kartu-anggota.html dengan data driver + kode tanda tangan tetap,
-// supaya QR di kartu bisa diverifikasi (lihat function verifikasi, jenis "kartu cetak").
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-print]');
-  if (!b) return;
-  const slug = b.dataset.print;
-  const r = S.drivers.find((x) => x.slug === slug);
-  const tok = S.cards[slug];
-  if (!r || !tok || !r.driver_code || !S.siteUrl) { toast('Data driver, kode ID, token kartu, atau alamat situs belum lengkap', true); return; }
-  b.disabled = true;
-  try {
-    const k = (await hmacHex(tok, `${r.driver_code}.cetak`)).slice(0, 20);
-    const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '', k });
-    if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
-    window.open(`${S.siteUrl}/kartu-anggota.html?${p.toString()}`, '_blank');
-  } finally { b.disabled = false; }
-});
 
 let ROWS = {};
 async function viewCrud(key) {
@@ -670,14 +593,6 @@ async function viewCrud(key) {
 }
 function fieldHTML(f, val, disabled) {
   const id = 'f_' + f.key, cls = f.full ? ' class="full"' : '';
-  if (f.type === 'photo') {
-    const prev = val ? `<img src="${esc(val)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">` : '';
-    return `<div${cls}><label>${esc(f.label)}</label>
-      <div id="${id}_prev">${prev}</div>
-      <input type="file" id="${id}_file" accept="image/*">
-      <input type="hidden" id="${id}" value="${esc(val || '')}">
-      <div class="help" id="${id}_status">&nbsp;</div></div>`;
-  }
   if (f.type === 'bool') return `<div${cls}><label class="chk"><input type="checkbox" id="${id}" ${val ? 'checked' : ''}> ${esc(f.label)}</label></div>`;
   if (f.type === 'textarea') return `<div${cls}><label>${esc(f.label)}<textarea id="${id}" rows="${f.rows || 4}">${esc(val == null ? '' : val)}</textarea></label></div>`;
   const type = f.type === 'number' ? 'number' : (f.type === 'datetime' ? 'datetime-local' : 'text');
@@ -705,33 +620,6 @@ function openForm(key, row) {
       <button class="btn ghost" id="mCancel" type="button">Batal</button>
       <button class="btn" id="mSave" type="button">Simpan</button>
     </div>`);
-  if (key === 'driver' && isNew) {
-    const nameEl = $('#f_name'), slugEl = $('#f_slug');
-    let slugTouched = false;
-    slugEl.addEventListener('input', () => { slugTouched = true; });
-    nameEl.addEventListener('input', () => {
-      if (slugTouched) return;
-      slugEl.value = nameEl.value.toLowerCase().trim()
-        .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-    });
-  }
-  const photoField = R.fields.find((f) => f.type === 'photo');
-  if (photoField) {
-    const pid = 'f_' + photoField.key;
-    const fileEl = $('#' + pid + '_file'), hiddenEl = $('#' + pid), statusEl = $('#' + pid + '_status');
-    fileEl.addEventListener('change', async () => {
-      const file = fileEl.files[0]; if (!file) return;
-      statusEl.textContent = 'Mengunggah…';
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const up = await sb.storage.from('driver-photos').upload(path, file, { upsert: false });
-      if (up.error) { statusEl.textContent = 'Gagal unggah: ' + up.error.message; return; }
-      const pub = sb.storage.from('driver-photos').getPublicUrl(path).data.publicUrl;
-      hiddenEl.value = pub;
-      $('#' + pid + '_prev').innerHTML = `<img src="${esc(pub)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">`;
-      statusEl.textContent = 'Terunggah';
-    });
-  }
   $('#mCancel').addEventListener('click', closeModal);
   $('#mSave').addEventListener('click', () => saveForm(key, row));
   if ($('#mDel')) $('#mDel').addEventListener('click', async () => {
@@ -757,102 +645,6 @@ async function saveForm(key, row) {
   toast('Tersimpan'); closeModal();
   if (key === 'driver') await loadShared();
   nav(key);
-}
-
-/* ---------- PERSETUJUAN DRIVER (dari daftar-driver.html) ---------- */
-let PENDING_ROWS = [];
-function pendBadge(st) {
-  const map = { pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak' };
-  const cls = st === 'approved' ? 'b-paid' : st === 'rejected' ? 'b-cancelled' : 'b-pending';
-  return `<span class="badge ${cls}">${esc(map[st] || st)}</span>`;
-}
-VIEWS.persetujuan = async function () {
-  $('#view').innerHTML = `
-    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Persetujuan Driver</h2>
-      <select id="pgStatus"><option value="pending" selected>Menunggu</option><option value="approved">Disetujui</option><option value="rejected">Ditolak</option><option value="">Semua</option></select>
-    </div>
-    <div class="card" id="pgList"></div>`;
-  $('#pgStatus').addEventListener('change', loadPending);
-  await loadPending();
-};
-async function loadPending() {
-  const st = $('#pgStatus').value;
-  let q = sb.from('drivers_pending').select('*').order('created_at', { ascending: false }).limit(200);
-  if (st) q = q.eq('status', st);
-  const { data, error } = await q;
-  if (error) { $('#pgList').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
-  PENDING_ROWS = data || [];
-  renderPending();
-}
-function renderPending() {
-  if (!PENDING_ROWS.length) { $('#pgList').innerHTML = '<div class="empty">Tidak ada data.</div>'; return; }
-  $('#pgList').innerHTML = `<div class="tablewrap"><table>
-    <thead><tr><th>Daftar</th><th>Nama</th><th>WA</th><th>Kendaraan</th><th>Foto</th><th>Status</th><th></th></tr></thead>
-    <tbody>${PENDING_ROWS.map((p) => `<tr>
-      <td class="small">${esc(waktu(p.created_at))}</td>
-      <td>${esc(p.name)}</td>
-      <td>${esc(p.phone)} <a class="small" href="https://wa.me/${esc(normWA(p.phone))}" target="_blank" rel="noopener">chat</a></td>
-      <td>${esc(p.vehicle_type || '-')}${p.plate ? `<div class="small">${esc(p.plate)}</div>` : ''}</td>
-      <td>${p.photo_url ? `<img src="${esc(p.photo_url)}" style="width:40px;height:40px;border-radius:50%;object-fit:cover">` : '-'}</td>
-      <td>${pendBadge(p.status)}</td>
-      <td class="num">${p.status === 'pending' ? `<button class="btn sm" type="button" data-approve="${p.id}">Setujui</button> <button class="btn ghost sm" type="button" data-reject="${p.id}">Tolak</button>` : ''}</td>
-    </tr>`).join('')}</tbody></table></div>`;
-}
-document.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-approve]');
-  if (!b) return;
-  const p = PENDING_ROWS.find((x) => String(x.id) === b.dataset.approve);
-  if (p) openApproveForm(p);
-});
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-reject]');
-  if (!b) return;
-  if (!confirm('Tolak pendaftaran ini? Data pendaftar tetap disimpan sebagai riwayat, tapi tidak dibuatkan akun driver.')) return;
-  const id = b.dataset.reject;
-  const r = await sb.from('drivers_pending').update({ status: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
-  if (r.error) { toast(r.error.message, true); return; }
-  toast('Pendaftaran ditolak'); nav('persetujuan');
-});
-function openApproveForm(p) {
-  const slugAwal = String(p.name || '').toLowerCase().trim()
-    .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-  openModal(`
-    <h2>Setujui: ${esc(p.name)}</h2>
-    <div class="help">Cek dan perbaiki data (terutama nomor WA) sebelum disimpan sebagai driver resmi. Kode ID dibuat otomatis.</div>
-    <div class="fgrid">
-      <div><label>Nama<input id="apName" value="${esc(p.name)}"></label></div>
-      <div><label>Slug (untuk link ?r=slug)<input id="apSlug" value="${esc(slugAwal)}"></label></div>
-      <div><label>Nomor WA<input id="apPhone" value="${esc(p.phone)}"></label></div>
-      <div><label>Plat nomor<input id="apPlate" value="${esc(p.plate || '')}"></label></div>
-      <div class="full"><label>Jenis kendaraan<input id="apVehicle" value="${esc(p.vehicle_type || '')}"></label></div>
-    </div>
-    <div class="mbtns">
-      <button class="btn ghost" id="apCancel" type="button">Batal</button>
-      <button class="btn" id="apSave" type="button">Simpan sebagai driver</button>
-    </div>`);
-  $('#apCancel').addEventListener('click', closeModal);
-  $('#apSave').addEventListener('click', async () => {
-    const name = $('#apName').value.trim();
-    const slug = $('#apSlug').value.trim().toLowerCase();
-    const phone = $('#apPhone').value.trim();
-    const plate = $('#apPlate').value.trim();
-    const vehicle_type = $('#apVehicle').value.trim();
-    if (!name || !slug || !phone) { toast('Nama, slug, dan nomor WA wajib diisi', true); return; }
-    const btn = $('#apSave'); btn.disabled = true;
-    const ins = await sb.from('drivers').insert({
-      slug, name, phone, plate: plate || null, vehicle_type: vehicle_type || null,
-      photo_url: p.photo_url || null, is_active: true
-    });
-    if (ins.error) { toast(ins.error.message, true); btn.disabled = false; return; }
-    try { await sb.rpc('rotate_driver_card', { p_slug: slug }); }
-    catch (_e) { toast('Driver dibuat, tapi token kartu ID gagal dibuat otomatis. Ketuk "Ganti token" di tabel Driver nanti.', true); }
-    const upd = await sb.from('drivers_pending').update({ status: 'approved', reviewed_at: new Date().toISOString() }).eq('id', p.id);
-    if (upd.error) toast('Driver tersimpan, tapi status pendaftaran gagal ditandai disetujui: ' + upd.error.message, true);
-    else toast('Driver baru disimpan');
-    closeModal();
-    await loadShared();
-    nav('persetujuan');
-  });
 }
 
 /* ---------- PENGATURAN ---------- */
