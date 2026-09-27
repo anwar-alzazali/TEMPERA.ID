@@ -30,18 +30,38 @@ html{scroll-behavior:smooth}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}.animate-shake{animation:shake.5s ease-in-out}
 .accordion-content{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
 .accordion-content.open{max-height:2000px}
-:root{--accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;--text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;--border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07)}
-[data-theme="classic"]{--accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;--text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;--border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07)}
-[data-theme="sky"]{--accent:#0EA5E9;--accent-light:#38BDF8;--accent-glow:rgba(14,165,233,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F0F9FF;--bg-card:#FFFFFF;--bg-card-hover:#E0F2FE;--bg-input:#FFFFFF;--text-primary:#0C4A6E;--text-secondary:#0369A1;--text-muted:#3E7C97;--border-color:rgba(14,165,233,0.30);--border-soft:#E0F2FE}
-[data-theme="tropical"]{--accent:#06B6D4;--accent-light:#22D3EE;--accent-glow:rgba(6,182,214,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#ECFEFF;--bg-card:#FFFFFF;--bg-card-hover:#CFFAFE;--bg-input:#FFFFFF;--text-primary:#164E63;--text-secondary:#0E7490;--text-muted:#3B7A87;--border-color:rgba(6,182,214,0.30);--border-soft:#CFFAFE}
-[data-theme="mountain"]{--accent:#10B981;--accent-light:#34D399;--accent-glow:rgba(16,185,129,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#ECFDF5;--bg-card:#FFFFFF;--bg-card-hover:#D1FAE5;--bg-input:#FFFFFF;--text-primary:#022C22;--text-secondary:#065F46;--text-muted:#3D7A63;--border-color:rgba(16,185,129,0.30);--border-soft:#D1FAE5}
-[data-theme="ocean"]{--accent:#2563EB;--accent-light:#3B82F6;--accent-glow:rgba(37,99,235,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#EFF6FF;--bg-card:#FFFFFF;--bg-card-hover:#DBEAFE;--bg-input:#FFFFFF;--text-primary:#1E3A8A;--text-secondary:#1D4ED8;--text-muted:#4A5F94;--border-color:rgba(37,99,235,0.30);--border-soft:#DBEAFE}
-[data-theme="sunset"]{--accent:#F97316;--accent-light:#FB923C;--accent-glow:rgba(249,115,22,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#FFF7ED;--bg-card:#FFFFFF;--bg-card-hover:#FFEDD5;--bg-input:#FFFFFF;--text-primary:#431407;--text-secondary:#9A3412;--text-muted:#A15A2E;--border-color:rgba(249,115,22,0.30);--border-soft:#FFEDD5}
-[data-theme="minimal"]{--accent:#334155;--accent-light:#475569;--accent-glow:rgba(51,65,85,0.12);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F8FAFC;--bg-card:#FFFFFF;--bg-card-hover:#F1F5F9;--bg-input:#FFFFFF;--text-primary:#0F172A;--text-secondary:#334155;--text-muted:#5B6B80;--border-color:#CBD5E1;--border-soft:#F1F5F9}
-[data-theme="heritage"]{--accent:#7C3AED;--accent-light:#A78BFA;--accent-glow:rgba(124,58,237,0.18);--bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F5F3FF;--bg-card:#FFFFFF;--bg-card-hover:#EDE9FE;--bg-input:#FFFFFF;--text-primary:#1E1B4B;--text-secondary:#5B21B6;--text-muted:#6B4FA0;--border-color:rgba(124,58,237,0.30);--border-soft:#EDE9FE}
-/* FINAL FIX: MALAM HITAM SEMUA TEMA - TAPI BISA DIPAKSA PUTIH DI AWAL */
-html.is-night{--bg-main:#0A0A0A!important;--bg-section:#0A0A0A!important;--bg-section-alt:#0F0F0F!important;--bg-card:#111111!important;--bg-card-hover:#1A1A1A!important;--bg-input:#1A1A1A!important;--text-primary:#FFFFFF!important;--text-secondary:#A1A1AA!important;--text-muted:#71717A!important;--border-soft:rgba(255,255,255,0.07)!important}
-body{background:var(--bg-main);color:var(--text-primary);transition:all 0.4s ease}
+
+/* =====================================================================
+   TEMA: cuma 2 -- terang (teal, senada invoice/panel/kas/ID card) dan
+   gelap (Classic Luxury, emas-hitam yang sudah ada). Ikut pengaturan
+   terang/gelap perangkat secara otomatis; bisa ditimpa manual lewat
+   tombol (disimpan di localStorage sebagai data-theme="light"/"dark"
+   di <html>, ditulis oleh js/main.js).
+   ===================================================================== */
+:root{
+  --accent:#0891b2;--accent-light:#22b8d0;--accent-glow:rgba(8,145,178,0.18);
+  --bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F0F9FF;--bg-card:#FFFFFF;--bg-card-hover:#E0F2FE;--bg-input:#FFFFFF;
+  --text-primary:#0F172A;--text-secondary:#0E7490;--text-muted:#64748B;
+  --border-color:rgba(8,145,178,0.30);--border-soft:#E0F2FE;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);
+    --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
+    --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
+    --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+  }
+}
+:root[data-theme="dark"]{
+  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);
+  --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
+  --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
+  --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+}
+/* dipakai .gold-text & elemen yang sengaja selalu emas (footer, dsb) di kedua tema */
+.always-gold{--accent:#E5B80B;--accent-light:#FFD700}
+
+body{background:var(--bg-main);color:var(--text-primary);transition:background .4s ease,color .4s ease}
 .theme-section{background:var(--bg-section);transition:all 0.4s ease}
 .theme-section-alt{background:var(--bg-section-alt);transition:all 0.4s ease}
 .theme-card{background:var(--bg-card);border-color:var(--border-color);box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:all 0.4s ease}
@@ -79,24 +99,55 @@ body{background:var(--bg-main);color:var(--text-primary);transition:all 0.4s eas
 #mobileArmadaName{font-size: 12px!important;font-weight: 700!important;letter-spacing: 0.02em;line-height: 1.2;}
 #mobileTotalPrice{font-size: 22px!important;font-weight: 800!important;font-family: 'Cormorant Garamond', serif!important;letter-spacing: -0.02em;line-height: 1;}
 
-/* FIX GRID ARMADA & CARD SERAGAM (dipertahankan !important: Tailwind CDN menyuntik <style> setelah main.css jadi menang cascade tanpa ini) */
-#armada-cards{display:grid!important;grid-template-columns:repeat(1,minmax(0,1fr))!important;gap:1.5rem!important}
-@media(min-width:768px){#armada-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(min-width:1024px){#armada-cards{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
-.armada-card-uniform{display:flex!important;flex-direction:column!important;height:100%!important;min-height:520px!important}
-.armada-card-uniform .armada-img-container{height:220px!important;flex-shrink:0}
+/* ARMADA jadi slider (geser ke samping), bukan lagi kolom memanjang ke bawah.
+   (dipertahankan !important: Tailwind CDN menyuntik <style> setelah main.css
+   jadi menang cascade tanpa ini) */
+#armada-cards{display:flex!important;gap:1.25rem!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;padding:4px 4px 14px!important;scrollbar-width:none}
+#armada-cards::-webkit-scrollbar{display:none}
+.armada-card-uniform{flex:0 0 auto!important;width:280px!important;scroll-snap-align:start;display:flex!important;flex-direction:column!important;min-height:480px!important}
+.armada-card-uniform .armada-img-container{height:200px!important;flex-shrink:0}
 .armada-card-uniform .p-6{flex:1 1 auto;display:flex;flex-direction:column}
 .armada-card-uniform ul{flex:1 1 auto}
 .armada-card-uniform button{margin-top:auto!important}
+@media(min-width:640px){.armada-card-uniform{width:300px!important}}
 
 /* NAV LINK HOVER - ikut tema, ganti hover:text-white yang hilang di tema terang */
 .nav-link{transition:color .2s ease}
 .nav-link:hover{color:var(--accent)!important}
 
 /* MODAL & WARNING BOX - jangan menyilaukan saat tema gelap */
-html.is-night #capacityModalBox{background:var(--bg-card)!important;color:var(--text-primary)!important;border-color:var(--border-color)!important}
-html.is-night #crossTripWarning .bg-white,
-html.is-night #crossTripWarning .bg-white\/90,
-html.is-night #crossTripWarning .bg-zinc-800{background:var(--bg-card)!important;color:var(--text-primary)!important}
-html.is-night #crossTripWarning{filter:brightness(0.92)}
+:root[data-theme="dark"] #capacityModalBox{background:var(--bg-card)!important;color:var(--text-primary)!important;border-color:var(--border-color)!important}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #capacityModalBox{background:var(--bg-card)!important;color:var(--text-primary)!important;border-color:var(--border-color)!important}}
+:root[data-theme="dark"] #crossTripWarning .bg-white,
+:root[data-theme="dark"] #crossTripWarning .bg-white\/90,
+:root[data-theme="dark"] #crossTripWarning .bg-zinc-800{background:var(--bg-card)!important;color:var(--text-primary)!important}
+:root[data-theme="dark"] #crossTripWarning{filter:brightness(0.92)}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) #crossTripWarning .bg-white,
+  :root:not([data-theme="light"]) #crossTripWarning .bg-white\/90,
+  :root:not([data-theme="light"]) #crossTripWarning .bg-zinc-800{background:var(--bg-card)!important;color:var(--text-primary)!important}
+  :root:not([data-theme="light"]) #crossTripWarning{filter:brightness(0.92)}
+}
 
+/* Tombol pemilih tema (pengganti dropdown 8-tema lama) */
+#themeToggleBtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);font-size:15px;cursor:pointer;transition:background .2s ease}
+#themeToggleBtn:hover{background:var(--bg-card-hover)}
+
+/* FAQ: pakai <details>/<summary> bawaan browser, tidak perlu JS tambahan */
+.faq-item{overflow:hidden}
+.faq-item summary{padding:16px 18px;cursor:pointer;font-weight:700;font-size:13.5px;list-style:none;color:var(--text-primary);display:flex;align-items:center;justify-content:space-between}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';font-size:20px;color:var(--accent);flex:none;margin-left:12px}
+.faq-item[open] summary::after{content:'\2212'}
+.faq-item p{margin:0;padding:0 18px 16px;font-size:13px;color:var(--text-secondary);line-height:1.6}
+
+/* Slider (armada & paket wisata): geser ke samping, tidak memanjangkan halaman */
+.slider-track{display:flex;gap:1.25rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 14px;scrollbar-width:none}
+.slider-track::-webkit-scrollbar{display:none}
+.slider-track>*{flex:0 0 auto;scroll-snap-align:start}
+.slider-nav{display:flex;gap:8px;justify-content:center;margin-top:4px}
+.slider-dot{width:7px;height:7px;border-radius:99px;background:var(--border-color);transition:background .2s,width .2s}
+.slider-dot.on{background:var(--accent);width:20px}
+.slider-arrow{width:38px;height:38px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.slider-arrow:hover{background:var(--bg-card-hover)}
+.slider-arrow:disabled{opacity:.35;cursor:default}
