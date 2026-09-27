@@ -32,6 +32,9 @@
   .inv-title h1{margin:0;font-size:26px;letter-spacing:.12em;color:var(--accent)}
   .inv-no{font-weight:700}
   .badge{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:800;font-size:12px;letter-spacing:.08em}
+  .badge.dp{background:#fef3c7;color:#92400e}
+  .dp-note{margin-top:16px;padding:12px 14px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:12.5px;line-height:1.6}
+  .dp-note b{display:block;margin-bottom:2px;font-size:13.5px}
 
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:22px 0}
   .box h3{margin:0 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -151,7 +154,7 @@ function buildInvoice(d) {
   const rows = [`<tr><td>${esc(inv.fleet_name || 'Sewa mobil')}</td><td class="num">${rp(inv.base_price)}</td></tr>`];
   if (Number(inv.cross_cost) > 0) rows.push(`<tr><td>Biaya lintas wilayah</td><td class="num">${rp(inv.cross_cost)}</td></tr>`);
   if (Number(inv.discount) > 0) rows.push(`<tr><td class="disc">Diskon</td><td class="num disc">- ${rp(inv.discount)}</td></tr>`);
-  rows.push(`<tr class="total"><td>Total dibayar</td><td class="num">${rp(inv.total)}</td></tr>`);
+  rows.push(`<tr class="total"><td>${inv.payment_mode === 'dp' ? 'Total tagihan' : 'Total dibayar'}</td><td class="num">${rp(inv.total)}</td></tr>`);
 
   return `
   <div id="invoice">
@@ -163,9 +166,13 @@ function buildInvoice(d) {
       <div class="inv-title">
         <h1>INVOICE</h1>
         <div class="inv-no">${esc(inv.invoice_no || '-')}</div>
-        <span class="badge">LUNAS</span>
+        <span class="badge${inv.payment_mode === 'dp' ? ' dp' : ''}">${inv.payment_mode === 'dp' ? 'DP DITERIMA' : 'LUNAS'}</span>
       </div>
     </div>
+    ${inv.payment_mode === 'dp' ? `<div class="dp-note">
+      <b>Uang muka (DP) sudah diterima${inv.dp_percent_applied ? ' — ' + inv.dp_percent_applied + '%' : ''}: ${rp(inv.dp_amount)}</b>
+      Sisa ${rp(inv.sisa_tunai)} dibayar tunai langsung ke driver saat perjalanan berlangsung.
+    </div>` : ''}
 
     <div class="grid">
       <div class="box">
