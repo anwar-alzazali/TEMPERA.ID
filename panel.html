@@ -274,7 +274,7 @@ async function enter() {
   nav(location.hash.replace('#', '') || 'pesanan');
 }
 async function loadShared() {
-  const d = await sb.from('drivers').select('*').order('name');
+  const d = await sb.from('drivers').select('*').order('driver_code');
   S.drivers = d.data || [];
   const s = await sb.from('app_settings').select('key,value').in('key', ['site_url', 'kas_token']);
   const sm = {}; (s.data || []).forEach((x) => { sm[x.key] = x.value; });
@@ -600,7 +600,7 @@ const RES = {
       { key: 'is_active', label: 'Aktif', type: 'bool' }]
   },
   driver: {
-    table: 'drivers', title: 'Driver', pk: 'id', order: { col: 'name', asc: true },
+    table: 'drivers', title: 'Driver', pk: 'id', order: { col: 'driver_code', asc: true },
     defaults: { is_active: true },
     cols: [
       { key: 'driver_code', label: 'ID', render: (r) => r.driver_code || '-' },
