@@ -929,7 +929,37 @@ document.addEventListener('click', async (e) => {
   if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
   toast('Ditandai selesai'); loadWaFail();
 });
+/* ---------- AKUN MITRA (dashboard driver, mitra.html) ---------- */
+// Menambah kolom "Akun Mitra" di tab Driver: status, tombol Kirim info (WA ke driver), dan Reset.
+S.mitra = {};
+RES.driver.cols.push({ key: 'mitra', label: 'Akun Mitra', render: (r) => {
+  const m = S.mitra[r.slug];
+  const link = S.siteUrl ? `${S.siteUrl}/mitra.html` : '';
+  const pesanInfo = `Halo ${r.name}, dashboard Mitra Tempera sudah bisa dipakai:\n${link}\n\nKode ID kamu: ${r.driver_code || '-'}\nPilih "Daftar / aktifkan akun", masukkan Kode ID dan nomor WA ini, lalu buat PIN sendiri. Kode verifikasi akan dikirim ke WA ini.`;
+  const info = (link && r.phone && r.driver_code)
+    ? `<a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}?text=${encodeURIComponent(pesanInfo)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim info</a>` : '';
+  if (!m || !m.aktif) return `<span class="badge">Belum daftar</span> ${info}`;
+  const st = m.terkunci ? '<span class="badge b-cancelled">Terkunci 15 mnt</span>' : '<span class="badge b-paid">Aktif</span>';
+  return `${st}<div class="small">${esc(m.sesi)} HP masuk</div><button class="btn ghost sm" type="button" data-mitra-reset="${esc(r.slug)}" data-nama="${esc(r.name)}">Reset</button>`;
+} });
+const _driverAsli = VIEWS.driver;
+VIEWS.driver = async function () {
+  const r = await sb.rpc('admin_mitra_status');
+  S.mitra = {};
+  if (!r.error) (r.data || []).forEach((x) => { S.mitra[x.driver_slug] = x; });
+  return _driverAsli();
+};
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-mitra-reset]');
+  if (!b) return;
+  if (!confirm(`Reset akun mitra ${b.dataset.nama}?\n\nPIN dihapus dan semua HP-nya keluar. Driver harus daftar ulang lewat kode WA di halaman mitra.`)) return;
+  b.disabled = true;
+  const r = await sb.rpc('admin_reset_mitra', { p_slug: b.dataset.mitraReset });
+  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
+  toast('Akun mitra direset'); nav('driver');
+});
 
+  
 </script>
 </body>
 </html>
