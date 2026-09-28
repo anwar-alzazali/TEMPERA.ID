@@ -1,6 +1,6 @@
 /* [MAIN.JS] */
 
-const WA_NUMBER = '6285196755972';
+const WA_NUMBER = '6285196755972'; // nomor WA admin untuk chat pelanggan (bukan nomor pengirim Fonnte)
 
 var TRANSLATIONS={id:{nav_home:"Beranda",nav_dest:"Paket Wisata",nav_fleet:"Sewa Mobil",nav_book:"Pesan Sekarang",hero_badge:"",hero_h1a:"Tempera",hero_h1b:"Private Trip Bandung",hero_desc:"Lembang • Ciwidey • Pangalengan • Dago",hero_cta1:"Jelajahi Paket",hero_cta2:"Lihat Armada",dest_title:"Paket Wisata Bandung Favorit 2025",dest_sub:"1 Wilayah Lebih Efisien & Hemat",fleet_title:"Armada Sewa Mobil Bandung",book_title:"Booking Sewa Mobil & Paket Wisata Bandung",step1:"Langkah 1: Pilih Wilayah Biar Hemat (Traveloka Style)",step2:"Langkah 2: Pilih Destinasi (Centang yang Mau Dikunjungi)",form_name:"Nama Lengkap *",form_armada:"Pilih Armada 12 Jam All-In *",form_date:"Tanggal *",form_time:"Jam Jemput",form_pax:"Jumlah Peserta *",form_note:"Catatan / Lokasi Jemput",summary:"Rincian Biaya",btn_wa:"Kirim Pesanan via WhatsApp"},en:{nav_home:"Home",nav_dest:"Tour Packages",nav_fleet:"Car Rental",nav_book:"Book Now",hero_badge:"",hero_h1a:"Tempera",hero_h1b:"Private Trip Bandung",hero_desc:"Lembang • Ciwidey • Pangalengan • Dago",hero_cta1:"Explore Packages",hero_cta2:"View Fleet",dest_title:"Favorite Bandung Tour Packages 2025",dest_sub:"1 Region More Efficient",fleet_title:"Bandung Car Rental Fleet",book_title:"Booking Bandung Car Rental & Tour",step1:"Step 1: Choose Region",step2:"Step 2: Choose Destinations",form_name:"Full Name *",form_armada:"Choose Fleet *",form_date:"Date *",form_time:"Pickup Time",form_pax:"Guests *",form_note:"Notes / Pickup",summary:"Price Summary",btn_wa:"Send via WhatsApp"},ms:{nav_home:"Laman Utama",nav_dest:"Pakej Pelancongan",nav_fleet:"Sewa Kereta",nav_book:"Tempah Sekarang",hero_badge:"",hero_h1a:"Tempera",hero_h1b:"Private Trip Bandung",hero_desc:"Lembang • Ciwidey • Pangalengan • Dago",hero_cta1:"Jelajahi Paket",hero_cta2:"Lihat Armada",dest_title:"Pakej Pelancongan Bandung 2025",dest_sub:"1 Wilayah Lebih Efisien",fleet_title:"Armada Sewa Kereta Bandung",book_title:"Tempahan Sewa Kereta Bandung",step1:"Langkah 1: Pilih Wilayah",step2:"Langkah 2: Pilih Destinasi",form_name:"Nama Penuh *",form_armada:"Pilih Armada *",form_date:"Tarikh *",form_time:"Masa Jemput",form_pax:"Bil. Peserta *",form_note:"Catatan / Lokasi",summary:"Ringkasan Harga",btn_wa:"Hantar via WhatsApp"}};
 var currentLang=localStorage.getItem('tempera_lang')||'id';
@@ -331,7 +331,7 @@ if(regionCount>=2){
             <div class="text-[10px] text-zinc-500 mt-1">Total muter ~90KM • 3-4 Jam di jalan kalau 1 hari</div>
           </div>
           <div class="mt-3 rounded-xl bg-white/90 p-3 border border-orange-200"><div class="flex justify-between text-[11px] mt-1"><span class="text-orange-700 font-medium">+ Lintas Utara-Selatan</span><span class="font-bold text-orange-700">Rp ${cost.toLocaleString('id-ID')}</span></div><div class="mt-2 flex justify-between border-t pt-2 text-[13px] font-black"><span>Total</span><span>Rp ${(base+cost).toLocaleString('id-ID')}</span></div></div>
-          <div class="mt-3"><button onclick="if(confirm('Jadikan 2 hari? Hari 1 Lembang, Hari 2 Ciwidey+Pangalengan')){alert('Chat admin untuk paket 2D1N!')}" class="w-full bg-zinc-900 text-white rounded-full py-2.5 text-[11px] font-bold">💡 Mending jadi 2 hari? (Lebih santai, driver rekomen)</button></div>
+          <div class="mt-3"><button onclick="pilihDuaHari()" class="w-full bg-zinc-900 text-white rounded-full py-2.5 text-[11px] font-bold">💡 Mending jadi 2 hari? (Lebih santai, driver rekomen)</button></div>
         </div>
       </div>`;
   } else if(crossType==="tiga_penjuru"){
@@ -566,6 +566,88 @@ function updatePaymentPreview(totalBeforeToll) {
   }
 }
 
+// ------------------------------------------------------------------
+// Dialog TEMPERA: pengganti alert()/confirm() bawaan browser, yang judulnya
+// selalu berupa alamat situs ("...github.io says") dan tidak bisa diubah.
+// Warnanya ikut tema terang/gelap. Pesan ditulis lewat textContent (bukan
+// innerHTML), jadi teks dari server tidak bisa menyusupkan kode.
+// temperaDialog() mengembalikan Promise: true = tombol utama, false = batal.
+// ------------------------------------------------------------------
+function temperaDialog({ message, okText = 'OK', cancelText = null }) {
+  return new Promise((resolve) => {
+    const lama = document.getElementById('temperaDialog');
+    if (lama) lama.remove();                       // cegah dua dialog bertumpuk
+    const fokusAwal = document.activeElement;
+    const gelap = effectiveTheme() === 'dark';
+
+    const overlay = document.createElement('div');
+    overlay.id = 'temperaDialog';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'TEMPERA');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55)';
+
+    const card = document.createElement('div');
+    card.style.cssText = 'width:100%;max-width:380px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)';
+
+    const head = document.createElement('div');
+    head.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px';
+    const logo = document.createElement('span'); logo.className = 'logo'; logo.style.setProperty('--w', '26px');
+    const judul = document.createElement('b'); judul.textContent = 'TEMPERA';
+    judul.style.cssText = 'letter-spacing:.22em;font-size:13px;color:var(--accent)';
+    head.append(logo, judul);
+
+    const pesan = document.createElement('p');
+    pesan.textContent = message;
+    pesan.style.cssText = 'margin:0 0 18px;font-size:14px;line-height:1.55;white-space:pre-line;color:var(--text-secondary)';
+
+    const baris = document.createElement('div');
+    baris.style.cssText = 'display:flex;gap:10px;justify-content:flex-end';
+    const gayaTombol = 'flex:1;padding:11px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;';
+    let btnBatal = null;
+    if (cancelText) {
+      btnBatal = document.createElement('button'); btnBatal.type = 'button'; btnBatal.textContent = cancelText;
+      btnBatal.style.cssText = gayaTombol + 'background:transparent;color:var(--text-primary);border:1px solid var(--border-color)';
+      baris.appendChild(btnBatal);
+    }
+    const btnOk = document.createElement('button'); btnOk.type = 'button'; btnOk.textContent = okText;
+    btnOk.style.cssText = gayaTombol + 'border:0;background:var(--accent);color:' + (gelap ? '#0A0A0A' : '#fff');
+    baris.appendChild(btnOk);
+
+    card.append(head, pesan, baris); overlay.appendChild(card); document.body.appendChild(overlay);
+    const kunciScroll = document.body.style.overflow; document.body.style.overflow = 'hidden';
+
+    const tutup = (hasil) => {
+      document.removeEventListener('keydown', onKey, true);
+      overlay.remove(); document.body.style.overflow = kunciScroll;
+      if (fokusAwal && fokusAwal.focus) { try { fokusAwal.focus(); } catch (e) {} }
+      resolve(hasil);
+    };
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); tutup(false); }
+      else if (e.key === 'Tab') {                  // fokus tetap di dalam dialog
+        const el = btnBatal ? [btnBatal, btnOk] : [btnOk];
+        const i = el.indexOf(document.activeElement);
+        e.preventDefault(); el[(i + (e.shiftKey ? el.length - 1 : 1)) % el.length].focus();
+      }
+    }
+    document.addEventListener('keydown', onKey, true);
+    btnOk.addEventListener('click', () => tutup(true));
+    if (btnBatal) btnBatal.addEventListener('click', () => tutup(false));
+    else overlay.addEventListener('click', (e) => { if (e.target === overlay) tutup(true); });
+    btnOk.focus();
+  });
+}
+// alert() pengganti: menunggu OK. confirm() pengganti: true = lanjut, false = batal.
+function notify(message, okText) { return temperaDialog({ message, okText: okText || 'OK' }).then(() => {}); }
+function askConfirm(message, okText, cancelText) { return temperaDialog({ message, okText: okText || 'Lanjutkan', cancelText: cancelText || 'Kembali' }); }
+
+// Tombol "Mending jadi 2 hari?" di peringatan Utara-Selatan
+async function pilihDuaHari() {
+  const ya = await askConfirm('Jadikan 2 hari? Hari 1 Lembang, hari 2 Ciwidey atau Pangalengan. Kami hubungkan ke admin lewat WhatsApp untuk mengatur paketnya.', 'Chat admin', 'Tidak');
+  if (ya) window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Admin Tempera, saya mau tanya paket 2 hari: Lembang di hari pertama, Ciwidey atau Pangalengan di hari kedua.')}`, '_blank');
+}
+
 async function handleFormSubmitMidtrans(event) {
   event.preventDefault();
 
@@ -573,25 +655,25 @@ async function handleFormSubmitMidtrans(event) {
   const nama = document.getElementById('formNama')?.value.trim() || '';
   const kontakRaw = document.getElementById('formKontak')?.value.trim() || '';
   const kontak = normalizeWA(kontakRaw);
-  if(!nama){ alert('Isi nama lengkap dulu!'); return; }
-  if(kontak.length<10 || kontak.length>15){ alert('Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxx'); return; }
+  if(!nama){ await notify('Isi nama lengkap dulu!'); return; }
+  if(kontak.length<10 || kontak.length>15){ await notify('Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxx'); return; }
 
   const armada = getSelectedArmada();
-  if(!armada){ alert('Pilih armada dulu!'); return; }
+  if(!armada){ await notify('Pilih armada dulu!'); return; }
 
   const checked = [...document.querySelectorAll('input[name="destinasi"]:checked')].map(c=>c.value);
-  if(checked.length===0){ alert('Pilih minimal satu destinasi!'); return; }
+  if(checked.length===0){ await notify('Pilih minimal satu destinasi!'); return; }
 
   const jumlahNum = parseInt(document.getElementById('formJumlah')?.value)||0;
-  if(jumlahNum<=0){ alert('Isi jumlah peserta dulu!'); return; }
+  if(jumlahNum<=0){ await notify('Isi jumlah peserta dulu!'); return; }
   if(jumlahNum>armada.capmax){ showCapacityModal('over_max',jumlahNum,armada); return; }
   if(jumlahNum>armada.cap){
-    if(!confirm(`${jumlahNum} orang melebihi kapasitas nyaman ${armada.name} (${armada.cap}), tapi masih di bawah max ${armada.capmax}. Tetap lanjut?`)) return;
+    if(!(await askConfirm(`${jumlahNum} orang melebihi kapasitas nyaman ${armada.name} (${armada.cap}), tapi masih di bawah maksimal ${armada.capmax}. Tetap lanjut?`, 'Tetap lanjut', 'Ubah jumlah'))) return;
   }
 
   const region = getRegionInfo();
   if(region.count>=2){
-    if(!confirm(`${region.count} WILAYAH = BIAYA CROSS Rp ${region.cost.toLocaleString('id-ID')}. Tetap lanjut?`)) return;
+    if(!(await askConfirm(`Destinasi yang kamu pilih mencakup ${region.count} wilayah di luar Kota Bandung, jadi ada biaya lintas Rp ${region.cost.toLocaleString('id-ID')}. Lanjutkan?`, 'Lanjutkan', 'Ubah pilihan'))) return;
   }
 
   const tanggal = document.getElementById('formTanggal')?.value || '';
@@ -632,17 +714,17 @@ async function handleFormSubmitMidtrans(event) {
     });
     const data = await res.json();
     if(data.snap_token){
-      if(!window.snap){ alert('Sistem pembayaran belum siap. Muat ulang halaman lalu coba lagi.'); return; }
+      if(!window.snap){ await notify('Sistem pembayaran belum siap. Muat ulang halaman lalu coba lagi.'); return; }
       const dpNote = data.payment_mode === 'dp' && data.dp_amount
         ? ` Sisa Rp ${(data.total - data.dp_amount).toLocaleString('id-ID')} dibayar tunai langsung ke driver saat perjalanan.`
         : '';
       window.snap.pay(data.snap_token, {
-        onSuccess: ()=>alert('Pembayaran berhasil!'+dpNote+' Konfirmasi dan invoice akan dikirim ke WhatsApp Anda.'),
-        onPending: ()=>alert('Menunggu pembayaran.'+dpNote+' Invoice dikirim ke WhatsApp setelah pembayaran diterima.'),
-        onError: ()=>alert('Pembayaran gagal. Silakan coba lagi.'),
+        onSuccess: ()=>notify('Pembayaran berhasil!'+dpNote+' Konfirmasi dan invoice akan dikirim ke WhatsApp Anda.'),
+        onPending: ()=>notify('Menunggu pembayaran.'+dpNote+' Invoice dikirim ke WhatsApp setelah pembayaran diterima.'),
+        onError: ()=>notify('Pembayaran gagal. Silakan coba lagi.'),
         onClose: ()=>{}
       });
-    } else { alert(data.error ? ('Gagal membuat pesanan: '+data.error) : 'Gagal membuat pesanan. Coba lagi.'); }
-  }catch(e){ console.error(e); alert('Koneksi error ke server Midtrans'); }
+    } else { await notify(data.error ? ('Gagal membuat pesanan: '+data.error) : 'Gagal membuat pesanan. Coba lagi.'); }
+  }catch(e){ console.error(e); await notify('Koneksi ke server bermasalah. Periksa internetmu lalu coba lagi.'); }
   finally{ if(btn){ btn.textContent=oldText; btn.disabled=false; } }
 }
