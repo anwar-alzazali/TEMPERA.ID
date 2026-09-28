@@ -1,0 +1,16 @@
+{
+  "name": "Mitra Tempera",
+  "short_name": "Mitra",
+  "description": "Dashboard mitra pengemudi Tempera.",
+  "start_url": "./mitra.html",
+  "scope": "./mitra.html",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "lang": "id",
+  "icons": [
+    { "src": "images/mitra-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "images/mitra-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "images/mitra-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
