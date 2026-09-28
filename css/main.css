@@ -58,9 +58,6 @@ html{scroll-behavior:smooth}
   --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
   --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
 }
-/* dipakai .gold-text & elemen yang sengaja selalu emas (footer, dsb) di kedua tema */
-.always-gold{--accent:#E5B80B;--accent-light:#FFD700}
-
 body{background:var(--bg-main);color:var(--text-primary);transition:background .4s ease,color .4s ease}
 .theme-section{background:var(--bg-section);transition:all 0.4s ease}
 .theme-section-alt{background:var(--bg-section-alt);transition:all 0.4s ease}
@@ -132,6 +129,12 @@ body{background:var(--bg-main);color:var(--text-primary);transition:background .
 /* Tombol pemilih tema (pengganti dropdown 8-tema lama) */
 #themeToggleBtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);font-size:15px;cursor:pointer;transition:background .2s ease}
 #themeToggleBtn:hover{background:var(--bg-card-hover)}
+
+/* LOGO ikut tema: logo_sky_blue_transparent.png dipakai sebagai "cetakan" bentuk
+   (mask), lalu diwarnai lewat CSS -- otomatis teal di terang, emas di gelap,
+   sama seperti yang sudah dipakai di panel/invoice/ID card. Ukuran diatur
+   lewat --w di style inline tiap pemakaian. */
+.logo{display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
 
 /* FAQ: pakai <details>/<summary> bawaan browser, tidak perlu JS tambahan */
 .faq-item{overflow:hidden}
