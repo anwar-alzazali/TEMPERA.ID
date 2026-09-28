@@ -116,7 +116,7 @@ let ARMADA_DATA=[
  * DATA DARI DATABASE: armada, pengaturan harga, banner, pencatatan kunjungan
  * Kalau database tidak terjangkau, situs tetap jalan memakai data bawaan.
  * ================================================================= */
-let CROSS_2=400000, CROSS_3=800000, TOLL_EST=100000, DP_PERCENT=30;
+let CROSS_2=400000, CROSS_3=800000, TOLL_EST=100000, DP_PERCENT=30, BOOKING_MIN_HOURS=12;
 let PAYMENT_MODE='lunas'; // 'lunas' atau 'dp' -- dipilih pelanggan lewat kotak pilihan pembayaran
 const SB_URL='https://wjmotidelqgcyyujacud.supabase.co';
 
@@ -184,9 +184,34 @@ function updateDurasi(){
   const m=/^(\d{2}):(\d{2})$/.exec(v);
   let selesai='';
   if(m){ const h=parseInt(m[1],10)+12; selesai=String(h%24).padStart(2,'0')+':'+m[2]+(h>=24?' (hari berikutnya)':''); }
+  const sedia=sel?[...sel.options].some(o=>!o.disabled):true;
   const note=document.getElementById('durasiNote');
-  if(note) note.innerHTML=m?`⏱ <b>Sewa dibatasi 12 jam.</b> Jemput ${v}, selesai paling lambat ${selesai}.`:'⏱ <b>Sewa dibatasi 12 jam</b>, dihitung dari jam jemput.';
+  if(note) note.innerHTML=(m?`⏱ <b>Sewa dibatasi 12 jam.</b> Jemput ${v}, selesai paling lambat ${selesai}.`:'⏱ <b>Sewa dibatasi 12 jam</b>, dihitung dari jam jemput.')
+    +(BOOKING_MIN_HOURS>0?`<br>🕒 Pesan paling lambat <b>${BOOKING_MIN_HOURS} jam</b> sebelum jam jemput.`:'')
+    +(sedia?'':'<br><b>Untuk tanggal ini semua jam jemput sudah terlalu dekat.</b> Pilih tanggal berikutnya atau hubungi admin.');
   const rd=document.getElementById('resDurasi'); if(rd) rd.textContent=m?`12 jam (${v} - ${selesai})`:'12 jam';
+}
+
+// Batas waktu pemesanan: jam jemput harus paling cepat BOOKING_MIN_HOURS jam dari sekarang (WIB).
+// Yang menentukan tetap server (create-order); ini supaya pelanggan tidak salah pilih.
+function pickupMs(tgl, jam){ const t=Date.parse(`${tgl}T${jam||'00:00'}:00+07:00`); return Number.isFinite(t)?t:NaN; }
+function batasMs(){ return Date.now()+BOOKING_MIN_HOURS*3600*1000; }
+function tanggalWIB(offsetHari){ return new Date(Date.now()+7*3600*1000+offsetHari*86400*1000).toISOString().slice(0,10); }
+let tglDiubahPelanggan=false;   // selama false, tanggal otomatis mengikuti tanggal paling awal yang boleh
+function updateBatasWaktu(){
+  const tglEl=document.getElementById('formTanggal'), jamEl=document.getElementById('formJam');
+  if(!tglEl||!jamEl){ return; }
+  const nilai=(o)=>o.value||o.textContent;
+  const terakhir=[...jamEl.options].map(nilai).sort().pop();     // jam jemput paling akhir yang tersedia
+  let awal=null;                                                  // tanggal paling awal yang masih punya jam yang lolos
+  for(let i=0;i<400;i++){ const d=tanggalWIB(i); if(pickupMs(d,terakhir)>=batasMs()){ awal=d; break; } }
+  if(!awal) awal=tanggalWIB(0);
+  tglEl.min=awal;
+  if(!tglEl.value||tglEl.value<awal||!tglDiubahPelanggan) tglEl.value=awal;
+  [...jamEl.options].forEach(o=>{ o.disabled=!(pickupMs(tglEl.value,nilai(o))>=batasMs()); });
+  const terpilih=jamEl.selectedOptions[0];
+  if(terpilih&&terpilih.disabled){ const pertama=[...jamEl.options].find(o=>!o.disabled); if(pertama) jamEl.value=nilai(pertama); }
+  updateDurasi();
 }
 
 async function initRemoteData(){
@@ -203,7 +228,8 @@ async function initRemoteData(){
     const s={}; (rows||[]).forEach(r=>{ s[r.key]=r.value; });
     const n=(v,d)=>{ const x=parseInt(v); return isNaN(x)?d:x; };
     CROSS_2=n(s.cross_cost_2,CROSS_2); CROSS_3=n(s.cross_cost_3,CROSS_3); TOLL_EST=n(s.toll_parking_estimate,TOLL_EST); DP_PERCENT=n(s.dp_percent,DP_PERCENT);
-    calculateLive();
+    { const mh=parseFloat(s.booking_min_hours); if(Number.isFinite(mh)) BOOKING_MIN_HOURS=Math.min(Math.max(0,mh),1440); }
+    calculateLive(); updateBatasWaktu();
   }catch(e){ console.warn('settings:',e); }
   try{ renderBanners(await sbGet('banners?select=*&order=sort_order.asc')); }catch(e){ console.warn('banners:',e); }
 }
@@ -429,8 +455,9 @@ window.addEventListener('DOMContentLoaded',()=>{
   const waBtn=document.getElementById('floatingWaBtn'); if(waBtn){ waBtn.href=`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Halo Admin Tempera saya mau konsultasi paket wisata')}`; }
   applyLanguage(currentLang); renderArmada(); calculateLive(); initRemoteData(); initPaymentModeUI();
   const jamEl=document.getElementById('formJam'); if(jamEl) jamEl.addEventListener('change',updateDurasi); updateDurasi();
+  const tglEl2=document.getElementById('formTanggal'); if(tglEl2) tglEl2.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });
   // FIX: pakai tanggal lokal perangkat (bukan UTC) supaya tidak mundur 1 hari antara jam 00:00-07:00 WIB
-  const nowLocal=new Date(); const today=new Date(nowLocal.getTime()-nowLocal.getTimezoneOffset()*60000).toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} document.getElementById('footerYear').innerText=new Date().getFullYear();
+  const nowLocal=new Date(); const today=new Date(nowLocal.getTime()-nowLocal.getTimezoneOffset()*60000).toISOString().split('T')[0]; const el=document.getElementById('formTanggal'); if(el){el.min=today; el.value=today;} updateBatasWaktu(); document.getElementById('footerYear').innerText=new Date().getFullYear();
   toggleAccordion('lembang');
 
   // Cuaca: fetch tiap 10 menit, tapi jeda saat tab tidak aktif biar hemat baterai/kuota
@@ -666,6 +693,17 @@ async function handleFormSubmitMidtrans(event) {
 
   const jumlahNum = parseInt(document.getElementById('formJumlah')?.value)||0;
   if(jumlahNum<=0){ await notify('Isi jumlah peserta dulu!'); return; }
+  {
+    const tglV=document.getElementById('formTanggal')?.value||'', jamV=document.getElementById('formJam')?.value||'';
+    const jm=pickupMs(tglV,jamV);
+    if(!Number.isFinite(jm)){ await notify('Isi tanggal dan jam jemput dulu.'); return; }
+    if(jm<batasMs()){
+      await notify(BOOKING_MIN_HOURS>0
+        ? `Pemesanan minimal ${BOOKING_MIN_HOURS} jam sebelum jam jemput. Pilih tanggal atau jam yang lebih lambat, atau hubungi admin lewat WhatsApp untuk pesanan mendadak.`
+        : 'Jam jemput sudah lewat. Pilih tanggal atau jam yang lebih lambat.');
+      return;
+    }
+  }
   if(jumlahNum>armada.capmax){ showCapacityModal('over_max',jumlahNum,armada); return; }
   if(jumlahNum>armada.cap){
     if(!(await askConfirm(`${jumlahNum} orang melebihi kapasitas nyaman ${armada.name} (${armada.cap}), tapi masih di bawah maksimal ${armada.capmax}. Tetap lanjut?`, 'Tetap lanjut', 'Ubah jumlah'))) return;
