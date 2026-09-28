@@ -1,103 +1,165 @@
-
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-
-/* ===== ORIGINAL STYLE BLOCK ===== */
-
+/* ===== MAIN.CSS v3 ===== */
 html{scroll-behavior:smooth}
 .gold-text{background:linear-gradient(to right,var(--accent),var(--accent-light),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}.animate-shake{animation:shake.5s ease-in-out}
 .accordion-content{max-height:0;overflow:hidden;transition:max-height 0.4s ease}
 .accordion-content.open{max-height:2000px}
 
 /* =====================================================================
-   TEMA: cuma 2 -- terang (teal, senada invoice/panel/kas/ID card) dan
-   gelap (Classic Luxury, emas-hitam yang sudah ada). Ikut pengaturan
-   terang/gelap perangkat secara otomatis; bisa ditimpa manual lewat
-   tombol (disimpan di localStorage sebagai data-theme="light"/"dark"
-   di <html>, ditulis oleh js/main.js).
+   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (emas-hitam).
+   Ikut pengaturan perangkat; bisa ditimpa manual (data-theme di <html>).
+   --on-accent = warna teks di atas tombol berwarna aksen.
    ===================================================================== */
 :root{
-  --accent:#0891b2;--accent-light:#22b8d0;--accent-glow:rgba(8,145,178,0.18);
+  --accent:#0891b2;--accent-light:#22b8d0;--accent-glow:rgba(8,145,178,0.18);--on-accent:#FFFFFF;
   --bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F0F9FF;--bg-card:#FFFFFF;--bg-card-hover:#E0F2FE;--bg-input:#FFFFFF;
   --text-primary:#0F172A;--text-secondary:#0E7490;--text-muted:#64748B;
   --border-color:rgba(8,145,178,0.30);--border-soft:#E0F2FE;
+  --hero-grad:linear-gradient(160deg,#0C4A6E 0%,#0891B2 58%,#22B8D0 100%);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);
+    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0A0A0A;
     --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
     --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
     --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.22) 0%,transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1C1917 100%);
   }
 }
 :root[data-theme="dark"]{
-  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);
+  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0A0A0A;
   --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
   --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
   --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.22) 0%,transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1C1917 100%);
 }
 body{background:var(--bg-main);color:var(--text-primary);transition:background .4s ease,color .4s ease}
 .theme-section{background:var(--bg-section);transition:all 0.4s ease}
 .theme-section-alt{background:var(--bg-section-alt);transition:all 0.4s ease}
 .theme-card{background:var(--bg-card);border-color:var(--border-color);box-shadow:0 1px 3px rgba(0,0,0,0.15);transition:all 0.4s ease}
-.theme-card:hover{border-color:var(--accent);box-shadow:0 8px 30px var(--accent-glow);transform:translateY(-2px)}
+.theme-card:hover{border-color:var(--accent);box-shadow:0 8px 30px var(--accent-glow)}
 .theme-input{background:var(--bg-input);border-color:var(--border-soft);color:var(--text-primary);transition:all 0.3s ease}
 .theme-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-.weather-android{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transition:background 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease; position:relative; overflow:hidden;}
-.lottie-weather{width:110px;height:110px;min-width:110px;min-height:110px;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 8px 30px var(--accent-glow));position:relative;z-index:2}
-.armada-img-container{position:relative}.armada-img-track{position:relative;width:100%;height:100%}.armada-img-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.6s ease, transform 0.6s ease;transform:scale(1.02)}.armada-img-slide.active{opacity:1;transform:scale(1)}
-.dest-checkbox{accent-color:var(--accent)}.dest-item{border:1px solid var(--border-soft);border-radius:12px;padding:10px 12px;transition:all.2s}.dest-item:has(input:checked){border-color:var(--accent);background:color-mix(in srgb, var(--accent) 8%, var(--bg-card))}
-#weather-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:32px;z-index:1}
-.rain-drop{position:absolute;width:2px;height:18px;border-radius:2px;background:linear-gradient(to bottom, transparent, currentColor);animation:rainFall linear infinite;opacity:0.6}
-@keyframes rainFall{0%{transform:translateY(-20px) translateX(0);opacity:0}10%{opacity:0.8}90%{opacity:0.6}100%{transform:translateY(420px) translateX(-12px);opacity:0}}
-.drizzle-drop{position:absolute;width:1.5px;height:10px;border-radius:2px;background:currentColor;animation:rainFall 1.2s linear infinite;opacity:0.5}
-.thunder-flash{position:absolute;inset:0;background:radial-gradient(circle at 30% 20%, white 0%, transparent 45%);opacity:0;animation:thunderFlash 5s ease-in-out infinite}
-@keyframes thunderFlash{0%,90%,100%{opacity:0}92%{opacity:0.85}93%{opacity:0.15}94%{opacity:0.9}95%{opacity:0}}
-.sun-ray{position:absolute;width:2px;height:70px;top:50%;left:50%;background:linear-gradient(to bottom, var(--accent), transparent);transform-origin:bottom center;opacity:0.28;animation:sunRotate 20s linear infinite}
-@keyframes sunRotate{from{transform:translate(-50%,-100%) rotate(0deg)}to{transform:translate(-50%,-100%) rotate(360deg)}}
-.fog-layer{position:absolute;left:-50%;width:200%;height:40px;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);filter:blur(10px);animation:fogMove 12s linear infinite}
-@keyframes fogMove{0%{transform:translateX(-25%)}100%{transform:translateX(25%)}}
-.cloud-dot{position:absolute;background:white;border-radius:50%;filter:blur(8px);opacity:0.45;animation:cloudDrift 18s ease-in-out infinite alternate}
-@keyframes cloudDrift{from{transform:translateX(0)}to{transform:translateX(25px)}}
-@keyframes wa-float {0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes wa-heartbeat {0%{transform:scale(1)}14%{transform:scale(1.3)}28%{transform:scale(1)}42%{transform:scale(1.3)}70%{transform:scale(1)}}
-@keyframes wa-pulse-ring {0%{transform:scale(0.8);opacity:0.8}100%{transform:scale(1.8);opacity:0}}
-.wa-float {animation:wa-float 3s ease-in-out infinite}
-.wa-heart {animation:wa-heartbeat 1.5s ease-in-out infinite}
-.wa-pulse {position:absolute;inset:0;border-radius:9999px;background:#25D366;animation:wa-pulse-ring 2s cubic-bezier(0.455,0.03,0.515,0.955) infinite}
-@keyframes coinFlip{
-  0%,90%,100%{ transform: perspective(600px) rotateY(0) scale(1); filter: drop-shadow(0 8px 20px var(--accent-glow)); }
-  92%{ transform: perspective(600px) rotateY(180deg) scale(1.1); filter: drop-shadow(0 15px 35px var(--accent-glow)) brightness(1.2); }
-  95%{ transform: perspective(600px) rotateY(360deg) scale(1.1); filter: drop-shadow(0 15px 35px var(--accent-glow)) brightness(1.2); }
-}
-#footerLogo{animation: coinFlip 8s ease-in-out infinite;transform-style: preserve-3d;}
-#mobileArmadaName{font-size: 12px!important;font-weight: 700!important;letter-spacing: 0.02em;line-height: 1.2;}
-#mobileTotalPrice{font-size: 22px!important;font-weight: 800!important;font-family: 'Cormorant Garamond', serif!important;letter-spacing: -0.02em;line-height: 1;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ARMADA jadi slider (geser ke samping), bukan lagi kolom memanjang ke bawah.
-   (dipertahankan !important: Tailwind CDN menyuntik <style> setelah main.css
-   jadi menang cascade tanpa ini) */
+/* ===== HERO: tanpa video. Latar polos bergradasi, atau gambar dari panel (kelas .has-img) ===== */
+.hero{position:relative;overflow:hidden;min-height:78vh;display:flex;align-items:center;justify-content:center;background:var(--hero-grad);color:#fff}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity .6s ease}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(0,0,0,0) 55%,var(--bg-main) 100%)}
+.hero.has-img .hero-bg{opacity:1}
+.hero.has-img::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(0,0,0,.30) 0%,rgba(0,0,0,.50) 60%,rgba(0,0,0,.35) 100%)}
+.hero-inner{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:128px 20px 96px;text-align:center}
+.hero-brand{margin:0 0 14px;font-family:'Inter',sans-serif;font-size:13px;font-weight:300;letter-spacing:.35em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.hero-title{margin:0;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:clamp(38px,8vw,68px);line-height:1.04;color:#fff;text-wrap:balance;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+.hero-sub{margin:18px auto 0;max-width:560px;font-size:clamp(14px,2.2vw,17px);line-height:1.65;color:rgba(255,255,255,.9)}
+.hero-points{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.hero-points li{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff}
+.hero-points li::before{content:'✓ '}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:30px}
+.hero-btn{display:inline-flex;align-items:center;justify-content:center;min-width:180px;padding:13px 26px;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;transition:filter .2s ease,background .2s ease}
+.hero-btn-main{background:var(--accent);color:var(--on-accent)}
+.hero:not(.has-img) .hero-btn-main{background:#fff;color:#0C4A6E}
+:root[data-theme="dark"] .hero:not(.has-img) .hero-btn-main{background:var(--accent);color:var(--on-accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero:not(.has-img) .hero-btn-main{background:var(--accent);color:var(--on-accent)}}
+.hero-btn-main:hover{filter:brightness(1.08)}
+.hero-btn-ghost{border:1px solid rgba(255,255,255,.45);color:#fff;background:rgba(255,255,255,.08)}
+.hero-btn-ghost:hover{background:rgba(255,255,255,.18)}
+
+/* ===== CUACA: latar ikut waktu, teks putih, kotak kaca ===== */
+.weather-card{position:relative;overflow:hidden;border-radius:32px;padding:24px;color:#fff;border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 50px rgba(15,23,42,.18);transition:background 1s ease}
+@media(min-width:768px){.weather-card{padding:32px}}
+.weather-card.wx-pagi{background:linear-gradient(135deg,#F59E0B 0%,#EA580C 45%,#0E7490 100%)}
+.weather-card.wx-siang{background:linear-gradient(135deg,#0284C7 0%,#0891B2 50%,#0E7490 100%)}
+.weather-card.wx-sore{background:linear-gradient(135deg,#EA580C 0%,#BE185D 55%,#6D28D9 100%)}
+.weather-card.wx-malam{background:linear-gradient(135deg,#0F172A 0%,#1E1B4B 55%,#312E81 100%)}
+.weather-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% 10%,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
+.weather-card h3,.weather-card p,.weather-card span{text-shadow:0 1px 2px rgba(0,0,0,.18)}
+.wx-muted{color:rgba(255,255,255,.88)!important}
+.wx-glass{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);color:#fff}
+button.wx-glass{cursor:pointer}
+.wx-hour{min-width:68px;border-radius:16px;padding:10px;text-align:center}
+.wx-icon{width:110px;height:110px;min-width:110px;display:flex;align-items:center;justify-content:center;font-size:72px;line-height:1;filter:drop-shadow(0 6px 18px rgba(0,0,0,.2))}
+
+/* ===== PAKET WISATA (template destinasi) ===== */
+.paket-card{width:280px;border-radius:20px;overflow:hidden;border:1px solid var(--border-color);display:flex;flex-direction:column}
+.paket-img{height:176px;background-size:cover;background-position:center;position:relative}
+.paket-img-combo{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-light) 100%);display:flex;align-items:center;justify-content:center}
+.paket-combo-mark{font-size:44px}
+.paket-tag{position:absolute;top:14px;left:14px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:700;background:var(--accent);color:var(--on-accent)}
+.paket-img-combo .paket-tag{background:rgba(0,0,0,.35);color:#fff}
+.paket-body{padding:20px;display:flex;flex-direction:column;flex:1}
+.paket-title{margin:0;font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:700;line-height:1.2;color:var(--text-primary)}
+.paket-dest{margin:8px 0 0;font-size:12px;line-height:1.55;color:var(--text-secondary)}
+.paket-info{margin:10px 0 0;font-size:11px;color:var(--text-muted)}
+.paket-price{margin:14px 0 12px;font-size:15px;font-weight:800;color:var(--accent);margin-top:auto;padding-top:14px}
+.paket-btn{width:100%;padding:11px 14px;border-radius:999px;border:0;font-size:12px;font-weight:700;cursor:pointer;background:var(--accent);color:var(--on-accent)}
+.paket-btn:hover{filter:brightness(1.08)}
+
+/* ===== TRIP CUSTOM ===== */
+.tc-chip{padding:8px 16px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-primary);cursor:pointer}
+.tc-chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+
+/* ===== RINCIAN: termasuk / tidak termasuk ===== */
+.incl-box{margin:0 0 18px;padding:12px 14px;border-radius:14px;border:1px solid var(--border-soft);background:var(--bg-card);font-size:11.5px;line-height:1.55;color:var(--text-secondary)}
+.incl-box p{margin:0}
+.incl-box p+p{margin-top:8px}
+.incl-box b{color:var(--text-primary)}
+
+/* ===== Pilihan cara bayar (dibuat main.js) ===== */
+.pm-box{margin:0 0 14px;padding:14px;border-radius:16px;border:1px solid var(--border-soft);background:var(--bg-card)}
+.pm-title{margin:0 0 10px;font-size:12px;font-weight:700;color:var(--text-muted)}
+.pm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pm-opt{display:block;cursor:pointer;position:relative}
+.pm-opt input{position:absolute;opacity:0;pointer-events:none}
+.pm-card{display:block;height:100%;padding:12px;border-radius:12px;border:2px solid var(--border-soft);color:var(--text-primary)}
+.pm-card b{display:block;font-size:13px}
+.pm-card small{display:block;margin-top:2px;font-size:11px;color:var(--text-muted)}
+.pm-card.on{border-color:var(--accent);background:var(--accent-glow)}
+.pm-opt input:focus-visible+.pm-card{outline:2px solid var(--accent);outline-offset:2px}
+.pm-preview{margin:10px 0 0;font-size:13px;font-weight:700;color:var(--text-primary)}
+
+/* ===== FOOTER: ikon kontak & media sosial ===== */
+.soc-row{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.soc{width:42px;height:42px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);transition:background .2s ease,color .2s ease}
+.soc:hover{background:var(--accent);color:var(--on-accent)}
+.soc svg{width:20px;height:20px}
+.soc[hidden]{display:none}
+
+/* ===== Modal kapasitas ===== */
+#capacityModalBox{background:var(--bg-card);color:var(--text-primary);border-color:var(--border-color)}
+#capacityModalIcon{background:color-mix(in srgb,#DC2626 12%,var(--bg-card))}
+.cm-btn{padding:12px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;cursor:pointer}
+.cm-ghost{background:transparent;border:1px solid var(--border-color);color:var(--text-primary)}
+.cm-main{background:var(--accent);border:0;color:var(--on-accent)}
+
+/* ===== Armada ===== */
+.armada-img-container{position:relative}.armada-img-track{position:relative;width:100%;height:100%}.armada-img-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.6s ease}.armada-img-slide.active{opacity:1}
+.dest-checkbox{accent-color:var(--accent)}.dest-item{border:1px solid var(--border-soft);border-radius:12px;padding:10px 12px;transition:all .2s}.dest-item:has(input:checked){border-color:var(--accent);background:color-mix(in srgb, var(--accent) 8%, var(--bg-card))}
+/* (dipertahankan !important: Tailwind CDN menyuntik <style> setelah main.css) */
 #armada-cards{display:flex!important;gap:1.25rem!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;padding:4px 4px 14px!important;scrollbar-width:none}
 #armada-cards::-webkit-scrollbar{display:none}
-.armada-card-uniform{flex:0 0 auto!important;width:280px!important;scroll-snap-align:start;display:flex!important;flex-direction:column!important;min-height:480px!important}
+.armada-card-uniform{flex:0 0 auto!important;width:280px!important;scroll-snap-align:start;display:flex!important;flex-direction:column!important;min-height:460px!important}
 .armada-card-uniform .armada-img-container{height:200px!important;flex-shrink:0}
 .armada-card-uniform .p-6{flex:1 1 auto;display:flex;flex-direction:column}
 .armada-card-uniform ul{flex:1 1 auto}
 .armada-card-uniform button{margin-top:auto!important}
-@media(min-width:640px){.armada-card-uniform{width:300px!important}}
+@media(min-width:640px){.armada-card-uniform,.paket-card{width:300px!important}}
 
-/* NAV LINK HOVER - ikut tema, ganti hover:text-white yang hilang di tema terang */
+/* ===== Tombol WA melayang ===== */
+@keyframes wa-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes wa-heartbeat{0%{transform:scale(1)}14%{transform:scale(1.3)}28%{transform:scale(1)}42%{transform:scale(1.3)}70%{transform:scale(1)}}
+@keyframes wa-pulse-ring{0%{transform:scale(0.8);opacity:0.8}100%{transform:scale(1.8);opacity:0}}
+.wa-float{animation:wa-float 3s ease-in-out infinite}
+.wa-heart{animation:wa-heartbeat 1.5s ease-in-out infinite}
+.wa-pulse{position:absolute;inset:0;border-radius:9999px;background:#25D366;animation:wa-pulse-ring 2s cubic-bezier(0.455,0.03,0.515,0.955) infinite}
+@keyframes coinFlip{0%,90%,100%{transform:perspective(600px) rotateY(0) scale(1)}92%{transform:perspective(600px) rotateY(180deg) scale(1.1)}95%{transform:perspective(600px) rotateY(360deg) scale(1.1)}}
+#footerLogo{animation:coinFlip 8s ease-in-out infinite;transform-style:preserve-3d}
+#mobileArmadaName{font-size:12px!important;font-weight:700!important;letter-spacing:0.02em;line-height:1.2}
+#mobileTotalPrice{font-size:22px!important;font-weight:800!important;font-family:'Cormorant Garamond',serif!important;letter-spacing:-0.02em;line-height:1}
+
 .nav-link{transition:color .2s ease}
 .nav-link:hover{color:var(--accent)!important}
 
-/* MODAL & WARNING BOX - jangan menyilaukan saat tema gelap */
-:root[data-theme="dark"] #capacityModalBox{background:var(--bg-card)!important;color:var(--text-primary)!important;border-color:var(--border-color)!important}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #capacityModalBox{background:var(--bg-card)!important;color:var(--text-primary)!important;border-color:var(--border-color)!important}}
+/* Peringatan lintas wilayah: jangan menyilaukan saat tema gelap */
 :root[data-theme="dark"] #crossTripWarning .bg-white,
 :root[data-theme="dark"] #crossTripWarning .bg-white\/90,
 :root[data-theme="dark"] #crossTripWarning .bg-zinc-800{background:var(--bg-card)!important;color:var(--text-primary)!important}
@@ -109,17 +171,13 @@ body{background:var(--bg-main);color:var(--text-primary);transition:background .
   :root:not([data-theme="light"]) #crossTripWarning{filter:brightness(0.92)}
 }
 
-/* Tombol pemilih tema (pengganti dropdown 8-tema lama) */
 #themeToggleBtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);font-size:15px;cursor:pointer;transition:background .2s ease}
 #themeToggleBtn:hover{background:var(--bg-card-hover)}
 
-/* LOGO ikut tema: logo_sky_blue_transparent.png dipakai sebagai "cetakan" bentuk
-   (mask), lalu diwarnai lewat CSS -- otomatis teal di terang, emas di gelap,
-   sama seperti yang sudah dipakai di panel/invoice/ID card. Ukuran diatur
-   lewat --w di style inline tiap pemakaian. */
+/* LOGO ikut tema (mask). Path relatif ke folder css/, jadi ../images/ */
 .logo{display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(../images/logo_sky_blue_transparent.png);mask-image:url(../images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
 
-/* FAQ: pakai <details>/<summary> bawaan browser, tidak perlu JS tambahan */
+/* FAQ */
 .faq-item{overflow:hidden}
 .faq-item summary{padding:16px 18px;cursor:pointer;font-weight:700;font-size:13.5px;list-style:none;color:var(--text-primary);display:flex;align-items:center;justify-content:space-between}
 .faq-item summary::-webkit-details-marker{display:none}
@@ -127,13 +185,14 @@ body{background:var(--bg-main);color:var(--text-primary);transition:background .
 .faq-item[open] summary::after{content:'\2212'}
 .faq-item p{margin:0;padding:0 18px 16px;font-size:13px;color:var(--text-secondary);line-height:1.6}
 
-/* Slider (armada & paket wisata): geser ke samping, tidak memanjangkan halaman */
+/* Slider (armada & paket) */
 .slider-track{display:flex;gap:1.25rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 14px;scrollbar-width:none}
 .slider-track::-webkit-scrollbar{display:none}
 .slider-track>*{flex:0 0 auto;scroll-snap-align:start}
-.slider-nav{display:flex;gap:8px;justify-content:center;margin-top:4px}
-.slider-dot{width:7px;height:7px;border-radius:99px;background:var(--border-color);transition:background .2s,width .2s}
-.slider-dot.on{background:var(--accent);width:20px}
-.slider-arrow{width:38px;height:38px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none}
+.slider-arrow{width:38px;height:38px;border-radius:999px;border:1px solid var(--border-color);background:var(--bg-card);color:var(--accent);align-items:center;justify-content:center;cursor:pointer;flex:none}
 .slider-arrow:hover{background:var(--bg-card-hover)}
-.slider-arrow:disabled{opacity:.35;cursor:default}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .wa-float,.wa-heart,.wa-pulse,#footerLogo{animation:none!important}
+}
