@@ -959,6 +959,17 @@ document.addEventListener('click', async (e) => {
   toast('Akun mitra direset'); nav('driver');
 });
 
+/* ---------- QR referral membawa penanda &s=qr (Fase B) ---------- */
+// Tombol "Salin" tetap link biasa; tombol "QR" membuat QR dengan penanda supaya
+// dashboard mitra bisa membedakan kunjungan lewat scan QR dan klik link.
+(function () {
+  const col = RES.driver.cols.find((c) => c.key === 'ref');
+  if (!col) return;
+  col.render = (r) => {
+    const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : '';
+    return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u + '&s=qr')}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`;
+  };
+})();
   
 </script>
 </body>
