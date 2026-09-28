@@ -134,7 +134,7 @@ body{background:var(--bg-main);color:var(--text-primary);transition:background .
    (mask), lalu diwarnai lewat CSS -- otomatis teal di terang, emas di gelap,
    sama seperti yang sudah dipakai di panel/invoice/ID card. Ukuran diatur
    lewat --w di style inline tiap pemakaian. */
-.logo{display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
+.logo{display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(../images/logo_sky_blue_transparent.png);mask-image:url(../images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
 
 /* FAQ: pakai <details>/<summary> bawaan browser, tidak perlu JS tambahan */
 .faq-item{overflow:hidden}
