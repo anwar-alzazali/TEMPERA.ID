@@ -4,9 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#0891b2">
+<meta name="theme-color" content="#0891b2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
 <title>Mitra Tempera</title>
-<link rel="icon" type="image/png" href="images/logo_sky_blue_transparent.png">
+<link rel="manifest" href="mitra.webmanifest">
+<link rel="icon" type="image/png" sizes="48x48" href="images/mitra-48.png">
+<link rel="apple-touch-icon" href="images/mitra-apple-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mitra Tempera">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{--accent:#0891b2;--accent-soft:#e0f2fe;--on-accent:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--danger:#dc2626;--ok:#15803d;--warn-bg:#fef3c7;--warn-ink:#92400e}
 @media (prefers-color-scheme: dark){:root{--accent:#E5B80B;--accent-soft:rgba(229,184,11,.14);--on-accent:#0a0a0a;--ink:#f8fafc;--muted:#a1a1aa;--line:#27272a;--bg:#0a0a0a;--card:#141414;--danger:#f87171;--ok:#4ade80;--warn-bg:rgba(245,158,11,.15);--warn-ink:#fbbf24}}
@@ -82,6 +89,10 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
 .kas .top{display:flex;justify-content:space-between;gap:10px}
 .kas .j.plus{color:var(--ok);font-weight:800;white-space:nowrap}
 .kas .j.min{color:var(--danger);font-weight:800;white-space:nowrap}
+.owed{border:2px solid var(--accent)}
+.owed .v{font-size:22px;font-weight:800;color:var(--accent)}
+.tag.paid{background:rgba(22,163,74,.14);color:var(--ok)}
+.tag.unpaid{background:var(--warn-bg);color:var(--warn-ink)}
 </style>
 </head>
 <body>
@@ -284,7 +295,8 @@ function gambar(){
   $('#sBulanL').textContent=`Pendapatan bulan ini (${r.ringkasan.bulan_ini.trip} trip)`;
   $('#sTrip').textContent=r.trip_mendatang.length;
   $('#tTrip').innerHTML=r.trip_mendatang.length?r.trip_mendatang.map(kartuTrip).join(''):'<div class="card empty">Belum ada trip mendatang.</div>';
-  $('#tPendapatan').innerHTML=`<div class="card"><div class="row" style="border-top:0"><span>Total semua (${r.ringkasan.semua.trip} trip)</span><span><b>${rp(r.ringkasan.semua.pendapatan)}</b></span></div><div class="note">Pendapatan dicatat untuk pembawa pesanan (pemilik link/QR). Kalau pesanan langsung dari web, dicatat untuk driver yang ditugaskan.</div></div>`
+  const bd=r.belum_dibayar||{pesanan:0,jumlah:0};
+  $('#tPendapatan').innerHTML=`<div class="card owed"><div class="note">Belum dibayar admin</div><div class="v">${bd.jumlah>=0?rp(bd.jumlah):'− '+rp(-bd.jumlah)}</div><div class="note">${bd.pesanan?`${bd.pesanan} pesanan menunggu pembayaran dari admin.`:'Semua pesanan sudah dibayar. 👍'}${bd.jumlah<0?' Angka minus: kamu yang perlu menyetor ke admin.':''}</div></div><div class="card"><div class="row" style="border-top:0"><span>Total semua (${r.ringkasan.semua.trip} trip)</span><span><b>${rp(r.ringkasan.semua.pendapatan)}</b></span></div><div class="note">Pendapatan dicatat untuk pembawa pesanan (pemilik link/QR). Kalau pesanan langsung dari web, dicatat untuk driver yang ditugaskan.</div></div>`
     +(r.riwayat.length?r.riwayat.map(kartuRiwayat).join(''):'<div class="card empty">Belum ada riwayat.</div>');
   gambarReferral(r); gambarKas(r.kas); qrDigambar='';
   if(!$('#tReferral').hidden) gambarQR();
@@ -392,6 +404,7 @@ function kartuRiwayat(o){
     <div class="top"><div><b>${esc(tglPendek(o.tanggal))}</b>${o.dp?'<span class="tag">DP</span>':''}<div class="note">${esc(o.invoice_no||o.order_id)} • ${esc(o.armada||'-')}</div></div><div class="earn">${rp(o.pendapatan)}</div></div>
     <div class="note">${esc(o.pelanggan||'-')} (${esc(o.wa||'-')}) • Total ${rp(o.total)} • Potongan ${rp(o.potongan)}</div>
     ${o.dijalankan_lain?'<div class="note">Dijalankan oleh driver lain.</div>':''}
+    <div style="margin-top:6px">${o.dibayar?`<span class="tag paid" style="margin-left:0">✓ Sudah dibayar admin ${rp(o.bayar_admin)}</span>`:`<span class="tag unpaid" style="margin-left:0">Belum dibayar ${o.bayar_admin>=0?rp(o.bayar_admin):'(kamu setor '+rp(-o.bayar_admin)+')'}</span>`}${o.dp&&!o.dibayar?'<div class="note">Pesanan DP: admin membayar DP dikurangi potongan; sisanya sudah kamu terima tunai.</div>':''}</div>
   </article>`;
 }
 const TABS={trip:'#tTrip',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#tKas',akun:'#tAkun'};
