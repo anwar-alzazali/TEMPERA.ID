@@ -42,9 +42,21 @@ jobs:
           ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac
         run: |
           set -u
+          # buang spasi / baris baru yang tidak sengaja ikut saat rahasia ditempel
+          TG_TOKEN=$(printf '%s' "${TG_TOKEN}" | tr -d '[:space:]')
+          TG_TOKEN=${TG_TOKEN#bot}
+          TG_CHAT=$(printf '%s' "${TG_CHAT}" | tr -d '[:space:]')
           kirim() {
-            curl -s --max-time 20 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-              --data-urlencode "chat_id=${TG_CHAT}" --data-urlencode "text=$1" > /dev/null || true
+            if [ -z "${TG_TOKEN}" ] || [ -z "${TG_CHAT}" ]; then
+              echo "::warning::Rahasia TELEGRAM_BOT_TOKEN atau TELEGRAM_CHAT_ID kosong / belum diisi"; return 0
+            fi
+            balasan=$(curl -s --max-time 20 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TG_CHAT}" --data-urlencode "text=$1" || echo '{"ok":false,"description":"tidak bisa menghubungi Telegram"}')
+            if printf '%s' "$balasan" | jq -e '.ok == true' > /dev/null 2>&1; then
+              echo "Telegram: pesan terkirim"
+            else
+              echo "::warning::Telegram menolak: $(printf '%s' "$balasan" | jq -r '.description // "tanpa keterangan"' 2>/dev/null)"
+            fi
           }
           waktu=$(TZ=Asia/Jakarta date '+%d-%m-%Y %H:%M WIB')
           lama=$(cat .health-state 2>/dev/null || echo "ok")
