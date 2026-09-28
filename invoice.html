@@ -35,6 +35,7 @@
   .badge.dp{background:#fef3c7;color:#92400e}
   .dp-note{margin-top:16px;padding:12px 14px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:12.5px;line-height:1.6}
   .dp-note b{display:block;margin-bottom:2px;font-size:13.5px}
+  .dp-note.ok{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
 
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:22px 0}
   .box h3{margin:0 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -142,6 +143,12 @@ function tintLogo(url, color) {
 
 function buildInvoice(d) {
   const inv = d.invoice, co = d.company;
+  // DP menunggu tunai = status dp_paid. Kalau tunai sudah diterima (status paid dst.), invoice LUNAS.
+  const isDP = inv.payment_mode === 'dp';
+  const dpMenunggu = isDP && inv.status === 'dp_paid';
+  const dpLunas = isDP && !dpMenunggu;
+  const adaAngkaDP = isDP && Number(inv.dp_amount) > 0;   // jangan tampilkan "Rp 0" kalau angkanya memang tidak ada
+  const pctDP = inv.dp_percent_applied ? ' (' + inv.dp_percent_applied + '%)' : '';
 
   const logo = co.logo_url ? `<img src="${esc(imgSrc(co.logo_url))}" alt="${esc(co.name)}" crossorigin="anonymous">` : '';
   const alamat = [co.address, co.contact].filter(Boolean).map(esc).join('<br>');
@@ -154,7 +161,7 @@ function buildInvoice(d) {
   const rows = [`<tr><td>${esc(inv.fleet_name || 'Sewa mobil')}</td><td class="num">${rp(inv.base_price)}</td></tr>`];
   if (Number(inv.cross_cost) > 0) rows.push(`<tr><td>Biaya lintas wilayah</td><td class="num">${rp(inv.cross_cost)}</td></tr>`);
   if (Number(inv.discount) > 0) rows.push(`<tr><td class="disc">Diskon</td><td class="num disc">- ${rp(inv.discount)}</td></tr>`);
-  rows.push(`<tr class="total"><td>${inv.payment_mode === 'dp' ? 'Total tagihan' : 'Total dibayar'}</td><td class="num">${rp(inv.total)}</td></tr>`);
+  rows.push(`<tr class="total"><td>${dpMenunggu ? 'Total tagihan' : 'Total dibayar'}</td><td class="num">${rp(inv.total)}</td></tr>`);
 
   return `
   <div id="invoice">
@@ -166,12 +173,16 @@ function buildInvoice(d) {
       <div class="inv-title">
         <h1>INVOICE</h1>
         <div class="inv-no">${esc(inv.invoice_no || '-')}</div>
-        <span class="badge${inv.payment_mode === 'dp' ? ' dp' : ''}">${inv.payment_mode === 'dp' ? 'DP DITERIMA' : 'LUNAS'}</span>
+        <span class="badge${dpMenunggu ? ' dp' : ''}">${dpMenunggu ? 'DP DITERIMA' : 'LUNAS'}</span>
       </div>
     </div>
-    ${inv.payment_mode === 'dp' ? `<div class="dp-note">
-      <b>Uang muka (DP) sudah diterima${inv.dp_percent_applied ? ' — ' + inv.dp_percent_applied + '%' : ''}: ${rp(inv.dp_amount)}</b>
+    ${dpMenunggu && adaAngkaDP ? `<div class="dp-note">
+      <b>Uang muka (DP) sudah diterima${pctDP}: ${rp(inv.dp_amount)}</b>
       Sisa ${rp(inv.sisa_tunai)} dibayar tunai langsung ke driver saat perjalanan berlangsung.
+    </div>` : ''}
+    ${dpLunas && adaAngkaDP ? `<div class="dp-note ok">
+      <b>Pembayaran lunas</b>
+      DP ${rp(inv.dp_amount)}${pctDP} dibayar lewat ${esc(METODE[inv.payment_type] || 'pembayaran online')}; sisa ${rp(inv.sisa_tunai)} dibayar tunai ke driver.
     </div>` : ''}
 
     <div class="grid">
@@ -183,7 +194,7 @@ function buildInvoice(d) {
       <div class="box">
         <h3>Detail pembayaran</h3>
         <p>Order: ${esc(inv.order_id)}</p>
-        <p>Dibayar: ${esc(waktuBayar(inv.paid_at))}</p>
+        <p>${isDP ? 'DP dibayar' : 'Dibayar'}: ${esc(waktuBayar(inv.paid_at))}</p>
         <p>Metode: ${esc(METODE[inv.payment_type] || (inv.payment_type ? String(inv.payment_type).toUpperCase() : '-'))}</p>
       </div>
     </div>
