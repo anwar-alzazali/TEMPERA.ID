@@ -1,21 +1,4 @@
 
-/* PENTING: font ini hanya muncul kalau folder fonts/ benar-benar ada di root situs.
-   Kalau belum ada filenya, browser diam-diam fallback ke system-ui/monospace (lihat :where(html) di bawah),
-   jadi tidak error tapi juga tidak salah - cuma tidak sesuai desain. */
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
 :where(html) {
   font-family: "Optimistic", system-ui, sans-serif;
 }

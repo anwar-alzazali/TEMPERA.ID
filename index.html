@@ -141,7 +141,7 @@
 
 <!-- HERO SECTION -->
 <header id="home" class="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
-<video class="absolute inset-0 w-full h-full object-cover" style="background:#0A0A0A" poster="images/hero-poster.jpg" preload="metadata" autoplay loop muted playsinline>
+<video class="absolute inset-0 w-full h-full object-cover" style="background:#0A0A0A" preload="metadata" autoplay loop muted playsinline>
   <source src="images/VID-20260623-WA0083.mp4" type="video/mp4">
 </video>
 <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(0,0,0,0.02) 0%, rgba(0,0,0,0.03) 40%, rgba(0,0,0,0.05) 75%, var(--bg-main) 100%)"></div>
@@ -319,11 +319,6 @@
 
 <!-- SCRIPT PENGHUBUNG (JS EKSTERNAL) -->
 <script src="js/main.js"></script>
-  <script>
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js');
-}
-</script>
 <script>
 // ===== PELACAK SCAN QR DRIVER =====
 // (dinonaktifkan -- tabel "scans" sudah dikunci total sejak pembersihan
