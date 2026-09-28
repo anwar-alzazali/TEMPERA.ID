@@ -51,7 +51,7 @@ header.top .who span{font-size:13px;color:var(--muted)}
 .stat .v{font-size:18px;font-weight:800}
 .stat .l{font-size:12px;color:var(--muted)}
 .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
-.tabs button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:9px 12px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.tabs button{flex:1 0 auto;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:9px 12px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .tabs button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .list{display:grid;gap:12px}
 .trip .when{font-weight:800;font-size:16px}
@@ -69,6 +69,19 @@ header.top .who span{font-size:13px;color:var(--muted)}
 .hist .earn{font-weight:800;color:var(--ok);white-space:nowrap}
 .note{font-size:12px;color:var(--muted);margin-top:4px}
 .loading{text-align:center;color:var(--muted);padding:40px 0}
+.linkbox{font-size:13px;word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0 12px}
+.qrwrap{display:flex;justify-content:center;margin:6px 0 12px}
+.qrwrap canvas{width:100%;max-width:240px;height:auto;border-radius:12px;background:#fff}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.grid3 .v{font-size:20px;font-weight:800}
+.grid3 .l{font-size:11px;color:var(--muted)}
+table.mini{width:100%;border-collapse:collapse;font-size:14px}
+table.mini th,table.mini td{padding:8px 4px;border-top:1px solid var(--line);text-align:right}
+table.mini th:first-child,table.mini td:first-child{text-align:left;color:var(--muted);font-weight:400}
+table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
+.kas .top{display:flex;justify-content:space-between;gap:10px}
+.kas .j.plus{color:var(--ok);font-weight:800;white-space:nowrap}
+.kas .j.min{color:var(--danger);font-weight:800;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -138,10 +151,14 @@ header.top .who span{font-size:13px;color:var(--muted)}
   <nav class="tabs" id="tabs">
     <button type="button" data-tab="trip" class="on">Trip</button>
     <button type="button" data-tab="pendapatan">Pendapatan</button>
+    <button type="button" data-tab="referral">Referral</button>
+    <button type="button" data-tab="kas">Kas</button>
     <button type="button" data-tab="akun">Akun</button>
   </nav>
   <section id="tTrip" class="list"><div class="loading">Memuat…</div></section>
   <section id="tPendapatan" class="list" hidden></section>
+  <section id="tReferral" class="list" hidden></section>
+  <section id="tKas" class="list" hidden></section>
   <section id="tAkun" hidden>
     <div class="card">
       <h2>Ganti PIN</h2>
@@ -162,6 +179,7 @@ header.top .who span{font-size:13px;color:var(--muted)}
   </section>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 const SB_URL='https://wjmotidelqgcyyujacud.supabase.co';
 const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
@@ -268,6 +286,88 @@ function gambar(){
   $('#tTrip').innerHTML=r.trip_mendatang.length?r.trip_mendatang.map(kartuTrip).join(''):'<div class="card empty">Belum ada trip mendatang.</div>';
   $('#tPendapatan').innerHTML=`<div class="card"><div class="row" style="border-top:0"><span>Total semua (${r.ringkasan.semua.trip} trip)</span><span><b>${rp(r.ringkasan.semua.pendapatan)}</b></span></div><div class="note">Pendapatan dicatat untuk pembawa pesanan (pemilik link/QR). Kalau pesanan langsung dari web, dicatat untuk driver yang ditugaskan.</div></div>`
     +(r.riwayat.length?r.riwayat.map(kartuRiwayat).join(''):'<div class="card empty">Belum ada riwayat.</div>');
+  gambarReferral(r); gambarKas(r.kas); qrDigambar='';
+  if(!$('#tReferral').hidden) gambarQR();
+}
+function gambarReferral(r){
+  const ref=r.referral, t=r.trafik, w=r.web_pusat;
+  const baris=(label,a,b)=>`<tr><td>${label}</td><td>${a}</td><td>${b}</td></tr>`;
+  $('#tReferral').innerHTML=(ref?`<div class="card">
+      <h2>Link referral kamu</h2>
+      <div class="note">Pelanggan yang memesan lewat link atau QR ini tercatat sebagai pesananmu.</div>
+      <div class="linkbox" id="rLink">${esc(ref.link)}</div>
+      <div class="acts" style="margin-top:0"><button class="btn sm" type="button" id="rSalin">Salin link</button>${navigator.share?'<button class="btn ghost sm" type="button" id="rBagi">Bagikan</button>':''}</div>
+    </div>
+    <div class="card">
+      <h2>QR referral</h2>
+      <div class="note">Cetak atau tempel di mobil. Kunjungan lewat QR ini tercatat terpisah dari klik link.</div>
+      <div class="qrwrap" id="rQr"></div>
+      <button class="btn full" type="button" id="rUnduh">Unduh QR (PNG)</button>
+    </div>`:'<div class="card empty">Alamat situs belum diatur admin.</div>')
+    +`<div class="card">
+      <h2>Performa referral</h2>
+      <table class="mini"><thead><tr><th></th><th>30 hari</th><th>Semua</th></tr></thead><tbody>
+        ${baris('Scan QR',t.hari30.qr,t.semua.qr)}${baris('Klik link',t.hari30.link,t.semua.link)}
+        ${baris('Pesanan dibuat',t.hari30.pesanan,t.semua.pesanan)}${baris('Pesanan dibayar',t.hari30.closing,t.semua.closing)}
+      </tbody></table>
+      <div class="note" style="margin-top:8px">QR lama (dibuat sebelum fitur ini) tetap terhitung sebagai klik link.</div>
+    </div>
+    <div class="card">
+      <h2>Kunjungan web pusat</h2>
+      <div class="note" style="margin-bottom:10px">Pengunjung yang datang langsung ke situs Tempera, tanpa link driver.</div>
+      <div class="grid3"><div><div class="v">${w.hari_ini}</div><div class="l">Hari ini</div></div><div><div class="v">${w.hari7}</div><div class="l">7 hari</div></div><div><div class="v">${w.hari30}</div><div class="l">30 hari</div></div></div>
+    </div>`;
+  if(ref){
+    $('#rSalin').addEventListener('click',()=>{ navigator.clipboard.writeText(ref.link).then(()=>{ $('#rSalin').textContent='Tersalin ✓'; setTimeout(()=>{ $('#rSalin').textContent='Salin link'; },1500); },()=>{ alert(ref.link); }); });
+    if($('#rBagi')) $('#rBagi').addEventListener('click',()=>{ navigator.share({title:'Tempera - Private Trip Bandung',text:'Pesan sewa mobil & private trip Bandung di sini:',url:ref.link}).catch(()=>{}); });
+    $('#rUnduh').addEventListener('click',unduhQR);
+  }
+}
+const KAS_JENIS={setoran_driver:'Setoran driver',komisi_admin:'Komisi admin (otomatis)',pengeluaran:'Pengeluaran',lainnya:'Lainnya'};
+function gambarKas(k){
+  $('#tKas').innerHTML=`<div class="stats" style="margin-bottom:0">
+      <div class="stat"><div class="v">${rp(k.saldo)}</div><div class="l">Saldo kas</div></div>
+      <div class="stat"><div class="v">${rp(k.setoranku)}</div><div class="l">Total setoranmu</div></div>
+      <div class="stat"><div class="v">${rp(k.masuk)}</div><div class="l">Total masuk</div></div>
+      <div class="stat"><div class="v">${rp(k.keluar)}</div><div class="l">Total keluar</div></div>
+    </div>
+    <div class="note">Pembukuan yang sama untuk semua anggota. Transaksi terbaru di atas.</div>`
+    +(k.transaksi.length?k.transaksi.map((x)=>`<article class="card kas">
+      <div class="top"><div><b>${esc(KAS_JENIS[x.jenis]||x.jenis)}</b><div class="note">${esc(tglPendek(x.tanggal))}${x.nama?' • '+esc(x.nama):''}</div></div>
+      <div class="j ${x.jumlah<0?'min':'plus'}">${x.jumlah<0?'− ':'+ '}${rp(Math.abs(x.jumlah))}</div></div>
+      ${x.keterangan?`<div class="note">${esc(x.keterangan)}</div>`:''}
+      <div class="note">Saldo setelahnya: ${rp(x.saldo)}</div>
+    </article>`).join(''):'<div class="card empty">Belum ada transaksi kas.</div>');
+}
+/* QR berlogo (sama dengan panel): dibuat di HP, tanpa server */
+let qrDigambar='', qrCanvas=null;
+function muatGambar(src){ return new Promise((ok,no)=>{ const i=new Image(); i.onload=()=>ok(i); i.onerror=no; i.src=src; }); }
+async function buatQR(teks,ukuran){
+  const q=qrcode(0,'H'); q.addData(teks); q.make();
+  const n=q.getModuleCount(), tepi=4, sel=Math.floor(ukuran/(n+tepi*2)), total=sel*(n+tepi*2);
+  const c=document.createElement('canvas'); c.width=c.height=total; const x=c.getContext('2d');
+  x.fillStyle='#fff'; x.fillRect(0,0,total,total); x.fillStyle='#000';
+  for(let r=0;r<n;r++) for(let k=0;k<n;k++) if(q.isDark(r,k)) x.fillRect((k+tepi)*sel,(r+tepi)*sel,sel,sel);
+  try{
+    const img=await muatGambar('images/logo_sky_blue_transparent.png');
+    const t=document.createElement('canvas'); t.width=1328; t.height=1287; const tx=t.getContext('2d');
+    tx.drawImage(img,0,151,1328,1287,0,0,1328,1287); tx.globalCompositeOperation='source-in'; tx.fillStyle='#0891b2'; tx.fillRect(0,0,1328,1287);
+    const plat=Math.round(total*0.20), pad=Math.round(plat*0.06), lw=plat-pad*2, lh=Math.round(lw*1287/1328), px=Math.round((total-plat)/2);
+    x.fillStyle='#fff'; x.beginPath(); if(x.roundRect) x.roundRect(px,px,plat,plat,plat*0.18); else x.rect(px,px,plat,plat); x.fill();
+    x.drawImage(t,px+pad,px+Math.round((plat-lh)/2),lw,lh);
+  }catch(e){ /* logo gagal dimuat: QR tetap sah tanpa logo */ }
+  return c;
+}
+async function gambarQR(){
+  const ref=DATA&&DATA.referral, box=$('#rQr'); if(!ref||!box) return;
+  if(typeof qrcode!=='function'){ box.innerHTML='<div class="note">Pembuat QR belum termuat. Muat ulang halaman.</div>'; return; }
+  if(qrDigambar===ref.link_qr&&box.firstChild) return;
+  qrCanvas=await buatQR(ref.link_qr,720); qrDigambar=ref.link_qr; box.innerHTML=''; box.appendChild(qrCanvas);
+}
+async function unduhQR(){
+  await gambarQR(); if(!qrCanvas) return;
+  const a=document.createElement('a'); a.href=qrCanvas.toDataURL('image/png'); a.download=`qr-tempera-${(DATA.driver.kode||'mitra').toLowerCase()}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
 }
 function kartuTrip(o){
   const dest=Object.entries(o.destinasi||{}).filter(([,v])=>Array.isArray(v)&&v.length).map(([k,v])=>`<li><b>${esc(WIL[k]||k)}:</b> ${esc(v.join(', '))}</li>`).join('');
@@ -294,9 +394,11 @@ function kartuRiwayat(o){
     ${o.dijalankan_lain?'<div class="note">Dijalankan oleh driver lain.</div>':''}
   </article>`;
 }
+const TABS={trip:'#tTrip',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#tKas',akun:'#tAkun'};
 function pilihTab(tab){
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
-  $('#tTrip').hidden=tab!=='trip'; $('#tPendapatan').hidden=tab!=='pendapatan'; $('#tAkun').hidden=tab!=='akun';
+  Object.entries(TABS).forEach(([k,sel])=>{ $(sel).hidden=k!==tab; });
+  if(tab==='referral') gambarQR();
 }
 $('#tabs').addEventListener('click',(e)=>{ const b=e.target.closest('[data-tab]'); if(b) pilihTab(b.dataset.tab); });
 $('#dMuat').addEventListener('click',muatDashboard);
