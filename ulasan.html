@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0891b2">
+<title>Ulasan Perjalanan · Tempera</title>
+<link rel="icon" type="image/png" sizes="48x48" href="images/tempera-48.png">
+<link rel="apple-touch-icon" href="images/tempera-apple-180.png">
+<style>
+:root{--accent:#0891b2;--accent-soft:#e0f2fe;--on-accent:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--danger:#dc2626;--star:#f59e0b}
+@media (prefers-color-scheme: dark){:root{--accent:#E5B80B;--accent-soft:rgba(229,184,11,.14);--on-accent:#0a0a0a;--ink:#f8fafc;--muted:#a1a1aa;--line:#27272a;--bg:#0a0a0a;--card:#141414;--danger:#f87171;--star:#fbbf24}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.55;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:max(20px,env(safe-area-inset-top)) 16px max(20px,env(safe-area-inset-bottom))}
+button,input,textarea{font:inherit}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;width:100%;max-width:440px}
+.logo{--w:40px;display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.brand b{letter-spacing:.16em;color:var(--accent)}
+h1{font-size:21px;margin:0 0 6px;line-height:1.25}
+.sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+.stars{display:flex;justify-content:center;gap:6px;margin:6px 0 4px}
+.stars button{background:none;border:0;padding:4px;cursor:pointer;font-size:40px;line-height:1;color:var(--line);transition:transform .1s ease,color .1s ease}
+.stars button.on{color:var(--star)}
+.stars button:active{transform:scale(.9)}
+.stars button:focus-visible{outline:2px solid var(--accent);border-radius:8px}
+.starlabel{text-align:center;font-size:13px;color:var(--muted);min-height:1.4em;margin-bottom:12px}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 12px}
+textarea,input[type=text]{display:block;width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:16px}
+textarea{min-height:110px;resize:vertical}
+textarea:focus,input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+.count{text-align:right;font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:10px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;color:var(--ink);font-size:14px;cursor:pointer}
+.chk input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent);flex:none}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;border:0;border-radius:12px;padding:13px 16px;font-weight:700;background:var(--accent);color:var(--on-accent);cursor:pointer;text-decoration:none;font-size:15px;margin-top:6px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.msg{font-size:13px;margin:10px 0 0;min-height:1em;color:var(--danger)}
+.center{text-align:center}
+.big{font-size:44px;margin:4px 0 8px}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand"><span class="logo"></span><b>TEMPERA</b></div>
+
+  <section id="vMuat" class="center"><p class="sub">Memuat…</p></section>
+
+  <section id="vGalat" class="center" hidden><div class="big">🔗</div><h1>Link tidak berlaku</h1><p class="sub" id="gTeks">Link ulasan ini tidak valid atau sudah tidak berlaku. Kalau ada yang ingin disampaikan, hubungi admin Tempera lewat WhatsApp.</p></section>
+
+  <section id="vBelum" class="center" hidden><div class="big">🗓️</div><h1>Belum waktunya</h1><p class="sub">Ulasan bisa diberikan setelah perjalananmu. Sampai jumpa di hari H!</p></section>
+
+  <section id="vForm" hidden>
+    <h1 id="fJudul">Bagaimana perjalananmu?</h1>
+    <p class="sub" id="fInfo"></p>
+    <div class="stars" id="bintang" role="radiogroup" aria-label="Beri bintang 1 sampai 5">
+      <button type="button" data-n="1" role="radio" aria-checked="false" aria-label="1 bintang">★</button>
+      <button type="button" data-n="2" role="radio" aria-checked="false" aria-label="2 bintang">★</button>
+      <button type="button" data-n="3" role="radio" aria-checked="false" aria-label="3 bintang">★</button>
+      <button type="button" data-n="4" role="radio" aria-checked="false" aria-label="4 bintang">★</button>
+      <button type="button" data-n="5" role="radio" aria-checked="false" aria-label="5 bintang">★</button>
+    </div>
+    <div class="starlabel" id="starLabel">Ketuk bintang</div>
+    <label>Ceritakan sedikit (opsional)<textarea id="fTeks" maxlength="1000" placeholder="Apa yang paling berkesan? Bagaimana drivernya?"></textarea></label>
+    <div class="count"><span id="fHitung">0</span>/1000</div>
+    <label>Nama yang ditampilkan<input type="text" id="fNama" maxlength="40" autocomplete="given-name"></label>
+    <label class="chk"><input type="checkbox" id="fIzin"><span>Saya izinkan ulasan ini (nama tampil, bintang, dan cerita) ditampilkan di situs Tempera.</span></label>
+    <button class="btn" type="button" id="fKirim" disabled>Kirim ulasan</button>
+    <div class="msg" id="fMsg" role="alert"></div>
+    <p class="note">Nomor WhatsApp-mu tidak pernah ditampilkan. Tanpa izin di atas, ulasan hanya dibaca tim Tempera.</p>
+  </section>
+
+  <section id="vSelesai" class="center" hidden>
+    <div class="big">🙏</div>
+    <h1>Terima kasih!</h1>
+    <p class="sub" id="sTeks">Ulasanmu sudah kami terima.</p>
+    <a class="btn" id="sGoogle" href="#" target="_blank" rel="noopener" hidden>Tulis juga di Google</a>
+    <a class="btn ghost" href="./" style="margin-top:10px">Kembali ke situs Tempera</a>
+  </section>
+</main>
+<script>
+const SB_URL='https://wjmotidelqgcyyujacud.supabase.co';
+const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+const $=(s)=>document.querySelector(s);
+const token=new URLSearchParams(location.search).get('t')||'';
+const LABEL=['','Kurang memuaskan','Perlu perbaikan','Cukup baik','Bagus','Luar biasa!'];
+let pilih=0;
+function tampil(id){ ['vMuat','vGalat','vBelum','vForm','vSelesai'].forEach(v=>{ $('#'+v).hidden=v!==id; }); }
+function tgl(s){ const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||''); if(!m) return s||''; return new Date(Date.UTC(+m[1],+m[2]-1,+m[3],12)).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}); }
+async function api(body){
+  try{ const r=await fetch(`${SB_URL}/functions/v1/ulasan`,{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,Authorization:`Bearer ${ANON}`},body:JSON.stringify({token,...body})});
+    return await r.json().catch(()=>({ok:false,error:'Jawaban server tidak terbaca.'})); }
+  catch(e){ return {ok:false,error:'Tidak ada koneksi internet. Coba lagi.'}; }
+}
+function setBintang(n){
+  pilih=n; document.querySelectorAll('#bintang button').forEach(b=>{ const on=Number(b.dataset.n)<=n; b.classList.toggle('on',on); b.setAttribute('aria-checked',String(Number(b.dataset.n)===n)); });
+  $('#starLabel').textContent=LABEL[n]||'Ketuk bintang'; $('#fKirim').disabled=!n;
+}
+$('#bintang').addEventListener('click',(e)=>{ const b=e.target.closest('button[data-n]'); if(b) setBintang(Number(b.dataset.n)); });
+$('#bintang').addEventListener('keydown',(e)=>{ if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); setBintang(Math.min(5,pilih+1)); } if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); setBintang(Math.max(1,pilih-1)); } });
+$('#fTeks').addEventListener('input',()=>{ $('#fHitung').textContent=$('#fTeks').value.length; });
+$('#fKirim').addEventListener('click',async()=>{
+  if(!pilih) return;
+  const b=$('#fKirim'); b.disabled=true; b.textContent='Mengirim…'; $('#fMsg').textContent='';
+  const r=await api({aksi:'kirim',bintang:pilih,teks:$('#fTeks').value,nama:$('#fNama').value,izin:$('#fIzin').checked});
+  b.textContent='Kirim ulasan';
+  if(!r.ok){ b.disabled=false; $('#fMsg').textContent=r.error||'Gagal mengirim.'; return; }
+  $('#sTeks').textContent=pilih>=4?'Senang sekali perjalananmu menyenangkan. Ulasanmu sudah kami terima.':'Ulasanmu sudah kami terima. Tim kami akan menghubungimu untuk memperbaikinya.';
+  if(r.google&&/^https:\/\//i.test(r.google)){ $('#sGoogle').href=r.google; $('#sGoogle').hidden=false; }
+  tampil('vSelesai');
+});
+(async function mulai(){
+  if(!/^[0-9a-f]{32}$/.test(token)){ tampil('vGalat'); return; }
+  const r=await api({aksi:'lihat'});
+  if(!r.ok){ if(r.error) $('#gTeks').textContent=r.error; tampil('vGalat'); return; }
+  if(r.belum_waktunya){ tampil('vBelum'); return; }
+  if(r.sudah){ $('#sTeks').textContent='Ulasan untuk perjalanan ini sudah kami terima. Terima kasih!'; tampil('vSelesai'); return; }
+  $('#fJudul').textContent=r.nama?`Bagaimana perjalananmu, ${r.nama}?`:'Bagaimana perjalananmu?';
+  $('#fInfo').textContent=[tgl(r.tanggal),r.armada,r.driver?`bersama ${r.driver}`:''].filter(Boolean).join(' · ');
+  $('#fNama').value=r.nama||'';
+  tampil('vForm');
+})();
+</script>
+</body>
+</html>
