@@ -1052,6 +1052,57 @@ document.addEventListener('click', async (e) => {
   if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
   toast('Tanggal dibuka lagi'); nav('ketersediaan');
 });
+/* ---------- ULASAN PELANGGAN (SQL 92) ---------- */
+// Tab "Ulasan": semua ulasan masuk (terbaru di atas), rata-rata, tombol Tampilkan / Sembunyikan.
+// Hanya ulasan yang diberi izin pelanggan yang bisa ditampilkan di situs (dijaga juga oleh database).
+NAVS.splice(NAVS.findIndex((n) => n[0] === 'laporan') + 1, 0, ['ulasan', 'Ulasan']);
+const STATUS_UL = { menunggu: 'Menunggu', tampil: 'Tampil di situs', sembunyi: 'Disembunyikan' };
+VIEWS.ulasan = async function () {
+  $('#view').innerHTML = `
+    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Ulasan pelanggan</h2>
+      <select id="ulFilter" style="width:auto"><option value="">Semua</option><option value="menunggu" selected>Menunggu</option><option value="tampil">Tampil di situs</option><option value="sembunyi">Disembunyikan</option></select></div>
+    <div class="stats" id="ulStats"></div>
+    <div id="ulList"><div class="empty">Memuat…</div></div>
+    <div class="help" style="margin-top:10px">Ajakan ulasan dikirim otomatis lewat WA sehari setelah trip. Bintang 1–3 juga langsung dikabarkan ke Telegram. Link Google (kalau sudah punya) diisi di Pengaturan → <b>google_review_url</b>.</div>`;
+  $('#ulFilter').addEventListener('change', muatUlasanPanel);
+  muatUlasanPanel();
+};
+async function muatUlasanPanel() {
+  const semua = await sb.from('ulasan').select('*').order('created_at', { ascending: false }).limit(500);
+  if (semua.error) { $('#ulList').innerHTML = `<div class="empty">Gagal memuat: ${esc(semua.error.message)}</div>`; return; }
+  const rows = semua.data || [];
+  const rata = rows.length ? (rows.reduce((a, x) => a + x.bintang, 0) / rows.length) : 0;
+  const tampil = rows.filter((x) => x.status === 'tampil');
+  $('#ulStats').innerHTML = `
+    <div class="stat"><div class="v">${rows.length ? rata.toFixed(1).replace('.', ',') + ' ⭐' : '-'}</div><div class="l">Rata-rata semua (${rows.length} ulasan)</div></div>
+    <div class="stat"><div class="v">${rows.filter((x) => x.status === 'menunggu').length}</div><div class="l">Menunggu diperiksa</div></div>
+    <div class="stat"><div class="v">${tampil.length}</div><div class="l">Tampil di situs</div></div>
+    <div class="stat"><div class="v">${rows.filter((x) => x.bintang <= 3).length}</div><div class="l">Bintang 1–3</div></div>`;
+  const f = $('#ulFilter').value;
+  const list = f ? rows.filter((x) => x.status === f) : rows;
+  $('#ulList').innerHTML = list.length ? list.map((u) => `
+    <div class="card" style="margin-bottom:10px${u.bintang <= 3 ? ';border-left:4px solid var(--danger)' : ''}">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+        <div><span style="color:#f59e0b;font-size:18px">${'★'.repeat(u.bintang)}</span><span style="color:#cbd5e1;font-size:18px">${'★'.repeat(5 - u.bintang)}</span>
+          <b style="margin-left:6px">${esc(u.nama_tampil || '-')}</b></div>
+        <span class="badge ${u.status === 'tampil' ? 'b-paid' : u.status === 'sembunyi' ? 'b-cancelled' : 'b-pending'}">${esc(STATUS_UL[u.status] || u.status)}</span>
+      </div>
+      <div style="margin:8px 0;white-space:pre-line">${u.teks ? esc(u.teks) : '<span class="small">(tanpa komentar)</span>'}</div>
+      <div class="small">${esc(waktu(u.created_at))} · ${esc(u.order_id)} · ${esc(u.armada || '-')} · Driver: ${esc(u.driver_slug ? driverName(u.driver_slug) : '-')} · ${u.izin_tampil ? '✅ boleh ditampilkan' : '🔒 tidak diizinkan tampil'}</div>
+      <div class="mbtns" style="justify-content:flex-start;margin-top:8px">
+        ${u.status !== 'tampil' ? (u.izin_tampil ? `<button class="btn sm" type="button" data-ul="${esc(u.id)}" data-st="tampil">Tampilkan di situs</button>` : '') : ''}
+        ${u.status !== 'sembunyi' ? `<button class="btn ghost sm" type="button" data-ul="${esc(u.id)}" data-st="sembunyi">${u.status === 'tampil' ? 'Sembunyikan' : 'Tandai sudah dibaca'}</button>` : ''}
+      </div>
+    </div>`).join('') : '<div class="card empty">Tidak ada ulasan.</div>';
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-ul]');
+  if (!b) return;
+  b.disabled = true;
+  const r = await sb.from('ulasan').update({ status: b.dataset.st, dimoderasi_at: new Date().toISOString() }).eq('id', b.dataset.ul);
+  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
+  toast(b.dataset.st === 'tampil' ? 'Ulasan ditampilkan di situs' : 'Ulasan disembunyikan'); muatUlasanPanel();
+});
 
 </script>
 </body>
