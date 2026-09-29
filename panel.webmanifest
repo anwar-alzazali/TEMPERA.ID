@@ -4,7 +4,7 @@
   "start_url": "./panel.html",
   "scope": "./panel.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0891b2",
   "theme_color": "#0891b2",
   "lang": "id",
   "icons": [
