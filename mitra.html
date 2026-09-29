@@ -93,6 +93,21 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
 .owed .v{font-size:22px;font-weight:800;color:var(--accent)}
 .tag.paid{background:rgba(22,163,74,.14);color:var(--ok)}
 .tag.unpaid{background:var(--warn-bg);color:var(--warn-ink)}
+.alert{background:var(--warn-bg);color:var(--warn-ink);border:1px solid rgba(146,64,14,.25);border-radius:16px;padding:14px;margin-bottom:14px}
+.alert b{display:block;margin-bottom:4px}
+.alert .ln{font-size:14px;padding:2px 0}
+.alert .acts{margin-top:10px}
+.rekap{overflow-x:auto}
+.rekap table{border-collapse:collapse;width:100%;font-size:13px;min-width:340px}
+.rekap th,.rekap td{padding:7px 5px;border-top:1px solid var(--line);text-align:center;white-space:nowrap}
+.rekap th{font-size:11px;color:var(--muted);border-top:0}
+.rekap td:first-child,.rekap th:first-child{text-align:left;white-space:normal}
+.rekap tr.me td{background:var(--accent-soft);font-weight:700}
+.rekap .hutang{color:var(--danger);font-weight:700}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--accent)}
+.peserta{font-size:13px}
+.peserta .row{padding:5px 0}
 </style>
 </head>
 <body>
@@ -155,6 +170,7 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
     <div class="who"><b id="dNama">…</b><span id="dKode"></span></div>
     <button class="btn ghost sm" type="button" id="dMuat" aria-label="Muat ulang">↻</button>
   </header>
+  <div id="iuranAlert"></div>
   <div class="stats">
     <div class="stat"><div class="v" id="sBulanRp">-</div><div class="l" id="sBulanL">Pendapatan bulan ini</div></div>
     <div class="stat"><div class="v" id="sTrip">-</div><div class="l">Trip mendatang</div></div>
@@ -298,7 +314,7 @@ function gambar(){
   const bd=r.belum_dibayar||{pesanan:0,jumlah:0};
   $('#tPendapatan').innerHTML=`<div class="card owed"><div class="note">Belum dibayar admin</div><div class="v">${bd.jumlah>=0?rp(bd.jumlah):'− '+rp(-bd.jumlah)}</div><div class="note">${bd.pesanan?`${bd.pesanan} pesanan menunggu pembayaran dari admin.`:'Semua pesanan sudah dibayar. 👍'}${bd.jumlah<0?' Angka minus: kamu yang perlu menyetor ke admin.':''}</div></div><div class="card"><div class="row" style="border-top:0"><span>Total semua (${r.ringkasan.semua.trip} trip)</span><span><b>${rp(r.ringkasan.semua.pendapatan)}</b></span></div><div class="note">Pendapatan dicatat untuk pembawa pesanan (pemilik link/QR). Kalau pesanan langsung dari web, dicatat untuk driver yang ditugaskan.</div></div>`
     +(r.riwayat.length?r.riwayat.map(kartuRiwayat).join(''):'<div class="card empty">Belum ada riwayat.</div>');
-  gambarReferral(r); gambarKas(r.kas); qrDigambar='';
+  gambarReferral(r); gambarKas(r.kas, r.iuran); gambarPeringatan(r.iuran); qrDigambar='';
   if(!$('#tReferral').hidden) gambarQR();
 }
 function gambarReferral(r){
@@ -336,8 +352,63 @@ function gambarReferral(r){
   }
 }
 const KAS_JENIS={setoran_driver:'Setoran driver',komisi_admin:'Komisi admin (otomatis)',pengeluaran:'Pengeluaran',lainnya:'Lainnya'};
-function gambarKas(k){
-  $('#tKas').innerHTML=`<div class="stats" style="margin-bottom:0">
+const blnPendek=(ym)=>{ const m=/^(\d{4})-(\d{2})/.exec(ym||''); return m?new Date(Date.UTC(+m[1],+m[2]-1,15)).toLocaleDateString('id-ID',{month:'short',timeZone:'UTC'}):ym; };
+const blnPanjang=(ym)=>{ const m=/^(\d{4})-(\d{2})/.exec(ym||''); return m?new Date(Date.UTC(+m[1],+m[2]-1,15)).toLocaleDateString('id-ID',{month:'long',year:'numeric',timeZone:'UTC'}):ym; };
+const IKON={lunas:'✅',sebagian:'◐',belum:'❌','-':'–'};
+function linkBayar(iu,extra){ return iu&&iu.link_bayar&&/^https:\/\//i.test(iu.link_bayar)?iu.link_bayar+(extra||''):''; }
+function gambarPeringatan(iu){
+  const box=$('#iuranAlert'); if(!box) return;
+  const p=iu&&iu.peringatan; if(!p){ box.innerHTML=''; return; }
+  const baris=[];
+  if(p.ini&&p.ini.sisa>0) baris.push(`⚠️ Kas bulan ini (${esc(blnPanjang(p.bulan_ini))}) ${p.ini.sisa<p.ini.tagihan?'kurang':'belum dibayar'}: <b style="display:inline">${rp(p.ini.sisa)}</b>`);
+  if(p.lalu&&p.lalu.sisa>0) baris.push(`⚠️ Kas bulan lalu (${esc(blnPanjang(p.bulan_lalu))}) ${p.lalu.sisa<p.lalu.tagihan?'kurang':'belum dibayar'}: <b style="display:inline">${rp(p.lalu.sisa)}</b>`);
+  const lain=p.total_tunggakan-(p.ini?p.ini.sisa:0)-(p.lalu?p.lalu.sisa:0);
+  if(lain>0) baris.push(`⚠️ Tunggakan bulan-bulan sebelumnya: <b style="display:inline">${rp(lain)}</b>`);
+  (p.khusus||[]).forEach(k=>baris.push(`👕 ${esc(k.judul)}: <b style="display:inline">${rp(k.sisa)}</b>${k.batas?` · batas ${esc(tglPendek(k.batas))}`:''}`));
+  if(!baris.length){ box.innerHTML=''; return; }
+  const url=linkBayar(iu, p.total_tunggakan>0?'&bayar=tunggakan':((p.khusus||[])[0]?`&iuran=${encodeURIComponent(p.khusus[0].id)}`:''));
+  box.innerHTML=`<div class="alert" role="alert"><b>Ada yang belum dibayar</b>${baris.map(x=>`<div class="ln">${x}</div>`).join('')}
+    ${url?`<div class="acts"><a class="btn sm" href="${esc(url)}">Bayar sekarang</a></div>`:''}</div>`;
+}
+function tabelRekap(iu){
+  const rows=[...iu.anggota].sort((a,b)=>b.tunggakan-a.tunggakan||String(a.kode).localeCompare(String(b.kode)));
+  return `<table><thead><tr><th>Anggota</th>${iu.kolom.map(b=>`<th>${esc(blnPendek(b))}</th>`).join('')}<th>Tunggakan</th></tr></thead><tbody>
+    ${rows.map(a=>`<tr class="${a.saya?'me':''}"><td>${esc(a.nama)}<div class="note">${esc(a.kode||'')}${a.dimuka?` · di muka ${a.dimuka} bln`:''}</div></td>${a.status.map(st=>`<td>${IKON[st]||'–'}</td>`).join('')}<td class="${a.tunggakan>0?'hutang':''}">${a.tunggakan>0?rp(a.tunggakan):'–'}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+function tabelKhusus(k){
+  return `<table><thead><tr><th>Anggota</th><th>Iuran</th><th>Dibayar</th><th>Sisa</th></tr></thead><tbody>
+    ${k.peserta.map(p=>`<tr class="${p.saya?'me':''}"><td>${esc(p.nama)}</td><td>${rp(p.nominal)}</td><td>${rp(Math.min(p.terbayar,p.nominal))}</td><td class="${p.sisa>0?'hutang':''}">${p.sisa>0?rp(p.sisa):'✅'}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+function cetak(judul,sub,isi){
+  const w=window.open('','_blank'); if(!w){ alert('Izinkan jendela baru (pop-up) untuk mencetak.'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>${esc(judul)}</title><style>
+    body{font-family:system-ui,Arial,sans-serif;color:#0f172a;margin:24px}h1{font-size:18px;margin:0}p{margin:4px 0 14px;color:#475569;font-size:12px}
+    table{border-collapse:collapse;width:100%;font-size:12px}th,td{border:1px solid #cbd5e1;padding:6px 5px;text-align:center}th{background:#e0f2fe}
+    td:first-child,th:first-child{text-align:left}.note{color:#64748b;font-size:10px}.hutang{color:#b91c1c;font-weight:700}tr.me td{font-weight:400;background:none}
+    .kop{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0891b2;padding-bottom:8px;margin-bottom:12px}.kop b{color:#0891b2;letter-spacing:.15em}
+    @page{size:A4 landscape;margin:12mm}</style></head><body>
+    <div class="kop"><div><b>TEMPERA</b><h1>${esc(judul)}</h1></div><div class="note">Dicetak ${esc(new Date().toLocaleString('id-ID',{timeZone:'Asia/Jakarta'}))} WIB</div></div>
+    <p>${esc(sub)}</p>${isi}<p style="margin-top:14px">Keterangan: ✅ lunas · ◐ sebagian · ❌ belum · – tidak ditagih</p></body></html>`);
+  w.document.close(); w.focus(); setTimeout(()=>w.print(),300);
+}
+function gambarKas(k, iu){
+  const bagIuran=iu?`<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">Rekap iuran kas</h2>
+        <div class="acts" style="margin:0">${linkBayar(iu)?`<a class="btn sm" href="${esc(linkBayar(iu))}">Bayar kas & iuran</a>`:''}<button class="btn ghost sm" type="button" id="kCetak">Cetak</button></div></div>
+      <div class="note" style="margin:6px 0 8px">Setoran otomatis menutup bulan tertua yang belum lunas. ✅ lunas · ◐ sebagian · ❌ belum</div>
+      <div class="rekap">${iu.anggota.length?tabelRekap(iu):'<div class="empty">Belum ada anggota yang ditagih.</div>'}</div>
+    </div>
+    ${(iu.khusus||[]).map((x,i)=>`<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">👕 ${esc(x.judul)}</h2>
+        <div class="acts" style="margin:0">${x.saya&&x.saya.sisa>0&&linkBayar(iu)?`<a class="btn sm" href="${esc(linkBayar(iu,'&iuran='+encodeURIComponent(x.id)))}">Bayar ${rp(x.saya.sisa)}</a>`:''}<button class="btn ghost sm" type="button" data-cetak-khusus="${i}">Cetak</button></div></div>
+      ${x.keterangan?`<div class="note">${esc(x.keterangan)}</div>`:''}
+      <div class="note">${x.batas?`Batas ${esc(tglPendek(x.batas))} · `:''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)}</div>
+      <div class="bar"><i style="width:${x.target?Math.min(100,Math.round(x.terkumpul/x.target*100)):0}%"></i></div>
+      <div class="rekap">${tabelKhusus(x)}</div>
+    </div>`).join('')}`:'';
+  $('#tKas').innerHTML=bagIuran+`<div class="stats" style="margin-bottom:0">
       <div class="stat"><div class="v">${rp(k.saldo)}</div><div class="l">Saldo kas</div></div>
       <div class="stat"><div class="v">${rp(k.setoranku)}</div><div class="l">Total setoranmu</div></div>
       <div class="stat"><div class="v">${rp(k.masuk)}</div><div class="l">Total masuk</div></div>
@@ -350,6 +421,11 @@ function gambarKas(k){
       ${x.keterangan?`<div class="note">${esc(x.keterangan)}</div>`:''}
       <div class="note">Saldo setelahnya: ${rp(x.saldo)}</div>
     </article>`).join(''):'<div class="card empty">Belum ada transaksi kas.</div>');
+  if(iu){
+    const c=$('#kCetak'); if(c) c.addEventListener('click',()=>cetak('Rekap Iuran Kas Mitra',`Periode ${blnPanjang(iu.kolom[0])} – ${blnPanjang(iu.kolom[iu.kolom.length-1])}`,tabelRekap(iu)));
+    document.querySelectorAll('[data-cetak-khusus]').forEach(b=>b.addEventListener('click',()=>{ const x=iu.khusus[+b.dataset.cetakKhusus];
+      cetak(`Iuran: ${x.judul}`,`${x.batas?'Batas '+tglPendek(x.batas)+' · ':''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)}`,tabelKhusus(x)); }));
+  }
 }
 /* QR berlogo (sama dengan panel): dibuat di HP, tanpa server */
 let qrDigambar='', qrCanvas=null;
