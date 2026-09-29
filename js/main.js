@@ -1,4 +1,4 @@
-/* [MAIN.JS] v7 (88) -- + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
+/* [MAIN.JS] v8 (96) -- + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
 
 let WA_NUMBER = '6285196755972'; // nomor WA admin (ditimpa app_settings.admin_wa bila tersedia & publik)
@@ -39,6 +39,7 @@ id: {
   card_btn: 'Pilih Unit - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Armada Dulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh di tanggal ini', opt_left: ' — tinggal {n} unit!',
   av_low: '⏳ Tinggal sedikit di tanggal ini: {list}.',
+  rv_title: 'Kata Pelanggan', rv_sub: '⭐ {rata} dari 5 · {n} ulasan asli pelanggan Tempera', rv_left: 'Geser ke kiri', rv_right: 'Geser ke kanan',
   av_some: '🚫 Penuh di tanggal ini: {list}. Pilih armada lain atau tanggal lain.',
   av_all: '🚫 <b>Semua armada penuh di tanggal ini.</b> Pilih tanggal lain, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">tanya admin lewat WhatsApp</a>.',
   av_card_full: '{car} penuh di tanggal yang dipilih. Pilih armada lain atau ubah tanggal.',
@@ -189,6 +190,7 @@ ms: {
   card_btn: 'Pilih - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Kereta Dahulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh pada tarikh ini', opt_left: ' — tinggal {n} unit sahaja!',
   av_low: '⏳ Tinggal sedikit pada tarikh ini: {list}.',
+  rv_title: 'Kata Pelanggan', rv_sub: '⭐ {rata} daripada 5 · {n} ulasan sebenar pelanggan Tempera', rv_left: 'Anjak ke kiri', rv_right: 'Anjak ke kanan',
   av_some: '🚫 Penuh pada tarikh ini: {list}. Pilih kereta lain atau tarikh lain.',
   av_all: '🚫 <b>Semua kereta penuh pada tarikh ini.</b> Pilih tarikh lain, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">tanya admin melalui WhatsApp</a>.',
   av_card_full: '{car} penuh pada tarikh yang dipilih. Pilih kereta lain atau tukar tarikh.',
@@ -572,6 +574,45 @@ function terapkanKetersediaan(){
   if(tadi&&PENUH.has(tadi.id)){ sel.selectedIndex=0; calculateLive(); checkCapacityLive(); }
 }
 
+/* ---------- Ulasan asli pelanggan (SQL 92). Bagian dibuat di sini, tepat sebelum FAQ,
+   HANYA kalau sudah ada ulasan yang ditampilkan admin. ---------- */
+let ULASAN={list:[],jumlah:0,rata:null};
+async function muatUlasan(){
+  try{
+    const h={apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'};
+    const [a,b]=await Promise.all([
+      fetch(`${SB_URL}/rest/v1/rpc/ulasan_tampil`,{method:'POST',headers:h,body:JSON.stringify({p_limit:12})}),
+      fetch(`${SB_URL}/rest/v1/rpc/ringkasan_ulasan`,{method:'POST',headers:h,body:'{}'})]);
+    if(!a.ok||!b.ok) return;
+    const list=await a.json(), sum=await b.json(); const r=Array.isArray(sum)?sum[0]:sum;
+    ULASAN={list:Array.isArray(list)?list:[],jumlah:Number(r&&r.jumlah)||0,rata:r&&r.rata!=null?Number(r.rata):null};
+    renderUlasan();
+  }catch(e){ console.warn('ulasan:',e); }
+}
+function renderUlasan(){
+  let sec=document.getElementById('ulasan');
+  if(!ULASAN.list.length){ if(sec) sec.remove(); return; }
+  if(!sec){ const faq=document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='ulasan'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
+  const loc=currentLang==='ms'?'ms-MY':'id-ID';
+  const bulan=(ym)=>{ const m=/^(\d{4})-(\d{2})$/.exec(ym||''); return m?new Date(Date.UTC(+m[1],+m[2]-1,15)).toLocaleDateString(loc,{month:'long',year:'numeric',timeZone:'UTC'}):''; };
+  const rata=ULASAN.rata!=null?ULASAN.rata.toLocaleString(loc,{minimumFractionDigits:1,maximumFractionDigits:1}):'-';
+  const kartu=ULASAN.list.map(u=>{ const n=Math.max(1,Math.min(5,Number(u.bintang)||0));
+    return `<article class="theme-card border" style="width:290px;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <div aria-label="${n}/5" style="color:#f59e0b;font-size:18px;letter-spacing:2px">${'★'.repeat(n)}<span style="color:var(--border-color)">${'★'.repeat(5-n)}</span></div>
+      ${u.teks?`<p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--text-secondary);white-space:pre-line;display:-webkit-box;-webkit-line-clamp:7;-webkit-box-orient:vertical;overflow:hidden">"${esc(u.teks)}"</p>`:''}
+      <p style="margin:auto 0 0;font-size:12px;color:var(--text-muted)"><b style="color:var(--text-primary)">${esc(u.nama)}</b>${u.armada?' · '+esc(u.armada):''}${u.bulan?' · '+esc(bulan(u.bulan)):''}</p>
+    </article>`; }).join('');
+  sec.innerHTML=`<div class="max-w-7xl mx-auto px-4">
+    <div class="text-center max-w-2xl mx-auto mb-12"><h2 class="text-3xl md:text-[38px] font-serif uppercase tracking-widest" style="color:var(--accent)">${esc(t('rv_title'))}</h2>
+      <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
+      <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)">${esc(t('rv_sub',{rata,n:ULASAN.jumlah}))}</p></div>
+    <div class="flex items-center gap-3">
+      <button type="button" class="slider-arrow hidden sm:flex" data-slide="ulasanTrack" data-dir="-1" aria-label="${esc(t('rv_left'))}">‹</button>
+      <div class="slider-track" id="ulasanTrack" style="flex:1">${kartu}</div>
+      <button type="button" class="slider-arrow hidden sm:flex" data-slide="ulasanTrack" data-dir="1" aria-label="${esc(t('rv_right'))}">›</button>
+    </div></div>`;
+}
+
 /* ---------- Destinasi & paket (paket = template destinasi, harga tetap dari armada) ---------- */
 const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
 const PAKET={
@@ -943,7 +984,7 @@ function refreshDynamic(){
   terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });
   if(openId) openAccordion(openId);
-  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts();
+  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan();
 }
 
 function normalizeWA(input){
@@ -1052,7 +1093,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('formTanggal')?.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });
   updateBatasWaktu();
   openAccordion('lembang');
-  initRemoteData();
+  initRemoteData(); muatUlasan();
 
   fetchWeather();
   let weatherInterval=setInterval(fetchWeather,600000);
