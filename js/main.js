@@ -1,4 +1,4 @@
-/* [MAIN.JS] v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
+/* [MAIN.JS] v7 (88) -- + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
 
 let WA_NUMBER = '6285196755972'; // nomor WA admin (ditimpa app_settings.admin_wa bila tersedia & publik)
@@ -37,6 +37,12 @@ id: {
   th_fleet: 'Armada', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
   cap_comfort: '{n} Nyaman', card_cap: '{cap} • Maks {max}', card_people: '👥 <b>{cap}</b> + driver • Maks {max}',
   card_btn: 'Pilih Unit - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Armada Dulu —', opt_label: '{name} - {price} / 12 Jam',
+  opt_full: ' — penuh di tanggal ini', opt_left: ' — tinggal {n} unit!',
+  av_low: '⏳ Tinggal sedikit di tanggal ini: {list}.',
+  av_some: '🚫 Penuh di tanggal ini: {list}. Pilih armada lain atau tanggal lain.',
+  av_all: '🚫 <b>Semua armada penuh di tanggal ini.</b> Pilih tanggal lain, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">tanya admin lewat WhatsApp</a>.',
+  av_card_full: '{car} penuh di tanggal yang dipilih. Pilih armada lain atau ubah tanggal.',
+  av_wa_msg: 'Halo Admin Tempera, saya mau tanya ketersediaan armada untuk tanggal {tgl}.',
 
   tc_title: 'Trip Custom', tc_sub: 'Antar kota, bandara, mudik Lebaran, dan trip lebih dari 1 hari',
   tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Pilih tujuan, lalu tanyakan harganya lewat WhatsApp (tergantung jarak, jumlah hari, dan jam berangkat).',
@@ -181,6 +187,12 @@ ms: {
   th_fleet: 'Kereta', th_cap: 'Selesa / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Tindakan',
   cap_comfort: '{n} Selesa', card_cap: '{cap} • Maks {max}', card_people: '👥 <b>{cap}</b> + pemandu • Maks {max}',
   card_btn: 'Pilih - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Kereta Dahulu —', opt_label: '{name} - {price} / 12 Jam',
+  opt_full: ' — penuh pada tarikh ini', opt_left: ' — tinggal {n} unit sahaja!',
+  av_low: '⏳ Tinggal sedikit pada tarikh ini: {list}.',
+  av_some: '🚫 Penuh pada tarikh ini: {list}. Pilih kereta lain atau tarikh lain.',
+  av_all: '🚫 <b>Semua kereta penuh pada tarikh ini.</b> Pilih tarikh lain, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">tanya admin melalui WhatsApp</a>.',
+  av_card_full: '{car} penuh pada tarikh yang dipilih. Pilih kereta lain atau tukar tarikh.',
+  av_wa_msg: 'Hai Admin Tempera, saya ingin bertanya tentang kekosongan kereta untuk tarikh {tgl}.',
 
   tc_title: 'Trip Tersuai', tc_sub: 'Antara bandar, lapangan terbang, balik raya dan trip lebih dari 1 hari',
   tc_desc: 'Kereta dan pemandu khas untuk rombongan anda, bukan pengangkutan awam. Pilih destinasi, kemudian tanya harga melalui WhatsApp (bergantung pada jarak, bilangan hari dan masa bertolak).',
@@ -490,6 +502,7 @@ function updateBatasWaktu(){
   const terpilih=jamEl.selectedOptions[0];
   if(terpilih&&terpilih.disabled){ const pertama=[...jamEl.options].find(o=>!o.disabled); if(pertama) jamEl.value=nilai(pertama); }
   updateDurasi();
+  if(tglEl.value!==cekTgl) cekKetersediaan();
 }
 
 async function initRemoteData(){
@@ -514,6 +527,51 @@ async function initRemoteData(){
   try{ renderBanners(await sbGet('banners?select=*&order=sort_order.asc')); }catch(e){ console.warn('banners:',e); }
 }
 
+/* ---------- Ketersediaan armada per tanggal (SQL 83). Server (create-order) tetap penjaga utama;
+   di sini hanya supaya pelanggan tidak memilih armada yang sudah penuh. ---------- */
+let PENUH=new Set(), SISA={}, cekTgl='';
+async function cekKetersediaan(){
+  const tgl=document.getElementById('formTanggal')?.value||''; if(!/^\d{4}-\d{2}-\d{2}$/.test(tgl)) return;
+  cekTgl=tgl;
+  try{
+    const panggil=(fn)=>fetch(`${SB_URL}/rest/v1/rpc/${fn}`,{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({p_tanggal:tgl})});
+    let r=await panggil('status_armada');                  // penuh + sisa 1–3 (SQL 87)
+    if(r.status===404) r=await panggil('armada_penuh');     // cadangan kalau SQL 87 belum dijalankan
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const rows=await r.json(); if(cekTgl!==tgl) return;
+    const arr=Array.isArray(rows)?rows:[];
+    PENUH=new Set(arr.filter(x=>x.penuh!==false).map(x=>x.fleet_id));
+    SISA={}; arr.forEach(x=>{ if(x.penuh===false&&Number(x.sisa)>0) SISA[x.fleet_id]=Number(x.sisa); });
+  }catch(e){ console.warn('ketersediaan:',e); PENUH=new Set(); SISA={}; }
+  terapkanKetersediaan();
+}
+function terapkanKetersediaan(){
+  const sel=document.getElementById('calcUnit'); if(!sel) return;
+  const tadi=getSelectedArmada();
+  [...sel.options].forEach(o=>{ if(!o.dataset.id) return;
+    const u=ARMADA_DATA.find(x=>x.id===o.dataset.id); const penuh=PENUH.has(o.dataset.id);
+    o.disabled=penuh; o.textContent=t('opt_label',{name:u?u.name:o.dataset.name,price:formatPrice(u?u.price:o.value)})+(penuh?t('opt_full'):(SISA[o.dataset.id]?t('opt_left',{n:SISA[o.dataset.id]}):'')); });
+  let note=document.getElementById('availNote');
+  if(!note){ const d=document.getElementById('durasiNote'); if(!d) return; note=document.createElement('div'); note.id='availNote'; note.className='rounded-xl p-3 text-[12px]'; note.setAttribute('role','status'); note.style.cssText='background:#fef2f2;border:1px solid #fecaca;color:#991b1b'; d.after(note); }
+  const penuhAktif=ARMADA_DATA.filter(u=>PENUH.has(u.id));
+  const sedikit=ARMADA_DATA.filter(u=>!PENUH.has(u.id)&&SISA[u.id]);
+  const merah='background:#fef2f2;border:1px solid #fecaca;color:#991b1b', kuning='background:#fffbeb;border:1px solid #fde68a;color:#92400e';
+  const nm=(u)=>u.shortName||u.name;
+  if(!penuhAktif.length&&!sedikit.length){ note.hidden=true; note.innerHTML=''; }
+  else if(penuhAktif.length>=ARMADA_DATA.length){
+    const tgl=document.getElementById('formTanggal')?.value||'';
+    note.style.cssText=merah; note.innerHTML=t('av_all',{wa:esc(waLink(t('av_wa_msg',{tgl})))}); note.hidden=false;
+  } else {
+    note.textContent=''; note.style.cssText=penuhAktif.length?merah:kuning;
+    const baris=[];
+    if(penuhAktif.length) baris.push(t('av_some',{list:penuhAktif.map(nm).join(', ')}));
+    if(sedikit.length) baris.push(t('av_low',{list:sedikit.map(u=>`${nm(u)} (${SISA[u.id]} unit)`).join(', ')}));
+    baris.forEach((b,i)=>{ if(i) note.appendChild(document.createElement('br')); note.appendChild(document.createTextNode(b)); });
+    note.hidden=false;
+  }
+  if(tadi&&PENUH.has(tadi.id)){ sel.selectedIndex=0; calculateLive(); checkCapacityLive(); }
+}
+
 /* ---------- Destinasi & paket (paket = template destinasi, harga tetap dari armada) ---------- */
 const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
 const PAKET={
@@ -528,13 +586,19 @@ const REGION_NAME={lembang:'Lembang',ciwidey:'Ciwidey',pangalengan:'Pangalengan'
 
 function getSelectedArmada(){const s=document.getElementById('calcUnit');if(!s||!s.value||s.selectedIndex<=0)return null;const o=s.options[s.selectedIndex];return{id:o.dataset.id,name:o.dataset.name,cap:parseInt(o.dataset.cap)||0,capmax:parseInt(o.dataset.capmax)||0,price:parseInt(o.value)||0};}
 function selectUnitById(id){ const s=document.getElementById('calcUnit'); for(let i=0;i<s.options.length;i++){ if(s.options[i].dataset.id===id){ s.selectedIndex=i; return true; } } return false; }
-function selectUnitFromCard(id){ selectUnitById(id); calculateLive(); checkCapacityLive(); document.getElementById('pesan').scrollIntoView({behavior:'smooth'}); }
+function selectUnitFromCard(id){
+  if(PENUH.has(id)){ const u=ARMADA_DATA.find(x=>x.id===id); notify(t('av_card_full',{car:u?u.name:id})); document.getElementById('pesan').scrollIntoView({behavior:'smooth'}); return; }
+  selectUnitById(id); calculateLive(); checkCapacityLive(); document.getElementById('pesan').scrollIntoView({behavior:'smooth'});
+}
 function cheapestUnit(){ return ARMADA_DATA.reduce((a,u)=>(!a||u.price<a.price)?u:a,null); }
 
 function pilihPaket(key){
   const p=PAKET[key]; if(!p) return;
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=!!(p[cb.dataset.group]&&p[cb.dataset.group].includes(cb.value)); });
-  if(!getSelectedArmada()){ const c=ARMADA_DATA.find(u=>u.id==='calya')||cheapestUnit(); if(c) selectUnitById(c.id); }  // armada pilihan pelanggan tidak ditimpa
+  if(!getSelectedArmada()){   // armada pilihan pelanggan tidak ditimpa; Calya, atau termurah yang belum penuh
+    const bisa=ARMADA_DATA.filter(u=>!PENUH.has(u.id)).sort((a,b)=>a.price-b.price);
+    const c=bisa.find(u=>u.id==='calya')||bisa[0]; if(c) selectUnitById(c.id);
+  }
   calculateLive(); checkCapacityLive();
   openAccordion(Object.keys(p)[0]);
   document.getElementById('pesan').scrollIntoView({behavior:'smooth'});
@@ -876,6 +940,7 @@ function refreshDynamic(){
   const open=document.querySelector('.accordion-content.open'); const openId=open?open.id.replace('acc-',''):null;
   renderArmada();
   if(unitId) selectUnitById(unitId);
+  terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });
   if(openId) openAccordion(openId);
   calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts();
@@ -954,7 +1019,10 @@ async function handleFormSubmitMidtrans(event){
         onError:()=>notify(t('pay_err')),
         onClose:()=>{}
       });
-    } else { await notify(data.error?t('order_fail',{e:data.error}):t('order_fail2')); }
+    } else {
+      if(data.penuh){ cekTgl=''; cekKetersediaan(); await notify(data.error); return; }
+      await notify(data.error?t('order_fail',{e:data.error}):t('order_fail2'));
+    }
   }catch(e){ console.error(e); await notify(t('net_err')); }
   finally{ if(btn){ btn.textContent=t('submit'); btn.disabled=false; } }
 }
