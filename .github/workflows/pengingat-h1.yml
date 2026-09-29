@@ -1,0 +1,42 @@
+# .github/workflows/pengingat-h1.yml  (91)
+# Tiap hari ~18.00 WIB memanggil fungsi kirim-pengingat (WA H-1 ke pelanggan & driver untuk trip besok).
+# Fungsinya aman dipanggil ulang (tiap pesanan hanya sekali, hanya jalan 16.00–21.59 WIB).
+# Kalau fungsi tidak menjawab dengan benar -> Telegram. Rahasia: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID (sudah ada).
+name: Pengingat H-1
+
+on:
+  schedule:
+    - cron: '0 11 * * *'   # 11.00 UTC = 18.00 WIB (GitHub kadang terlambat beberapa menit)
+  workflow_dispatch: {}    # uji manual (di luar jam 16.00–21.59 WIB fungsi hanya menjawab "dilewati")
+
+permissions:
+  contents: read
+
+jobs:
+  kirim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Panggil kirim-pengingat
+        env:
+          TG_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TG_CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FN_URL: https://wjmotidelqgcyyujacud.supabase.co/functions/v1/kirim-pengingat
+          ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac
+        run: |
+          set -u
+          TG_TOKEN=$(printf '%s' "${TG_TOKEN}" | tr -d '[:space:]'); TG_TOKEN=${TG_TOKEN#bot}
+          TG_CHAT=$(printf '%s' "${TG_CHAT}" | tr -d '[:space:]')
+          rm -f hasil.json
+          kode=$(curl -s -o hasil.json -w '%{http_code}' --max-time 150 -X POST \
+            -H "apikey: ${ANON_KEY}" -H "Authorization: Bearer ${ANON_KEY}" -H "Content-Type: application/json" \
+            -d '{}' "${FN_URL}" || echo "000")
+          echo "HTTP ${kode}"; cat hasil.json 2>/dev/null || true; echo
+          if [ "$kode" != "200" ]; then
+            if [ -n "${TG_TOKEN}" ] && [ -n "${TG_CHAT}" ]; then
+              curl -s --max-time 20 -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+                --data-urlencode "chat_id=${TG_CHAT}" \
+                --data-urlencode "text=$(printf '🚨 Pengingat H-1 GAGAL dijalankan (HTTP %s).\nCek Edge Function kirim-pengingat & tab Actions GitHub.\n%s' "$kode" "$(TZ=Asia/Jakarta date '+%d-%m-%Y %H:%M WIB')")" > /dev/null || true
+            fi
+            exit 1
+          fi
