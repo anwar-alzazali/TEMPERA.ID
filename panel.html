@@ -974,7 +974,85 @@ document.addEventListener('click', async (e) => {
     return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u + '&s=qr')}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`;
   };
 })();
-  
+  /* ---------- KETERSEDIAAN ARMADA (SQL 83) ---------- */
+// 1) Tab Armada: kolom & isian "Jumlah unit" (kosong = tidak dibatasi).
+// 2) Tab baru "Ketersediaan": tutup tanggal (satu armada / semua, rentang), daftar & Buka lagi,
+//    serta ringkasan pemakaian 14 hari ke depan.
+RES.armada.cols.splice(2, 0, { key: 'unit_count', label: 'Unit', render: (r) => (r.unit_count == null ? '<span class="small">tak dibatasi</span>' : esc(r.unit_count)) });
+RES.armada.fields.splice(7, 0, { key: 'unit_count', label: 'Jumlah unit (kosongkan = tidak dibatasi)', type: 'number', help: 'Kalau di satu tanggal pesanan (DP/Lunas, atau menunggu bayar < 45 menit) sudah sebanyak ini, armada otomatis penuh di tanggal itu.' });
+const _readFieldAsli = readField;
+readField = function (f, required) {
+  if (f.key === 'unit_count') { const v = $('#f_unit_count').value.trim(); return v === '' ? null : Math.max(0, parseInt(v, 10) || 0); }
+  return _readFieldAsli(f, required);
+};
+
+NAVS.splice(4, 0, ['ketersediaan', 'Ketersediaan']);
+const hariIniWIBp = () => new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+VIEWS.ketersediaan = async function () {
+  const fl = await sb.from('fleet').select('id,short_name,unit_count,sort_order').eq('is_active', true).order('sort_order');
+  const armada = fl.data || [];
+  const opsi = '<option value="">Semua armada</option>' + armada.map((f) => `<option value="${esc(f.id)}">${esc(f.short_name)}</option>`).join('');
+  const hari = hariIniWIBp();
+  $('#view').innerHTML = `
+    <h2>Ketersediaan</h2>
+    <div class="card" style="margin-bottom:14px">
+      <h2>Tutup tanggal</h2>
+      <div class="fgrid">
+        <div><label>Dari tanggal<input id="kbDari" type="date" value="${hari}" min="${hari}"></label></div>
+        <div><label>Sampai tanggal<input id="kbSampai" type="date" value="${hari}" min="${hari}"></label></div>
+        <div><label>Armada<select id="kbArmada">${opsi}</select></label></div>
+        <div><label>Catatan (hanya admin)<input id="kbCatatan" placeholder="mis. Hiace servis / full lewat WA"></label></div>
+      </div>
+      <div class="mbtns" style="justify-content:flex-start"><button class="btn" type="button" id="kbSimpan">Tutup tanggal ini</button></div>
+      <div class="help" style="margin-top:8px">Tanggal yang ditutup langsung tampil "penuh" di formulir pesan dan ditolak server. Pesanan yang sudah dibayar tidak terpengaruh.</div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h2>Tanggal yang ditutup</h2><div id="kbList"><div class="empty">Memuat…</div></div></div>
+    <div class="card"><h2>Pemakaian 14 hari ke depan</h2><div id="kbGrid"><div class="empty">Memuat…</div></div>
+      <div class="help" style="margin-top:8px">Angka = unit terpakai / jumlah unit. ∞ = tidak dibatasi. Merah = penuh atau ditutup.</div></div>`;
+  $('#kbDari').addEventListener('change', () => { if ($('#kbSampai').value < $('#kbDari').value) $('#kbSampai').value = $('#kbDari').value; });
+  $('#kbSimpan').addEventListener('click', async (e) => {
+    const dari = $('#kbDari').value, sampai = $('#kbSampai').value || dari;
+    if (!dari) { toast('Isi tanggal', true); return; }
+    if (sampai < dari) { toast('Tanggal "sampai" tidak boleh sebelum "dari"', true); return; }
+    e.target.disabled = true;
+    const r = await sb.from('fleet_blocks').insert({ date_from: dari, date_to: sampai, fleet_id: $('#kbArmada').value || null, note: $('#kbCatatan').value.trim() || null });
+    e.target.disabled = false;
+    if (r.error) { toast(r.error.message, true); return; }
+    toast('Tanggal ditutup'); $('#kbCatatan').value = ''; muatKetersediaan(armada);
+  });
+  muatKetersediaan(armada);
+};
+async function muatKetersediaan(armada) {
+  const nama = (id) => (id ? ((armada.find((f) => f.id === id) || {}).short_name || id) : 'Semua armada');
+  const hari = hariIniWIBp();
+  const bl = await sb.from('fleet_blocks').select('*').gte('date_to', hari).order('date_from');
+  $('#kbList').innerHTML = bl.error ? `<div class="empty">Gagal memuat: ${esc(bl.error.message)}</div>`
+    : (bl.data || []).length ? `<div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Armada</th><th>Catatan</th><th></th></tr></thead><tbody>
+      ${bl.data.map((b) => `<tr><td>${esc(tglPendek(b.date_from))}${b.date_to !== b.date_from ? ' – ' + esc(tglPendek(b.date_to)) : ''}</td><td>${esc(nama(b.fleet_id))}</td><td class="small">${esc(b.note || '-')}</td>
+        <td class="num"><button class="btn ghost sm" type="button" data-kb-buka="${esc(b.id)}">Buka lagi</button></td></tr>`).join('')}</tbody></table></div>`
+    : '<div class="empty">Tidak ada tanggal yang ditutup.</div>';
+  const g = await sb.rpc('admin_ketersediaan', { p_dari: hari, p_hari: 14 });
+  if (g.error) { $('#kbGrid').innerHTML = `<div class="empty">Gagal memuat: ${esc(g.error.message)}</div>`; return; }
+  const tgl = [...new Set(g.data.map((x) => x.tanggal))];
+  const sel = (x) => {
+    const penuh = x.ditutup || (x.unit != null && x.terpakai >= x.unit);
+    const isi = x.ditutup ? 'tutup' : `${x.terpakai}/${x.unit == null ? '∞' : x.unit}`;
+    return `<td class="num" style="${penuh ? 'background:#fee2e2;color:#991b1b;font-weight:700' : ''}">${esc(isi)}</td>`;
+  };
+  $('#kbGrid').innerHTML = `<div class="tablewrap"><table><thead><tr><th>Tanggal</th>${armada.map((f) => `<th class="num">${esc(f.short_name)}</th>`).join('')}</tr></thead><tbody>
+    ${tgl.map((d) => `<tr><td>${esc(tglPendek(d))}</td>${armada.map((f) => { const x = g.data.find((y) => y.tanggal === d && y.fleet_id === f.id); return x ? sel(x) : '<td></td>'; }).join('')}</tr>`).join('')}
+  </tbody></table></div>`;
+}
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-kb-buka]');
+  if (!b) return;
+  if (!confirm('Buka lagi tanggal ini? Pelanggan bisa memesan lagi.')) return;
+  b.disabled = true;
+  const r = await sb.from('fleet_blocks').delete().eq('id', b.dataset.kbBuka);
+  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
+  toast('Tanggal dibuka lagi'); nav('ketersediaan');
+});
+
 </script>
 </body>
 </html>
