@@ -459,7 +459,8 @@ function applyHero(){
 }
 function socialUrl(v){ v=String(v||'').trim(); return /^https:\/\/[^\s"'<>]+$/i.test(v) ? v : ''; }
 function formatWaLocal(n){ const d=String(n||''); if(!d.startsWith('62')) return '+'+d; const x='0'+d.slice(2); return x.replace(/^(\d{4})(\d{4})(\d+)$/,'$1-$2-$3'); }
-function waLink(msg){ return `https://wa.me/${WA_NUMBER}`+(msg?`?text=${encodeURIComponent(msg)}`:''); }
+function refTag(){ const s=getRef(); return /^tmp-\d{2,4}$/i.test(s)?` (Ref: ${s.toUpperCase()})`:''; }
+function waLink(msg){ return `https://wa.me/${WA_NUMBER}`+(msg?`?text=${encodeURIComponent(msg+refTag())}`:''); }
 function applyContacts(){
   const fb=document.getElementById('floatingWaBtn'); if(fb) fb.href=waLink(t('wa_float_msg'));
   const set=(id,url)=>{ const a=document.getElementById(id); if(!a) return; if(url){ a.href=url; a.hidden=false; } else { a.removeAttribute('href'); a.hidden=true; } };
