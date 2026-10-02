@@ -1276,7 +1276,7 @@ document.addEventListener('click', (e) => {
   const h = e.target.closest('[data-tr-hapus]'); if (h) { if (!confirm('Hapus tarif ini?')) return;
     sb.from('iuran_tarif').delete().eq('berlaku_mulai', h.dataset.trHapus).then((r) => { if (r.error) toast(r.error.message, true); else { toast('Tarif dihapus'); nav('kas'); } }); }
 });
-/* ===== BLOK 125 (tempel di paling bawah panel.html, tepat di atas </script>, SETELAH blok 104) =====
+/* ===== BLOK 125 (tempel di paling bawah panel.html, tepat di atas tag penutup script, SETELAH blok 104) =====
    Isi: (1) tombol "Tandai DP / Lunas" untuk pesanan manual, (2) kolom Pengaturan banyak-baris (catatan AI, petunjuk bayar) + unggah gambar hero,
         (3) unggah gambar dari HP untuk Armada & Banner (tanpa alamat URL), (4) tab Galeri (unggah banyak foto + watermark). */
 
