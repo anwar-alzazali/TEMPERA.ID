@@ -1,4 +1,5 @@
-/* [MAIN.JS] v9 (115) -- + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
+/* [MAIN.JS] v10 (124) -- + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+   v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
 
@@ -159,7 +160,12 @@ id: {
   ft_area: 'Melayani Bandung dan sekitarnya', ft_crafted: 'Dibuat dengan',
   wa_online: 'Online', wa_consult: 'Konsultasi WA',
   wa_float_msg: 'Halo Admin Tempera, saya mau konsultasi paket wisata',
-  wa_2days: 'Halo mau paket 2 hari Lembang + Ciwidey/Pangalengan'
+  wa_2days: 'Halo mau paket 2 hari Lembang + Ciwidey/Pangalengan',
+  bm_title: 'Selesaikan Pembayaran', bm_order: 'No. pesanan', bm_amount: 'Bayar sekarang', bm_rest: 'Sisa {rest} dibayar tunai ke driver saat trip.',
+  bm_how: 'Cara bayar', bm_note: 'Tulis nomor pesanan di berita transfer. Setelah membayar, kirim nama pengirim atau bukti bayar lewat WhatsApp. Pesanan dibatalkan otomatis kalau belum dibayar dalam {jam} jam.',
+  bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
+  bm_msg: 'Bukti bayar pesanan {order} sebesar {nominal}. Nama pengirim: ',
+  gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 ms: {
   page_title: 'Tempera - Private Trip & Sewa Kereta Bandung | Teman Perjalanan',
@@ -310,7 +316,12 @@ ms: {
   ft_area: 'Berkhidmat di Bandung dan sekitarnya', ft_crafted: 'Dibuat dengan',
   wa_online: 'Dalam talian', wa_consult: 'Konsultasi WA',
   wa_float_msg: 'Hai Admin Tempera, saya ingin bertanya tentang pakej pelancongan',
-  wa_2days: 'Hai, saya mahu pakej 2 hari Lembang + Ciwidey/Pangalengan'
+  wa_2days: 'Hai, saya mahu pakej 2 hari Lembang + Ciwidey/Pangalengan',
+  bm_title: 'Selesaikan Pembayaran', bm_order: 'No. tempahan', bm_amount: 'Bayar sekarang', bm_rest: 'Baki {rest} dibayar tunai kepada pemandu semasa perjalanan.',
+  bm_how: 'Cara bayaran', bm_note: 'Tulis nombor tempahan pada ruang rujukan pindahan. Selepas membayar, hantar nama pengirim atau bukti bayaran melalui WhatsApp. Tempahan dibatalkan secara automatik jika belum dibayar dalam {jam} jam.',
+  bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
+  bm_msg: 'Bukti bayaran tempahan {order} sebanyak {nominal}. Nama pengirim: ',
+  gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 }
 };
 const WX_DESC = {
@@ -987,7 +998,7 @@ function refreshDynamic(){
   terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });
   if(openId) openAccordion(openId);
-  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan();
+  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan(); renderGaleri();
 }
 
 function normalizeWA(input){
@@ -1075,6 +1086,7 @@ async function handleFormSubmitMidtrans(event){
   try{
     const res=await fetch(MIDTRANS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'apikey':SUPABASE_ANON_KEY},body:JSON.stringify(payload)});
     const data=await res.json();
+    if(data.ok&&data.manual){ tampilBayarManual(data); return; }
     if(data.snap_token){
       if(!window.snap){ await notify(t('err_snap')); return; }
       const dpNote=(data.payment_mode==='dp'&&data.dp_amount)?t('dp_note',{rest:formatPrice(data.total-data.dp_amount)}):'';
@@ -1092,6 +1104,70 @@ async function handleFormSubmitMidtrans(event){
   finally{ if(btn){ btn.textContent=t('submit'); btn.disabled=false; } }
 }
 
+/* ---------- Layar PEMBAYARAN MANUAL (dipakai saat app_settings.payment_gateway = 'manual') ---------- */
+function tampilBayarManual(d){
+  const lama=document.getElementById('temperaDialog'); if(lama) lama.remove();
+  const fokusAwal=document.activeElement;
+  const overlay=document.createElement('div'); overlay.id='temperaDialog';
+  overlay.setAttribute('role','dialog'); overlay.setAttribute('aria-modal','true'); overlay.setAttribute('aria-label','TEMPERA');
+  overlay.style.cssText='position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-start;justify-content:center;padding:16px;background:rgba(0,0,0,.55);overflow-y:auto';
+  const card=document.createElement('div');
+  card.style.cssText='width:100%;max-width:420px;margin:auto;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.35)';
+  const tambah=(tag,teks,css)=>{ const el=document.createElement(tag); if(teks!=null) el.textContent=teks; if(css) el.style.cssText=css; card.appendChild(el); return el; };
+  const head=tambah('div',null,'display:flex;align-items:center;gap:10px;margin-bottom:12px');
+  const logo=document.createElement('span'); logo.className='logo'; logo.style.setProperty('--w','26px');
+  const judul=document.createElement('b'); judul.textContent=t('bm_title'); judul.style.cssText='letter-spacing:.08em;font-size:14px;color:var(--accent)';
+  head.append(logo,judul);
+  tambah('div',t('bm_order')+': '+d.order_id,'font-size:12px;color:var(--text-muted);margin-bottom:10px;word-break:break-all');
+  const kotak=tambah('div',null,'background:var(--bg-section-alt);border:1px solid var(--border-soft);border-radius:14px;padding:12px;margin-bottom:12px');
+  const k1=document.createElement('div'); k1.textContent=t('bm_amount'); k1.style.cssText='font-size:11px;color:var(--text-muted)';
+  const k2=document.createElement('div'); k2.textContent=formatPrice(d.amount_due); k2.style.cssText='font-size:26px;font-weight:800;color:var(--accent)';
+  kotak.append(k1,k2);
+  if(d.payment_mode==='dp'&&d.dp_amount){ const k3=document.createElement('div'); k3.textContent=t('bm_rest',{rest:formatPrice(d.total-d.dp_amount)}); k3.style.cssText='font-size:12px;color:var(--text-secondary);margin-top:4px'; kotak.appendChild(k3); }
+  tambah('div',t('bm_how'),'font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px');
+  if(d.info){
+    tambah('div',d.info,'white-space:pre-line;font-size:14px;line-height:1.55;margin-bottom:8px');
+    const salin=tambah('button',t('bm_copy'),'padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--text-primary);border:1px solid var(--border-color);margin-bottom:12px');
+    salin.type='button';
+    salin.addEventListener('click',()=>{ try{ navigator.clipboard.writeText(d.info).then(()=>{ salin.textContent=t('bm_copied'); }); }catch(e){} });
+  }
+  if(d.qris){ const im=document.createElement('img'); im.src=d.qris; im.alt='QR'; im.loading='lazy'; im.style.cssText='display:block;width:100%;max-width:240px;margin:0 auto 12px;border-radius:12px;background:#fff'; card.appendChild(im); }
+  tambah('p',t('bm_note',{jam:d.expiry_jam||3}),'margin:0 0 6px;font-size:12px;line-height:1.55;color:var(--text-secondary)');
+  tambah('p',t('bm_wa_sent'),'margin:0 0 14px;font-size:12px;color:var(--text-muted)');
+  const bukti=document.createElement('a'); bukti.textContent=t('bm_proof'); bukti.target='_blank'; bukti.rel='noopener';
+  bukti.href=waLink(t('bm_msg',{order:d.order_id,nominal:formatPrice(d.amount_due)}));
+  bukti.style.cssText='display:block;text-align:center;padding:12px 14px;border-radius:999px;font-size:12px;font-weight:700;background:var(--accent);color:var(--on-accent);text-decoration:none;margin-bottom:8px';
+  card.appendChild(bukti);
+  const tutup=tambah('button',t('bm_close'),'display:block;width:100%;padding:11px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;background:transparent;color:var(--text-primary);border:1px solid var(--border-color)');
+  tutup.type='button';
+  overlay.appendChild(card); document.body.appendChild(overlay);
+  const kunci=document.body.style.overflow; document.body.style.overflow='hidden';
+  const selesai=()=>{ document.removeEventListener('keydown',onKey,true); overlay.remove(); document.body.style.overflow=kunci; if(fokusAwal&&fokusAwal.focus){ try{ fokusAwal.focus(); }catch(e){} } };
+  function onKey(e){ if(e.key==='Escape'){ e.preventDefault(); selesai(); } }
+  document.addEventListener('keydown',onKey,true);
+  tutup.addEventListener('click',selesai);
+  bukti.focus();
+}
+
+/* ---------- Galeri Perjalanan di beranda (tabel galeri, SQL 126): hanya muncul kalau ada foto yang ditampilkan ---------- */
+let GALERI=[];
+async function muatGaleri(){
+  try{ GALERI=(await sbGet('galeri?select=id,url,keterangan,wilayah&tampil=eq.true&order=created_at.desc&limit=8')).filter(g=>/^https:\/\//i.test(String(g.url||''))); renderGaleri(); }
+  catch(e){ console.warn('galeri:',e); }
+}
+function renderGaleri(){
+  let sec=document.getElementById('galeri');
+  if(!GALERI.length){ if(sec) sec.remove(); return; }
+  if(!sec){ const faq=document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='galeri'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
+  const foto=GALERI.map(g=>`<a href="galeri.html" style="display:block;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:var(--bg-section-alt)"><img src="${esc(g.url)}" alt="${esc(g.keterangan||'Perjalanan bersama Tempera')}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block"></a>`).join('');
+  sec.innerHTML=`<div class="max-w-7xl mx-auto px-4">
+    <div class="text-center max-w-2xl mx-auto mb-10"><h2 class="text-3xl md:text-[38px] font-serif uppercase tracking-widest" style="color:var(--accent)">${esc(t('gl_title'))}</h2>
+      <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
+      <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)">${esc(t('gl_sub'))}</p></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">${foto}</div>
+    <div class="text-center mt-8"><a href="galeri.html" class="inline-block px-6 py-3 rounded-full text-[12px] font-bold" style="background:var(--accent);color:var(--on-accent);text-decoration:none">${esc(t('gl_all'))}</a></div></div>`;
+}
+
 /* ---------- Slider: tombol panah geser kartu armada & paket ---------- */
 document.addEventListener('click',(e)=>{
   const b=e.target.closest('[data-slide]'); if(!b) return;
@@ -1105,39 +1181,4 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('themeToggleBtn')?.addEventListener('click',toggleTheme);
   if(window.matchMedia){
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
-      let manual=null; try{ manual=localStorage.getItem('tempera_theme_manual'); }catch(e){}
-      if(!manual){ document.documentElement.removeAttribute('data-theme'); updateThemeIcon(); }
-    });
-  }
-  applyStaticText(); updateLangButton();
-  initPaymentModeUI();
-  renderArmada(); calculateLive(); applyHero(); applyContacts();
-  const yr=document.getElementById('footerYear'); if(yr) yr.textContent=new Date().getFullYear();
-  document.getElementById('formJam')?.addEventListener('change',updateDurasi);
-  document.getElementById('formTanggal')?.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });
-  updateBatasWaktu();
-  openAccordion('lembang');
-  terapkanLinkPesan();
-  initRemoteData(); muatUlasan();
-
-  fetchWeather();
-  let weatherInterval=setInterval(fetchWeather,600000);
-  document.addEventListener('visibilitychange',()=>{
-    if(document.hidden) clearInterval(weatherInterval);
-    else{ fetchWeather(); weatherInterval=setInterval(fetchWeather,600000); }
-  });
-  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeCapacityModal(); });
-
-  // Pengaman: kolom form selalu bisa diketuk & diketik walau ada CSS lain (mis. css/driver.css) yang memblokir
-  const fixStyle=document.createElement('style');
-  fixStyle.textContent='#travelForm input,#travelForm textarea,#travelForm select{pointer-events:auto!important;-webkit-user-select:text!important;user-select:text!important;touch-action:manipulation}#capacityModal.hidden{display:none!important}';
-  document.head.appendChild(fixStyle);
-
-  // HP: saat mengetik di form, sembunyikan bar total & tombol WA supaya tidak menutupi kolom
-  const formEl=document.getElementById('travelForm');
-  if(formEl){
-    const overlays=()=>[document.getElementById('mobileStickyBar'),document.getElementById('floatingWaBtn')].filter(Boolean);
-    formEl.addEventListener('focusin',(e)=>{ if(!e.target.matches('input,textarea,select')) return; overlays().forEach(o=>{ o.style.display='none'; }); setTimeout(()=>{ try{ e.target.scrollIntoView({block:'center',behavior:'smooth'}); }catch(err){} },300); });
-    formEl.addEventListener('focusout',()=>{ overlays().forEach(o=>{ o.style.display=''; }); });
-  }
-});
+      let manual=null; try{ manual=localStorage.getItem('tempe
