@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Galeri Perjalanan | Tempera - Private Trip & Sewa Mobil Bandung</title>
+<meta name="description" content="Foto perjalanan nyata bersama Tempera: Lembang, Kota Bandung & Dago, Ciwidey, dan Pangalengan.">
+<link rel="icon" type="image/png" sizes="48x48" href="images/tempera-48.png">
+<style>
+:root{--accent:#0891b2;--on-accent:#fff;--bg:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--accent:#E5B80B;--on-accent:#000;--bg:#0b0b0c;--card:#17171a;--ink:#f4f4f5;--muted:#a1a1aa;--line:#2a2a2e}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.14em;color:var(--accent);text-decoration:none}
+.logo{--w:32px;display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
+.back{color:var(--ink);text-decoration:none;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+main{max-width:1100px;margin:0 auto;padding:22px 14px 40px}
+h1{margin:0 0 4px;font-size:26px;color:var(--accent)}
+.sub{margin:0 0 16px;color:var(--muted);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.item{display:block;border:0;padding:0;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:var(--line);cursor:zoom-in}
+.item img{width:100%;height:100%;object-fit:cover;display:block}
+.vazio{padding:50px 10px;text-align:center;color:var(--muted)}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px}
+#lb[hidden]{display:none}
+#lb img{max-width:100%;max-height:78vh;border-radius:8px}
+#lbCap{color:#e5e7eb;font-size:14px;margin:12px 0 0;text-align:center;max-width:640px}
+.lbb{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.14);color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer}
+#lbPrev{left:10px}#lbNext{right:10px}
+#lbX{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.14);color:#fff;border:0;border-radius:999px;padding:8px 16px;font-weight:700;cursor:pointer}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="./"><span class="logo"></span>TEMPERA</a>
+  <a class="back" href="./">← Beranda</a>
+</header>
+<main>
+  <h1>Galeri Perjalanan</h1>
+  <p class="sub">Momen nyata dari perjalanan bersama Tempera.</p>
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+  <div class="vazio" id="kosong" hidden>Belum ada foto.</div>
+</main>
+<footer>© <span id="thn"></span> Tempera · Teman Perjalanan · Bandung</footer>
+<div id="lb" hidden role="dialog" aria-modal="true" aria-label="Foto">
+  <button id="lbX" type="button">Tutup</button>
+  <button class="lbb" id="lbPrev" type="button" aria-label="Sebelumnya">‹</button>
+  <img id="lbImg" alt="">
+  <button class="lbb" id="lbNext" type="button" aria-label="Berikutnya">›</button>
+  <p id="lbCap"></p>
+</div>
+<script>
+const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+const WIL = { lembang: 'Lembang', dago: 'Kota Bandung & Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan', lainnya: 'Lainnya' };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let SEMUA = [], TAMPIL = [], filter = '', idx = 0;
+$('#thn').textContent = new Date().getFullYear();
+
+async function muat() {
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/galeri?select=id,url,keterangan,wilayah&tampil=eq.true&order=created_at.desc&limit=300`, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    SEMUA = (await r.json()).filter((g) => /^https:\/\//i.test(String(g.url || '')));
+  } catch (e) { console.warn('galeri:', e); SEMUA = []; }
+  gambar();
+}
+function gambar() {
+  const ada = Object.keys(WIL).filter((k) => SEMUA.some((g) => g.wilayah === k));
+  $('#chips').innerHTML = ada.length > 1 ? [['', 'Semua']].concat(ada.map((k) => [k, WIL[k]])).map(([k, l]) => `<button type="button" class="chip${k === filter ? ' on' : ''}" data-f="${k}">${esc(l)}</button>`).join('') : '';
+  TAMPIL = filter ? SEMUA.filter((g) => g.wilayah === filter) : SEMUA;
+  $('#grid').innerHTML = TAMPIL.map((g, i) => `<button type="button" class="item" data-i="${i}" aria-label="${esc(g.keterangan || 'Perbesar foto')}"><img src="${esc(g.url)}" alt="${esc(g.keterangan || 'Perjalanan bersama Tempera')}" loading="lazy" decoding="async"></button>`).join('');
+  $('#kosong').hidden = TAMPIL.length > 0;
+}
+function buka(i) {
+  if (!TAMPIL.length) return; idx = (i + TAMPIL.length) % TAMPIL.length;
+  const g = TAMPIL[idx]; $('#lbImg').src = g.url; $('#lbImg').alt = g.keterangan || ''; $('#lbCap').textContent = [g.keterangan, WIL[g.wilayah]].filter(Boolean).join(' · ');
+  $('#lb').hidden = false; document.body.style.overflow = 'hidden';
+}
+function tutup() { $('#lb').hidden = true; document.body.style.overflow = ''; }
+document.addEventListener('click', (e) => {
+  const c = e.target.closest('.chip'); if (c) { filter = c.dataset.f; gambar(); return; }
+  const it = e.target.closest('.item'); if (it) buka(+it.dataset.i);
+});
+$('#lbX').addEventListener('click', tutup);
+$('#lbPrev').addEventListener('click', () => buka(idx - 1));
+$('#lbNext').addEventListener('click', () => buka(idx + 1));
+$('#lb').addEventListener('click', (e) => { if (e.target.id === 'lb') tutup(); });
+document.addEventListener('keydown', (e) => { if ($('#lb').hidden) return; if (e.key === 'Escape') tutup(); if (e.key === 'ArrowLeft') buka(idx - 1); if (e.key === 'ArrowRight') buka(idx + 1); });
+muat();
+</script>
+</body>
+</html>
