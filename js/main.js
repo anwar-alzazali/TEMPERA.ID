@@ -1,4 +1,5 @@
-/* [MAIN.JS] v8 (96) -- + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
+/* [MAIN.JS] v9 (115) -- + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
+   v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
 
 let WA_NUMBER = '6285196755972'; // nomor WA admin (ditimpa app_settings.admin_wa bila tersedia & publik)
@@ -459,6 +460,7 @@ function applyHero(){
 }
 function socialUrl(v){ v=String(v||'').trim(); return /^https:\/\/[^\s"'<>]+$/i.test(v) ? v : ''; }
 function formatWaLocal(n){ const d=String(n||''); if(!d.startsWith('62')) return '+'+d; const x='0'+d.slice(2); return x.replace(/^(\d{4})(\d{4})(\d+)$/,'$1-$2-$3'); }
+// Pesan WA yang berisi teks diberi penanda (Ref: TMP-xxx) bila pengunjung datang lewat link driver (kode TMP-...), supaya pembawa tidak hilang di chat
 function refTag(){ const s=getRef(); return /^tmp-\d{2,4}$/i.test(s)?` (Ref: ${s.toUpperCase()})`:''; }
 function waLink(msg){ return `https://wa.me/${WA_NUMBER}`+(msg?`?text=${encodeURIComponent(msg+refTag())}`:''); }
 function applyContacts(){
@@ -1010,6 +1012,27 @@ function getRef(){
 }
 captureRef();
 
+/* ---------- Link pemesanan dari chat (dibuat asisten AI): isi formulir otomatis.
+   Bentuk: ?dest=Nama1|Nama2&armada=avanza&tgl=2026-10-06&pax=5#pesan  (tanpa dest = formulir kosong).
+   Hanya MENGISI formulir; harga tetap dihitung server dan semua aturan (jam minimal, armada penuh, kapasitas) tetap berlaku. ---------- */
+function terapkanLinkPesan(){
+  try{
+    const q=new URLSearchParams(location.search);
+    const dest=(q.get('dest')||'').split('|').map(s=>s.trim().toLowerCase()).filter(Boolean);
+    if(dest.length){
+      const set=new Set(dest);
+      document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=set.has(cb.value.toLowerCase()); });
+      const first=document.querySelector('input[name="destinasi"]:checked'); if(first) openAccordion(first.dataset.group);
+      const arm=q.get('armada')||'', tgl=q.get('tgl')||'', pax=parseInt(q.get('pax'));
+      if(arm&&!PENUH.has(arm)) selectUnitById(arm);
+      if(/^\d{4}-\d{2}-\d{2}$/.test(tgl)){ const el=document.getElementById('formTanggal'); if(el&&tgl>=(el.min||'')){ el.value=tgl; tglDiubahPelanggan=true; } }
+      if(pax>0&&pax<=40){ const el=document.getElementById('formJumlah'); if(el) el.value=pax; }
+      updateBatasWaktu(); calculateLive(); checkCapacityLive();
+    }
+    if(location.hash==='#pesan') setTimeout(()=>document.getElementById('pesan')?.scrollIntoView(),700);
+  }catch(e){ console.warn('link pesan:',e); }
+}
+
 /* ---------- Pemesanan & pembayaran Midtrans (harga dihitung server, bukan browser) ---------- */
 const MIDTRANS_ENDPOINT='https://wjmotidelqgcyyujacud.supabase.co/functions/v1/create-order';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
@@ -1094,6 +1117,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('formTanggal')?.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });
   updateBatasWaktu();
   openAccordion('lembang');
+  terapkanLinkPesan();
   initRemoteData(); muatUlasan();
 
   fetchWeather();
