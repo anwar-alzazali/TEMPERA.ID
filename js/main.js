@@ -672,7 +672,7 @@ const DEST_SEC={
 const DEST_CARDS=[
   {id:'lembang',img:'floating_market.jpg',tag:'tag_utara',title:'card_lembang',secs:[{g:'lembang',items:DESTINASI_DATA.lembang}]},
   {id:'dago',img:'fomoso.jpg',tag:'tag_utara',title:'card_dago',secs:[{g:'dago',items:DEST_SEC.dago}]},
-  {id:'kota',img:'fomoso.jpg',tag:'tag_titik0',title:'card_kota',secs:[{g:'dago',h:'sec_wisata',items:DEST_SEC.kotaWisata},{g:'dago',h:'sec_kuliner',items:DEST_SEC.kotaKuliner}]},
+  {id:'kota',img:'gedung-sate.webp',tag:'tag_titik0',title:'card_kota',secs:[{g:'dago',h:'sec_wisata',items:DEST_SEC.kotaWisata},{g:'dago',h:'sec_kuliner',items:DEST_SEC.kotaKuliner}]},
   {id:'ciwidey',img:'kawah_putih.jpg',tag:'tag_selatan',title:'card_ciwidey',secs:[{g:'ciwidey',items:DESTINASI_DATA.ciwidey}]},
   {id:'pangalengan',img:'nimo_pangalengan.jpg',tag:'tag_selatan',title:'card_pangalengan',secs:[{g:'pangalengan',items:DESTINASI_DATA.pangalengan}]}
 ];
