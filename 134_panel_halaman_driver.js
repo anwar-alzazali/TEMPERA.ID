@@ -1,3 +1,4 @@
+/* v2 (149): + kolom CARA BAYAR (rekening bank, QRIS, catatan). Perlu SQL 149.
 /* ===== BLOK 134: tab HALAMAN DRIVER di panel (berkas terpisah, dimuat SETELAH skrip utama panel dan SETELAH blok 125) =====
    Admin mengisi halaman pribadi tiap driver (paket Dasar). Halaman publiknya: halaman.html?d=<slug>.
    Butuh: tabel driver_halaman (SQL 134) dan fungsi unggahGambar dari blok 125. */
@@ -63,6 +64,11 @@
           <div><label>Instagram (alamat https)<input id="hm_ig" value="${esc(sos.instagram || '')}" placeholder="https://instagram.com/..."></label></div>
           <div><label>TikTok (alamat https)<input id="hm_tt" value="${esc(sos.tiktok || '')}"></label></div>
           <div class="full"><label>Facebook (alamat https)<input id="hm_fb" value="${esc(sos.facebook || '')}"></label></div>
+          <div class="full"><label>Rekening bank (satu bank per baris, atau pisahkan dengan ;)<textarea id="hm_rekening" rows="3" maxlength="1200" placeholder="BCA | 1234567890 | Nama Pemilik | bank-bca.png">${esc(h.rekening || '')}</textarea></label>
+            <div class="help">Format: <b>Bank | Nomor rekening | Atas nama | logo</b>. Logo boleh dikosongkan (tampil lencana teks) atau diisi nama berkas di folder images (mis. bank-bca.png). Maksimal 6 bank.</div></div>
+          <div class="full"><label>QRIS: nama berkas di folder images, atau alamat https<input id="hm_qris" maxlength="500" value="${esc(h.qris_url || '')}" placeholder="qris-rafly.png"></label>
+            <input type="file" accept="image/*" data-hm-qris="1"><div class="help" id="hm_qris_s">Pengunggah mengecilkan gambar. Setelah mengunggah, pindai QR-nya sendiri untuk memastikan masih terbaca; kalau tidak, unggah berkas PNG asli ke folder images.</div></div>
+          <div class="full"><label>Catatan pembayaran (maks 400 huruf)<textarea id="hm_infobayar" rows="2" maxlength="400" placeholder="mis. Kirim bukti bayar lewat WhatsApp setelah transfer.">${esc(h.info_bayar || '')}</textarea></label></div>
           <div><label>Paket<select id="hm_paket"><option value="dasar" ${h.paket === 'dasar' ? 'selected' : ''}>Dasar</option><option value="pro" ${h.paket === 'pro' ? 'selected' : ''}>Pro</option></select></label></div>
           <div><label class="chk"><input id="hm_aktif" type="checkbox" ${h.aktif ? 'checked' : ''}> Aktif (terlihat publik)</label></div>
         </div>
@@ -89,6 +95,18 @@
     const payload = { slug, nama_tampil: v('nama'), slogan: v('slogan') || null, bio: v('bio') || null, kota: v('kota') || null, wa,
       foto_profil: v('foto_profil') || null, foto_sampul: v('foto_sampul') || null, logo_url: v('logo_url') || null, warna: $('#hm_warna').value,
       mobil: mob, sosial, paket: $('#hm_paket').value, aktif: $('#hm_aktif').checked };
+    const barisRek = $('#hm_rekening').value.split(/\n|;/).map((x) => x.trim()).filter(Boolean);
+    const rapi = [];
+    for (let i = 0; i < barisRek.length; i++) {
+      const [bk, no, an, lg] = barisRek[i].split('|').map((x) => String(x || '').trim());
+      if (!bk || !no || bk.length > 30 || !/^[0-9][0-9 .\-]{3,30}$/.test(no)) { toast(`Rekening baris ${i + 1} tidak valid: harus "Bank | Nomor | Atas nama | logo", nomor hanya angka`, true); return; }
+      if (lg && !/^(https:\/\/[^\s"'<>]+|[A-Za-z0-9_.-]+)$/.test(lg)) { toast(`Logo di baris ${i + 1} harus nama berkas atau alamat https`, true); return; }
+      rapi.push([bk, no, an || '', lg || ''].join(' | ').replace(/( \| )+$/, ''));
+    }
+    if (rapi.length > 6) { toast('Maksimal 6 rekening', true); return; }
+    const qrisIsi = $('#hm_qris').value.trim();
+    if (qrisIsi && !/^(https:\/\/[^\s"'<>]+|[A-Za-z0-9_.-]+)$/.test(qrisIsi)) { toast('QRIS harus nama berkas (tanpa spasi) atau alamat https', true); return; }
+    payload.rekening = rapi.length ? rapi.join('\n') : null; payload.qris_url = qrisIsi || null; payload.info_bayar = $('#hm_infobayar').value.trim() || null;
     const b = $('#hmSimpan'); b.disabled = true;
     const r = await sb.from('driver_halaman').upsert(payload, { onConflict: 'slug' });
     b.disabled = false;
@@ -106,6 +124,12 @@
   document.addEventListener('change', async (e) => {
     const t = e.target; if (!t.matches || !t.matches('input[type="file"]') || !t.files || !t.files[0]) return;
     if (typeof unggahGambar !== 'function') { toast('Fungsi unggah gambar (blok 125) belum termuat', true); return; }
+    if (t.dataset.hmQris) {
+      const st = $('#hm_qris_s'); st.textContent = 'Mengunggah…';
+      try { const url = await unggahGambar(t.files[0], { lebar: 1400, folder: 'tempera/halaman' }); $('#hm_qris').value = url; st.textContent = 'Terunggah. Pindai QR-nya untuk memastikan terbaca, lalu tekan Simpan.'; }
+      catch (err) { st.textContent = 'Gagal: ' + err.message; }
+      t.value = ''; return;
+    }
     const kunci = t.dataset.hmImg, idx = t.dataset.hmMfoto; if (!kunci && idx === undefined) return;
     const st = kunci ? $('#hm_' + kunci + '_s') : null; if (st) st.textContent = 'Mengunggah…';
     try {
