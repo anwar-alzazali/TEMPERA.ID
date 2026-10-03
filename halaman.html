@@ -40,6 +40,13 @@ input,textarea,select{width:100%;margin-top:4px;min-height:46px;padding:10px 12p
 textarea{resize:vertical}
 .dua{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cat{font-size:12px;color:var(--muted);margin:0}
+.bank{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.bank .lg{flex:none;width:64px;height:36px;display:flex;align-items:center;justify-content:center}
+.bank .lg img{max-width:64px;max-height:36px;object-fit:contain;background:#fff;border-radius:6px;padding:2px}
+.bank .lc{font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:4px 6px}
+.bank .tg{flex:1;min-width:0}.bank .nm{font-size:12px;font-weight:700;color:var(--muted)}.bank .no{font-size:17px;font-weight:800;letter-spacing:.04em;word-break:break-all}.bank .an{font-size:12px;color:var(--muted)}
+.bank button{flex:none;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.qris{text-align:center;margin-top:8px}.qris img{width:100%;max-width:260px;border-radius:12px;background:#fff}
 .sosial{display:flex;flex-wrap:wrap;gap:8px}
 .sosial a{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13px;font-weight:700;text-decoration:none}
 footer{text-align:center;color:var(--muted);font-size:12px;margin:30px 18px 0}
@@ -55,6 +62,20 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const aman = (u) => (/^https:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? String(u) : '');
 const rp = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+function parseBank(raw) {
+  const out = [];
+  for (const baris of String(raw || '').split(/\n|;/)) {
+    const [b, n, a, l] = baris.split('|').map((x) => String(x || '').trim());
+    if (!b || !n) continue;
+    if (b.length > 30 || !/^[0-9][0-9 .\-]{3,30}$/.test(n)) continue;
+    let logo = '';
+    if (l) { if (/^https:\/\/[^\s"'<>]+$/i.test(l)) logo = l; else if (/^[a-z0-9_.\-]+$/i.test(l)) logo = 'images/' + l; }
+    out.push({ bank: b, norek: n, nama: String(a || '').slice(0, 60), logo });
+    if (out.length >= 6) break;
+  }
+  return out;
+}
+function urlQris(v) { v = String(v || '').trim(); if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return v; return /^[a-z0-9_.\-]+$/i.test(v) ? 'images/' + v : ''; }
 const warnaOk = (w) => (/^#[0-9a-fA-F]{6}$/.test(String(w || '')) ? w : '#0891b2');
 function teksDiAtas(hex) { const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#0f172a' : '#ffffff'; }
 const slug = (new URLSearchParams(location.search).get('d') || '').toLowerCase();
@@ -82,6 +103,8 @@ function gambar(h) {
   const sos = h.sosial || {};
   const tautan = [['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook']].filter(([k]) => aman(sos[k]));
   const wa = String(h.wa || '').replace(/\D/g, '');
+  const banks = parseBank(h.rekening), qris = urlQris(h.qris_url), infoBayar = String(h.info_bayar || '').trim().slice(0, 400);
+  const adaBayar = banks.length > 0 || !!qris || !!infoBayar;
   document.getElementById('app').innerHTML = `
     <div class="sampul" ${sampul ? `style="background-image:url('${esc(sampul)}')"` : ''}></div>
     <div class="kepala">
@@ -105,10 +128,26 @@ function gambar(h) {
         <label>Titik jemput<input id="fJemput" maxlength="200"></label>
         <label>Catatan<textarea id="fCat" rows="2" maxlength="400"></textarea></label>
         <button class="btn utama" type="submit">Kirim lewat WhatsApp</button>
-        <p class="cat">Tombol ini membuka WhatsApp dengan pesan yang sudah terisi, dikirim langsung ke ${esc(h.nama_tampil)}. Harga dan pembayaran disepakati langsung dengan pengemudi.</p>
+        <p class="cat">Tombol ini membuka WhatsApp dengan pesan yang sudah terisi, dikirim langsung ke ${esc(h.nama_tampil)}. Harga dan pembayaran disepakati langsung dengan pengemudi.${adaBayar ? ' Cara bayar ada di bagian bawah halaman ini.' : ''}</p>
       </form></section>
+    ${adaBayar ? `<section id="bayar"><h2>Cara bayar</h2><div id="bankList"></div>${qris ? `<div class="qris"><img src="${esc(qris)}" alt="QRIS ${esc(h.nama_tampil)}" loading="lazy"></div>` : ''}${infoBayar ? `<p class="cat" style="white-space:pre-line;margin-top:10px">${esc(infoBayar)}</p>` : ''}</section>` : ''}
     ${tautan.length ? `<section><h2>Ikuti</h2><div class="sosial">${tautan.map(([k, l]) => `<a href="${esc(aman(sos[k]))}" target="_blank" rel="noopener">${l}</a>`).join('')}</div></section>` : ''}
     ${h.paket === 'pro' ? '' : '<footer>Halaman mitra · dibuat dengan Tempera</footer>'}`;
+  const daftar = document.getElementById('bankList');
+  if (daftar) banks.forEach((b) => {
+    const k = document.createElement('div'); k.className = 'bank';
+    const lg = document.createElement('div'); lg.className = 'lg';
+    const lencana = () => { const sp = document.createElement('span'); sp.className = 'lc'; sp.textContent = b.bank.slice(0, 4).toUpperCase(); lg.replaceChildren(sp); };
+    if (b.logo) { const im = document.createElement('img'); im.src = b.logo; im.alt = b.bank; im.loading = 'lazy'; im.addEventListener('error', lencana); lg.appendChild(im); } else lencana();
+    const tg = document.createElement('div'); tg.className = 'tg';
+    const n1 = document.createElement('div'); n1.className = 'nm'; n1.textContent = b.bank;
+    const n2 = document.createElement('div'); n2.className = 'no'; n2.textContent = b.norek;
+    tg.append(n1, n2);
+    if (b.nama) { const n3 = document.createElement('div'); n3.className = 'an'; n3.textContent = 'a.n. ' + b.nama; tg.appendChild(n3); }
+    const sal = document.createElement('button'); sal.type = 'button'; sal.textContent = 'Salin';
+    sal.addEventListener('click', () => { try { navigator.clipboard.writeText(b.norek.replace(/[^0-9]/g, '')).then(() => { sal.textContent = 'Tersalin'; }); } catch (e) { /* abaikan */ } });
+    k.append(lg, tg, sal); daftar.appendChild(k);
+  });
   const tulis = (teks) => `https://wa.me/${wa}?text=${encodeURIComponent(teks)}`;
   document.getElementById('btnWA').href = tulis(`Halo ${h.nama_tampil}, saya mau tanya sewa mobil.`);
   document.getElementById('btnWA').target = '_blank'; document.getElementById('btnWA').rel = 'noopener';
