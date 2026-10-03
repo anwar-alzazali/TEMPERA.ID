@@ -1,4 +1,4 @@
-/* [MAIN.JS] v10 (124) -- + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+/* [MAIN.JS] v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
    v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
@@ -477,7 +477,7 @@ function waLink(msg){ return `https://wa.me/${WA_NUMBER}`+(msg?`?text=${encodeUR
 function applyContacts(){
   const fb=document.getElementById('floatingWaBtn'); if(fb) fb.href=waLink(t('wa_float_msg'));
   const set=(id,url)=>{ const a=document.getElementById(id); if(!a) return; if(url){ a.href=url; a.hidden=false; } else { a.removeAttribute('href'); a.hidden=true; } };
-  set('socWa', waLink(''));
+  set('socWa', waLink(t('wa_float_msg')));
   set('socIg', socialUrl(SETTINGS.social_instagram));
   set('socTiktok', socialUrl(SETTINGS.social_tiktok));
   set('socFb', socialUrl(SETTINGS.social_facebook));
@@ -1168,6 +1168,12 @@ function renderGaleri(){
     <div class="text-center mt-8"><a href="galeri.html" class="inline-block px-6 py-3 rounded-full text-[12px] font-bold" style="background:var(--accent);color:var(--on-accent);text-decoration:none">${esc(t('gl_all'))}</a></div></div>`;
 }
 
+/* ---------- Jaring pengaman: tautan wa.me mana pun yang belum membawa pesan diberi pesan pembuka (+ penanda Ref) tepat saat diklik ---------- */
+document.addEventListener('click',(e)=>{
+  const a=e.target.closest&&e.target.closest('a[href*="wa.me/"]'); if(!a) return;
+  try{ const u=new URL(a.href); if(!u.searchParams.get('text')){ u.searchParams.set('text',t('wa_float_msg')+refTag()); a.href=u.toString(); } }catch(err){}
+},true);
+
 /* ---------- Slider: tombol panah geser kartu armada & paket ---------- */
 document.addEventListener('click',(e)=>{
   const b=e.target.closest('[data-slide]'); if(!b) return;
@@ -1181,4 +1187,39 @@ window.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('themeToggleBtn')?.addEventListener('click',toggleTheme);
   if(window.matchMedia){
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
-      let manual=null; try{ manual=localStorage.getItem('tempe
+      let manual=null; try{ manual=localStorage.getItem('tempera_theme_manual'); }catch(e){}
+      if(!manual){ document.documentElement.removeAttribute('data-theme'); updateThemeIcon(); }
+    });
+  }
+  applyStaticText(); updateLangButton();
+  initPaymentModeUI();
+  renderArmada(); calculateLive(); applyHero(); applyContacts();
+  const yr=document.getElementById('footerYear'); if(yr) yr.textContent=new Date().getFullYear();
+  document.getElementById('formJam')?.addEventListener('change',updateDurasi);
+  document.getElementById('formTanggal')?.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });
+  updateBatasWaktu();
+  openAccordion('lembang');
+  terapkanLinkPesan();
+  initRemoteData(); muatUlasan(); muatGaleri();
+
+  fetchWeather();
+  let weatherInterval=setInterval(fetchWeather,600000);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden) clearInterval(weatherInterval);
+    else{ fetchWeather(); weatherInterval=setInterval(fetchWeather,600000); }
+  });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeCapacityModal(); });
+
+  // Pengaman: kolom form selalu bisa diketuk & diketik walau ada CSS lain (mis. css/driver.css) yang memblokir
+  const fixStyle=document.createElement('style');
+  fixStyle.textContent='#travelForm input,#travelForm textarea,#travelForm select{pointer-events:auto!important;-webkit-user-select:text!important;user-select:text!important;touch-action:manipulation}#capacityModal.hidden{display:none!important}';
+  document.head.appendChild(fixStyle);
+
+  // HP: saat mengetik di form, sembunyikan bar total & tombol WA supaya tidak menutupi kolom
+  const formEl=document.getElementById('travelForm');
+  if(formEl){
+    const overlays=()=>[document.getElementById('mobileStickyBar'),document.getElementById('floatingWaBtn')].filter(Boolean);
+    formEl.addEventListener('focusin',(e)=>{ if(!e.target.matches('input,textarea,select')) return; overlays().forEach(o=>{ o.style.display='none'; }); setTimeout(()=>{ try{ e.target.scrollIntoView({block:'center',behavior:'smooth'}); }catch(err){} },300); });
+    formEl.addEventListener('focusout',()=>{ overlays().forEach(o=>{ o.style.display=''; }); });
+  }
+});
