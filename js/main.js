@@ -1,4 +1,4 @@
-/* [MAIN.JS] v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+/* [MAIN.JS] v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
    v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
@@ -163,7 +163,7 @@ id: {
   wa_2days: 'Halo mau paket 2 hari Lembang + Ciwidey/Pangalengan',
   bm_title: 'Selesaikan Pembayaran', bm_order: 'No. pesanan', bm_amount: 'Bayar sekarang', bm_rest: 'Sisa {rest} dibayar tunai ke driver saat trip.',
   bm_how: 'Cara bayar', bm_note: 'Tulis nomor pesanan di berita transfer. Setelah membayar, kirim nama pengirim atau bukti bayar lewat WhatsApp. Pesanan dibatalkan otomatis kalau belum dibayar dalam {jam} jam.',
-  bm_transfer: 'Transfer ke salah satu rekening ini', bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
+  bm_kode: 'Sudah termasuk kode unik {kode} (nominal dasar {base}). Bayar PERSIS sesuai angka di atas supaya pembayaranmu mudah kami cocokkan.', bm_transfer: 'Transfer ke salah satu rekening ini', bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
   bm_msg: 'Bukti bayar pesanan {order} sebesar {nominal}. Nama pengirim: ',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
@@ -319,7 +319,7 @@ ms: {
   wa_2days: 'Hai, saya mahu pakej 2 hari Lembang + Ciwidey/Pangalengan',
   bm_title: 'Selesaikan Pembayaran', bm_order: 'No. tempahan', bm_amount: 'Bayar sekarang', bm_rest: 'Baki {rest} dibayar tunai kepada pemandu semasa perjalanan.',
   bm_how: 'Cara bayaran', bm_note: 'Tulis nombor tempahan pada ruang rujukan pindahan. Selepas membayar, hantar nama pengirim atau bukti bayaran melalui WhatsApp. Tempahan dibatalkan secara automatik jika belum dibayar dalam {jam} jam.',
-  bm_transfer: 'Pindahan ke salah satu akaun ini', bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
+  bm_kode: 'Sudah termasuk kod unik {kode} (jumlah asas {base}). Bayar TEPAT mengikut angka di atas supaya pembayaran anda mudah kami padankan.', bm_transfer: 'Pindahan ke salah satu akaun ini', bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
   bm_msg: 'Bukti bayaran tempahan {order} sebanyak {nominal}. Nama pengirim: ',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 }
@@ -1123,6 +1123,7 @@ function tampilBayarManual(d){
   const k1=document.createElement('div'); k1.textContent=t('bm_amount'); k1.style.cssText='font-size:11px;color:var(--text-muted)';
   const k2=document.createElement('div'); k2.textContent=formatPrice(d.amount_due); k2.style.cssText='font-size:26px;font-weight:800;color:var(--accent)';
   kotak.append(k1,k2);
+  if(Number(d.kode_unik)>0){ const k4=document.createElement('div'); k4.textContent=t('bm_kode',{kode:d.kode_unik,base:formatPrice(d.amount_base)}); k4.style.cssText='font-size:12px;font-weight:600;color:var(--text-secondary);margin-top:6px'; kotak.appendChild(k4); }
   if(d.payment_mode==='dp'&&d.dp_amount){ const k3=document.createElement('div'); k3.textContent=t('bm_rest',{rest:formatPrice(d.total-d.dp_amount)}); k3.style.cssText='font-size:12px;color:var(--text-secondary);margin-top:4px'; kotak.appendChild(k3); }
   tambah('div',t('bm_how'),'font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px');
   const adaBank=Array.isArray(d.banks)&&d.banks.length>0;
