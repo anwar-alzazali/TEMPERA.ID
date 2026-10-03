@@ -1,4 +1,4 @@
-/* [MAIN.JS] v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+/* [MAIN.JS] v14 (150) -- halaman PILIH DESTINASI (lima kartu geser, label di formulir, popup biaya lintas, bar melayang) menggantikan kartu paket; kotak centang lama tetap ada TERSEMBUNYI sebagai penyimpan data; Cara Pesan; kolom Destinasi lain; persetujuan S&K; destinasi kota baru. v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
    v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
@@ -13,26 +13,41 @@ let WA_NUMBER = '6285196755972'; // nomor WA admin (ditimpa app_settings.admin_w
 const I18N = {
 id: {
   page_title: 'Tempera - Private Trip & Sewa Mobil Bandung | Teman Perjalanan',
-  nav_home: 'Beranda', nav_weather: 'Cuaca Live', nav_dest: 'Paket Wisata', nav_fleet: 'Sewa Mobil',
+  nav_home: 'Beranda', nav_weather: 'Cuaca Live', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Mobil',
   nav_custom: 'Trip Custom', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
   aria_theme: 'Ganti tema terang/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Geser ke kiri', aria_right: 'Geser ke kanan',
 
   hero_title: 'Sewa Mobil & Private Trip Bandung',
   hero_sub: 'Mobil + driver 12 jam ke Lembang, Ciwidey, Pangalengan, dan Kota Bandung. Bayar online, bisa DP.',
   hero_p1: 'BBM termasuk', hero_p2: 'Sewa 12 jam', hero_p3: 'Bisa bayar DP',
-  hero_cta1: 'Lihat Paket Wisata', hero_cta2: 'Pilih Armada',
+  hero_cta1: 'Pilih Destinasi', hero_cta2: 'Pilih Armada',
 
   wx_title: 'Cuaca Live Bandung & Sekitarnya', wx_src: 'Data Open-Meteo, diperbarui tiap 10 menit',
   wx_hum: 'Kelembapan', wx_wind: 'Angin', wx_time: 'Waktu', wx_forecast: 'Prakiraan 12 Jam', wx_now: 'Sekarang',
   wx_loading: 'Memuat...', wx_live: 'Live', wx_feels: 'Terasa {n}°', wx_alt: '{n} mdpl', wx_refresh: 'Muat ulang cuaca',
   wx_pagi: 'Pagi', wx_siang: 'Siang', wx_sore: 'Sore', wx_malam: 'Malam',
 
-  dest_title: 'Paket Wisata Bandung Favorit', dest_sub: 'Satu wilayah per hari: lebih santai, tanpa biaya lintas',
-  tag_utara: 'Bandung Utara', tag_kota: 'Kota Bandung', tag_selatan: 'Bandung Selatan', tag_combo: 'Utara + Kota',
-  pk_lembang: 'Paket Wisata Lembang', pk_dago: 'Paket Kota Bandung & Dago', pk_ciwidey: 'Paket Wisata Ciwidey',
-  pk_pangalengan: 'Paket Wisata Pangalengan', pk_combo: 'Paket Lembang + Dago',
-  pk_info: '4 destinasi, sewa 12 jam, tanpa biaya lintas',
-  pk_from: 'mulai {price}', pk_with: '{price} dengan {car}', pk_btn: 'Pilih paket ini',
+  dest_title: 'Pilih Destinasi', dest_sub: 'Ketuk tempat yang ingin dikunjungi, boleh dari beberapa wilayah',
+  dest_order: 'Urutan kunjungan diatur driver bersamamu lewat WhatsApp setelah pesanan dikonfirmasi.',
+  dest_tip: 'Untuk sewa 12 jam, kami sarankan maksimal 4 destinasi supaya perjalanan tetap santai.',
+  tag_utara: 'Bandung Utara', tag_selatan: 'Bandung Selatan', tag_titik0: 'Titik 0',
+  card_lembang: 'Lembang', card_dago: 'Dago', card_kota: 'Kota Bandung', card_ciwidey: 'Ciwidey', card_pangalengan: 'Pangalengan',
+  sec_wisata: 'Wisata', sec_kuliner: 'Kuliner & oleh-oleh',
+  pk_info: 'Sewa 12 jam, tanpa biaya lintas',
+  cp_title: 'Cara Pesan',
+  cp_1t: 'Pilih destinasi', cp_1d: 'Ketuk tempat yang ingin dikunjungi, boleh dari beberapa wilayah.',
+  cp_2t: 'Pilih armada', cp_2d: 'Sesuai jumlah penumpang.',
+  cp_3t: 'Isi data', cp_3d: 'Nama, WhatsApp, tanggal, jam jemput.',
+  cp_4t: 'Bayar', cp_4d: 'Pilih lunas atau DP; konfirmasi dan invoice dikirim ke WhatsApp.',
+  cp_note: 'Sewa 12 jam. Biaya lintas hanya berlaku kalau menggabung wilayah di luar kota (Lembang, Ciwidey, Pangalengan). Kota Bandung dan Dago adalah titik 0, bebas digabung.',
+  bar_text: '{n} destinasi dipilih', bar_go: 'Lanjut pilih armada',
+  picked_title: 'Destinasi pilihanmu', picked_empty: 'Belum ada destinasi. Pilih dulu di bagian Pilih Destinasi.', picked_go: 'Pilih destinasi', picked_rm: 'Hapus {name}',
+  lain_label: 'Destinasi lain (konsultasi dengan driver)', lain_ph: 'Contoh: nama tempat lain di empat wilayah layanan',
+  lain_note: 'Hanya untuk tempat di empat wilayah layanan. Tidak dijamin: driver atau admin mengonfirmasi lewat WhatsApp apakah waktunya cukup. Di luar area, gunakan Trip Custom.',
+  terms_html: 'Saya telah membaca dan menyetujui <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Syarat &amp; Ketentuan</a>, termasuk kebijakan DP dan pembatalan.',
+  err_terms: 'Centang persetujuan Syarat & Ketentuan dulu.',
+  xp_title: 'Menggabung wilayah', xp_text: 'Menambahkan {dest} membuat perjalananmu mencakup {n} wilayah di luar Kota Bandung ({list}). Ada biaya lintas {cost}.',
+  xp_yes: 'Tetap gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Armada Sewa Mobil Bandung',
   fleet_note: '⏱ Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
@@ -81,7 +96,7 @@ id: {
   summary: 'Rincian Biaya', sum_armada: '🚐 Armada', not_chosen: 'Belum dipilih', choose_above: 'Pilih armada di atas',
   sum_dur: 'Durasi sewa:', sum_cross: 'Biaya lintas:', sum_dest: 'Destinasi:', none_yet: 'Belum ada', sum_cap: 'Kapasitas:',
   sum_total: 'Total Tarif', inc_title: '✅ Termasuk', inc_list: 'Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam',
-  exc_title: '❌ Tidak termasuk', exc_list: 'Tol, parkir, makan driver',
+  exc_title: '❌ Tidak termasuk', exc_list: 'Tol, parkir, makan driver (makan driver tidak ditagihkan ke pelanggan; boleh menraktir secara sukarela)',
   submit: 'Konfirmasi & Bayar', processing: 'Memproses...',
   lbl_beda_lembah: ' (Beda Lembah Selatan)', lbl_utsel: ' (Lintas Utara-Selatan)', lbl_tiga: ' (3 Penjuru)',
   cap_line: '{cap} Nyaman • Maks {max}', mb_sewa: 'Sewa 12 jam',
@@ -136,7 +151,7 @@ id: {
   faq_q1: 'Berapa lama durasi sewanya?',
   faq_a1: 'Sewa dibatasi 12 jam, dihitung dari jam jemput. Contoh: dijemput pukul 07.00, selesai paling lambat pukul 19.00. Di formulir pemesanan, jam selesainya otomatis ditampilkan.',
   faq_q2: 'Apa saja yang termasuk dan tidak termasuk?',
-  faq_a2: 'Termasuk: mobil, driver, BBM, air mineral, dan pemakaian sampai 12 jam. Tidak termasuk: tol, parkir, dan makan driver.',
+  faq_a2: 'Termasuk: mobil, driver, BBM, air mineral, dan pemakaian sampai 12 jam. Tidak termasuk: tol, parkir, dan makan driver. Makan driver tidak ditagihkan ke pelanggan; kalau mau menraktir, itu sepenuhnya sukarela.',
   faq_q3: 'Kenapa ada biaya tambahan kalau destinasi lebih dari satu wilayah?',
   faq_a3: 'Kota Bandung adalah titik jemput dan antar, jadi destinasi di Kota Bandung & Dago bisa digabung dengan wilayah mana pun tanpa biaya lintas. Biaya lintas hanya berlaku kalau kamu menggabung 2 wilayah di luar kota (dua dari Lembang, Ciwidey, Pangalengan), dan lebih besar lagi kalau ketiganya. Satu wilayah saja tidak kena biaya tambahan.',
   faq_q4: 'Berapa destinasi yang disarankan dalam sehari?',
@@ -146,7 +161,7 @@ id: {
   faq_q6: 'Bagaimana cara pesan Trip Custom?',
   faq_a6: 'Pilih tujuannya di bagian Trip Custom, lalu tanyakan harganya lewat WhatsApp. Harga tergantung jarak, jumlah hari, dan jam berangkat.',
   faq_q7: 'Bisa bayar DP?',
-  faq_a7: 'Bisa. Saat checkout, pilih "Bayar DP". Anda cukup membayar sebagian lewat Midtrans, sisanya dibayar tunai langsung ke driver saat perjalanan.',
+  faq_a7: 'Bisa. Saat checkout, pilih "Bayar DP". Anda cukup membayar sebagian lewat Midtrans, sisanya dibayar tunai langsung ke driver saat perjalanan. DP tidak dapat dikembalikan jika pelanggan membatalkan; detail kebijakan ada di Syarat & Ketentuan.',
   faq_q8: 'Bayarnya lewat apa?', faq_a8: 'Lewat Midtrans: bisa QRIS, transfer bank, atau e-wallet.',
   faq_q9: 'Saya dari Malaysia, bisa pesan?',
   faq_a9: 'Bisa. Tulis nomor WhatsApp lengkap dengan kode negara, misalnya +60 12-345 6789. Kalau metode pembayaran yang tersedia tidak bisa Anda pakai, chat admin lewat WhatsApp.',
@@ -169,26 +184,41 @@ id: {
 },
 ms: {
   page_title: 'Tempera - Private Trip & Sewa Kereta Bandung | Teman Perjalanan',
-  nav_home: 'Laman Utama', nav_weather: 'Cuaca Semasa', nav_dest: 'Pakej Pelancongan', nav_fleet: 'Sewa Kereta',
+  nav_home: 'Laman Utama', nav_weather: 'Cuaca Semasa', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Kereta',
   nav_custom: 'Trip Tersuai', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
   aria_theme: 'Tukar tema cerah/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Anjak ke kiri', aria_right: 'Anjak ke kanan',
 
   hero_title: 'Sewa Kereta & Private Trip Bandung',
   hero_sub: 'Kereta + pemandu 12 jam ke Lembang, Ciwidey, Pangalengan dan Bandar Bandung. Bayar dalam talian, boleh bayar deposit.',
   hero_p1: 'Petrol termasuk', hero_p2: 'Sewa 12 jam', hero_p3: 'Boleh bayar deposit',
-  hero_cta1: 'Lihat Pakej', hero_cta2: 'Pilih Kereta',
+  hero_cta1: 'Pilih Destinasi', hero_cta2: 'Pilih Kereta',
 
   wx_title: 'Cuaca Semasa Bandung & Sekitarnya', wx_src: 'Data Open-Meteo, dikemas kini setiap 10 minit',
   wx_hum: 'Kelembapan', wx_wind: 'Angin', wx_time: 'Waktu', wx_forecast: 'Ramalan 12 Jam', wx_now: 'Kini',
   wx_loading: 'Memuatkan...', wx_live: 'Langsung', wx_feels: 'Terasa {n}°', wx_alt: '{n} m', wx_refresh: 'Muat semula cuaca',
   wx_pagi: 'Pagi', wx_siang: 'Tengah hari', wx_sore: 'Petang', wx_malam: 'Malam',
 
-  dest_title: 'Pakej Pelancongan Bandung Pilihan', dest_sub: 'Satu kawasan sehari: lebih santai, tanpa caj rentas',
-  tag_utara: 'Bandung Utara', tag_kota: 'Bandar Bandung', tag_selatan: 'Bandung Selatan', tag_combo: 'Utara + Bandar',
-  pk_lembang: 'Pakej Lembang', pk_dago: 'Pakej Bandar Bandung & Dago', pk_ciwidey: 'Pakej Ciwidey',
-  pk_pangalengan: 'Pakej Pangalengan', pk_combo: 'Pakej Lembang + Dago',
-  pk_info: '4 destinasi, sewa 12 jam, tanpa caj rentas',
-  pk_from: 'dari {price}', pk_with: '{price} dengan {car}', pk_btn: 'Pilih pakej ini',
+  dest_title: 'Pilih Destinasi', dest_sub: 'Ketik tempat yang ingin dilawati, boleh daripada beberapa kawasan',
+  dest_order: 'Urutan lawatan diatur oleh pemandu bersama anda melalui WhatsApp selepas tempahan disahkan.',
+  dest_tip: 'Untuk sewa 12 jam, kami syorkan maksimum 4 destinasi supaya perjalanan kekal santai.',
+  tag_utara: 'Bandung Utara', tag_selatan: 'Bandung Selatan', tag_titik0: 'Titik 0',
+  card_lembang: 'Lembang', card_dago: 'Dago', card_kota: 'Bandar Bandung', card_ciwidey: 'Ciwidey', card_pangalengan: 'Pangalengan',
+  sec_wisata: 'Pelancongan', sec_kuliner: 'Kuliner & buah tangan',
+  pk_info: 'Sewa 12 jam, tanpa caj rentas',
+  cp_title: 'Cara Tempah',
+  cp_1t: 'Pilih destinasi', cp_1d: 'Ketik tempat yang ingin dilawati, boleh daripada beberapa kawasan.',
+  cp_2t: 'Pilih kereta', cp_2d: 'Mengikut bilangan penumpang.',
+  cp_3t: 'Isi maklumat', cp_3d: 'Nama, WhatsApp, tarikh, masa jemputan.',
+  cp_4t: 'Bayar', cp_4d: 'Pilih bayar penuh atau deposit; pengesahan dan invois dihantar ke WhatsApp.',
+  cp_note: 'Sewa 12 jam. Caj rentas hanya dikenakan jika menggabungkan kawasan di luar bandar (Lembang, Ciwidey, Pangalengan). Bandar Bandung dan Dago ialah titik 0, bebas digabungkan.',
+  bar_text: '{n} destinasi dipilih', bar_go: 'Teruskan pilih kereta',
+  picked_title: 'Destinasi pilihan anda', picked_empty: 'Belum ada destinasi. Pilih dahulu di bahagian Pilih Destinasi.', picked_go: 'Pilih destinasi', picked_rm: 'Buang {name}',
+  lain_label: 'Destinasi lain (berunding dengan pemandu)', lain_ph: 'Contoh: nama tempat lain di empat kawasan perkhidmatan',
+  lain_note: 'Hanya untuk tempat di empat kawasan perkhidmatan. Tidak dijamin: pemandu atau admin mengesahkan melalui WhatsApp sama ada masanya mencukupi. Di luar kawasan, gunakan Trip Tersuai.',
+  terms_html: 'Saya telah membaca dan bersetuju dengan <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Terma &amp; Syarat</a>, termasuk dasar deposit dan pembatalan.',
+  err_terms: 'Tandakan persetujuan Terma & Syarat dahulu.',
+  xp_title: 'Menggabungkan kawasan', xp_text: 'Menambah {dest} menjadikan perjalanan anda merangkumi {n} kawasan di luar Bandar Bandung ({list}). Ada caj rentas {cost}.',
+  xp_yes: 'Teruskan gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Kereta Sewa di Bandung',
   fleet_note: '⏱ Semua harga di bawah untuk <b>sewa 12 jam</b> (kereta + pemandu + petrol). Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam.',
@@ -237,7 +267,7 @@ ms: {
   summary: 'Ringkasan Harga', sum_armada: '🚐 Kereta', not_chosen: 'Belum dipilih', choose_above: 'Pilih kereta di atas',
   sum_dur: 'Tempoh sewa:', sum_cross: 'Caj rentas:', sum_dest: 'Destinasi:', none_yet: 'Belum ada', sum_cap: 'Kapasiti:',
   sum_total: 'Jumlah Harga', inc_title: '✅ Termasuk', inc_list: 'Kereta, pemandu, petrol, air mineral, penggunaan sehingga 12 jam',
-  exc_title: '❌ Tidak termasuk', exc_list: 'Tol, parkir, makan pemandu',
+  exc_title: '❌ Tidak termasuk', exc_list: 'Tol, parkir, makan pemandu (makan pemandu tidak dicajkan kepada pelanggan; boleh belanja secara sukarela)',
   submit: 'Sahkan & Bayar', processing: 'Sedang diproses...',
   lbl_beda_lembah: ' (Lembah Selatan Berbeza)', lbl_utsel: ' (Rentas Utara-Selatan)', lbl_tiga: ' (3 Penjuru)',
   cap_line: '{cap} Selesa • Maks {max}', mb_sewa: 'Sewa 12 jam',
@@ -292,7 +322,7 @@ ms: {
   faq_q1: 'Berapa lama tempoh sewa?',
   faq_a1: 'Sewa terhad 12 jam, dikira dari masa jemputan. Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam. Dalam borang tempahan, masa tamat dipaparkan secara automatik.',
   faq_q2: 'Apa yang termasuk dan tidak termasuk?',
-  faq_a2: 'Termasuk: kereta, pemandu, petrol, air mineral dan penggunaan sehingga 12 jam. Tidak termasuk: tol, parkir dan makan pemandu.',
+  faq_a2: 'Termasuk: kereta, pemandu, petrol, air mineral dan penggunaan sehingga 12 jam. Tidak termasuk: tol, parkir dan makan pemandu. Makan pemandu tidak dicajkan kepada pelanggan; jika mahu belanja, itu sepenuhnya sukarela.',
   faq_q3: 'Kenapa ada caj tambahan jika destinasi lebih dari satu kawasan?',
   faq_a3: 'Bandar Bandung ialah titik jemputan dan hantaran, jadi destinasi di Bandar Bandung & Dago boleh digabung dengan kawasan mana-mana tanpa caj rentas. Caj rentas hanya dikenakan jika anda menggabungkan 2 kawasan di luar bandar (dua daripada Lembang, Ciwidey, Pangalengan), dan lebih tinggi jika ketiga-tiganya. Satu kawasan sahaja tidak dikenakan caj tambahan.',
   faq_q4: 'Berapa destinasi yang disyorkan dalam sehari?',
@@ -302,7 +332,7 @@ ms: {
   faq_q6: 'Bagaimana cara menempah Trip Tersuai?',
   faq_a6: 'Pilih destinasi di bahagian Trip Tersuai, kemudian tanya harga melalui WhatsApp. Harga bergantung pada jarak, bilangan hari dan masa bertolak.',
   faq_q7: 'Boleh bayar deposit?',
-  faq_a7: 'Boleh. Semasa pembayaran, pilih "Bayar Deposit". Anda hanya perlu membayar sebahagian melalui Midtrans, bakinya dibayar tunai terus kepada pemandu semasa perjalanan.',
+  faq_a7: 'Boleh. Semasa pembayaran, pilih "Bayar Deposit". Anda hanya perlu membayar sebahagian melalui Midtrans, bakinya dibayar tunai terus kepada pemandu semasa perjalanan. Deposit tidak boleh dikembalikan jika pelanggan membatalkan; butiran dasar ada dalam Terma & Syarat.',
   faq_q8: 'Bayaran melalui apa?', faq_a8: 'Melalui Midtrans: QRIS, pindahan bank atau e-dompet.',
   faq_q9: 'Saya dari Malaysia, boleh menempah?',
   faq_a9: 'Boleh. Tulis nombor WhatsApp lengkap dengan kod negara, contohnya +60 12-345 6789. Jika kaedah pembayaran yang tersedia tidak dapat anda gunakan, hubungi admin melalui WhatsApp.',
@@ -628,16 +658,130 @@ function renderUlasan(){
 }
 
 /* ---------- Destinasi & paket (paket = template destinasi, harga tetap dari armada) ---------- */
-const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
-const PAKET={
-  lembang:{lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole"]},
-  dago:{dago:["Tebing Keraton","Tahura Djuanda","Punclut & Cakrawala","Gedung Sate, Braga & Alun-alun"]},
-  ciwidey:{ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Kebun Teh Rancabali"]},
-  pangalengan:{pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Kebun Teh Malabar"]},
-  lembang_dago:{lembang:["Tangkuban Perahu","Farmhouse Susu Lembang"],dago:["Tebing Keraton","Punclut & Cakrawala"]}
-};
+const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung","Masjid Raya Al Jabbar","Paskal 23","Bubur DPR","Batagor Kingsley","Batagor Serayu","Kupat Tahu Gempol","Kartikasari","Pasar Baru"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
 const OUTER=['lembang','ciwidey','pangalengan'];
 const REGION_NAME={lembang:'Lembang',ciwidey:'Ciwidey',pangalengan:'Pangalengan'};
+
+/* ---------- v14: PILIH DESTINASI. Kotak centang lama (#destinasi-wrapper) tetap dibuat tapi TERSEMBUNYI: ia penyimpan data
+   (harga, biaya lintas, kapasitas, link chat AI, payload server tidak berubah). Kartu menyalakan/mematikannya. ---------- */
+const DEST_SEC={
+  dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang"],
+  kotaWisata:["Gedung Sate, Braga & Alun-alun","Trans Studio Bandung","Masjid Raya Al Jabbar","Paskal 23"],
+  kotaKuliner:["Bubur DPR","Batagor Kingsley","Batagor Serayu","Kupat Tahu Gempol","Kartikasari","Pasar Baru"]
+};
+const DEST_CARDS=[
+  {id:'lembang',img:'floating_market.jpg',tag:'tag_utara',title:'card_lembang',secs:[{g:'lembang',items:DESTINASI_DATA.lembang}]},
+  {id:'dago',img:'fomoso.jpg',tag:'tag_utara',title:'card_dago',secs:[{g:'dago',items:DEST_SEC.dago}]},
+  {id:'kota',img:'fomoso.jpg',tag:'tag_titik0',title:'card_kota',secs:[{g:'dago',h:'sec_wisata',items:DEST_SEC.kotaWisata},{g:'dago',h:'sec_kuliner',items:DEST_SEC.kotaKuliner}]},
+  {id:'ciwidey',img:'kawah_putih.jpg',tag:'tag_selatan',title:'card_ciwidey',secs:[{g:'ciwidey',items:DESTINASI_DATA.ciwidey}]},
+  {id:'pangalengan',img:'nimo_pangalengan.jpg',tag:'tag_selatan',title:'card_pangalengan',secs:[{g:'pangalengan',items:DESTINASI_DATA.pangalengan}]}
+];
+const APPROVED=new Set();   // kombinasi wilayah luar kota yang sudah disetujui pelanggan (popup tidak muncul lagi)
+function regionKey(list){ return list.slice().sort().join('+'); }
+function approveCurrent(){ const l=getRegionInfo().list; if(l.length>=2) APPROVED.add(regionKey(l)); }
+function findCb(g,n){ return [...document.querySelectorAll('input[name="destinasi"]')].find(c=>c.dataset.group===g&&c.value===n); }
+
+function renderDestinasi(){
+  const track=document.getElementById('destinasiTrack'); if(!track) return;
+  track.innerHTML=DEST_CARDS.map(c=>{
+    const secs=c.secs.map(sc=>`${sc.h?`<p class="dsec">${esc(t(sc.h))}</p>`:''}<div class="dchips">${sc.items.map(n=>`<button type="button" class="dchip" data-g="${esc(sc.g)}" data-n="${esc(n)}" aria-pressed="false">${esc(n)}</button>`).join('')}</div>`).join('');
+    return `<article class="dcard theme-card"><div class="paket-img" style="background-image:url('images/${esc(c.img)}')" role="img" aria-label="${esc(t(c.title))}"><span class="paket-tag">${esc(t(c.tag))}</span></div><div class="dcard-body"><h3 class="paket-title">${esc(t(c.title))}</h3>${secs}<p class="paket-info">${esc(t('pk_info'))}</p></div></article>`;
+  }).join('');
+  syncPicker();
+}
+
+async function togglePick(g,n){
+  const cb=findCb(g,n); if(!cb||document.getElementById('crossPopup')) return;
+  if(cb.checked){ cb.checked=false; calculateLive(); return; }
+  const before=getRegionInfo().list;
+  const after=OUTER.filter(r=>before.includes(r)||r===g);
+  if(after.length>=2&&after.length>before.length&&!APPROVED.has(regionKey(after))){
+    const ok=await showCrossPopup(n,after,after.length===3?CROSS_3:CROSS_2);
+    if(!ok) return;
+    APPROVED.add(regionKey(after));
+  }
+  cb.checked=true; calculateLive();
+}
+document.addEventListener('click',(e)=>{ const b=e.target.closest('.dchip'); if(b) togglePick(b.dataset.g,b.dataset.n); });
+
+// Popup biaya lintas: di tengah layar, latar menutup seluruh layar dan menahan klik, gulir dikunci, hanya dua tombol. Esc / tombol Kembali = batalkan.
+function showCrossPopup(dest,regions,cost){
+  return new Promise((resolve)=>{
+    const fokusAwal=document.activeElement;
+    const ov=document.createElement('div'); ov.id='crossPopup';
+    ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','crossPopupTitle');
+    ov.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);touch-action:none;overscroll-behavior:contain';
+    ov.addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); });   // latar menahan klik: tidak menutup, tidak meneruskan ke halaman
+    const card=document.createElement('div');
+    card.style.cssText='width:100%;max-width:380px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4);touch-action:auto';
+    const h=document.createElement('b'); h.id='crossPopupTitle'; h.textContent=t('xp_title'); h.style.cssText='display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px';
+    const p=document.createElement('p'); p.textContent=t('xp_text',{dest,n:regions.length,list:regions.map(r=>REGION_NAME[r]).join(', '),cost:formatPrice(cost)});
+    p.style.cssText='margin:0 0 18px;font-size:14px;line-height:1.55;color:var(--text-secondary)';
+    const row=document.createElement('div'); row.style.cssText='display:flex;flex-direction:column;gap:10px';
+    const gaya='width:100%;padding:12px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;';
+    const yes=document.createElement('button'); yes.type='button'; yes.textContent=t('xp_yes',{cost:formatPrice(cost)}); yes.style.cssText=gaya+'border:0;background:var(--accent);color:var(--on-accent)';
+    const no=document.createElement('button'); no.type='button'; no.textContent=t('xp_no'); no.style.cssText=gaya+'background:transparent;color:var(--text-primary);border:1px solid var(--border-color)';
+    row.append(yes,no); card.append(h,p,row); ov.appendChild(card); document.body.appendChild(ov);
+    const kunci=document.body.style.overflow; document.body.style.overflow='hidden';
+    try{ history.pushState({crossPopup:1},''); }catch(e){}
+    let selesai=false;
+    const tutup=(hasil,viaPop)=>{
+      if(selesai) return; selesai=true;
+      document.removeEventListener('keydown',onKey,true); window.removeEventListener('popstate',onPop);
+      ov.remove(); document.body.style.overflow=kunci;
+      if(!viaPop){ try{ if(history.state&&history.state.crossPopup) history.back(); }catch(e){} }
+      if(fokusAwal&&fokusAwal.focus){ try{ fokusAwal.focus(); }catch(e){} }
+      resolve(hasil);
+    };
+    function onPop(){ tutup(false,true); }
+    function onKey(e){
+      if(e.key==='Escape'){ e.preventDefault(); tutup(false); }
+      else if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===yes?no:yes).focus(); }
+    }
+    window.addEventListener('popstate',onPop); document.addEventListener('keydown',onKey,true);
+    yes.addEventListener('click',()=>tutup(true)); no.addEventListener('click',()=>tutup(false));
+    yes.focus();
+  });
+}
+
+// Menyelaraskan tampilan (kartu, label di formulir, bar melayang) dengan kotak centang tersembunyi
+function syncPicker(){
+  const cbs=[...document.querySelectorAll('input[name="destinasi"]:checked')];
+  const on=new Set(cbs.map(cb=>cb.dataset.group+'|'+cb.value));
+  document.querySelectorAll('.dchip').forEach(b=>{ const s=on.has(b.dataset.g+'|'+b.dataset.n); b.classList.toggle('on',s); b.setAttribute('aria-pressed',String(s)); });
+  const box=document.getElementById('pickedBox');
+  if(box){
+    box.textContent='';
+    if(!cbs.length){
+      const e=document.createElement('p'); e.textContent=t('picked_empty'); e.style.cssText='margin:0 0 8px;font-size:12px;color:var(--text-muted)'; box.appendChild(e);
+      const a=document.createElement('a'); a.href='#destinasi'; a.textContent=t('picked_go'); a.className='dlabel'; a.style.textDecoration='none'; box.appendChild(a);
+    } else {
+      cbs.forEach(cb=>{
+        const b=document.createElement('button'); b.type='button'; b.className='dlabel'; b.dataset.g=cb.dataset.group; b.dataset.n=cb.value;
+        b.setAttribute('aria-label',t('picked_rm',{name:cb.value}));
+        b.append(document.createTextNode(cb.value+' '));
+        const x=document.createElement('span'); x.textContent='×'; x.setAttribute('aria-hidden','true'); x.style.cssText='font-weight:800;margin-left:2px'; b.appendChild(x);
+        box.appendChild(b);
+      });
+    }
+  }
+  let bar=document.getElementById('destBar');
+  if(!bar){
+    bar=document.createElement('button'); bar.type='button'; bar.id='destBar'; bar.hidden=true;
+    bar.addEventListener('click',()=>{ document.getElementById('armada')?.scrollIntoView({behavior:'smooth'}); });
+    document.body.appendChild(bar);
+  }
+  const n=cbs.length;
+  bar.hidden=!(n>0)||!!getSelectedArmada();   // setelah armada dipilih, bar total HP yang tampil
+  bar.textContent=t('bar_text',{n})+' · '+t('bar_go')+' ›';
+}
+document.addEventListener('click',(e)=>{ const b=e.target.closest('.dlabel[data-n]'); if(!b) return; const cb=findCb(b.dataset.g,b.dataset.n); if(cb){ cb.checked=false; calculateLive(); } });
+
+function catatanLengkap(){
+  const base=(document.getElementById('formCatatan')?.value||'').trim();
+  const lain=(document.getElementById('formDestLain')?.value||'').trim().slice(0,300);
+  return lain?(base?base+'\n':'')+'Destinasi tambahan (konsultasi driver): '+lain:base;   // sementara lewat pickup_note supaya terbaca driver (kolom khusus menyusul di gelombang function)
+}
 
 function getSelectedArmada(){const s=document.getElementById('calcUnit');if(!s||!s.value||s.selectedIndex<=0)return null;const o=s.options[s.selectedIndex];return{id:o.dataset.id,name:o.dataset.name,cap:parseInt(o.dataset.cap)||0,capmax:parseInt(o.dataset.capmax)||0,price:parseInt(o.value)||0};}
 function selectUnitById(id){ const s=document.getElementById('calcUnit'); for(let i=0;i<s.options.length;i++){ if(s.options[i].dataset.id===id){ s.selectedIndex=i; return true; } } return false; }
@@ -646,24 +790,6 @@ function selectUnitFromCard(id){
   selectUnitById(id); calculateLive(); checkCapacityLive(); document.getElementById('pesan').scrollIntoView({behavior:'smooth'});
 }
 function cheapestUnit(){ return ARMADA_DATA.reduce((a,u)=>(!a||u.price<a.price)?u:a,null); }
-
-function pilihPaket(key){
-  const p=PAKET[key]; if(!p) return;
-  document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=!!(p[cb.dataset.group]&&p[cb.dataset.group].includes(cb.value)); });
-  if(!getSelectedArmada()){   // armada pilihan pelanggan tidak ditimpa; Calya, atau termurah yang belum penuh
-    const bisa=ARMADA_DATA.filter(u=>!PENUH.has(u.id)).sort((a,b)=>a.price-b.price);
-    const c=bisa.find(u=>u.id==='calya')||bisa[0]; if(c) selectUnitById(c.id);
-  }
-  calculateLive(); checkCapacityLive();
-  openAccordion(Object.keys(p)[0]);
-  document.getElementById('pesan').scrollIntoView({behavior:'smooth'});
-}
-function renderPaketPrices(){
-  const a=getSelectedArmada(), c=cheapestUnit();
-  document.querySelectorAll('[data-paket-price]').forEach(el=>{
-    el.textContent=a?t('pk_with',{price:formatPrice(a.price),car:a.name}):(c?t('pk_from',{price:formatPrice(c.price)}):'');
-  });
-}
 
 function initInnerArmadaSliders(){
   if(window._armadaTimers) window._armadaTimers.forEach(clearInterval);
@@ -702,7 +828,6 @@ function renderArmada(){
   setTimeout(initInnerArmadaSliders,200);
 }
 document.addEventListener('click',(e)=>{ const b=e.target.closest('[data-unit]'); if(b) selectUnitFromCard(b.dataset.unit); });
-document.addEventListener('click',(e)=>{ const b=e.target.closest('[data-paket]'); if(b) pilihPaket(b.dataset.paket); });
 
 function toggleAccordion(g){ const c=document.getElementById('acc-'+g); if(!c) return; const isOpen=c.classList.contains('open'); document.querySelectorAll('.accordion-content').forEach(x=>x.classList.remove('open')); if(!isOpen) c.classList.add('open'); }
 function openAccordion(g){ const c=document.getElementById('acc-'+g); if(!c) return; document.querySelectorAll('.accordion-content').forEach(x=>x.classList.remove('open')); c.classList.add('open'); }
@@ -752,7 +877,7 @@ function calculateLive(){
     document.getElementById('mobileStickyBar')?.classList.remove('hidden');
   }
   updatePaymentPreview(hasArmada?(base+cost):0);
-  renderPaketPrices();
+  syncPicker();
   const listEl=document.getElementById('resSelectedList'); const all=document.querySelectorAll('input[name="destinasi"]:checked');
   if(!all.length) listEl.textContent=t('none_yet');
   else{ const g={}; all.forEach(cb=>{ (g[cb.dataset.group]=g[cb.dataset.group]||[]).push(cb.value); });
@@ -762,6 +887,7 @@ function calculateLive(){
 
 function renderCrossWarning(crossType,base,cost){
   const warn=document.getElementById('crossTripWarning'); if(!warn) return;
+  warn.classList.add('hidden'); warn.innerHTML=''; return;   // v14: diganti popup biaya lintas saat memilih destinasi (baris biaya di Rincian tetap)
   if(crossType==='none'){ warn.classList.add('hidden'); warn.innerHTML=''; return; }
   const rp=(v)=>formatPrice(v);
   if(crossType==='beda_lembah'){
@@ -933,7 +1059,7 @@ function initPaymentModeUI(){
       <label class="pm-opt"><input type="radio" name="paymentMode" value="dp"><span data-pm-card="dp" class="pm-card"><b id="pmDpLabel"></b><small data-i18n="pm_dp_d"></small></span></label>
     </div>
     <p id="pmPreview" class="pm-preview"></p>`;
-  btn.parentNode.insertBefore(box,btn);
+  btn.parentNode.insertBefore(box,document.getElementById('termsRow')||btn);
   applyStaticText(box);
   box.querySelectorAll('input[name="paymentMode"]').forEach(r=>r.addEventListener('change',()=>{
     PAYMENT_MODE=r.value;
@@ -998,7 +1124,7 @@ function refreshDynamic(){
   terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });
   if(openId) openAccordion(openId);
-  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan(); renderGaleri();
+  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan(); renderGaleri(); renderDestinasi();
 }
 
 function normalizeWA(input){
@@ -1038,6 +1164,7 @@ function terapkanLinkPesan(){
       if(arm&&!PENUH.has(arm)) selectUnitById(arm);
       if(/^\d{4}-\d{2}-\d{2}$/.test(tgl)){ const el=document.getElementById('formTanggal'); if(el&&tgl>=(el.min||'')){ el.value=tgl; tglDiubahPelanggan=true; } }
       if(pax>0&&pax<=40){ const el=document.getElementById('formJumlah'); if(el) el.value=pax; }
+      approveCurrent();   // dari link chat: popup biaya lintas tidak muncul (cukup baris biaya)
       updateBatasWaktu(); calculateLive(); checkCapacityLive();
     }
     if(location.hash==='#pesan') setTimeout(()=>document.getElementById('pesan')?.scrollIntoView(),700);
@@ -1057,6 +1184,7 @@ async function handleFormSubmitMidtrans(event){
   const armada=getSelectedArmada();
   if(!armada){ await notify(t('err_fleet')); return; }
   if(!document.querySelectorAll('input[name="destinasi"]:checked').length){ await notify(t('err_dest')); return; }
+  { const sj=document.getElementById('formSetuju'); if(sj&&!sj.checked){ await notify(t('err_terms')); return; } }
   const jumlahNum=parseInt(document.getElementById('formJumlah')?.value)||0;
   if(jumlahNum<=0){ await notify(t('err_pax')); return; }
   {
@@ -1070,7 +1198,7 @@ async function handleFormSubmitMidtrans(event){
     if(!(await askConfirm(t('ask_overcomfort',{n:jumlahNum,car:armada.name,cap:armada.cap,max:armada.capmax}),t('btn_keep'),t('btn_change_pax')))) return;
   }
   const region=getRegionInfo();
-  if(region.count>=2){
+  if(region.count>=2&&!APPROVED.has(regionKey(region.list))){
     if(!(await askConfirm(t('ask_cross',{n:region.count,cost:formatPrice(region.cost)}),t('dlg_continue'),t('btn_change_choice')))) return;
   }
   const by={lembang:[],dago:[],ciwidey:[],pangalengan:[]};
@@ -1078,7 +1206,7 @@ async function handleFormSubmitMidtrans(event){
   const payload={
     fleet_id:armada.id, customer_name:nama, customer_wa:kontak,
     trip_date:document.getElementById('formTanggal')?.value||'', trip_time:document.getElementById('formJam')?.value||'',
-    pax:jumlahNum, pickup_note:document.getElementById('formCatatan')?.value.trim()||'',
+    pax:jumlahNum, pickup_note:catatanLengkap(),
     destinations:by, ref:getRef(), payment_mode:PAYMENT_MODE
   };
   const btn=document.getElementById('submitBtn');
@@ -1219,7 +1347,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   applyStaticText(); updateLangButton();
   initPaymentModeUI();
-  renderArmada(); calculateLive(); applyHero(); applyContacts();
+  renderArmada(); renderDestinasi(); calculateLive(); applyHero(); applyContacts();
   const yr=document.getElementById('footerYear'); if(yr) yr.textContent=new Date().getFullYear();
   document.getElementById('formJam')?.addEventListener('change',updateDurasi);
   document.getElementById('formTanggal')?.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });
@@ -1244,7 +1372,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   // HP: saat mengetik di form, sembunyikan bar total & tombol WA supaya tidak menutupi kolom
   const formEl=document.getElementById('travelForm');
   if(formEl){
-    const overlays=()=>[document.getElementById('mobileStickyBar'),document.getElementById('floatingWaBtn')].filter(Boolean);
+    const overlays=()=>[document.getElementById('mobileStickyBar'),document.getElementById('floatingWaBtn'),document.getElementById('destBar')].filter(Boolean);
     formEl.addEventListener('focusin',(e)=>{ if(!e.target.matches('input,textarea,select')) return; overlays().forEach(o=>{ o.style.display='none'; }); setTimeout(()=>{ try{ e.target.scrollIntoView({block:'center',behavior:'smooth'}); }catch(err){} },300); });
     formEl.addEventListener('focusout',()=>{ overlays().forEach(o=>{ o.style.display=''; }); });
   }
