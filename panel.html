@@ -3,1487 +3,169 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Panel Admin Tempera</title>
-<link rel="manifest" href="panel.webmanifest">
-<link rel="icon" type="image/png" sizes="48x48" href="images/panel-48.png">
-<link rel="apple-touch-icon" href="images/panel-apple-180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Admin Tempera">
+<title>Halaman Mitra</title>
+<meta name="description" content="Halaman mitra pengemudi: profil, armada, dan pemesanan lewat WhatsApp.">
+<link rel="icon" type="image/png" sizes="48x48" href="images/tempera-48.png">
 <style>
-:root{--accent:#0891b2;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--danger:#dc2626}
+:root{--accent:#0891b2;--on-accent:#fff;--bg:#f8fafc;--card:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0b0b0c;--card:#17171a;--ink:#f4f4f5;--muted:#a1a1aa;--line:#2a2a2e}}
 *{box-sizing:border-box}
-[hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
-button,input,select,textarea{font:inherit}
-.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;background:var(--accent);color:#fff;cursor:pointer}
-.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn.danger{background:var(--danger)}
-.btn.sm{padding:6px 12px;font-size:12px}
-.btn:disabled{opacity:.6;cursor:wait}
-input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.55}
+main{max-width:640px;margin:0 auto;padding-bottom:48px}
+.sampul{height:150px;background:var(--accent);background-size:cover;background-position:center}
+.kepala{padding:0 18px;margin-top:-44px}
+.avatar{width:88px;height:88px;border-radius:24px;border:4px solid var(--bg);background:var(--card);object-fit:cover;display:block}
+.avatar.logo{object-fit:contain;padding:8px;background:#fff}
+.avatar.kosong{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:var(--accent)}
+h1{margin:10px 0 0;font-size:24px;line-height:1.2}
+.slogan{margin:4px 0 0;color:var(--muted);font-size:14px}
+.kota{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+.aksi{display:flex;gap:10px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:14px;border:0;font-weight:800;font-size:14px;text-decoration:none;cursor:pointer;font-family:inherit}
+.btn.utama{flex:1;background:var(--accent);color:var(--on-accent)}
+.btn.tepi{flex:1;background:transparent;color:var(--ink);border:1px solid var(--line)}
+section{margin:22px 18px 0}
+h2{margin:0 0 10px;font-size:16px}
+.bio{white-space:pre-line;color:var(--ink);font-size:14.5px}
+.mobil{display:grid;gap:12px}
+.kartu{display:flex;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.kartu img,.kartu .foto0{width:120px;min-height:96px;object-fit:cover;flex:none;background:var(--line)}
+.kartu .isi{padding:12px 12px 12px 0;min-width:0}
+.kartu b{display:block;font-size:15px}
+.kartu .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.kartu .harga{margin-top:8px;font-weight:800;color:var(--accent);font-size:15px}
+form{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px}
+label{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+input,textarea,select{width:100%;margin-top:4px;min-height:46px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:15px}
 textarea{resize:vertical}
-label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px}
-label input,label select,label textarea{margin-top:4px;font-weight:400;color:var(--ink);font-size:14px}
-label.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px}
-label.chk input{width:auto;margin:0}
-.help{font-size:11px;color:var(--muted);margin:-6px 0 10px}
-#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.loginbox{background:var(--card);padding:28px;border-radius:16px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(15,23,42,.1)}
-.loginbox h1{margin:0 0 4px;font-size:22px}
-.loginbox p{margin:0 0 18px;color:var(--muted)}
-.err{color:var(--danger);font-size:13px;margin:8px 0 0}
-header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em}
-.logo{--w:34px;display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
-nav{display:flex;gap:4px;padding:0 12px 10px;overflow-x:auto}
-nav button{border:0;background:transparent;padding:8px 14px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
-nav button.on{background:var(--accent);color:#fff}
-main{max-width:1100px;margin:0 auto;padding:16px}
-h2{margin:0 0 12px;font-size:18px}
-.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.bar select,.bar input{width:auto;flex:1 1 150px}
-.card{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
-.tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:640px}
-th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-td.num,th.num{text-align:right;white-space:nowrap}
-tr.click{cursor:pointer}
-tr.click:hover{background:#f8fafc}
-.small{font-size:12px;color:var(--muted)}
-.empty{padding:30px;text-align:center;color:var(--muted)}
-.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;background:#e2e8f0;color:#334155;white-space:nowrap}
-.b-pending{background:#fef3c7;color:#92400e}
-.b-paid{background:#dcfce7;color:#166534}
-.b-confirmed{background:#dbeafe;color:#1e40af}
-.b-dp_paid{background:#e0e7ff;color:#3730a3}
-.b-completed{background:#ede9fe;color:#5b21b6}
-.b-cancelled,.b-expired{background:#fee2e2;color:#991b1b}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
-.stat{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
-.stat .v{font-size:20px;font-weight:800}
-.stat .l{font-size:12px;color:var(--muted)}
-.setrow{display:grid;grid-template-columns:1fr 1.2fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
-.setrow small{display:block;color:var(--muted)}
-#modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto}
-.mcard{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:640px}
-.mcard h2{margin-top:0}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
-.fgrid .full{grid-column:1/-1}
-.mbtns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
-dl.det{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;margin:0 0 14px}
-dl.det dt{color:var(--muted);font-size:12px}
-dl.det dd{margin:0}
-.act{border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
-.row2{display:flex;gap:8px;align-items:end;margin-bottom:10px}
-.row2 label{flex:1;margin:0}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
-.chip{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;background:#f1f5f9;border-radius:6px;padding:2px 6px}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:90vw;text-align:center}
-#toast.show{opacity:1}
-#toast.err{background:var(--danger)}
-@media (max-width:560px){.fgrid{grid-template-columns:1fr}.setrow{grid-template-columns:1fr}dl.det{grid-template-columns:100px 1fr}}
+.dua{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cat{font-size:12px;color:var(--muted);margin:0}
+.bank{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}
+.bank .lg{flex:none;width:64px;height:36px;display:flex;align-items:center;justify-content:center}
+.bank .lg img{max-width:64px;max-height:36px;object-fit:contain;background:#fff;border-radius:6px;padding:2px}
+.bank .lc{font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:4px 6px}
+.bank .tg{flex:1;min-width:0}.bank .nm{font-size:12px;font-weight:700;color:var(--muted)}.bank .no{font-size:17px;font-weight:800;letter-spacing:.04em;word-break:break-all}.bank .an{font-size:12px;color:var(--muted)}
+.bank button{flex:none;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.qris{text-align:center;margin-top:8px}.qris img{width:100%;max-width:260px;border-radius:12px;background:#fff}
+.sosial{display:flex;flex-wrap:wrap;gap:8px}
+.sosial a{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:13px;font-weight:700;text-decoration:none}
+footer{text-align:center;color:var(--muted);font-size:12px;margin:30px 18px 0}
+.tengah{padding:80px 20px;text-align:center;color:var(--muted)}
+@media (max-width:420px){.dua{grid-template-columns:1fr}.kartu img,.kartu .foto0{width:96px}}
 </style>
 </head>
 <body>
-<div id="login" hidden>
-<div class="loginbox">
-<span class="logo" style="--w:56px;margin-bottom:12px"></span>
-<h1>Panel Admin</h1>
-<p>Tempera — masuk dengan akun admin</p>
-<form id="loginForm">
-<label>Email<input id="lEmail" type="email" autocomplete="username" required></label>
-<label>Password<input id="lPass" type="password" autocomplete="current-password" required></label>
-<button class="btn" id="lBtn" style="width:100%" type="submit">Masuk</button>
-<div class="err" id="lErr"></div>
-</form>
-</div>
-</div>
-<div id="shell" hidden>
-<header>
-<div class="topbar">
-<div class="brand"><span class="logo"></span>TEMPERA · Admin</div>
-<button class="btn ghost sm" id="btnLogout" type="button">Keluar</button>
-</div>
-<nav id="nav"></nav>
-</header>
-<main id="view"></main>
-</div>
-<div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
-<div id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<main id="app"><div class="tengah">Memuat…</div></main>
 <script>
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
-const sb = supabase.createClient(SB_URL, SB_KEY);
-
-/* ---------- helper ---------- */
-const $ = (s, el = document) => el.querySelector(s);
-const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const aman = (u) => (/^https:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? String(u) : '');
 const rp = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
-const p2 = (n) => String(n).padStart(2, '0');
-function tglPendek(s) { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? `${m[3]}-${m[2]}-${m[1]}` : (s || '-'); }
-function waktu(iso) {
-  if (!iso) return '-';
-  try { return new Date(iso).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
-  catch (_e) { return String(iso); }
-}
-function isoToLocal(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`;
-}
-function normWA(n) {
-  let x = String(n || '').replace(/\D/g, '');
-  if (x.startsWith('0')) x = '62' + x.slice(1); else if (x.startsWith('8')) x = '62' + x;
-  return x;
-}
-let toastTimer;
-function toast(msg, err) {
-  const t = $('#toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ''; }, 4000);
-}
-function openModal(html) { $('#modalBody').innerHTML = html; $('#modal').hidden = false; }
-function closeModal() { $('#modal').hidden = true; $('#modalBody').innerHTML = ''; }
-$('#modal').addEventListener('click', (e) => { if (e.target.id === 'modal') closeModal(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-document.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-copy]');
-  if (!b) return;
-  if (!b.dataset.copy) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
-  navigator.clipboard.writeText(b.dataset.copy).then(() => toast('Tersalin'), () => toast('Gagal menyalin', true));
-});
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-rotate]');
-  if (!b) return;
-  const slug = b.dataset.rotate;
-  if (!confirm('Ganti token ID card driver ini? Link lama akan langsung berhenti berfungsi, jadi driver perlu link barunya (termasuk kartu cetak yang sudah ada).')) return;
-  b.disabled = true;
-  const r = await sb.rpc('rotate_driver_card', { p_slug: slug });
-  b.disabled = false;
-  if (r.error) { toast(r.error.message, true); return; }
-  S.cards[slug] = r.data;
-  toast('Token diganti. Kirim link ID card yang baru ke driver.');
-  if (VIEWS.driver && location.hash === '#driver') nav('driver');
-});
-
-/* ---------- HMAC (sama persis dengan yang dipakai function verifikasi) ---------- */
-// Dipakai untuk membuat kode QR referral (opsional, kosmetik) dan kode tetap kartu cetak
-// (wajib sama supaya verifikasi.html bisa mengenalinya). token driver_cards dipakai sebagai kunci.
-const encHmac = new TextEncoder();
-async function hmacHex(key, msg) {
-  const k = await crypto.subtle.importKey('raw', encHmac.encode(key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', k, encHmac.encode(msg));
-  return [...new Uint8Array(sig)].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-/* ---------- QR referral dengan logo (dibuat langsung di panel) ---------- */
-const QR_LOGO_SRC = 'images/logo_sky_blue_transparent.png';
-function loadImg(src) {
-  return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
-}
-async function makeQR(text, size) {
-  const q = qrcode(0, 'H');            // level H: tahan logo di tengah
-  q.addData(text); q.make();
-  const n = q.getModuleCount(), quiet = 4;
-  const cell = Math.floor(size / (n + quiet * 2)), total = cell * (n + quiet * 2);
-  const c = document.createElement('canvas'); c.width = c.height = total;
-  const x = c.getContext('2d');
-  x.fillStyle = '#fff'; x.fillRect(0, 0, total, total);
-  x.fillStyle = '#000';
-  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) {
-    if (q.isDark(r, k)) x.fillRect((k + quiet) * cell, (r + quiet) * cell, cell, cell);
+function parseBank(raw) {
+  const out = [];
+  for (const baris of String(raw || '').split(/\n|;/)) {
+    const [b, n, a, l] = baris.split('|').map((x) => String(x || '').trim());
+    if (!b || !n) continue;
+    if (b.length > 30 || !/^[0-9][0-9 .\-]{3,30}$/.test(n)) continue;
+    let logo = '';
+    if (l) { if (/^https:\/\/[^\s"'<>]+$/i.test(l)) logo = l; else if (/^[a-z0-9_.\-]+$/i.test(l)) logo = 'images/' + l; }
+    out.push({ bank: b, norek: n, nama: String(a || '').slice(0, 60), logo });
+    if (out.length >= 6) break;
   }
+  return out;
+}
+function urlQris(v) { v = String(v || '').trim(); if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return v; return /^[a-z0-9_.\-]+$/i.test(v) ? 'images/' + v : ''; }
+const warnaOk = (w) => (/^#[0-9a-fA-F]{6}$/.test(String(w || '')) ? w : '#0891b2');
+function teksDiAtas(hex) { const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#0f172a' : '#ffffff'; }
+const slug = (new URLSearchParams(location.search).get('d') || '').toLowerCase();
+
+async function muat() {
+  const app = document.getElementById('app');
+  if (!/^[a-z0-9][a-z0-9_-]{1,39}$/.test(slug)) { app.innerHTML = '<div class="tengah">Halaman tidak ditemukan.</div>'; return; }
+  let h = null;
   try {
-    const img = await loadImg(QR_LOGO_SRC);
-    const t = document.createElement('canvas'); t.width = 1328; t.height = 1287;
-    const tx = t.getContext('2d');
-    tx.drawImage(img, 0, 151, 1328, 1287, 0, 0, 1328, 1287);   // potong bagian kosong atas
-    tx.globalCompositeOperation = 'source-in';
-    tx.fillStyle = '#0891b2'; tx.fillRect(0, 0, 1328, 1287);    // warnai teal
-    const plate = Math.round(total * 0.20), pad = Math.round(plate * 0.06);
-    const lw = plate - pad * 2, lh = Math.round(lw * 1287 / 1328);
-    const px = Math.round((total - plate) / 2);
-    x.fillStyle = '#fff'; x.beginPath();
-    if (x.roundRect) x.roundRect(px, px, plate, plate, plate * 0.18); else x.rect(px, px, plate, plate);
-    x.fill();
-    x.drawImage(t, px + pad, px + Math.round((plate - lh) / 2), lw, lh);
-  } catch (_e) { /* logo gagal dimuat: QR tetap valid tanpa logo */ }
-  return c;
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-qr]');
-  if (!b) return;
-  const url = b.dataset.qr;
-  if (!url) { toast('Alamat situs belum diisi di Pengaturan (site_url)', true); return; }
-  if (typeof qrcode !== 'function') { toast('Pustaka QR belum termuat, muat ulang halaman', true); return; }
-  const c = await makeQR(url, 720);
-  const nama = b.dataset.qrname || 'driver';
-  openModal(`
-    <h2>QR referral</h2>
-    <div style="text-align:center"><div id="qrHolder"></div>
-    <div class="small" style="word-break:break-all;margin-top:8px">${esc(url)}</div></div>
-    <div class="mbtns"><button class="btn ghost" id="qrClose" type="button">Tutup</button><button class="btn" id="qrDl" type="button">Unduh PNG</button></div>`);
-  c.style.width = '100%'; c.style.maxWidth = '320px'; c.style.height = 'auto';
-  $('#qrHolder').appendChild(c);
-  $('#qrClose').addEventListener('click', closeModal);
-  $('#qrDl').addEventListener('click', () => {
-    const a = document.createElement('a');
-    a.href = c.toDataURL('image/png'); a.download = `qr-${nama}.png`;
-    document.body.appendChild(a); a.click(); a.remove();
-  });
-});
-
-const S = { drivers: [], siteUrl: '', cards: {} };
-const STATUS = { pending: 'Menunggu bayar', dp_paid: 'DP Diterima', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
-const PAID_SET = ['dp_paid', 'paid', 'confirmed', 'completed'];
-const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
-const badge = (st) => `<span class="badge b-${esc(st)}">${esc(STATUS[st] || st)}</span>`;
-// Pelaksana trip (tampil di daftar pesanan & surat jalan): yang ditugaskan, atau pembawa bila belum ditugaskan.
-const drv = (o) => o.assigned_driver || o.driver_slug || '';
-// Pemilik pendapatan (dipakai di Laporan): pembawa pesanan (link/QR-nya) lebih diutamakan;
-// bila pesanan langsung dari web, pendapatan jatuh ke yang ditugaskan menjalankan trip.
-const earner = (o) => o.driver_slug || o.assigned_driver || '';
-const driverName = (slug) => { const d = S.drivers.find((x) => x.slug === slug); return d ? d.name : (slug || '-'); };
-function destText(o) {
-  const d = o.destinations || {};
-  const lines = Object.keys(WILAYAH).filter((k) => Array.isArray(d[k]) && d[k].length).map((k) => `${WILAYAH[k]}: ${d[k].join(', ')}`);
-  return lines.length ? lines.join('\n') : '-';
+    const r = await fetch(`${SB_URL}/rest/v1/driver_halaman?slug=eq.${encodeURIComponent(slug)}&select=*&limit=1`, { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+    if (r.ok) h = (await r.json())[0] || null;
+  } catch (e) { console.warn(e); }
+  if (!h) { app.innerHTML = '<div class="tengah">Halaman tidak ditemukan atau belum aktif.</div>'; return; }
+  gambar(h);
 }
 
-/* ---------- login ---------- */
-function showLogin(msg) {
-  $('#shell').hidden = true; $('#login').hidden = false;
-  $('#lErr').textContent = msg || '';
-}
-$('#loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = $('#lBtn'); btn.disabled = true; $('#lErr').textContent = '';
-  const { error } = await sb.auth.signInWithPassword({ email: $('#lEmail').value.trim(), password: $('#lPass').value });
-  btn.disabled = false;
-  if (error) { $('#lErr').textContent = 'Email atau password salah.'; return; }
-  await enter();
-});
-$('#btnLogout').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(); });
-
-async function enter() {
-  const { data, error } = await sb.rpc('is_admin');
-  if (error || data !== true) { await sb.auth.signOut(); showLogin('Akun ini bukan admin.'); return; }
-  $('#login').hidden = true; $('#shell').hidden = false;
-  await loadShared();
-  nav(location.hash.replace('#', '') || 'pesanan');
-}
-async function loadShared() {
-  const d = await sb.from('drivers').select('*').order('driver_code');
-  S.drivers = d.data || [];
-  const s = await sb.from('app_settings').select('key,value').in('key', ['site_url', 'kas_token']);
-  const sm = {}; (s.data || []).forEach((x) => { sm[x.key] = x.value; });
-  S.siteUrl = String(sm.site_url || '').replace(/\/+$/, '');
-  S.kasToken = sm.kas_token || '';
-  const c = await sb.from('driver_cards').select('driver_slug,token');
-  S.cards = {};
-  (c.data || []).forEach((x) => { S.cards[x.driver_slug] = x.token; });
-}
-
-/* ---------- navigasi ---------- */
-const VIEWS = {};
-const NAVS = [['pesanan', 'Pesanan'], ['laporan', 'Laporan'], ['kas', 'Kas'], ['armada', 'Armada'], ['pengaturan', 'Pengaturan'], ['template', 'Template WA'], ['banner', 'Banner'], ['driver', 'Driver'], ['persetujuan', 'Persetujuan']];
-function nav(key) {
-  if (!VIEWS[key]) key = 'pesanan';
-  location.hash = key;
-  $('#nav').innerHTML = NAVS.map(([k, l]) => `<button type="button" data-k="${k}" class="${k === key ? 'on' : ''}">${l}</button>`).join('');
-  $$('#nav button').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
-  $('#view').innerHTML = '<div class="empty">Memuat…</div>';
-  VIEWS[key]();
-}
-
-/* ---------- PESANAN ---------- */
-let ORDERS = [];
-VIEWS.pesanan = async function () {
-  $('#view').innerHTML = `
-    <h2>Pesanan</h2>
-    <div class="bar">
-      <select id="fStatus"><option value="">Semua status</option>${Object.keys(STATUS).map((k) => `<option value="${k}">${STATUS[k]}</option>`).join('')}</select>
-      <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option></select>
-      <input id="fQ" placeholder="Cari nama / order / invoice / WA">
-      <button class="btn" id="fGo" type="button">Muat ulang</button>
+function gambar(h) {
+  const warna = warnaOk(h.warna);
+  document.documentElement.style.setProperty('--accent', warna);
+  document.documentElement.style.setProperty('--on-accent', teksDiAtas(warna));
+  document.title = `${h.nama_tampil} · Sewa Mobil dengan Sopir`;
+  const metaD = document.querySelector('meta[name="description"]'); if (metaD) metaD.content = `${h.nama_tampil}${h.kota ? ', ' + h.kota : ''}: profil, armada, dan pemesanan lewat WhatsApp.`;
+  const sampul = aman(h.foto_sampul), adaLogo = !!aman(h.logo_url), foto = aman(h.logo_url) || aman(h.foto_profil);
+  const mobil = (Array.isArray(h.mobil) ? h.mobil : []).filter((m) => m && m.jenis);
+  const sos = h.sosial || {};
+  const tautan = [['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook']].filter(([k]) => aman(sos[k]));
+  const wa = String(h.wa || '').replace(/\D/g, '');
+  const banks = parseBank(h.rekening), qris = urlQris(h.qris_url), infoBayar = String(h.info_bayar || '').trim().slice(0, 400);
+  const adaBayar = banks.length > 0 || !!qris || !!infoBayar;
+  document.getElementById('app').innerHTML = `
+    <div class="sampul" ${sampul ? `style="background-image:url('${esc(sampul)}')"` : ''}></div>
+    <div class="kepala">
+      ${foto ? `<img class="avatar${adaLogo ? ' logo' : ''}" src="${esc(foto)}" alt="${esc(h.nama_tampil)}">` : `<div class="avatar kosong">${esc(String(h.nama_tampil).slice(0, 1).toUpperCase())}</div>`}
+      <h1>${esc(h.nama_tampil)}</h1>
+      ${h.slogan ? `<p class="slogan">${esc(h.slogan)}</p>` : ''}
+      ${h.kota ? `<span class="kota">${esc(h.kota)}</span>` : ''}
+      <div class="aksi"><a class="btn utama" id="btnWA" href="#">Chat WhatsApp</a><a class="btn tepi" href="#pesan">Isi pemesanan</a></div>
     </div>
-    <div class="card" id="list"></div>`;
-  $('#fGo').addEventListener('click', loadOrders);
-  $('#fStatus').addEventListener('change', loadOrders);
-  $('#fSumber').addEventListener('change', loadOrders);
-  $('#fQ').addEventListener('input', renderOrders);
-  await loadOrders();
-};
-async function loadOrders() {
-  let q = sb.from('orders').select('*').order('created_at', { ascending: false }).limit(300);
-  const st = $('#fStatus').value; if (st) q = q.eq('status', st);
-  const so = $('#fSumber').value; if (so) q = q.eq('source', so);
-  const { data, error } = await q;
-  if (error) { toast(error.message, true); $('#list').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
-  ORDERS = data || [];
-  renderOrders();
-}
-function renderOrders() {
-  const q = ($('#fQ').value || '').toLowerCase().trim();
-  const rows = ORDERS.filter((o) => !q || [o.customer_name, o.order_id, o.invoice_no, o.customer_wa, o.fleet_name].join(' ').toLowerCase().includes(q));
-  if (!rows.length) { $('#list').innerHTML = '<div class="empty">Belum ada pesanan.</div>'; return; }
-  $('#list').innerHTML = `<div class="tablewrap"><table>
-    <thead><tr><th>Dibuat</th><th>Pesanan</th><th>Pelanggan</th><th>Trip</th><th class="num">Total</th><th>Status</th><th>Driver</th></tr></thead>
-    <tbody>${rows.map((o) => `<tr class="click" data-id="${esc(o.id)}">
-      <td class="small">${esc(waktu(o.created_at))}</td>
-      <td><b>${esc(o.invoice_no || '—')}</b><div class="small">${esc(o.order_id)}</div></td>
-      <td>${esc(o.customer_name)}<div class="small">${esc(o.customer_wa)}</div></td>
-      <td>${esc(tglPendek(o.trip_date))} ${esc(o.trip_time || '')}<div class="small">${esc(o.fleet_name || '')}</div></td>
-      <td class="num">${rp(o.total)}</td>
-      <td>${badge(o.status)}<div class="small">${o.source === 'driver' ? 'Link driver' : 'Langsung'}</div></td>
-      <td>${esc(driverName(drv(o)))}</td></tr>`).join('')}</tbody></table></div>`;
-  $$('#list tr.click').forEach((tr) => tr.addEventListener('click', () => openOrder(tr.dataset.id)));
-}
-function driverMsg(o, d, sjLink) {
-  const dpInfo = o.payment_mode === 'dp'
-    ? `\n\n💰 Pesanan ini DP (baru bayar ${rp(o.dp_amount)}).\nTagih TUNAI ke pelanggan: ${rp(Math.max(0, Number(o.total) - Number(o.dp_amount || 0)))}\nSisa akan ditransfer admin: ${rp(Math.max(0, Number(o.dp_amount || 0) - Number(o.admin_cut_amount || 0)))}`
-    : '';
-  return `Halo ${d.name}, ada trip untukmu.\n\nOrder: ${o.order_id}\nPelanggan: ${o.customer_name} (${o.customer_wa})\nArmada: ${o.fleet_name || '-'}\nTanggal: ${tglPendek(o.trip_date)}, jam ${o.trip_time || '-'}\nPeserta: ${o.pax || '-'} orang\nTitik jemput: ${o.pickup_note || '-'}\n\nDestinasi:\n${destText(o)}\n\nPendapatanmu: ${rp(o.driver_earning)}${dpInfo}${sjLink ? `\n\nSurat jalan: ${sjLink}` : ''}`;
-}
-async function openOrder(id) {
-  const o = ORDERS.find((x) => x.id === id); if (!o) return;
-  const cur = drv(o);
-  const stOpts = Object.keys(STATUS).map((k) => `<option value="${k}" ${k === o.status ? 'selected' : ''}>${STATUS[k]}</option>`).join('');
-  const drOpts = '<option value="">— belum ditentukan —</option>' + S.drivers.filter((d) => d.is_active !== false || d.slug === cur)
-    .map((d) => `<option value="${esc(d.slug)}" ${d.slug === cur ? 'selected' : ''}>${esc(d.name)} (${esc(d.slug)})</option>`).join('');
-  const invLink = (S.siteUrl && o.invoice_token && PAID_SET.includes(o.status)) ? `${S.siteUrl}/invoice.html?t=${o.invoice_token}` : '';
-  const sjLink = (S.siteUrl && o.sj_no && o.sj_token) ? `${S.siteUrl}/surat-jalan.html?t=${o.sj_token}` : '';
-  const dObj = S.drivers.find((d) => d.slug === cur);
-  const waDriver = (dObj && dObj.phone) ? `https://wa.me/${normWA(dObj.phone)}?text=${encodeURIComponent(driverMsg(o, dObj, sjLink))}` : '';
-
-  // cek apakah data pesanan sudah berbeda dari surat jalan yang terbit (perlu revisi)
-  let sjChanged = false;
-  if (o.sj_no) {
-    const r = await sb.rpc('sj_changed', { p_order: o.id });
-    sjChanged = r.data === true;
-  }
-  const sjInfo = o.sj_no
-    ? `${esc(o.sj_no)} · Rev ${esc(o.sj_rev)}${sjChanged ? ' <span class="badge b-pending">Data berubah, perlu revisi</span>' : ''}`
-    : '<span class="small">Belum terbit — perlu status DP Diterima/Lunas &amp; driver bertugas</span>';
-
-  openModal(`
-    <h2>${esc(o.invoice_no || o.order_id)} ${badge(o.status)}</h2>
-    <dl class="det">
-      <dt>Order</dt><dd>${esc(o.order_id)}</dd>
-      <dt>Pelanggan</dt><dd>${esc(o.customer_name)} · <a href="https://wa.me/${esc(normWA(o.customer_wa))}" target="_blank" rel="noopener">${esc(o.customer_wa)}</a></dd>
-      <dt>Armada</dt><dd>${esc(o.fleet_name || '-')}</dd>
-      <dt>Jadwal</dt><dd>${esc(tglPendek(o.trip_date))}, jam ${esc(o.trip_time || '-')} · ${esc(o.pax || '-')} peserta</dd>
-      <dt>Titik jemput</dt><dd>${esc(o.pickup_note || '-')}</dd>
-      <dt>Destinasi</dt><dd style="white-space:pre-line">${esc(destText(o))}</dd>
-      <dt>Biaya</dt><dd>Armada ${rp(o.base_price)}${Number(o.cross_cost) > 0 ? ` + lintas ${rp(o.cross_cost)}` : ''}${Number(o.discount) > 0 ? ` − diskon ${rp(o.discount)}` : ''} = <b>${rp(o.total)}</b></dd>
-      ${o.payment_mode === 'dp' ? `<dt>DP</dt><dd>Diterima ${rp(o.dp_amount)}${o.dp_percent_applied ? ` (${o.dp_percent_applied}%)` : ''} lewat Midtrans.<br>
-        Tunai ditagih ke pelanggan: <b>${rp(Math.max(0, Number(o.total) - Number(o.dp_amount || 0)))}</b><br>
-        Sisa transfer admin ke driver dari DP: <b>${rp(Math.max(0, Number(o.dp_amount || 0) - Number(o.admin_cut_amount || 0)))}</b></dd>` : ''}
-      <dt>Potongan admin</dt><dd>${rp(o.admin_cut_amount)} (${esc(o.admin_cut_value)}${o.admin_cut_type === 'flat' ? ' Rp' : '%'})</dd>
-      <dt>Pendapatan driver</dt><dd>${rp(o.driver_earning)}</dd>
-      <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : 'Langsung dari web'}</dd>
-      <dt>Pembayaran</dt><dd>${esc(o.midtrans_status || '-')} · ${esc(o.payment_type || '-')} · ${esc(waktu(o.paid_at))}</dd>
-      <dt>Invoice dikirim</dt><dd>${esc(waktu(o.invoice_sent_at))}</dd>
-      <dt>Surat jalan</dt><dd>${sjInfo}</dd>
-    </dl>
-    <div class="act">
-      <div class="row2"><label>Status<select id="oStatus">${stOpts}</select></label><button class="btn" id="oSaveStatus" type="button">Simpan status</button></div>
-      <div class="row2"><label>Driver bertugas<select id="oDriver">${drOpts}</select></label><button class="btn" id="oSaveDriver" type="button">Simpan driver</button></div>
-      <div class="mbtns" style="justify-content:flex-start">
-        ${invLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(invLink)}">Salin link invoice</button><a class="btn ghost sm" href="${esc(invLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka invoice</a>` : ''}
-        ${sjLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(sjLink)}">Salin link surat</button><a class="btn ghost sm" href="${esc(sjLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka surat jalan</a>` : ''}
-        ${sjChanged ? `<button class="btn sm" type="button" id="oRevisi">Terbitkan revisi</button>` : ''}
-        ${waDriver ? `<a class="btn ghost sm" href="${esc(waDriver)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim detail ke driver (WA)</a>` : ''}
-        <button class="btn ghost sm" type="button" id="oClose">Tutup</button>
-      </div>
-    </div>`);
-  $('#oClose').addEventListener('click', closeModal);
-  $('#oSaveStatus').addEventListener('click', async () => {
-    const st = $('#oStatus').value;
-    if (st === o.status) { toast('Status tidak berubah'); return; }
-    if ((st === 'cancelled' || st === 'expired') && PAID_SET.includes(o.status) &&
-        !confirm('Pesanan ini sudah LUNAS. Mengubahnya menjadi batal TIDAK mengembalikan uang pelanggan (lakukan refund manual di dashboard Midtrans). Lanjutkan?')) return;
-    const r = await sb.from('orders').update({ status: st }).eq('id', o.id);
-    if (r.error) { toast(r.error.message, true); return; }
-    toast('Status disimpan'); closeModal(); loadOrders();
+    ${h.bio ? `<section><h2>Tentang saya</h2><div class="bio">${esc(h.bio)}</div></section>` : ''}
+    ${mobil.length ? `<section><h2>Armada</h2><div class="mobil">${mobil.map((m) => `<div class="kartu">${aman(m.foto) ? `<img src="${esc(aman(m.foto))}" alt="${esc(m.jenis)}" loading="lazy">` : '<div class="foto0"></div>'}
+      <div class="isi"><b>${esc(m.jenis)}${m.tahun ? ' · ' + esc(m.tahun) : ''}</b><div class="sub">${m.kapasitas ? esc(m.kapasitas) + ' penumpang' : ''}</div>
+      ${Number(m.harga_mulai) > 0 ? `<div class="harga">Mulai ${esc(rp(m.harga_mulai))}</div>` : ''}${m.harga_ket ? `<div class="sub">${esc(m.harga_ket)}</div>` : ''}</div></div>`).join('')}</div></section>` : ''}
+    <section id="pesan"><h2>Pemesanan</h2>
+      <form id="frm">
+        <label>Nama Anda<input id="fNama" required maxlength="80" autocomplete="name"></label>
+        <div class="dua"><label>Tanggal<input id="fTgl" type="date"></label><label>Jam jemput<input id="fJam" type="time"></label></div>
+        <div class="dua"><label>Jumlah penumpang<input id="fPax" type="number" min="1" max="40" inputmode="numeric"></label>
+          <label>Mobil<select id="fMobil"><option value="">Belum menentukan</option>${mobil.map((m) => `<option>${esc(m.jenis)}</option>`).join('')}</select></label></div>
+        <label>Tujuan wisata<input id="fTujuan" maxlength="200" placeholder="mis. Lembang, Tangkuban Perahu"></label>
+        <label>Titik jemput<input id="fJemput" maxlength="200"></label>
+        <label>Catatan<textarea id="fCat" rows="2" maxlength="400"></textarea></label>
+        <button class="btn utama" type="submit">Kirim lewat WhatsApp</button>
+        <p class="cat">Tombol ini membuka WhatsApp dengan pesan yang sudah terisi, dikirim langsung ke ${esc(h.nama_tampil)}. Harga dan pembayaran disepakati langsung dengan pengemudi.${adaBayar ? ' Cara bayar ada di bagian bawah halaman ini.' : ''}</p>
+      </form></section>
+    ${adaBayar ? `<section id="bayar"><h2>Cara bayar</h2><div id="bankList"></div>${qris ? `<div class="qris"><img src="${esc(qris)}" alt="QRIS ${esc(h.nama_tampil)}" loading="lazy"></div>` : ''}${infoBayar ? `<p class="cat" style="white-space:pre-line;margin-top:10px">${esc(infoBayar)}</p>` : ''}</section>` : ''}
+    ${tautan.length ? `<section><h2>Ikuti</h2><div class="sosial">${tautan.map(([k, l]) => `<a href="${esc(aman(sos[k]))}" target="_blank" rel="noopener">${l}</a>`).join('')}</div></section>` : ''}
+    ${h.paket === 'pro' ? '' : '<footer>Halaman mitra · dibuat dengan Tempera</footer>'}`;
+  const daftar = document.getElementById('bankList');
+  if (daftar) banks.forEach((b) => {
+    const k = document.createElement('div'); k.className = 'bank';
+    const lg = document.createElement('div'); lg.className = 'lg';
+    const lencana = () => { const sp = document.createElement('span'); sp.className = 'lc'; sp.textContent = b.bank.slice(0, 4).toUpperCase(); lg.replaceChildren(sp); };
+    if (b.logo) { const im = document.createElement('img'); im.src = b.logo; im.alt = b.bank; im.loading = 'lazy'; im.addEventListener('error', lencana); lg.appendChild(im); } else lencana();
+    const tg = document.createElement('div'); tg.className = 'tg';
+    const n1 = document.createElement('div'); n1.className = 'nm'; n1.textContent = b.bank;
+    const n2 = document.createElement('div'); n2.className = 'no'; n2.textContent = b.norek;
+    tg.append(n1, n2);
+    if (b.nama) { const n3 = document.createElement('div'); n3.className = 'an'; n3.textContent = 'a.n. ' + b.nama; tg.appendChild(n3); }
+    const sal = document.createElement('button'); sal.type = 'button'; sal.textContent = 'Salin';
+    sal.addEventListener('click', () => { try { navigator.clipboard.writeText(b.norek.replace(/[^0-9]/g, '')).then(() => { sal.textContent = 'Tersalin'; }); } catch (e) { /* abaikan */ } });
+    k.append(lg, tg, sal); daftar.appendChild(k);
   });
-  $('#oSaveDriver').addEventListener('click', async () => {
-    const v = $('#oDriver').value || null;
-    const r = await sb.from('orders').update({ assigned_driver: v }).eq('id', o.id);
-    if (r.error) { toast(r.error.message, true); return; }
-    toast('Driver disimpan'); closeModal(); loadOrders();
-  });
-  if ($('#oRevisi')) $('#oRevisi').addEventListener('click', async () => {
-    if (!confirm(`Terbitkan revisi baru surat jalan ${o.sj_no} dengan data pesanan saat ini? Revisi sebelumnya tidak berlaku lagi.`)) return;
-    const r = await sb.rpc('issue_sj_revision', { p_order: o.id });
-    if (r.error) { toast(r.error.message, true); return; }
-    o.sj_rev = r.data.sj_rev;
-    toast('Revisi diterbitkan. Link surat tidak berubah — cukup kirim ke driver bila ia belum pernah menerimanya.');
-    loadOrders();       // sinkron daftar di belakang layar
-    openOrder(o.id);    // buka ulang jendela yang sama, dengan tombol WA siap ditekan
+  const tulis = (teks) => `https://wa.me/${wa}?text=${encodeURIComponent(teks)}`;
+  document.getElementById('btnWA').href = tulis(`Halo ${h.nama_tampil}, saya mau tanya sewa mobil.`);
+  document.getElementById('btnWA').target = '_blank'; document.getElementById('btnWA').rel = 'noopener';
+  const tgl = document.getElementById('fTgl'); tgl.min = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
+  document.getElementById('frm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const v = (id) => document.getElementById(id).value.trim();
+    const baris = [`Halo ${h.nama_tampil}, saya mau memesan:`, `Nama: ${v('fNama')}`];
+    if (v('fTgl')) baris.push(`Tanggal: ${v('fTgl')}${v('fJam') ? ', jam ' + v('fJam') : ''}`);
+    if (v('fPax')) baris.push(`Penumpang: ${v('fPax')} orang`);
+    if (v('fMobil')) baris.push(`Mobil: ${v('fMobil')}`);
+    if (v('fTujuan')) baris.push(`Tujuan: ${v('fTujuan')}`);
+    if (v('fJemput')) baris.push(`Jemput di: ${v('fJemput')}`);
+    if (v('fCat')) baris.push(`Catatan: ${v('fCat')}`);
+    window.open(tulis(baris.join('\n')), '_blank', 'noopener');
   });
 }
-
-/* ---------- LAPORAN ---------- */
-VIEWS.laporan = async function () {
-  $('#view').innerHTML = `
-    <h2>Laporan</h2>
-    <div class="bar"><select id="rPer">
-      <option value="7">7 hari terakhir</option><option value="30" selected>30 hari terakhir</option>
-      <option value="bulan">Bulan ini</option><option value="all">Semua waktu</option></select></div>
-    <div id="rOut"><div class="empty">Memuat…</div></div>`;
-  $('#rPer').addEventListener('change', loadLaporan);
-  await loadLaporan();
-};
-async function loadLaporan() {
-  const per = $('#rPer').value;
-  let q = sb.from('orders').select('*').in('status', PAID_SET).limit(3000);
-  const now = new Date();
-  if (per === '7' || per === '30') q = q.gte('paid_at', new Date(now.getTime() - Number(per) * 86400000).toISOString());
-  if (per === 'bulan') q = q.gte('paid_at', new Date(now.getFullYear(), now.getMonth(), 1).toISOString());
-  const [o, f] = await Promise.all([q, sb.from('v_funnel').select('*')]);
-  if (o.error) { $('#rOut').innerHTML = `<div class="empty">Gagal memuat: ${esc(o.error.message)}</div>`; return; }
-  const rows = o.data || [];
-  const sum = (arr, k) => arr.reduce((a, x) => a + (Number(x[k]) || 0), 0);
-  const byDrv = {};
-  rows.forEach((x) => { const k = earner(x) || '(belum ditentukan)'; (byDrv[k] = byDrv[k] || []).push(x); });
-  const drvRows = Object.keys(byDrv).map((k) => `<tr><td>${esc(k === '(belum ditentukan)' ? k : driverName(k))}</td><td class="num">${byDrv[k].length}</td><td class="num">${rp(sum(byDrv[k], 'total'))}</td><td class="num">${rp(sum(byDrv[k], 'driver_earning'))}</td></tr>`).join('');
-  const fun = (f.data || []).map((x) => `<tr><td>${esc(x.sumber === 'direct' ? 'Langsung dari web' : driverName(x.sumber))}</td><td class="num">${x.visit}</td><td class="num">${x.scan}</td><td class="num">${x.order_dibuat}</td><td class="num">${x.closing}</td><td class="num">${rp(x.omzet)}</td></tr>`).join('');
-  $('#rOut').innerHTML = `
-    <div class="stats">
-      <div class="stat"><div class="v">${rows.length}</div><div class="l">Pesanan lunas</div></div>
-      <div class="stat"><div class="v">${rp(sum(rows, 'total'))}</div><div class="l">Omzet</div></div>
-      <div class="stat"><div class="v">${rp(sum(rows, 'admin_cut_amount'))}</div><div class="l">Potongan admin</div></div>
-      <div class="stat"><div class="v">${rp(sum(rows, 'driver_earning'))}</div><div class="l">Pendapatan driver</div></div>
-    </div>
-    <div class="card" style="margin-bottom:14px"><h2>Per pembawa pesanan</h2><div class="tablewrap"><table>
-      <thead><tr><th>Pembawa pesanan</th><th class="num">Trip</th><th class="num">Omzet</th><th class="num">Pendapatan</th></tr></thead>
-      <tbody>${drvRows || '<tr><td colspan="4" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
-      <div class="help" style="margin-top:8px">Pendapatan dicatat untuk yang membawa pesanan (pemilik link/QR). Bila driver itu melemparkan trip ke orang lain, pendapatan tetap di sini &mdash; pembagian dengan pelaksana adalah urusan mereka sendiri.</div></div>
-    <div class="card"><h2>Kunjungan → closing (semua waktu)</h2><div class="tablewrap"><table>
-      <thead><tr><th>Sumber</th><th class="num">Visit</th><th class="num">Scan</th><th class="num">Order dibuat</th><th class="num">Closing</th><th class="num">Omzet</th></tr></thead>
-      <tbody>${fun || '<tr><td colspan="6" class="empty">Belum ada data.</td></tr>'}</tbody></table></div>
-      <div class="help" style="margin-top:8px">Visit = hanya berkunjung. Scan = lewat link/QR driver. Closing = pesanan yang sudah dibayar.</div></div>`;
-}
-
-/* ---------- KAS ---------- */
-const KAS_JENIS = { setoran_driver: 'Setoran driver', komisi_admin: 'Komisi admin (otomatis)', pengeluaran: 'Pengeluaran', lainnya: 'Lainnya' };
-let KAS_ROWS = [];
-VIEWS.kas = async function () {
-  const { data, error } = await sb.from('kas_transaksi').select('*').order('tanggal', { ascending: true }).order('created_at', { ascending: true });
-  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
-  let saldo = 0;
-  KAS_ROWS = (data || []).map((r) => { saldo += Number(r.jumlah); return { ...r, saldoSaat: saldo }; }).reverse();
-  const totalMasuk = (data || []).filter((r) => r.jumlah > 0).reduce((a, r) => a + Number(r.jumlah), 0);
-  const totalKeluar = (data || []).filter((r) => r.jumlah < 0).reduce((a, r) => a + Number(r.jumlah), 0);
-
-  const kasLink = (S.siteUrl && S.kasToken) ? `${S.siteUrl}/kas.html?t=${S.kasToken}` : '';
-
-  $('#view').innerHTML = `
-    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Kas</h2><button class="btn" id="btnKasNew" type="button">+ Tambah</button></div>
-    <div class="stats">
-      <div class="stat"><div class="v">${rp(saldo)}</div><div class="l">Saldo kas saat ini</div></div>
-      <div class="stat"><div class="v">${rp(totalMasuk)}</div><div class="l">Total masuk</div></div>
-      <div class="stat"><div class="v">${rp(Math.abs(totalKeluar))}</div><div class="l">Total keluar</div></div>
-      <div class="stat"><div class="v">${KAS_ROWS.length}</div><div class="l">Jumlah transaksi</div></div>
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <h2>Link kas untuk anggota</h2>
-      <div class="mbtns" style="justify-content:flex-start">
-        ${kasLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(kasLink)}">Salin link</button><a class="btn ghost sm" href="${esc(kasLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka</a>` : '<span class="small">Alamat situs belum diisi di Pengaturan (site_url)</span>'}
-        <button class="btn ghost sm" type="button" id="btnKasRotate">Ganti token</button>
-      </div>
-      <div class="help" style="margin-top:8px">Satu link sama untuk semua anggota &mdash; semua orang melihat pembukuan yang sama persis. Ganti token akan langsung mematikan link lama.</div>
-    </div>
-    <div class="card"><div class="tablewrap"><table>
-      <thead><tr><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th class="num">Jumlah</th><th class="num">Saldo</th></tr></thead>
-      <tbody>${KAS_ROWS.map((r, i) => `<tr>
-        <td class="small">${esc(tglPendek(r.tanggal))}</td>
-        <td>${esc(KAS_JENIS[r.jenis] || r.jenis)}${r.driver_slug ? `<div class="small">${esc(driverName(r.driver_slug))}</div>` : ''}</td>
-        <td>${esc(r.keterangan || '-')}</td>
-        <td class="num" style="color:${r.jumlah < 0 ? 'var(--danger)' : '#166534'}">${r.jumlah < 0 ? '- ' : '+ '}${rp(Math.abs(r.jumlah))}</td>
-        <td class="num">${rp(r.saldoSaat)}</td>
-      </tr>`).join('') || `<tr><td colspan="5" class="empty">Belum ada transaksi.</td></tr>`}</tbody>
-    </table></div></div>`;
-
-  $('#btnKasNew').addEventListener('click', openKasForm);
-  $('#btnKasRotate').addEventListener('click', async () => {
-    if (!confirm('Ganti token link kas? Link lama akan langsung berhenti berfungsi, jadi anggota perlu link barunya.')) return;
-    const r = await sb.rpc('rotate_kas_token');
-    if (r.error) { toast(r.error.message, true); return; }
-    S.kasToken = r.data;
-    toast('Token diganti. Bagikan link kas yang baru ke anggota.');
-    nav('kas');
-  });
-};
-
-function openKasForm() {
-  const drOpts = S.drivers.map((d) => `<option value="${esc(d.slug)}">${esc(d.name)}</option>`).join('');
-  const today = new Date().toISOString().slice(0, 10);
-  openModal(`
-    <h2>Tambah transaksi kas</h2>
-    <div class="fgrid">
-      <div><label>Jenis<select id="kJenis">
-        <option value="setoran_driver">Setoran driver (masuk)</option>
-        <option value="pengeluaran">Pengeluaran (keluar)</option>
-        <option value="lainnya">Lainnya (masuk)</option>
-      </select></label></div>
-      <div><label>Tanggal<input id="kTanggal" type="date" value="${today}"></label></div>
-      <div id="kDriverWrap"><label>Driver<select id="kDriver">${drOpts}</select></label></div>
-      <div><label>Jumlah (Rp)<input id="kJumlah" type="number" step="any" placeholder="mis. 50000"></label></div>
-      <div class="full"><label>Keterangan<input id="kKet" type="text" placeholder="mis. Setoran kas bulan Oktober"></label></div>
-    </div>
-    <div class="mbtns">
-      <button class="btn ghost" id="kCancel" type="button">Batal</button>
-      <button class="btn" id="kSave" type="button">Simpan</button>
-    </div>`);
-  const jenisSel = $('#kJenis');
-  const toggleDriver = () => { $('#kDriverWrap').style.display = jenisSel.value === 'setoran_driver' ? '' : 'none'; };
-  jenisSel.addEventListener('change', toggleDriver); toggleDriver();
-  $('#kCancel').addEventListener('click', closeModal);
-  $('#kSave').addEventListener('click', async () => {
-    const jenis = jenisSel.value;
-    const tanggal = $('#kTanggal').value || today;
-    let jumlah = Number($('#kJumlah').value);
-    const keterangan = $('#kKet').value.trim();
-    const driver_slug = jenis === 'setoran_driver' ? ($('#kDriver').value || null) : null;
-    if (!jumlah || jumlah <= 0) { toast('Jumlah harus lebih dari 0', true); return; }
-    if (jenis === 'setoran_driver' && !driver_slug) { toast('Pilih drivernya', true); return; }
-    if (jenis === 'pengeluaran') jumlah = -Math.abs(jumlah);
-    const r = await sb.from('kas_transaksi').insert({ jenis, tanggal, jumlah, keterangan: keterangan || null, driver_slug });
-    if (r.error) { toast(r.error.message, true); return; }
-    toast('Tersimpan'); closeModal(); nav('kas');
-  });
-}
-
-/* ---------- CRUD umum ---------- */
-const PLACEHOLDERS = ['{nama}', '{customer_wa}', '{order_id}', '{invoice_no}', '{link_invoice}', '{armada}', '{tanggal}', '{jam}', '{peserta}', '{jemput}', '{destinasi}', '{rincian}', '{total}', '{potongan}', '{pendapatan_driver}', '{sumber}', '{driver_name}', '{driver_phone}'];
-
-const RES = {
-  armada: {
-    table: 'fleet', title: 'Armada', pk: 'id', order: { col: 'sort_order', asc: true },
-    defaults: { is_active: true, sort_order: 0 },
-    cols: [{ key: 'name', label: 'Armada' }, { key: 'price', label: 'Harga', num: true, render: (r) => rp(r.price) },
-      { key: 'capacity_comfort', label: 'Kapasitas', render: (r) => `${r.capacity_comfort} nyaman / max ${r.capacity_max}` },
-      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active ? 'Ya' : 'Tidak' }],
-    fields: [
-      { key: 'id', label: 'ID (huruf kecil, tanpa spasi)', type: 'text', required: true, createOnly: true },
-      { key: 'name', label: 'Nama lengkap', type: 'text', required: true },
-      { key: 'short_name', label: 'Nama pendek', type: 'text', required: true },
-      { key: 'badge', label: 'Label (mis. Best Seller)', type: 'text' },
-      { key: 'price', label: 'Harga sewa 12 jam (Rp)', type: 'number', required: true },
-      { key: 'capacity_comfort', label: 'Kapasitas nyaman', type: 'number', required: true },
-      { key: 'capacity_max', label: 'Kapasitas maksimal', type: 'number', required: true },
-      { key: 'baggage', label: 'Info bagasi', type: 'text' },
-      { key: 'max_info', label: 'Info kapasitas maks', type: 'text' },
-      { key: 'note', label: 'Catatan (awali ⚠ / ✅ / ℹ)', type: 'text', full: true },
-      { key: 'images', label: 'Foto', type: 'array', full: true, help: 'Nama file di folder images situs, pisahkan dengan koma. Boleh juga alamat penuh https://...' },
-      { key: 'sort_order', label: 'Urutan tampil', type: 'number' },
-      { key: 'is_active', label: 'Tampil di web', type: 'bool' }]
-  },
-  banner: {
-    table: 'banners', title: 'Banner', pk: 'id', order: { col: 'sort_order', asc: true }, canDelete: true,
-    defaults: { is_active: true, sort_order: 0 },
-    cols: [{ key: 'title', label: 'Judul' },
-      { key: 'starts_at', label: 'Tayang', render: (r) => `${r.starts_at ? waktu(r.starts_at) : 'langsung'} → ${r.ends_at ? waktu(r.ends_at) : 'tanpa batas'}` },
-      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active ? 'Ya' : 'Tidak' }],
-    fields: [
-      { key: 'title', label: 'Judul', type: 'text', required: true, full: true },
-      { key: 'subtitle', label: 'Teks singkat', type: 'text', full: true },
-      { key: 'image_url', label: 'Gambar (nama file di folder images, atau alamat https://...)', type: 'text', full: true },
-      { key: 'button_text', label: 'Teks tombol', type: 'text' },
-      { key: 'button_url', label: 'Tujuan tombol (alamat / #pesan)', type: 'text' },
-      { key: 'starts_at', label: 'Mulai tayang', type: 'datetime' },
-      { key: 'ends_at', label: 'Selesai tayang', type: 'datetime' },
-      { key: 'sort_order', label: 'Urutan', type: 'number' },
-      { key: 'is_active', label: 'Aktif', type: 'bool' }]
-  },
-  driver: {
-    table: 'drivers', title: 'Driver', pk: 'id', order: { col: 'driver_code', asc: true },
-    defaults: { is_active: true },
-    cols: [
-      { key: 'driver_code', label: 'ID', render: (r) => r.driver_code || '-' },
-      { key: 'name', label: 'Nama' },
-      { key: 'phone', label: 'WA', render: (r) => r.phone ? `${esc(r.phone)} <a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none;margin-left:4px">Kirim pesan</a>` : '-' },
-      { key: 'plate', label: 'Plat', render: (r) => r.plate || '-' },
-      { key: 'is_active', label: 'Aktif', render: (r) => r.is_active === false ? 'Tidak' : 'Ya' },
-      { key: 'ref', label: 'Link referral', render: (r) => { const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : ''; return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u)}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`; } },
-      { key: 'card', label: 'ID Card', render: (r) => {
-          const tok = S.cards[r.slug];
-          const u = (S.siteUrl && tok) ? `${S.siteUrl}/kartu.html?t=${tok}` : '';
-          return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin link</button> <button class="btn ghost sm" type="button" data-rotate="${esc(r.slug)}">Ganti token</button>`;
-        } },
-      { key: 'cetak', label: 'Kartu Cetak', render: (r) => {
-          if (!S.siteUrl) return '<span class="small">Isi site_url dulu</span>';
-          if (!r.driver_code || !S.cards[r.slug]) return '<span class="small">Kode ID/token belum ada</span>';
-          return `<button class="btn ghost sm" type="button" data-print="${esc(r.slug)}">Cetak kartu</button>`;
-        } }],
-    fields: [
-      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true, createOnly: true },
-      { key: 'name', label: 'Nama', type: 'text', required: true },
-      { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
-      { key: 'plate', label: 'Plat nomor kendaraan', type: 'text' },
-      { key: 'base', label: 'Basis / kota', type: 'text' },
-      { key: 'vehicle_type', label: 'Jenis kendaraan', type: 'text' },
-      { key: 'motto', label: 'Motto', type: 'text' },
-      { key: 'photo_url', label: 'Foto (pilih dari galeri HP)', type: 'photo', full: true },
-      { key: 'is_active', label: 'Aktif', type: 'bool' }],
-    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama dan kartu cetak yang sudah dibuat.</div>'
-  },
-  template: {
-    table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
-    cols: [{ key: 'id', label: 'ID' }, { key: 'title', label: 'Untuk' }, { key: 'updated_at', label: 'Diubah', render: (r) => waktu(r.updated_at) }],
-    fields: [
-      { key: 'title', label: 'Judul', type: 'text', full: true },
-      { key: 'template_text', label: 'Isi pesan', type: 'textarea', rows: 16, full: true }],
-    note: `<div class="help">Penanda yang bisa dipakai (diisi otomatis saat pesan dikirim):</div><div class="chips">${PLACEHOLDERS.map((p) => `<span class="chip">${p}</span>`).join('')}</div><div class="help">Template yang dipakai sistem: <b>order_paid_customer</b>, <b>order_paid_admin</b>, <b>order_paid_driver</b>. Template lain (admin_lunas, driver_lunas) adalah sisa versi lama.</div>`
-  }
-};
-for (const key of Object.keys(RES)) VIEWS[key] = () => viewCrud(key);
-
-// Tombol "Cetak kartu": buka kartu-anggota.html dengan data driver + kode tanda tangan tetap,
-// supaya QR di kartu bisa diverifikasi (lihat function verifikasi, jenis "kartu cetak").
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-print]');
-  if (!b) return;
-  const slug = b.dataset.print;
-  const r = S.drivers.find((x) => x.slug === slug);
-  const tok = S.cards[slug];
-  if (!r || !tok || !r.driver_code || !S.siteUrl) { toast('Data driver, kode ID, token kartu, atau alamat situs belum lengkap', true); return; }
-  b.disabled = true;
-  try {
-    const k = (await hmacHex(tok, `${r.driver_code}.cetak`)).slice(0, 20);
-    const p = new URLSearchParams({ nama: r.name || '', id: r.driver_code, telp: r.phone || '', k });
-    if (r.photo_url) p.set('foto', /^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl}/${String(r.photo_url).replace(/^\/+/, '')}`);
-    window.open(`${S.siteUrl}/kartu-anggota.html?${p.toString()}`, '_blank');
-  } finally { b.disabled = false; }
-});
-
-let ROWS = {};
-async function viewCrud(key) {
-  const R = RES[key];
-  const { data, error } = await sb.from(R.table).select('*').order(R.order.col, { ascending: R.order.asc });
-  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
-  ROWS[key] = data || [];
-  $('#view').innerHTML = `
-    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">${esc(R.title)}</h2>${R.noCreate ? '' : '<button class="btn" id="btnNew" type="button">+ Tambah</button>'}</div>
-    <div class="card"><div class="tablewrap"><table>
-      <thead><tr>${R.cols.map((c) => `<th class="${c.num ? 'num' : ''}">${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
-      <tbody>${ROWS[key].map((r, i) => `<tr>${R.cols.map((c) => `<td class="${c.num ? 'num' : ''}">${c.render ? c.render(r) : esc(r[c.key])}</td>`).join('')}<td class="num"><button class="btn ghost sm" type="button" data-i="${i}">Ubah</button></td></tr>`).join('') || `<tr><td colspan="${R.cols.length + 1}" class="empty">Belum ada data.</td></tr>`}</tbody>
-    </table></div></div>`;
-  if (!R.noCreate) $('#btnNew').addEventListener('click', () => openForm(key, null));
-  $$('#view button[data-i]').forEach((b) => b.addEventListener('click', () => openForm(key, ROWS[key][Number(b.dataset.i)])));
-}
-function fieldHTML(f, val, disabled) {
-  const id = 'f_' + f.key, cls = f.full ? ' class="full"' : '';
-  if (f.type === 'photo') {
-    const prev = val ? `<img src="${esc(val)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">` : '';
-    return `<div${cls}><label>${esc(f.label)}</label>
-      <div id="${id}_prev">${prev}</div>
-      <input type="file" id="${id}_file" accept="image/*">
-      <input type="hidden" id="${id}" value="${esc(val || '')}">
-      <div class="help" id="${id}_status">&nbsp;</div></div>`;
-  }
-  if (f.type === 'bool') return `<div${cls}><label class="chk"><input type="checkbox" id="${id}" ${val ? 'checked' : ''}> ${esc(f.label)}</label></div>`;
-  if (f.type === 'textarea') return `<div${cls}><label>${esc(f.label)}<textarea id="${id}" rows="${f.rows || 4}">${esc(val == null ? '' : val)}</textarea></label></div>`;
-  const type = f.type === 'number' ? 'number' : (f.type === 'datetime' ? 'datetime-local' : 'text');
-  const v = f.type === 'array' ? (Array.isArray(val) ? val.join(', ') : '') : (f.type === 'datetime' ? isoToLocal(val) : (val == null ? '' : val));
-  return `<div${cls}><label>${esc(f.label)}${f.required ? ' *' : ''}<input id="${id}" type="${type}" value="${esc(v)}" ${f.type === 'number' ? 'step="any"' : ''} ${disabled ? 'disabled' : ''}></label>${f.help ? `<div class="help">${esc(f.help)}</div>` : ''}</div>`;
-}
-function readField(f, required) {
-  const el = $('#f_' + f.key);
-  if (f.type === 'bool') return el.checked;
-  const v = el.value.trim();
-  if (f.type === 'number') return v === '' ? (required ? null : 0) : Number(v);
-  if (f.type === 'array') return v ? v.split(',').map((x) => x.trim()).filter(Boolean) : [];
-  if (f.type === 'datetime') return v ? new Date(v).toISOString() : null;
-  return v === '' ? null : v;
-}
-function openForm(key, row) {
-  const R = RES[key], isNew = !row;
-  const src = row || R.defaults || {};
-  openModal(`
-    <h2>${isNew ? 'Tambah' : 'Ubah'} ${esc(R.title)}</h2>
-    ${R.note || ''}
-    <div class="fgrid">${R.fields.map((f) => fieldHTML(f, src[f.key], f.createOnly && !isNew)).join('')}</div>
-    <div class="mbtns">
-      ${(!isNew && R.canDelete) ? '<button class="btn danger" id="mDel" type="button">Hapus</button>' : ''}
-      <button class="btn ghost" id="mCancel" type="button">Batal</button>
-      <button class="btn" id="mSave" type="button">Simpan</button>
-    </div>`);
-  if (key === 'driver' && isNew) {
-    const nameEl = $('#f_name'), slugEl = $('#f_slug');
-    let slugTouched = false;
-    slugEl.addEventListener('input', () => { slugTouched = true; });
-    nameEl.addEventListener('input', () => {
-      if (slugTouched) return;
-      slugEl.value = nameEl.value.toLowerCase().trim()
-        .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-    });
-  }
-  const photoField = R.fields.find((f) => f.type === 'photo');
-  if (photoField) {
-    const pid = 'f_' + photoField.key;
-    const fileEl = $('#' + pid + '_file'), hiddenEl = $('#' + pid), statusEl = $('#' + pid + '_status');
-    fileEl.addEventListener('change', async () => {
-      const file = fileEl.files[0]; if (!file) return;
-      statusEl.textContent = 'Mengunggah…';
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const up = await sb.storage.from('driver-photos').upload(path, file, { upsert: false });
-      if (up.error) { statusEl.textContent = 'Gagal unggah: ' + up.error.message; return; }
-      const pub = sb.storage.from('driver-photos').getPublicUrl(path).data.publicUrl;
-      hiddenEl.value = pub;
-      $('#' + pid + '_prev').innerHTML = `<img src="${esc(pub)}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;margin-bottom:8px">`;
-      statusEl.textContent = 'Terunggah';
-    });
-  }
-  $('#mCancel').addEventListener('click', closeModal);
-  $('#mSave').addEventListener('click', () => saveForm(key, row));
-  if ($('#mDel')) $('#mDel').addEventListener('click', async () => {
-    if (!confirm('Hapus data ini?')) return;
-    const r = await sb.from(R.table).delete().eq(R.pk, row[R.pk]);
-    if (r.error) { toast(r.error.message, true); return; }
-    toast('Dihapus'); closeModal(); nav(key);
-  });
-}
-async function saveForm(key, row) {
-  const R = RES[key], isNew = !row, payload = {};
-  for (const f of R.fields) {
-    if (f.createOnly && !isNew) continue;
-    const v = readField(f, f.required);
-    if (f.required && (v === null || v === '' || (Array.isArray(v) && !v.length))) { toast(`${f.label} wajib diisi`, true); return; }
-    payload[f.key] = v;
-  }
-  if (R.stamp) payload.updated_at = new Date().toISOString();
-  const btn = $('#mSave'); btn.disabled = true;
-  const res = isNew ? await sb.from(R.table).insert(payload) : await sb.from(R.table).update(payload).eq(R.pk, row[R.pk]);
-  btn.disabled = false;
-  if (res.error) { toast(res.error.message, true); return; }
-  toast('Tersimpan'); closeModal();
-  if (key === 'driver') await loadShared();
-  nav(key);
-}
-
-/* ---------- PERSETUJUAN DRIVER (dari daftar-driver.html) ---------- */
-let PENDING_ROWS = [];
-function pendBadge(st) {
-  const map = { pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak' };
-  const cls = st === 'approved' ? 'b-paid' : st === 'rejected' ? 'b-cancelled' : 'b-pending';
-  return `<span class="badge ${cls}">${esc(map[st] || st)}</span>`;
-}
-VIEWS.persetujuan = async function () {
-  $('#view').innerHTML = `
-    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Persetujuan Driver</h2>
-      <select id="pgStatus"><option value="pending" selected>Menunggu</option><option value="approved">Disetujui</option><option value="rejected">Ditolak</option><option value="">Semua</option></select>
-    </div>
-    <div class="card" id="pgList"></div>`;
-  $('#pgStatus').addEventListener('change', loadPending);
-  await loadPending();
-};
-async function loadPending() {
-  const st = $('#pgStatus').value;
-  let q = sb.from('drivers_pending').select('*').order('created_at', { ascending: false }).limit(200);
-  if (st) q = q.eq('status', st);
-  const { data, error } = await q;
-  if (error) { $('#pgList').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
-  PENDING_ROWS = data || [];
-  renderPending();
-}
-function renderPending() {
-  if (!PENDING_ROWS.length) { $('#pgList').innerHTML = '<div class="empty">Tidak ada data.</div>'; return; }
-  $('#pgList').innerHTML = `<div class="tablewrap"><table>
-    <thead><tr><th>Daftar</th><th>Nama</th><th>WA</th><th>Kendaraan</th><th>Foto</th><th>Status</th><th></th></tr></thead>
-    <tbody>${PENDING_ROWS.map((p) => `<tr>
-      <td class="small">${esc(waktu(p.created_at))}</td>
-      <td>${esc(p.name)}</td>
-      <td>${esc(p.phone)} <a class="small" href="https://wa.me/${esc(normWA(p.phone))}" target="_blank" rel="noopener">chat</a></td>
-      <td>${esc(p.vehicle_type || '-')}${p.plate ? `<div class="small">${esc(p.plate)}</div>` : ''}</td>
-      <td>${p.photo_url ? `<img src="${esc(p.photo_url)}" style="width:40px;height:40px;border-radius:50%;object-fit:cover">` : '-'}</td>
-      <td>${pendBadge(p.status)}</td>
-      <td class="num">${p.status === 'pending' ? `<button class="btn sm" type="button" data-approve="${p.id}">Setujui</button> <button class="btn ghost sm" type="button" data-reject="${p.id}">Tolak</button>` : ''}</td>
-    </tr>`).join('')}</tbody></table></div>`;
-}
-document.addEventListener('click', (e) => {
-  const b = e.target.closest('[data-approve]');
-  if (!b) return;
-  const p = PENDING_ROWS.find((x) => String(x.id) === b.dataset.approve);
-  if (p) openApproveForm(p);
-});
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-reject]');
-  if (!b) return;
-  if (!confirm('Tolak pendaftaran ini? Data pendaftar tetap disimpan sebagai riwayat, tapi tidak dibuatkan akun driver.')) return;
-  const id = b.dataset.reject;
-  const r = await sb.from('drivers_pending').update({ status: 'rejected', reviewed_at: new Date().toISOString() }).eq('id', id);
-  if (r.error) { toast(r.error.message, true); return; }
-  toast('Pendaftaran ditolak'); nav('persetujuan');
-});
-function openApproveForm(p) {
-  const slugAwal = String(p.name || '').toLowerCase().trim()
-    .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-  openModal(`
-    <h2>Setujui: ${esc(p.name)}</h2>
-    <div class="help">Cek dan perbaiki data (terutama nomor WA) sebelum disimpan sebagai driver resmi. Kode ID dibuat otomatis.</div>
-    <div class="fgrid">
-      <div><label>Nama<input id="apName" value="${esc(p.name)}"></label></div>
-      <div><label>Slug (untuk link ?r=slug)<input id="apSlug" value="${esc(slugAwal)}"></label></div>
-      <div><label>Nomor WA<input id="apPhone" value="${esc(p.phone)}"></label></div>
-      <div><label>Plat nomor<input id="apPlate" value="${esc(p.plate || '')}"></label></div>
-      <div class="full"><label>Jenis kendaraan<input id="apVehicle" value="${esc(p.vehicle_type || '')}"></label></div>
-    </div>
-    <div class="mbtns">
-      <button class="btn ghost" id="apCancel" type="button">Batal</button>
-      <button class="btn" id="apSave" type="button">Simpan sebagai driver</button>
-    </div>`);
-  $('#apCancel').addEventListener('click', closeModal);
-  $('#apSave').addEventListener('click', async () => {
-    const name = $('#apName').value.trim();
-    const slug = $('#apSlug').value.trim().toLowerCase();
-    const phone = $('#apPhone').value.trim();
-    const plate = $('#apPlate').value.trim();
-    const vehicle_type = $('#apVehicle').value.trim();
-    if (!name || !slug || !phone) { toast('Nama, slug, dan nomor WA wajib diisi', true); return; }
-    const btn = $('#apSave'); btn.disabled = true;
-    const ins = await sb.from('drivers').insert({
-      slug, name, phone, plate: plate || null, vehicle_type: vehicle_type || null,
-      photo_url: p.photo_url || null, is_active: true
-    });
-    if (ins.error) { toast(ins.error.message, true); btn.disabled = false; return; }
-    try { await sb.rpc('rotate_driver_card', { p_slug: slug }); }
-    catch (_e) { toast('Driver dibuat, tapi token kartu ID gagal dibuat otomatis. Ketuk "Ganti token" di tabel Driver nanti.', true); }
-    const upd = await sb.from('drivers_pending').update({ status: 'approved', reviewed_at: new Date().toISOString() }).eq('id', p.id);
-    if (upd.error) toast('Driver tersimpan, tapi status pendaftaran gagal ditandai disetujui: ' + upd.error.message, true);
-    else toast('Driver baru disimpan');
-    closeModal();
-    await loadShared();
-    nav('persetujuan');
-  });
-}
-
-/* ---------- PENGATURAN ---------- */
-VIEWS.pengaturan = async function () {
-  const { data, error } = await sb.from('app_settings').select('*').order('key');
-  if (error) { $('#view').innerHTML = `<div class="empty">Gagal memuat: ${esc(error.message)}</div>`; return; }
-  $('#view').innerHTML = `<h2>Pengaturan</h2><div class="card">${(data || []).map((r) => `
-    <div class="setrow">
-      <div><b>${esc(r.label || r.key)}</b><small>${esc(r.key)}${r.is_public ? ' · tampil ke publik' : ''}</small></div>
-      <input data-key="${esc(r.key)}" value="${esc(r.value)}">
-      <button class="btn sm" type="button" data-save="${esc(r.key)}">Simpan</button>
-    </div>`).join('')}</div>
-    <div class="help" style="margin-top:10px">Potongan admin: isi <b>percent</b> atau <b>flat</b> di "Jenis potongan". Nomor admin diawali 62 tanpa spasi. Perubahan berlaku untuk pesanan berikutnya; pesanan lama tidak berubah.</div>`;
-  $$('#view button[data-save]').forEach((b) => b.addEventListener('click', async () => {
-    const k = b.dataset.save, v = $(`#view input[data-key="${k}"]`).value.trim();
-    const r = await sb.from('app_settings').update({ value: v }).eq('key', k);
-    if (r.error) { toast(r.error.message, true); return; }
-    if (k === 'site_url') S.siteUrl = v.replace(/\/+$/, '');
-    toast('Tersimpan');
-  }));
-};
-
-/* ---------- mulai ---------- */
-(async function boot() {
-  const { data } = await sb.auth.getSession();
-  if (data && data.session) await enter(); else showLogin();
-})();
-
-/* ---------- WA GAGAL (tabel wa_log, dicatat midtrans-webhook v4) ---------- */
-// Tampil di atas halaman Pesanan. Hanya muncul kalau ada WA gagal yang belum ditangani.
-const _pesananAsli = VIEWS.pesanan;
-VIEWS.pesanan = async function () {
-  const jalan = _pesananAsli();                 // halaman Pesanan sudah tergambar di sini
-  $('#view').insertAdjacentHTML('afterbegin', '<div id="waFail"></div>');
-  loadWaFail();
-  await jalan;
-};
-const PENERIMA_WA = { pelanggan: 'Pelanggan', driver: 'Driver', admin: 'Admin' };
-async function loadWaFail() {
-  const box = $('#waFail'); if (!box) return;
-  const { data, error } = await sb.from('wa_log')
-    .select('id,created_at,order_id,recipient,target,reason,message')
-    .eq('ok', false).is('resolved_at', null)
-    .order('created_at', { ascending: false }).limit(50);
-  if (error || !data || !data.length) { box.innerHTML = ''; return; }
-  box.innerHTML = `<div class="card" style="border-left:4px solid var(--danger);background:#fef2f2;margin-bottom:14px">
-    <h2 style="color:var(--danger);margin-bottom:6px">⚠️ ${data.length} WA gagal terkirim</h2>
-    <div class="help" style="margin:0 0 10px">Tekan <b>Kirim manual</b> untuk membuka WhatsApp dengan pesan yang sama, lalu <b>Tandai selesai</b>.</div>
-    ${data.map((w) => {
-      const nomor = String(w.target || '').replace(/\D/g, '');
-      const link = nomor ? `https://wa.me/${nomor}?text=${encodeURIComponent(w.message || '')}` : '';
-      return `<div style="border-top:1px solid #fecaca;padding:10px 0">
-        <div><b>${esc(PENERIMA_WA[w.recipient] || w.recipient || '-')}</b> · ${esc(w.order_id || '-')} <span class="small">· ${esc(waktu(w.created_at))}</span></div>
-        <div class="small">Nomor: ${esc(nomor || '-')} · Alasan: ${esc(w.reason || '-')}</div>
-        <div class="mbtns" style="justify-content:flex-start;margin-top:6px">
-          ${link ? `<a class="btn sm" href="${esc(link)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim manual</a>` : ''}
-          <button class="btn ghost sm" type="button" data-wa-done="${esc(w.id)}">Tandai selesai</button>
-        </div></div>`;
-    }).join('')}
-  </div>`;
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-wa-done]');
-  if (!b) return;
-  b.disabled = true;
-  const r = await sb.from('wa_log').update({ resolved_at: new Date().toISOString() }).eq('id', b.dataset.waDone);
-  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
-  toast('Ditandai selesai'); loadWaFail();
-});
-/* ---------- AKUN MITRA (dashboard driver, mitra.html) ---------- */
-// Menambah kolom "Akun Mitra" di tab Driver: status, tombol Kirim info (WA ke driver), dan Reset.
-S.mitra = {};
-RES.driver.cols.push({ key: 'mitra', label: 'Akun Mitra', render: (r) => {
-  const m = S.mitra[r.slug];
-  const link = S.siteUrl ? `${S.siteUrl}/mitra.html` : '';
-  const pesanInfo = `Halo ${r.name}, dashboard Mitra Tempera sudah bisa dipakai:\n${link}\n\nKode ID kamu: ${r.driver_code || '-'}\nPilih "Daftar / aktifkan akun", masukkan Kode ID dan nomor WA ini, lalu buat PIN sendiri. Kode verifikasi akan dikirim ke WA ini.`;
-  const info = (link && r.phone && r.driver_code)
-    ? `<a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}?text=${encodeURIComponent(pesanInfo)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim info</a>` : '';
-  if (!m || !m.aktif) return `<span class="badge">Belum daftar</span> ${info}`;
-  const st = m.terkunci ? '<span class="badge b-cancelled">Terkunci 15 mnt</span>' : '<span class="badge b-paid">Aktif</span>';
-  return `${st}<div class="small">${esc(m.sesi)} HP masuk</div><button class="btn ghost sm" type="button" data-mitra-reset="${esc(r.slug)}" data-nama="${esc(r.name)}">Reset</button>`;
-} });
-const _driverAsli = VIEWS.driver;
-VIEWS.driver = async function () {
-  const r = await sb.rpc('admin_mitra_status');
-  S.mitra = {};
-  if (!r.error) (r.data || []).forEach((x) => { S.mitra[x.driver_slug] = x; });
-  return _driverAsli();
-};
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-mitra-reset]');
-  if (!b) return;
-  if (!confirm(`Reset akun mitra ${b.dataset.nama}?\n\nPIN dihapus dan semua HP-nya keluar. Driver harus daftar ulang lewat kode WA di halaman mitra.`)) return;
-  b.disabled = true;
-  const r = await sb.rpc('admin_reset_mitra', { p_slug: b.dataset.mitraReset });
-  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
-  toast('Akun mitra direset'); nav('driver');
-});
-
-/* ---------- QR referral membawa penanda &s=qr (Fase B) ---------- */
-// Tombol "Salin" tetap link biasa; tombol "QR" membuat QR dengan penanda supaya
-// dashboard mitra bisa membedakan kunjungan lewat scan QR dan klik link.
-(function () {
-  const col = RES.driver.cols.find((c) => c.key === 'ref');
-  if (!col) return;
-  col.render = (r) => {
-    const u = S.siteUrl ? `${S.siteUrl}/?r=${r.slug}` : '';
-    return `<button class="btn ghost sm" type="button" data-copy="${esc(u)}">Salin</button> ${u ? `<button class="btn ghost sm" type="button" data-qr="${esc(u + '&s=qr')}" data-qrname="${esc(r.slug)}">QR</button>` : ''}`;
-  };
-})();
-  /* ---------- KETERSEDIAAN ARMADA (SQL 83) ---------- */
-// 1) Tab Armada: kolom & isian "Jumlah unit" (kosong = tidak dibatasi).
-// 2) Tab baru "Ketersediaan": tutup tanggal (satu armada / semua, rentang), daftar & Buka lagi,
-//    serta ringkasan pemakaian 14 hari ke depan.
-RES.armada.cols.splice(2, 0, { key: 'unit_count', label: 'Unit', render: (r) => (r.unit_count == null ? '<span class="small">tak dibatasi</span>' : esc(r.unit_count)) });
-RES.armada.fields.splice(7, 0, { key: 'unit_count', label: 'Jumlah unit (kosongkan = tidak dibatasi)', type: 'number', help: 'Kalau di satu tanggal pesanan (DP/Lunas, atau menunggu bayar < 45 menit) sudah sebanyak ini, armada otomatis penuh di tanggal itu.' });
-const _readFieldAsli = readField;
-readField = function (f, required) {
-  if (f.key === 'unit_count') { const v = $('#f_unit_count').value.trim(); return v === '' ? null : Math.max(0, parseInt(v, 10) || 0); }
-  return _readFieldAsli(f, required);
-};
-
-NAVS.splice(4, 0, ['ketersediaan', 'Ketersediaan']);
-const hariIniWIBp = () => new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 10);
-VIEWS.ketersediaan = async function () {
-  const fl = await sb.from('fleet').select('id,short_name,unit_count,sort_order').eq('is_active', true).order('sort_order');
-  const armada = fl.data || [];
-  const opsi = '<option value="">Semua armada</option>' + armada.map((f) => `<option value="${esc(f.id)}">${esc(f.short_name)}</option>`).join('');
-  const hari = hariIniWIBp();
-  $('#view').innerHTML = `
-    <h2>Ketersediaan</h2>
-    <div class="card" style="margin-bottom:14px">
-      <h2>Tutup tanggal</h2>
-      <div class="fgrid">
-        <div><label>Dari tanggal<input id="kbDari" type="date" value="${hari}" min="${hari}"></label></div>
-        <div><label>Sampai tanggal<input id="kbSampai" type="date" value="${hari}" min="${hari}"></label></div>
-        <div><label>Armada<select id="kbArmada">${opsi}</select></label></div>
-        <div><label>Catatan (hanya admin)<input id="kbCatatan" placeholder="mis. Hiace servis / full lewat WA"></label></div>
-      </div>
-      <div class="mbtns" style="justify-content:flex-start"><button class="btn" type="button" id="kbSimpan">Tutup tanggal ini</button></div>
-      <div class="help" style="margin-top:8px">Tanggal yang ditutup langsung tampil "penuh" di formulir pesan dan ditolak server. Pesanan yang sudah dibayar tidak terpengaruh.</div>
-    </div>
-    <div class="card" style="margin-bottom:14px"><h2>Tanggal yang ditutup</h2><div id="kbList"><div class="empty">Memuat…</div></div></div>
-    <div class="card"><h2>Pemakaian 14 hari ke depan</h2><div id="kbGrid"><div class="empty">Memuat…</div></div>
-      <div class="help" style="margin-top:8px">Angka = unit terpakai / jumlah unit. ∞ = tidak dibatasi. Merah = penuh atau ditutup.</div></div>`;
-  $('#kbDari').addEventListener('change', () => { if ($('#kbSampai').value < $('#kbDari').value) $('#kbSampai').value = $('#kbDari').value; });
-  $('#kbSimpan').addEventListener('click', async (e) => {
-    const dari = $('#kbDari').value, sampai = $('#kbSampai').value || dari;
-    if (!dari) { toast('Isi tanggal', true); return; }
-    if (sampai < dari) { toast('Tanggal "sampai" tidak boleh sebelum "dari"', true); return; }
-    e.target.disabled = true;
-    const r = await sb.from('fleet_blocks').insert({ date_from: dari, date_to: sampai, fleet_id: $('#kbArmada').value || null, note: $('#kbCatatan').value.trim() || null });
-    e.target.disabled = false;
-    if (r.error) { toast(r.error.message, true); return; }
-    toast('Tanggal ditutup'); $('#kbCatatan').value = ''; muatKetersediaan(armada);
-  });
-  muatKetersediaan(armada);
-};
-async function muatKetersediaan(armada) {
-  const nama = (id) => (id ? ((armada.find((f) => f.id === id) || {}).short_name || id) : 'Semua armada');
-  const hari = hariIniWIBp();
-  const bl = await sb.from('fleet_blocks').select('*').gte('date_to', hari).order('date_from');
-  $('#kbList').innerHTML = bl.error ? `<div class="empty">Gagal memuat: ${esc(bl.error.message)}</div>`
-    : (bl.data || []).length ? `<div class="tablewrap"><table><thead><tr><th>Tanggal</th><th>Armada</th><th>Catatan</th><th></th></tr></thead><tbody>
-      ${bl.data.map((b) => `<tr><td>${esc(tglPendek(b.date_from))}${b.date_to !== b.date_from ? ' – ' + esc(tglPendek(b.date_to)) : ''}</td><td>${esc(nama(b.fleet_id))}</td><td class="small">${esc(b.note || '-')}</td>
-        <td class="num"><button class="btn ghost sm" type="button" data-kb-buka="${esc(b.id)}">Buka lagi</button></td></tr>`).join('')}</tbody></table></div>`
-    : '<div class="empty">Tidak ada tanggal yang ditutup.</div>';
-  const g = await sb.rpc('admin_ketersediaan', { p_dari: hari, p_hari: 14 });
-  if (g.error) { $('#kbGrid').innerHTML = `<div class="empty">Gagal memuat: ${esc(g.error.message)}</div>`; return; }
-  const tgl = [...new Set(g.data.map((x) => x.tanggal))];
-  const sel = (x) => {
-    const penuh = x.ditutup || (x.unit != null && x.terpakai >= x.unit);
-    const isi = x.ditutup ? 'tutup' : `${x.terpakai}/${x.unit == null ? '∞' : x.unit}`;
-    return `<td class="num" style="${penuh ? 'background:#fee2e2;color:#991b1b;font-weight:700' : ''}">${esc(isi)}</td>`;
-  };
-  $('#kbGrid').innerHTML = `<div class="tablewrap"><table><thead><tr><th>Tanggal</th>${armada.map((f) => `<th class="num">${esc(f.short_name)}</th>`).join('')}</tr></thead><tbody>
-    ${tgl.map((d) => `<tr><td>${esc(tglPendek(d))}</td>${armada.map((f) => { const x = g.data.find((y) => y.tanggal === d && y.fleet_id === f.id); return x ? sel(x) : '<td></td>'; }).join('')}</tr>`).join('')}
-  </tbody></table></div>`;
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-kb-buka]');
-  if (!b) return;
-  if (!confirm('Buka lagi tanggal ini? Pelanggan bisa memesan lagi.')) return;
-  b.disabled = true;
-  const r = await sb.from('fleet_blocks').delete().eq('id', b.dataset.kbBuka);
-  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
-  toast('Tanggal dibuka lagi'); nav('ketersediaan');
-});
-/* ---------- ULASAN PELANGGAN (SQL 92) ---------- */
-// Tab "Ulasan": semua ulasan masuk (terbaru di atas), rata-rata, tombol Tampilkan / Sembunyikan.
-// Hanya ulasan yang diberi izin pelanggan yang bisa ditampilkan di situs (dijaga juga oleh database).
-NAVS.splice(NAVS.findIndex((n) => n[0] === 'laporan') + 1, 0, ['ulasan', 'Ulasan']);
-const STATUS_UL = { menunggu: 'Menunggu', tampil: 'Tampil di situs', sembunyi: 'Disembunyikan' };
-VIEWS.ulasan = async function () {
-  $('#view').innerHTML = `
-    <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Ulasan pelanggan</h2>
-      <select id="ulFilter" style="width:auto"><option value="">Semua</option><option value="menunggu" selected>Menunggu</option><option value="tampil">Tampil di situs</option><option value="sembunyi">Disembunyikan</option></select></div>
-    <div class="stats" id="ulStats"></div>
-    <div id="ulList"><div class="empty">Memuat…</div></div>
-    <div class="help" style="margin-top:10px">Ajakan ulasan dikirim otomatis lewat WA sehari setelah trip. Bintang 1–3 juga langsung dikabarkan ke Telegram. Link Google (kalau sudah punya) diisi di Pengaturan → <b>google_review_url</b>.</div>`;
-  $('#ulFilter').addEventListener('change', muatUlasanPanel);
-  muatUlasanPanel();
-};
-async function muatUlasanPanel() {
-  const semua = await sb.from('ulasan').select('*').order('created_at', { ascending: false }).limit(500);
-  if (semua.error) { $('#ulList').innerHTML = `<div class="empty">Gagal memuat: ${esc(semua.error.message)}</div>`; return; }
-  const rows = semua.data || [];
-  const rata = rows.length ? (rows.reduce((a, x) => a + x.bintang, 0) / rows.length) : 0;
-  const tampil = rows.filter((x) => x.status === 'tampil');
-  $('#ulStats').innerHTML = `
-    <div class="stat"><div class="v">${rows.length ? rata.toFixed(1).replace('.', ',') + ' ⭐' : '-'}</div><div class="l">Rata-rata semua (${rows.length} ulasan)</div></div>
-    <div class="stat"><div class="v">${rows.filter((x) => x.status === 'menunggu').length}</div><div class="l">Menunggu diperiksa</div></div>
-    <div class="stat"><div class="v">${tampil.length}</div><div class="l">Tampil di situs</div></div>
-    <div class="stat"><div class="v">${rows.filter((x) => x.bintang <= 3).length}</div><div class="l">Bintang 1–3</div></div>`;
-  const f = $('#ulFilter').value;
-  const list = f ? rows.filter((x) => x.status === f) : rows;
-  $('#ulList').innerHTML = list.length ? list.map((u) => `
-    <div class="card" style="margin-bottom:10px${u.bintang <= 3 ? ';border-left:4px solid var(--danger)' : ''}">
-      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
-        <div><span style="color:#f59e0b;font-size:18px">${'★'.repeat(u.bintang)}</span><span style="color:#cbd5e1;font-size:18px">${'★'.repeat(5 - u.bintang)}</span>
-          <b style="margin-left:6px">${esc(u.nama_tampil || '-')}</b></div>
-        <span class="badge ${u.status === 'tampil' ? 'b-paid' : u.status === 'sembunyi' ? 'b-cancelled' : 'b-pending'}">${esc(STATUS_UL[u.status] || u.status)}</span>
-      </div>
-      <div style="margin:8px 0;white-space:pre-line">${u.teks ? esc(u.teks) : '<span class="small">(tanpa komentar)</span>'}</div>
-      <div class="small">${esc(waktu(u.created_at))} · ${esc(u.order_id)} · ${esc(u.armada || '-')} · Driver: ${esc(u.driver_slug ? driverName(u.driver_slug) : '-')} · ${u.izin_tampil ? '✅ boleh ditampilkan' : '🔒 tidak diizinkan tampil'}</div>
-      <div class="mbtns" style="justify-content:flex-start;margin-top:8px">
-        ${u.status !== 'tampil' ? (u.izin_tampil ? `<button class="btn sm" type="button" data-ul="${esc(u.id)}" data-st="tampil">Tampilkan di situs</button>` : '') : ''}
-        ${u.status !== 'sembunyi' ? `<button class="btn ghost sm" type="button" data-ul="${esc(u.id)}" data-st="sembunyi">${u.status === 'tampil' ? 'Sembunyikan' : 'Tandai sudah dibaca'}</button>` : ''}
-      </div>
-    </div>`).join('') : '<div class="card empty">Tidak ada ulasan.</div>';
-}
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-ul]');
-  if (!b) return;
-  b.disabled = true;
-  const r = await sb.from('ulasan').update({ status: b.dataset.st, dimoderasi_at: new Date().toISOString() }).eq('id', b.dataset.ul);
-  if (r.error) { b.disabled = false; toast(r.error.message, true); return; }
-  toast(b.dataset.st === 'tampil' ? 'Ulasan ditampilkan di situs' : 'Ulasan disembunyikan'); muatUlasanPanel();
-});
-/* ---------- KAS: REKAP IURAN, TARIF, IURAN KHUSUS (SQL 98) ---------- */
-// Tambahan di tab Kas: rekap iuran per anggota per bulan (+ Cetak), tarif iuran (berlaku mulai bulan),
-// iuran khusus (buat, kelola peserta & nominal, catat bayar manual, tutup, Cetak).
-// Tab Driver: isian "Bebas iuran" & "Iuran mulai (YYYY-MM)".
-RES.driver.fields.push(
-  { key: 'bebas_iuran', label: 'Bebas iuran kas', type: 'bool' },
-  { key: 'iuran_mulai', label: 'Iuran kas mulai (YYYY-MM, kosong = bulan bergabung)', type: 'text' });
-const _readFieldKas = readField;
-readField = function (f, required) {
-  if (f.key === 'iuran_mulai') { const v = $('#f_iuran_mulai').value.trim(); const m = /^(\d{4})-(\d{2})/.exec(v); return m ? `${m[1]}-${m[2]}-01` : null; }
-  return _readFieldKas(f, required);
-};
-const blnP = (ym) => { const m = /^(\d{4})-(\d{2})/.exec(ym || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, 15)).toLocaleDateString('id-ID', { month: 'short', year: '2-digit', timeZone: 'UTC' }) : ym; };
-const blnL = (ym) => { const m = /^(\d{4})-(\d{2})/.exec(ym || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, 15)).toLocaleDateString('id-ID', { month: 'long', year: 'numeric', timeZone: 'UTC' }) : ym; };
-const IKN = { lunas: '✅', sebagian: '◐', belum: '❌', '-': '–' };
-function cetakKas(judul, sub, isi) {
-  const w = window.open('', '_blank'); if (!w) { toast('Izinkan pop-up untuk mencetak', true); return; }
-  w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><title>${esc(judul)}</title><style>
-    body{font-family:system-ui,Arial,sans-serif;color:#0f172a;margin:24px}h1{font-size:18px;margin:0}p{margin:4px 0 14px;color:#475569;font-size:12px}
-    table{border-collapse:collapse;width:100%;font-size:11.5px}th,td{border:1px solid #cbd5e1;padding:5px 4px;text-align:center}th{background:#e0f2fe}
-    td:first-child,th:first-child{text-align:left}.small{color:#64748b;font-size:10px}.hutang{color:#b91c1c;font-weight:700}
-    .kop{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #0891b2;padding-bottom:8px;margin-bottom:12px}.kop b{color:#0891b2;letter-spacing:.15em}
-    button{display:none}@page{size:A4 landscape;margin:12mm}</style></head><body>
-    <div class="kop"><div><b>TEMPERA</b><h1>${esc(judul)}</h1></div><div class="small">Dicetak ${esc(new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }))} WIB</div></div>
-    <p>${esc(sub)}</p>${isi}<p style="margin-top:14px">Keterangan: ✅ lunas · ◐ sebagian · ❌ belum · – tidak ditagih</p></body></html>`);
-  w.document.close(); w.focus(); setTimeout(() => w.print(), 300);
-}
-async function dataRekap() {
-  const r = await sb.rpc('rekap_iuran', { p_slug: null });
-  if (r.error) throw new Error(r.error.message);
-  const bi = new Date(Date.now() + 7 * 3600000).toISOString().slice(0, 7);
-  const per = {};
-  r.data.forEach((x) => {
-    const b = String(x.bulan).slice(0, 7);
-    const a = (per[x.driver_slug] ||= { slug: x.driver_slug, nama: x.nama, kode: x.kode, bulan: {}, tunggakan: 0, dimuka: 0 });
-    a.bulan[b] = x; if (b <= bi) a.tunggakan += Math.max(0, x.tagihan - x.terbayar); else if (x.terbayar > 0) a.dimuka++;
-  });
-  const semua = [...new Set(r.data.map((x) => String(x.bulan).slice(0, 7)))].filter((b) => b <= bi).sort();
-  return { per: Object.values(per), semua };
-}
-function htmlRekap(d, jumlahBulan) {
-  const kol = jumlahBulan ? d.semua.slice(-jumlahBulan) : d.semua;
-  const rows = [...d.per].sort((a, b) => b.tunggakan - a.tunggakan || String(a.kode).localeCompare(String(b.kode)));
-  const st = (v) => (!v ? '-' : v.terbayar >= v.tagihan ? 'lunas' : v.terbayar > 0 ? 'sebagian' : 'belum');
-  return `<div class="tablewrap"><table style="min-width:${260 + kol.length * 56}px"><thead><tr><th>Anggota</th>${kol.map((b) => `<th class="num">${esc(blnP(b))}</th>`).join('')}<th class="num">Tunggakan</th></tr></thead><tbody>
-    ${rows.map((a) => `<tr><td>${esc(a.nama)} <span class="small">${esc(a.kode || '')}${a.dimuka ? ` · di muka ${a.dimuka} bln` : ''}</span></td>${kol.map((b) => `<td class="num">${IKN[st(a.bulan[b])]}</td>`).join('')}
-      <td class="num ${a.tunggakan > 0 ? 'hutang' : ''}" style="${a.tunggakan > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${a.tunggakan > 0 ? rp(a.tunggakan) : '–'}</td></tr>`).join('') || '<tr><td colspan="99" class="empty">Belum ada anggota yang ditagih.</td></tr>'}
-    <tr><td><b>Total tunggakan</b></td>${kol.map(() => '<td></td>').join('')}<td class="num"><b>${rp(rows.reduce((s, a) => s + a.tunggakan, 0))}</b></td></tr>
-  </tbody></table></div>`;
-}
-
-const _kasAsli = VIEWS.kas;
-VIEWS.kas = async function () {
-  await _kasAsli();
-  const v = $('#view'); if (!v) return;
-  const box = document.createElement('div');
-  box.innerHTML = `
-    <div class="card" style="margin-top:14px"><div class="bar" style="justify-content:space-between;align-items:center;margin:0 0 8px"><h2 style="margin:0">Rekap iuran kas</h2>
-      <div style="display:flex;gap:8px;flex-wrap:wrap"><select id="rkPer" style="width:auto"><option value="6">6 bulan terakhir</option><option value="12">12 bulan</option><option value="0">Semua</option></select>
-      <button class="btn ghost sm" type="button" id="rkCetak">Cetak</button></div></div>
-      <div id="rkIsi"><div class="empty">Memuat…</div></div>
-      <div class="help" style="margin-top:8px">Setoran driver otomatis menutup bulan tertua yang belum lunas. Anggota dihitung sejak bulan bergabung; ubah per anggota di tab Driver (Iuran mulai / Bebas iuran). Mulai hitung & biaya layanan: tab Pengaturan (<b>iuran_mulai</b>, <b>iuran_biaya_layanan</b>).</div></div>
-    <div class="card" style="margin-top:14px"><h2>Tarif iuran kas</h2><div id="trIsi"><div class="empty">Memuat…</div></div>
-      <div class="row2" style="margin-top:10px"><label>Berlaku mulai (bulan)<input id="trBulan" type="month"></label><label>Nominal per bulan (Rp)<input id="trNom" type="number" min="0" step="500" placeholder="10000"></label>
-      <button class="btn" type="button" id="trSimpan">Simpan tarif</button></div>
-      <div class="help">Tarif baru hanya berlaku mulai bulan yang dipilih; bulan-bulan sebelumnya tetap memakai tarif lama.</div></div>
-    <div class="card" style="margin-top:14px"><h2>Iuran khusus</h2>
-      <div class="fgrid"><div><label>Judul<input id="ikJudul" maxlength="80" placeholder="mis. Kemeja seragam 2026"></label></div>
-        <div><label>Nominal per anggota (Rp)<input id="ikNom" type="number" min="0" step="1000" placeholder="120000"></label></div>
-        <div><label>Batas bayar (opsional)<input id="ikBatas" type="date"></label></div>
-        <div><label>Keterangan (opsional)<input id="ikKet" placeholder="mis. ukuran S–XXL, XXL +15rb"></label></div></div>
-      <div class="mbtns" style="justify-content:flex-start"><button class="btn" type="button" id="ikBuat">Buat iuran</button></div>
-      <div class="help">Semua anggota aktif (kecuali bebas iuran) otomatis menjadi peserta. Nominal per orang bisa diubah di "Kelola". Uang iuran khusus terpisah dari saldo kas.</div>
-      <div id="ikList" style="margin-top:12px"><div class="empty">Memuat…</div></div></div>`;
-  v.appendChild(box);
-  let REKAP = null;
-  const gambarRekap = () => { $('#rkIsi').innerHTML = REKAP ? htmlRekap(REKAP, +$('#rkPer').value) : ''; };
-  try { REKAP = await dataRekap(); gambarRekap(); } catch (e) { $('#rkIsi').innerHTML = `<div class="empty">Gagal memuat: ${esc(e.message)}</div>`; }
-  $('#rkPer').addEventListener('change', gambarRekap);
-  $('#rkCetak').addEventListener('click', () => { if (!REKAP) return; const n = +$('#rkPer').value; const kol = n ? REKAP.semua.slice(-n) : REKAP.semua;
-    cetakKas('Rekap Iuran Kas Mitra', kol.length ? `Periode ${blnL(kol[0])} – ${blnL(kol[kol.length - 1])}` : '', htmlRekap(REKAP, n)); });
-  muatTarif(); muatIuranKhusus();
-  $('#trSimpan').addEventListener('click', async (e) => {
-    const b = $('#trBulan').value, n = parseInt($('#trNom').value, 10);
-    if (!/^\d{4}-\d{2}$/.test(b) || !(n >= 0)) { toast('Isi bulan dan nominal', true); return; }
-    e.target.disabled = true;
-    const r = await sb.from('iuran_tarif').upsert({ berlaku_mulai: `${b}-01`, nominal: n });
-    e.target.disabled = false; if (r.error) { toast(r.error.message, true); return; }
-    toast('Tarif disimpan'); nav('kas');
-  });
-  $('#ikBuat').addEventListener('click', async (e) => {
-    const j = $('#ikJudul').value.trim(), n = parseInt($('#ikNom').value, 10);
-    if (!j || !(n > 0)) { toast('Isi judul dan nominal', true); return; }
-    e.target.disabled = true;
-    const r = await sb.rpc('admin_buat_iuran_khusus', { p_judul: j, p_keterangan: $('#ikKet').value.trim() || null, p_nominal: n, p_batas: $('#ikBatas').value || null });
-    e.target.disabled = false; if (r.error) { toast(r.error.message, true); return; }
-    toast('Iuran dibuat'); ['#ikJudul', '#ikNom', '#ikBatas', '#ikKet'].forEach((s) => { $(s).value = ''; }); muatIuranKhusus();
-  });
-};
-async function muatTarif() {
-  const r = await sb.from('iuran_tarif').select('*').order('berlaku_mulai', { ascending: false });
-  $('#trIsi').innerHTML = r.error ? `<div class="empty">${esc(r.error.message)}</div>` : `<div class="tablewrap"><table style="min-width:280px"><thead><tr><th>Berlaku mulai</th><th class="num">Per bulan</th><th></th></tr></thead><tbody>
-    ${(r.data || []).map((t) => `<tr><td>${esc(blnL(t.berlaku_mulai))}</td><td class="num">${rp(t.nominal)}</td><td class="num">${(r.data.length > 1) ? `<button class="btn ghost sm" type="button" data-tr-hapus="${esc(t.berlaku_mulai)}">Hapus</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
-}
-async function dataKhusus() {
-  const [i, p, b] = await Promise.all([sb.from('iuran_khusus').select('*').order('id', { ascending: false }), sb.from('iuran_khusus_peserta').select('*'), sb.from('iuran_khusus_bayar').select('*').order('created_at')]);
-  if (i.error || p.error || b.error) throw new Error((i.error || p.error || b.error).message);
-  return (i.data || []).map((x) => {
-    const peserta = p.data.filter((q) => q.iuran_id === x.id).map((q) => {
-      const bayar = b.data.filter((y) => y.iuran_id === x.id && y.driver_slug === q.driver_slug);
-      const terbayar = bayar.reduce((s, y) => s + y.jumlah, 0);
-      return { ...q, nama: driverName(q.driver_slug), terbayar, sisa: Math.max(0, q.nominal - terbayar), bayar };
-    }).sort((a, c) => (a.sisa > 0 ? 0 : 1) - (c.sisa > 0 ? 0 : 1) || String(a.nama).localeCompare(String(c.nama)));
-    return { ...x, peserta, target: peserta.reduce((s, q) => s + q.nominal, 0), terkumpul: peserta.reduce((s, q) => s + Math.min(q.terbayar, q.nominal), 0),
-             masuk: b.data.filter((y) => y.iuran_id === x.id).reduce((s, y) => s + y.jumlah, 0) };
-  });
-}
-function htmlKhusus(x) {
-  return `<div class="tablewrap"><table style="min-width:360px"><thead><tr><th>Anggota</th><th class="num">Iuran</th><th class="num">Dibayar</th><th class="num">Sisa</th></tr></thead><tbody>
-    ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}</td><td class="num">${rp(q.nominal)}</td><td class="num">${rp(Math.min(q.terbayar, q.nominal))}</td><td class="num" style="${q.sisa > 0 ? 'color:#b91c1c;font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '✅'}</td></tr>`).join('')}
-    <tr><td><b>Total</b></td><td class="num"><b>${rp(x.target)}</b></td><td class="num"><b>${rp(x.terkumpul)}</b></td><td class="num"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
-}
-let IK = [];
-async function muatIuranKhusus() {
-  try { IK = await dataKhusus(); } catch (e) { $('#ikList').innerHTML = `<div class="empty">Gagal memuat: ${esc(e.message)}</div>`; return; }
-  $('#ikList').innerHTML = IK.length ? IK.map((x, i) => `<div style="border-top:1px solid var(--line);padding:10px 0">
-      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><b>${esc(x.judul)}</b> ${x.status === 'selesai' ? '<span class="badge b-cancelled">Ditutup</span>' : '<span class="badge b-paid">Aktif</span>'}
-        <div class="small">${x.batas ? `Batas ${esc(tglPendek(x.batas))} · ` : ''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)} · ${x.peserta.filter((q) => q.sisa > 0).length} belum lunas${x.masuk > x.terkumpul ? ` · lebih bayar ${rp(x.masuk - x.terkumpul)}` : ''}</div></div>
-        <div class="mbtns" style="margin:0"><button class="btn ghost sm" type="button" data-ik-cetak="${i}">Cetak</button><button class="btn sm" type="button" data-ik-kelola="${i}">Kelola</button></div></div></div>`).join('')
-    : '<div class="empty">Belum ada iuran khusus.</div>';
-}
-function kelolaIuran(x) {
-  const bukan = S.drivers.filter((d) => d.is_active !== false && !x.peserta.some((q) => q.driver_slug === d.slug));
-  openModal(`<h2>${esc(x.judul)}</h2>
-    <div class="fgrid"><div><label>Judul<input id="mkJudul" maxlength="80" value="${esc(x.judul)}"></label></div>
-      <div><label>Batas bayar<input id="mkBatas" type="date" value="${esc(x.batas || '')}"></label></div>
-      <div class="full"><label>Keterangan<input id="mkKet" value="${esc(x.keterangan || '')}"></label></div></div>
-    <div class="mbtns" style="justify-content:flex-start"><button class="btn sm" type="button" id="mkSimpan">Simpan judul/keterangan</button>
-      <button class="btn ghost sm" type="button" id="mkStatus">${x.status === 'aktif' ? 'Tutup iuran' : 'Aktifkan lagi'}</button></div>
-    <h2 style="margin-top:14px">Peserta</h2>
-    <div class="tablewrap"><table style="min-width:520px"><thead><tr><th>Anggota</th><th>Nominal</th><th class="num">Dibayar</th><th>Catat bayar manual</th><th></th></tr></thead><tbody>
-      ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}${q.sisa > 0 ? '' : ' ✅'}</td>
-        <td><div style="display:flex;gap:4px"><input type="number" min="0" step="1000" value="${esc(q.nominal)}" data-mk-nom="${esc(q.driver_slug)}" style="width:100px"><button class="btn ghost sm" type="button" data-mk-nomsave="${esc(q.driver_slug)}">OK</button></div></td>
-        <td class="num">${rp(q.terbayar)}${q.bayar.length ? `<div class="small">${q.bayar.map((y) => `${esc(tglPendek(y.tanggal))} ${rp(y.jumlah)}${y.kas_pending_id ? ' (QRIS)' : ` <a href="#" data-mk-hapusbayar="${esc(y.id)}">hapus</a>`}`).join('<br>')}</div>` : ''}</td>
-        <td>${q.sisa > 0 ? `<div style="display:flex;gap:4px"><input type="number" min="1" step="1000" placeholder="${esc(q.sisa)}" data-mk-bayar="${esc(q.driver_slug)}" style="width:100px"><button class="btn sm" type="button" data-mk-bayarsave="${esc(q.driver_slug)}">Catat</button></div>` : ''}</td>
-        <td class="num">${q.terbayar ? '' : `<button class="btn ghost sm" type="button" data-mk-keluar="${esc(q.driver_slug)}">Keluarkan</button>`}</td></tr>`).join('')}
-    </tbody></table></div>
-    ${bukan.length ? `<div class="row2" style="margin-top:10px"><label>Tambah peserta<select id="mkTambah">${bukan.map((d) => `<option value="${esc(d.slug)}">${esc(d.name)} (${esc(d.driver_code || d.slug)})</option>`).join('')}</select></label><button class="btn ghost" type="button" id="mkTambahBtn">Tambah</button></div>` : ''}
-    <div class="help">"Catat bayar manual" untuk yang membayar tunai/transfer langsung ke admin. Pembayaran lewat QRIS tercatat otomatis.</div>
-    <div class="mbtns"><button class="btn ghost" type="button" id="mkTutup">Tutup</button></div>`);
-  const ulang = async () => { await muatIuranKhusus(); const baru = IK.find((y) => y.id === x.id); if (baru) kelolaIuran(baru); else closeModal(); };
-  const jalan = async (p, pesanOk) => { const r = await p; if (r.error) { toast(r.error.message, true); return; } toast(pesanOk); ulang(); };
-  $('#mkTutup').addEventListener('click', closeModal);
-  $('#mkSimpan').addEventListener('click', () => { const j = $('#mkJudul').value.trim(); if (!j) { toast('Judul wajib', true); return; }
-    jalan(sb.from('iuran_khusus').update({ judul: j, keterangan: $('#mkKet').value.trim() || null, batas: $('#mkBatas').value || null }).eq('id', x.id), 'Disimpan'); });
-  $('#mkStatus').addEventListener('click', () => jalan(sb.from('iuran_khusus').update({ status: x.status === 'aktif' ? 'selesai' : 'aktif' }).eq('id', x.id), x.status === 'aktif' ? 'Iuran ditutup' : 'Iuran diaktifkan'));
-  if ($('#mkTambahBtn')) $('#mkTambahBtn').addEventListener('click', () => jalan(sb.from('iuran_khusus_peserta').insert({ iuran_id: x.id, driver_slug: $('#mkTambah').value, nominal: x.nominal_default }), 'Peserta ditambahkan'));
-  $$('#modalBody [data-mk-nomsave]').forEach((b) => b.addEventListener('click', () => { const s = b.dataset.mkNomsave; const n = parseInt($(`#modalBody [data-mk-nom="${CSS.escape(s)}"]`).value, 10);
-    if (!(n >= 0)) { toast('Nominal tidak valid', true); return; } jalan(sb.from('iuran_khusus_peserta').update({ nominal: n }).eq('iuran_id', x.id).eq('driver_slug', s), 'Nominal diubah'); }));
-  $$('#modalBody [data-mk-bayarsave]').forEach((b) => b.addEventListener('click', () => { const s = b.dataset.mkBayarsave; const el = $(`#modalBody [data-mk-bayar="${CSS.escape(s)}"]`);
-    const n = parseInt(el.value || el.placeholder, 10); if (!(n > 0)) { toast('Isi jumlah', true); return; }
-    jalan(sb.from('iuran_khusus_bayar').insert({ iuran_id: x.id, driver_slug: s, jumlah: n, keterangan: 'Dicatat admin (tunai/transfer)', dicatat_oleh: 'admin' }), 'Pembayaran dicatat'); }));
-  $$('#modalBody [data-mk-keluar]').forEach((b) => b.addEventListener('click', () => { if (!confirm('Keluarkan anggota ini dari iuran?')) return;
-    jalan(sb.from('iuran_khusus_peserta').delete().eq('iuran_id', x.id).eq('driver_slug', b.dataset.mkKeluar), 'Peserta dikeluarkan'); }));
-  $$('#modalBody [data-mk-hapusbayar]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); if (!confirm('Hapus catatan pembayaran manual ini?')) return;
-    jalan(sb.from('iuran_khusus_bayar').delete().eq('id', a.dataset.mkHapusbayar), 'Catatan dihapus'); }));
-}
-document.addEventListener('click', (e) => {
-  const k = e.target.closest('[data-ik-kelola]'); if (k) { kelolaIuran(IK[+k.dataset.ikKelola]); return; }
-  const c = e.target.closest('[data-ik-cetak]'); if (c) { const x = IK[+c.dataset.ikCetak]; cetakKas(`Iuran: ${x.judul}`, `${x.batas ? 'Batas ' + tglPendek(x.batas) + ' · ' : ''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)}`, htmlKhusus(x)); return; }
-  const h = e.target.closest('[data-tr-hapus]'); if (h) { if (!confirm('Hapus tarif ini?')) return;
-    sb.from('iuran_tarif').delete().eq('berlaku_mulai', h.dataset.trHapus).then((r) => { if (r.error) toast(r.error.message, true); else { toast('Tarif dihapus'); nav('kas'); } }); }
-});
-/* ===== BLOK 125 (tempel di paling bawah panel.html, tepat di atas tag penutup script, SETELAH blok 104) =====
-   Isi: (1) tombol "Tandai DP / Lunas" untuk pesanan manual, (2) kolom Pengaturan banyak-baris (catatan AI, petunjuk bayar) + unggah gambar hero,
-        (3) unggah gambar dari HP untuk Armada & Banner (tanpa alamat URL), (4) tab Galeri (unggah banyak foto + watermark). */
-
-/* ---------- (1) PEMBAYARAN MANUAL ---------- */
-const _openOrder125 = openOrder;
-openOrder = async function (id) {
-  await _openOrder125(id);
-  const o = ORDERS.find((x) => x.id === id);
-  if (!o || o.status !== 'pending' || o.midtrans_status !== 'manual') return;
-  const act = $('#modalBody .act'); if (!act) return;
-  const isDP = o.payment_mode === 'dp', jumlah = isDP ? o.dp_amount : o.total;
-  const box = document.createElement('div');
-  box.style.cssText = 'background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:12px;margin-bottom:12px';
-  box.innerHTML = `<b>Pembayaran manual — menunggu</b><div class="small" style="margin:4px 0 8px">Cek mutasi BRImo / GoPay Merchant. Harus masuk: <b>${rp(jumlah)}</b> (${isDP ? 'DP' : 'lunas'}).</div><button class="btn" type="button" id="oBayarManual">✅ Tandai ${isDP ? 'DP diterima' : 'Lunas'} (${rp(jumlah)})</button>`;
-  act.prepend(box);
-  const kirimTandai = async (paksa) => {
-    const ses = await sb.auth.getSession(); const tok = ses.data && ses.data.session && ses.data.session.access_token;
-    const r = await fetch(`${SB_URL}/functions/v1/bayar-manual`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${tok}` }, body: JSON.stringify({ order_id: o.order_id, paksa: !!paksa }) });
-    return r.json().catch(() => ({ ok: false, error: 'Balasan tidak terbaca' }));
-  };
-  $('#oBayarManual').addEventListener('click', async (e) => {
-    if (!confirm(`Pastikan ${rp(jumlah)} sudah masuk di mutasi.\n\nTandai ${isDP ? 'DP diterima' : 'LUNAS'} sekarang? Konfirmasi WA akan dikirim ke pelanggan dan driver, invoice terbit.`)) return;
-    e.target.disabled = true;
-    let j = await kirimTandai(false);
-    if (j.penuh && confirm(j.error + '\n\nTetap tandai (abaikan armada penuh)?')) j = await kirimTandai(true);
-    if (!j.ok) { e.target.disabled = false; toast(j.error || 'Gagal menandai', true); return; }
-    toast(j.sudah ? 'Sudah diproses sebelumnya' : 'Ditandai. Konfirmasi dikirim.'); closeModal(); loadOrders();
-  });
-};
-
-/* ---------- (3) PENGUNGGAH GAMBAR (dipakai Armada, Banner, hero, Galeri) ---------- */
-const MEDIA_BUCKET = 'media';
-function bacaGambar(file) {
-  return new Promise((res, rej) => { const u = URL.createObjectURL(file); const i = new Image();
-    i.onload = () => { URL.revokeObjectURL(u); res(i); }; i.onerror = () => { URL.revokeObjectURL(u); rej(new Error('Berkas bukan gambar yang bisa dibaca')); }; i.src = u; });
-}
-async function pasangWatermark(c, x) {
-  try {
-    const logo = await loadImg(QR_LOGO_SRC);
-    const t = document.createElement('canvas'); t.width = 1328; t.height = 1287; const tx = t.getContext('2d');
-    tx.drawImage(logo, 0, 151, 1328, 1287, 0, 0, 1328, 1287); tx.globalCompositeOperation = 'source-in'; tx.fillStyle = '#fff'; tx.fillRect(0, 0, 1328, 1287);
-    const lw = Math.round(c.width * 0.16), lh = Math.round(lw * 1287 / 1328), cx = c.width / 2, y0 = Math.round(c.height * 0.70);
-    x.save(); x.globalAlpha = 0.35; x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = Math.round(lw * 0.06);
-    x.drawImage(t, Math.round(cx - lw / 2), y0, lw, lh);
-    const fs = Math.max(12, Math.round(lw * 0.22)); x.font = `700 ${fs}px system-ui,Arial,sans-serif`; x.fillStyle = '#fff'; x.textAlign = 'center'; x.textBaseline = 'top';
-    x.fillText('tempera.id', cx, y0 + lh + Math.round(fs * 0.25)); x.restore();
-  } catch (_e) { /* logo gagal dimuat: foto tetap dipakai tanpa watermark */ }
-}
-// Kecilkan di browser (EXIF/GPS ikut terhapus karena digambar ulang), WEBP; cadangan JPEG untuk browser lama
-async function kecilkanGambar(file, opsi) {
-  const { lebar = 1200, kualitas = 0.8, watermark = false } = opsi || {};
-  const img = await bacaGambar(file);
-  const skala = Math.min(1, lebar / img.naturalWidth), w = Math.round(img.naturalWidth * skala), h = Math.round(img.naturalHeight * skala);
-  const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'); x.drawImage(img, 0, 0, w, h);
-  if (watermark) await pasangWatermark(c, x);
-  let blob = await new Promise((r) => c.toBlob(r, 'image/webp', kualitas)), ext = 'webp';
-  if (!blob || blob.type !== 'image/webp') { blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.85)); ext = 'jpg'; }
-  return { blob, ext, w, h };
-}
-async function unggahGambar(file, opsi) {
-  const { folder = 'umum' } = opsi || {};
-  const k = await kecilkanGambar(file, opsi);
-  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${k.ext}`;
-  const up = await sb.storage.from(MEDIA_BUCKET).upload(path, k.blob, { contentType: k.blob.type, cacheControl: '31536000', upsert: false });
-  if (up.error) throw new Error(up.error.message);
-  return sb.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl;
-}
-const gambarSrc = (v) => (/^https?:\/\//i.test(v) ? v : `${S.siteUrl}/images/${String(v).replace(/^\/+/, '')}`);
-
-// jenis isian baru: 'gambar' (banyak, daftar) dan 'gambarsatu' (satu)
-const _fieldHTML125 = fieldHTML;
-fieldHTML = function (f, val, disabled) {
-  const id = 'f_' + f.key, cls = f.full ? ' class="full"' : '';
-  if (f.type === 'gambar') return `<div${cls}><label>${esc(f.label)}</label><div id="${id}_list"></div><input type="hidden" id="${id}" value="${esc(JSON.stringify(Array.isArray(val) ? val : []))}"><input type="file" accept="image/*" multiple data-upl="multi" data-target="${id}" data-lebar="${f.lebar || 1200}"><div class="help" id="${id}_st">Pilih foto dari galeri HP. Otomatis dikecilkan. ★ = jadikan foto utama.</div></div>`;
-  if (f.type === 'gambarsatu') return `<div${cls}><label>${esc(f.label)}</label><div id="${id}_list"></div><input type="hidden" id="${id}" value="${esc(val || '')}"><input type="file" accept="image/*" data-upl="one" data-target="${id}" data-lebar="${f.lebar || 1200}"><div class="help" id="${id}_st"></div></div>`;
-  return _fieldHTML125(f, val, disabled);
-};
-const _readField125 = readField;
-readField = function (f, required) {
-  if (f.type === 'gambar') { try { const a = JSON.parse($('#f_' + f.key).value || '[]'); return Array.isArray(a) ? a : []; } catch (_e) { return []; } }
-  if (f.type === 'gambarsatu') { const v = $('#f_' + f.key).value.trim(); return v || null; }
-  return _readField125(f, required);
-};
-function gambarDaftar(id) {
-  const h = $('#' + id), list = $('#' + id + '_list'); if (!h || !list) return [];
-  const multi = !!$(`[data-upl="multi"][data-target="${id}"]`);
-  let arr; if (multi) { try { arr = JSON.parse(h.value || '[]'); } catch (_e) { arr = []; } } else arr = h.value ? [h.value] : [];
-  return { h, list, multi, arr };
-}
-function gambarRender(id) {
-  const g = gambarDaftar(id); if (!g.list) return;
-  g.list.innerHTML = g.arr.map((v, i) => `<div style="display:inline-block;margin:0 8px 8px 0;text-align:center"><img src="${esc(gambarSrc(v))}" alt="" style="width:84px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block"><div style="display:flex;gap:4px;justify-content:center;margin-top:4px">${g.multi && i > 0 ? `<button type="button" class="btn ghost sm" data-gmb-first="${esc(id)}|${i}">★</button>` : ''}<button type="button" class="btn ghost sm" data-gmb-del="${esc(id)}|${i}">✕</button></div></div>`).join('') || '<div class="small">Belum ada gambar.</div>';
-}
-function gambarSimpan(id, arr) { const g = gambarDaftar(id); g.h.value = g.multi ? JSON.stringify(arr) : (arr[0] || ''); gambarRender(id); }
-const _openForm125 = openForm;
-openForm = function (key, row) { _openForm125(key, row); $$('#modalBody [data-upl]').forEach((el) => gambarRender(el.dataset.target)); };
-document.addEventListener('click', (e) => {
-  const d = e.target.closest('[data-gmb-del]'), f = e.target.closest('[data-gmb-first]');
-  if (d) { const [id, i] = d.dataset.gmbDel.split('|'); const g = gambarDaftar(id); g.arr.splice(+i, 1); gambarSimpan(id, g.arr); }
-  if (f) { const [id, i] = f.dataset.gmbFirst.split('|'); const g = gambarDaftar(id); const [v] = g.arr.splice(+i, 1); g.arr.unshift(v); gambarSimpan(id, g.arr); }
-});
-document.addEventListener('change', async (e) => {
-  const inp = e.target; if (!inp.matches || !inp.matches('input[data-upl]')) return;
-  const id = inp.dataset.target, st = $('#' + id + '_st'), files = [...inp.files]; if (!files.length) return;
-  const g = gambarDaftar(id); let arr = g.arr.slice();
-  for (let i = 0; i < files.length; i++) {
-    st.textContent = `Mengunggah ${i + 1} dari ${files.length}…`;
-    try {
-      const url = await unggahGambar(files[i], { lebar: +inp.dataset.lebar || 1200, folder: id.replace(/^f_/, '') });
-      if (g.multi) arr.push(url); else arr = [url];
-      gambarSimpan(id, arr);
-    } catch (err) { st.textContent = 'Gagal: ' + err.message; inp.value = ''; return; }
-  }
-  st.textContent = 'Terunggah. Tekan Simpan untuk menyimpan perubahan.'; inp.value = '';
-});
-(function () {
-  const a = RES.armada.fields.find((f) => f.key === 'images'); if (a) { a.type = 'gambar'; a.lebar = 1200; }
-  const b = RES.banner.fields.find((f) => f.key === 'image_url'); if (b) { b.type = 'gambarsatu'; b.lebar = 1600; b.label = 'Gambar banner'; }
-})();
-
-/* ---------- (2) PENGATURAN: kolom banyak-baris + unggah gambar hero ---------- */
-const MULTI_SET = ['ai_catatan', 'manual_bayar_info'];
-const _pengaturan125 = VIEWS.pengaturan;
-VIEWS.pengaturan = async function () {
-  await _pengaturan125();
-  MULTI_SET.forEach((k) => {
-    const inp = $(`#view input[data-key="${k}"]`); if (!inp) return;
-    const ta = document.createElement('textarea'); ta.rows = 8; ta.value = inp.value; ta.dataset.key = k; inp.replaceWith(ta);
-    const old = ta.closest('.setrow').querySelector('button[data-save]'), nb = old.cloneNode(true); old.replaceWith(nb);   // lepas penanganan lama (hanya membaca <input>)
-    nb.addEventListener('click', async () => { const r = await sb.from('app_settings').update({ value: ta.value.trim() }).eq('key', k); if (r.error) { toast(r.error.message, true); return; } toast('Tersimpan'); });
-  });
-  const hero = $('#view input[data-key="hero_bg_image"]');
-  if (hero) {
-    const fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.style.marginTop = '6px'; hero.after(fi);
-    const st = document.createElement('div'); st.className = 'help'; st.textContent = 'Unggah dari HP: otomatis dikecilkan (lebar maks 1920) dan langsung disimpan.'; fi.after(st);
-    fi.addEventListener('change', async () => {
-      const f = fi.files[0]; if (!f) return; st.textContent = 'Memproses…';
-      try {
-        const url = await unggahGambar(f, { lebar: 1920, folder: 'hero' });
-        const r = await sb.from('app_settings').update({ value: url }).eq('key', 'hero_bg_image');
-        if (r.error) throw new Error(r.error.message);
-        hero.value = url; st.textContent = 'Terunggah dan tersimpan.';
-      } catch (e) { st.textContent = 'Gagal: ' + e.message; }
-      fi.value = '';
-    });
-  }
-};
-
-/* ---------- (4) TAB GALERI ---------- */
-NAVS.splice(Math.max(0, NAVS.findIndex((n) => n[0] === 'armada')) + 1, 0, ['galeri', 'Galeri']);
-const WIL_GL = { lembang: 'Lembang', dago: 'Kota Bandung & Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan', lainnya: 'Lainnya' };
-VIEWS.galeri = async function () {
-  $('#view').innerHTML = `
-    <h2>Galeri</h2>
-    <div class="card" style="margin-bottom:14px"><h2>Unggah foto</h2>
-      <div class="fgrid">
-        <div><label>Wilayah<select id="glWil">${Object.keys(WIL_GL).map((k) => `<option value="${k}">${esc(WIL_GL[k])}</option>`).join('')}</select></label></div>
-        <div><label>Keterangan (untuk semua foto yang dipilih; bisa diubah nanti)<input id="glKet" placeholder="mis. Kawah Putih, Ciwidey"></label></div>
-        <div class="full"><label>Foto (boleh pilih banyak)<input id="glFile" type="file" accept="image/*" multiple></label></div>
-      </div>
-      <label class="chk"><input type="checkbox" id="glWm" checked> Pasang watermark logo Tempera</label>
-      <div class="mbtns" style="justify-content:flex-start"><button class="btn" type="button" id="glGo">Unggah</button></div>
-      <div class="help" id="glSt">Foto dikecilkan di HP (lebar maks 1200) dan data lokasi (GPS) otomatis terhapus. Pastikan pelanggan yang tampak jelas sudah mengizinkan.</div></div>
-    <div class="card"><h2>Foto di galeri</h2><div id="glList"><div class="empty">Memuat…</div></div></div>`;
-  $('#glGo').addEventListener('click', async (e) => {
-    const files = [...$('#glFile').files]; if (!files.length) { toast('Pilih foto dulu', true); return; }
-    e.target.disabled = true; const ket = $('#glKet').value.trim() || null, wil = $('#glWil').value, wm = $('#glWm').checked; let ok = 0;
-    for (let i = 0; i < files.length; i++) {
-      $('#glSt').textContent = `Mengunggah ${i + 1} dari ${files.length}…`;
-      try {
-        const url = await unggahGambar(files[i], { lebar: 1200, folder: 'galeri', watermark: wm });
-        const r = await sb.from('galeri').insert({ url, keterangan: ket, wilayah: wil, tampil: true });
-        if (r.error) throw new Error(r.error.message); ok++;
-      } catch (err) { $('#glSt').textContent = `Gagal pada foto ${i + 1}: ${err.message}`; e.target.disabled = false; muatGaleriPanel(); return; }
-    }
-    e.target.disabled = false; $('#glFile').value = ''; $('#glSt').textContent = `${ok} foto terunggah.`; muatGaleriPanel();
-  });
-  muatGaleriPanel();
-};
-async function muatGaleriPanel() {
-  const r = await sb.from('galeri').select('*').order('created_at', { ascending: false }).limit(200);
-  if (r.error) { $('#glList').innerHTML = `<div class="empty">Gagal memuat: ${esc(r.error.message)}</div>`; return; }
-  const rows = r.data || [];
-  $('#glList').innerHTML = rows.length ? `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px">${rows.map((g) => `
-    <div style="border:1px solid var(--line);border-radius:12px;padding:8px;${g.tampil ? '' : 'opacity:.55'}">
-      <img src="${esc(g.url)}" alt="" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block">
-      <input data-gl-ket="${esc(g.id)}" value="${esc(g.keterangan || '')}" placeholder="Keterangan" style="margin-top:6px">
-      <select data-gl-wil="${esc(g.id)}" style="margin-top:6px">${Object.keys(WIL_GL).map((k) => `<option value="${k}" ${k === g.wilayah ? 'selected' : ''}>${esc(WIL_GL[k])}</option>`).join('')}</select>
-      <div class="mbtns" style="justify-content:flex-start;margin-top:6px"><button class="btn sm" type="button" data-gl-simpan="${esc(g.id)}">Simpan</button>
-        <button class="btn ghost sm" type="button" data-gl-tampil="${esc(g.id)}" data-v="${g.tampil ? '0' : '1'}">${g.tampil ? 'Sembunyikan' : 'Tampilkan'}</button>
-        <button class="btn danger sm" type="button" data-gl-hapus="${esc(g.id)}" data-url="${esc(g.url)}">Hapus</button></div></div>`).join('')}</div>` : '<div class="empty">Belum ada foto.</div>';
-}
-document.addEventListener('click', async (e) => {
-  const s = e.target.closest('[data-gl-simpan]'), t = e.target.closest('[data-gl-tampil]'), h = e.target.closest('[data-gl-hapus]');
-  if (s) { const id = s.dataset.glSimpan; const r = await sb.from('galeri').update({ keterangan: $(`[data-gl-ket="${CSS.escape(id)}"]`).value.trim() || null, wilayah: $(`[data-gl-wil="${CSS.escape(id)}"]`).value }).eq('id', id); if (r.error) toast(r.error.message, true); else toast('Tersimpan'); }
-  if (t) { const r = await sb.from('galeri').update({ tampil: t.dataset.v === '1' }).eq('id', t.dataset.glTampil); if (r.error) toast(r.error.message, true); else { toast(t.dataset.v === '1' ? 'Ditampilkan' : 'Disembunyikan'); muatGaleriPanel(); } }
-  if (h) {
-    if (!confirm('Hapus foto ini dari galeri? Berkasnya juga dihapus.')) return;
-    const r = await sb.from('galeri').delete().eq('id', h.dataset.glHapus); if (r.error) { toast(r.error.message, true); return; }
-    const path = String(h.dataset.url || '').split('/object/public/media/')[1]; if (path) await sb.storage.from(MEDIA_BUCKET).remove([decodeURIComponent(path)]);
-    toast('Dihapus'); muatGaleriPanel();
-  }
-});
-
+muat();
 </script>
-  <script src="133_panel_analitik.js"></script>
-  <script src="134_panel_halaman_driver.js"></script>
-<script src="148_panel_kode_unik.js"></script>
 </body>
 </html>
