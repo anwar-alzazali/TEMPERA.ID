@@ -1,4 +1,4 @@
-/* [MAIN.JS] v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+/* [MAIN.JS] v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
    v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
@@ -163,7 +163,7 @@ id: {
   wa_2days: 'Halo mau paket 2 hari Lembang + Ciwidey/Pangalengan',
   bm_title: 'Selesaikan Pembayaran', bm_order: 'No. pesanan', bm_amount: 'Bayar sekarang', bm_rest: 'Sisa {rest} dibayar tunai ke driver saat trip.',
   bm_how: 'Cara bayar', bm_note: 'Tulis nomor pesanan di berita transfer. Setelah membayar, kirim nama pengirim atau bukti bayar lewat WhatsApp. Pesanan dibatalkan otomatis kalau belum dibayar dalam {jam} jam.',
-  bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
+  bm_transfer: 'Transfer ke salah satu rekening ini', bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
   bm_msg: 'Bukti bayar pesanan {order} sebesar {nominal}. Nama pengirim: ',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
@@ -319,7 +319,7 @@ ms: {
   wa_2days: 'Hai, saya mahu pakej 2 hari Lembang + Ciwidey/Pangalengan',
   bm_title: 'Selesaikan Pembayaran', bm_order: 'No. tempahan', bm_amount: 'Bayar sekarang', bm_rest: 'Baki {rest} dibayar tunai kepada pemandu semasa perjalanan.',
   bm_how: 'Cara bayaran', bm_note: 'Tulis nombor tempahan pada ruang rujukan pindahan. Selepas membayar, hantar nama pengirim atau bukti bayaran melalui WhatsApp. Tempahan dibatalkan secara automatik jika belum dibayar dalam {jam} jam.',
-  bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
+  bm_transfer: 'Pindahan ke salah satu akaun ini', bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
   bm_msg: 'Bukti bayaran tempahan {order} sebanyak {nominal}. Nama pengirim: ',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 }
@@ -1125,11 +1125,36 @@ function tampilBayarManual(d){
   kotak.append(k1,k2);
   if(d.payment_mode==='dp'&&d.dp_amount){ const k3=document.createElement('div'); k3.textContent=t('bm_rest',{rest:formatPrice(d.total-d.dp_amount)}); k3.style.cssText='font-size:12px;color:var(--text-secondary);margin-top:4px'; kotak.appendChild(k3); }
   tambah('div',t('bm_how'),'font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px');
+  const adaBank=Array.isArray(d.banks)&&d.banks.length>0;
+  if(adaBank){
+    tambah('div',t('bm_transfer'),'font-size:13px;color:var(--text-secondary);margin:2px 0 8px');
+    d.banks.forEach((b)=>{
+      const kar=tambah('div',null,'display:flex;gap:12px;align-items:center;border:1px solid var(--border-soft);background:var(--bg-section-alt);border-radius:14px;padding:10px 12px;margin-bottom:8px');
+      const kiri=document.createElement('div'); kiri.style.cssText='flex:none;width:64px;height:36px;display:flex;align-items:center;justify-content:center';
+      const lencana=()=>{ const sp=document.createElement('span'); sp.textContent=String(b.bank||'').slice(0,4).toUpperCase(); sp.style.cssText='font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:4px 6px'; kiri.replaceChildren(sp); };
+      if(/^https:\/\//i.test(String(b.logo||''))){
+        const im=document.createElement('img'); im.src=b.logo; im.alt=String(b.bank||''); im.loading='lazy';
+        im.style.cssText='max-width:64px;max-height:36px;object-fit:contain;background:#fff;border-radius:6px;padding:2px';
+        im.addEventListener('error',lencana); kiri.appendChild(im);
+      } else lencana();
+      const tengah=document.createElement('div'); tengah.style.cssText='flex:1;min-width:0';
+      const n1=document.createElement('div'); n1.textContent=String(b.bank||''); n1.style.cssText='font-size:12px;font-weight:700;color:var(--text-muted)';
+      const n2=document.createElement('div'); n2.textContent=String(b.norek||''); n2.style.cssText='font-size:17px;font-weight:800;letter-spacing:.04em;word-break:break-all';
+      tengah.append(n1,n2);
+      if(b.nama){ const n3=document.createElement('div'); n3.textContent='a.n. '+String(b.nama); n3.style.cssText='font-size:12px;color:var(--text-secondary)'; tengah.appendChild(n3); }
+      const sal=document.createElement('button'); sal.type='button'; sal.textContent=t('bm_copy');
+      sal.style.cssText='flex:none;padding:7px 12px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--text-primary);border:1px solid var(--border-color)';
+      sal.addEventListener('click',()=>{ try{ navigator.clipboard.writeText(String(b.norek||'').replace(/[^0-9]/g,'')).then(()=>{ sal.textContent=t('bm_copied'); }); }catch(e){} });
+      kar.append(kiri,tengah,sal);
+    });
+  }
   if(d.info){
-    tambah('div',d.info,'white-space:pre-line;font-size:14px;line-height:1.55;margin-bottom:8px');
-    const salin=tambah('button',t('bm_copy'),'padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--text-primary);border:1px solid var(--border-color);margin-bottom:12px');
-    salin.type='button';
-    salin.addEventListener('click',()=>{ try{ navigator.clipboard.writeText(d.info).then(()=>{ salin.textContent=t('bm_copied'); }); }catch(e){} });
+    tambah('div',d.info,'white-space:pre-line;font-size:14px;line-height:1.55;margin-bottom:8px'+(adaBank?';margin-top:4px':''));
+    if(!adaBank){   // tanpa daftar bank, teks inilah yang berisi rekening: beri tombol salin
+      const salin=tambah('button',t('bm_copy'),'padding:6px 14px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;background:transparent;color:var(--text-primary);border:1px solid var(--border-color);margin-bottom:12px');
+      salin.type='button';
+      salin.addEventListener('click',()=>{ try{ navigator.clipboard.writeText(d.info).then(()=>{ salin.textContent=t('bm_copied'); }); }catch(e){} });
+    }
   }
   if(d.qris){ const im=document.createElement('img'); im.src=d.qris; im.alt='QR'; im.loading='lazy'; im.style.cssText='display:block;width:100%;max-width:240px;margin:0 auto 12px;border-radius:12px;background:#fff'; card.appendChild(im); }
   tambah('p',t('bm_note',{jam:d.expiry_jam||3}),'margin:0 0 6px;font-size:12px;line-height:1.55;color:var(--text-secondary)');
