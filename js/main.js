@@ -1,4 +1,4 @@
-/* [MAIN.JS] v17 (158) -- jendela pilihan destinasi/armada saat data kurang, tanda kolom merah, kotak pesanan mirip, tanda kepercayaan (teks ikut pengaturan teks_pembayaran), hero dimuat lebih awal (alamat terakhir diingat), animasi muncul + angka total halus. v16 (156) -- destinasi, kartu, dan foto kartu dibaca dari database (tabel destinasi_kartu + destinasi_item, SQL 153; diatur di panel -> Pengaturan); daftar di kode = cadangan bila database tidak terjangkau. v15 (152) -- bar melayang kini bisa dibuka: daftar destinasi terpilih (bisa dihapus) + rincian biaya (armada, biaya lintas, total); tetap tampil setelah armada dipilih. v14 (150) -- halaman PILIH DESTINASI (lima kartu geser, label di formulir, popup biaya lintas, bar melayang) menggantikan kartu paket; kotak centang lama tetap ada TERSEMBUNYI sebagai penyimpan data; Cara Pesan; kolom Destinasi lain; persetujuan S&K; destinasi kota baru. v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+/* [MAIN.JS] v17b (158) -- persetujuan biaya lintas hanya berlaku selama kombinasi wilayahnya masih dipilih: dihapus lalu dipilih lagi = popup muncul lagi. v17 (158) -- jendela pilihan destinasi/armada saat data kurang, tanda kolom merah, kotak pesanan mirip, tanda kepercayaan (teks ikut pengaturan teks_pembayaran), hero dimuat lebih awal (alamat terakhir diingat), animasi muncul + angka total halus. v16 (156) -- destinasi, kartu, dan foto kartu dibaca dari database (tabel destinasi_kartu + destinasi_item, SQL 153; diatur di panel -> Pengaturan); daftar di kode = cadangan bila database tidak terjangkau. v15 (152) -- bar melayang kini bisa dibuka: daftar destinasi terpilih (bisa dihapus) + rincian biaya (armada, biaya lintas, total); tetap tampil setelah armada dipilih. v14 (150) -- halaman PILIH DESTINASI (lima kartu geser, label di formulir, popup biaya lintas, bar melayang) menggantikan kartu paket; kotak centang lama tetap ada TERSEMBUNYI sebagai penyimpan data; Cara Pesan; kolom Destinasi lain; persetujuan S&K; destinasi kota baru. v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
    v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
@@ -717,6 +717,11 @@ let DEST_CARDS=[
 ];
 const APPROVED=new Set();   // kombinasi wilayah luar kota yang sudah disetujui pelanggan (popup tidak muncul lagi)
 function regionKey(list){ return list.slice().sort().join('+'); }
+// Persetujuan "Tetap gabung" hanya berlaku selama kombinasi wilayahnya masih dipilih; kalau salah satu wilayah dihapus, persetujuannya gugur.
+function pangkasApproved(){
+  const aktif=new Set(getRegionInfo().list);
+  [...APPROVED].forEach(k=>{ if(!k.split('+').every(r=>aktif.has(r))) APPROVED.delete(k); });
+}
 function approveCurrent(){ const l=getRegionInfo().list; if(l.length>=2) APPROVED.add(regionKey(l)); }
 function findCb(g,n){ return [...document.querySelectorAll('input[name="destinasi"]')].find(c=>c.dataset.group===g&&c.value===n); }
 
@@ -809,7 +814,7 @@ function showCrossPopup(dest,regions,cost){
       if(fokusAwal&&fokusAwal.focus){ try{ fokusAwal.focus(); }catch(e){} }
       resolve(hasil);
     };
-    function onPop(){ tutup(false,true); }
+    function onPop(){ if(history.state&&history.state.crossPopup) return; tutup(false,true); }   // popstate basi dari penutupan sebelumnya tidak boleh menutup popup baru
     function onKey(e){
       if(e.key==='Escape'){ e.preventDefault(); tutup(false); }
       else if(e.key==='Tab'){ e.preventDefault(); (document.activeElement===yes?no:yes).focus(); }
@@ -822,6 +827,7 @@ function showCrossPopup(dest,regions,cost){
 
 // Menyelaraskan tampilan (kartu, label di formulir, bar melayang) dengan kotak centang tersembunyi
 function syncPicker(){
+  pangkasApproved();
   const cbs=[...document.querySelectorAll('input[name="destinasi"]:checked')];
   const on=new Set(cbs.map(cb=>cb.dataset.group+'|'+cb.value));
   document.querySelectorAll('.dchip').forEach(b=>{ const s=on.has(b.dataset.g+'|'+b.dataset.n); b.classList.toggle('on',s); b.setAttribute('aria-pressed',String(s)); });
@@ -1640,4 +1646,5 @@ window.addEventListener('DOMContentLoaded',()=>{
     formEl.addEventListener('focusin',(e)=>{ if(!e.target.matches('input,textarea,select')) return; overlays().forEach(o=>{ o.style.display='none'; }); setTimeout(()=>{ try{ e.target.scrollIntoView({block:'center',behavior:'smooth'}); }catch(err){} },300); });
     formEl.addEventListener('focusout',()=>{ overlays().forEach(o=>{ o.style.display=''; }); });
   }
+});
 });
