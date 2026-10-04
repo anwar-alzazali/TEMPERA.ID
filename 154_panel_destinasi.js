@@ -1,4 +1,5 @@
-/* ===== BLOK 154: panel -> Pengaturan -> "Destinasi & Kartu" (berkas terpisah; muat SETELAH 148). Butuh SQL 153 dan unggahGambar dari blok 125. =====
+/* v2 (154): + pilihan "Teks pembayaran di situs" (manual | midtrans; butuh SQL 161).
+   ===== BLOK 154: panel -> Pengaturan -> "Destinasi & Kartu" (berkas terpisah; muat SETELAH 148). Butuh SQL 153 dan unggahGambar dari blok 125. =====
    Admin mengatur: nama kartu (+Melayu), label, foto kartu, urutan, tampil/sembunyi; destinasi di tiap kartu (tambah, ubah, urut, sembunyikan, hapus). */
 (function () {
   'use strict';
@@ -10,7 +11,7 @@
   const opsi = (map, pilih) => Object.keys(map).map((k) => `<option value="${esc(k)}"${k === pilih ? ' selected' : ''}>${esc(map[k])}</option>`).join('');
   const int = (v, d) => { const x = parseInt(v, 10); return Number.isFinite(x) ? x : d; };
   const slug = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 24);
-
+ 
   const sebelumnya = VIEWS.pengaturan;
   VIEWS.pengaturan = async function () {
     await sebelumnya();
@@ -19,7 +20,7 @@
     pasangEvent(box);
     await muat();
   };
-
+ 
   async function muat() {
     const m = $('#dsMount'); if (!m) return;
     const [k, i] = await Promise.all([
@@ -27,11 +28,17 @@
       sb.from('destinasi_item').select('*').order('urut').order('id')]);
     if (k.error || i.error) { m.innerHTML = `<h2 style="margin-top:22px">Destinasi &amp; Kartu</h2><div class="card"><div class="help">Belum bisa dimuat: ${esc((k.error || i.error).message)}. Jalankan SQL 153 di Supabase dulu.</div></div>`; return; }
     KARTU = k.data || []; ITEM = i.data || [];
-    m.innerHTML = `<h2 style="margin-top:24px">Destinasi &amp; Kartu</h2>
+    const tp = await sb.from('app_settings').select('value').eq('key', 'teks_pembayaran').maybeSingle();
+    const tpAda = !tp.error && tp.data;
+    const tpNilai = tpAda && String(tp.data.value).trim().toLowerCase() === 'midtrans' ? 'midtrans' : 'manual';
+    const kartuBayar = `<h2 style="margin-top:24px">Teks pembayaran di situs</h2>
+      <div class="card" style="margin-bottom:10px"><div class="help" style="margin-bottom:8px">Mengatur tulisan <b>tanda kepercayaan</b> di atas tombol bayar dan dua FAQ pembayaran. Ganti ke <b>Midtrans</b> saat Midtrans sudah aktif. Ini hanya mengubah <b>tulisan</b> di situs; cara bayar yang sebenarnya tetap ditentukan oleh pengaturan <code>payment_gateway</code>.</div>
+      ${tpAda ? `<select id="dsTeksBayar"><option value="manual"${tpNilai === 'manual' ? ' selected' : ''}>Transfer manual (rekening resmi, konfirmasi lewat WhatsApp)</option><option value="midtrans"${tpNilai === 'midtrans' ? ' selected' : ''}>Midtrans (QRIS, transfer bank, e-wallet)</option></select>` : '<div class="help">Pengaturan belum ada. Jalankan SQL 161 di Supabase dulu, lalu buka halaman ini lagi.</div>'}</div>`;
+    m.innerHTML = `${kartuBayar}<h2 style="margin-top:24px">Destinasi &amp; Kartu</h2>
       <div class="help" style="margin-bottom:10px">Mengatur kartu di bagian <b>Pilih Destinasi</b> situs. Buka satu kartu untuk mengubah nama, foto, dan isinya. Pakai <b>Tampil</b> (hilangkan centang) untuk menyembunyikan tanpa menghapus. Biaya lintas mengikuti <b>wilayah</b> kartu (Lembang, Ciwidey, Pangalengan); wilayah baru di luar itu belum bisa ditambah dari sini. Destinasi baru otomatis dikenali asisten WA.</div>
       ${KARTU.map(kartuHtml).join('')}${tambahKartuHtml()}`;
   }
-
+ 
   function kartuHtml(k) {
     const items = ITEM.filter((x) => x.kartu_id === k.id);
     const f = fotoSrc(k.foto);
@@ -74,14 +81,14 @@
       </div><div class="help">Foto dan label diisi setelah kartu dibuat.</div>
       <button class="btn sm" type="button" data-ds-ak>Buat kartu</button></details>`;
   }
-
+ 
   const baca = (root) => { const o = {}; root.querySelectorAll('[data-f]').forEach((el) => { o[el.dataset.f] = el.type === 'checkbox' ? el.checked : el.value.trim(); }); return o; };
   const gagal = (e) => { toast(e.message || String(e), true); };
   async function simpan(promise, pesan, tetapBuka) {
     const r = await promise; if (r.error) { gagal(r.error); return false; }
     toast(pesan); if (tetapBuka) terbuka.add(tetapBuka); await muat(); return true;
   }
-
+ 
   function pasangEvent(m) {
     m.addEventListener('toggle', (e) => { const d = e.target; if (d && d.dataset && d.dataset.kid) { if (d.open) terbuka.add(d.dataset.kid); else terbuka.delete(d.dataset.kid); } }, true);
     m.addEventListener('click', async (e) => {
@@ -113,6 +120,12 @@
       }
     });
     m.addEventListener('change', async (e) => {
+      const sel = e.target.closest('#dsTeksBayar');
+      if (sel) {
+        const r = await sb.from('app_settings').update({ value: sel.value }).eq('key', 'teks_pembayaran');
+        if (r.error) gagal(r.error); else toast('Teks pembayaran tersimpan: ' + sel.value);
+        return;
+      }
       const fi = e.target.closest('input[data-ds-foto]'); if (!fi) return;
       const f = fi.files[0]; if (!f) return;
       const d = fi.closest('details'), st = d.querySelector('[data-ds-st]'), inp = d.querySelector('input[data-f="foto"]'); st.textContent = 'Memproses…';
@@ -127,3 +140,4 @@
     });
   }
 })();
+ 
