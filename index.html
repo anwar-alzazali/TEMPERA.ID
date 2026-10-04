@@ -288,6 +288,7 @@
   <div>
     <label class="block text-[10px] uppercase font-bold mb-3" style="color:var(--accent)" data-i18n="picked_title">Destinasi pilihanmu</label>
     <div id="pickedBox" aria-live="polite"></div>
+    <div id="lintasInfo" hidden></div>
   </div>
   <details id="lainBox">
     <summary class="text-[12px] font-semibold cursor-pointer" style="color:var(--accent)" data-i18n="lain_toggle">+ Ada tempat lain? (opsional)</summary>
@@ -317,6 +318,9 @@
   </div>
   <div id="durasiNote" class="rounded-xl p-3 text-[12px]" style="background:color-mix(in srgb, var(--accent) 10%, var(--bg-card));border:1px solid var(--border-color);color:var(--text-secondary)"></div>
   <div><label for="formCatatan" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_note">Catatan / Lokasi Jemput</label><textarea id="formCatatan" rows="2" data-i18n-ph="ph_note" placeholder="Jemput di Stasiun Bandung..." class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></textarea></div>
+  <div id="payHolder" class="space-y-4">
+  <div id="trustBox" class="trust-box"><p data-i18n="trust1">Bayar hanya ke rekening resmi Tempera, atas nama Anwar Alzazali Mufti.</p><p data-i18n="trust2">Setelah bayar, konfirmasi dan invoice dikirim ke WhatsApp Anda.</p><p data-i18n-html="trust3">DP, pembatalan, dan ganti jadwal: lihat <a href="syarat.html#pembatalan" target="_blank" rel="noopener">Syarat &amp; Ketentuan</a>.</p></div>
+  </div>
 </div>
 <div class="border rounded-2xl p-6 sm:p-8 h-fit lg:sticky lg:top-28" style="background:var(--bg-section-alt);border-color:var(--border-color)">
   <h3 class="text-xs uppercase tracking-[0.2em] font-bold mb-6 pb-3 border-b" style="color:var(--accent);border-color:var(--border-soft)" data-i18n="summary">Rincian Biaya</h3>
@@ -334,7 +338,6 @@
       <p><b data-i18n="inc_title">✅ Termasuk</b><br><span data-i18n="inc_list">Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam</span></p>
       <p><b data-i18n="exc_title">❌ Tidak termasuk</b><br><span data-i18n="exc_list">Tol, parkir, makan driver</span></p>
     </div>
-    <div id="trustBox" class="trust-box"><p data-i18n="trust1">Bayar hanya ke rekening resmi Tempera, atas nama Anwar Alzazali Mufti.</p><p data-i18n="trust2">Setelah bayar, konfirmasi dan invoice dikirim ke WhatsApp Anda.</p><p data-i18n-html="trust3">DP, pembatalan, dan ganti jadwal: lihat <a href="syarat.html#pembatalan" target="_blank" rel="noopener">Syarat &amp; Ketentuan</a>.</p></div>
     <p id="formHint" role="alert" hidden data-i18n="gate_fields">Lengkapi dulu kolom yang bertanda merah.</p>
     <label id="termsRow" class="flex gap-2 items-start text-[12px] leading-relaxed mb-4 cursor-pointer" style="color:var(--text-secondary)"><input id="formSetuju" type="checkbox" required class="mt-1 w-4 h-4 shrink-0"><span data-i18n-html="terms_html">Saya telah membaca dan menyetujui <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Syarat &amp; Ketentuan</a>, termasuk kebijakan DP dan pembatalan.</span></label>
     <button type="submit" id="submitBtn" class="w-full font-bold py-4 rounded-xl uppercase text-[11px]" style="background:var(--accent);color:var(--on-accent)" data-i18n="submit">Konfirmasi &amp; Bayar</button>
