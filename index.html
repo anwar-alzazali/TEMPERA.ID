@@ -50,41 +50,8 @@
 <script>
 (function(){ try{ const m=localStorage.getItem('tempera_theme_manual'); if(m==='light'||m==='dark') document.documentElement.setAttribute('data-theme',m); }catch(e){} })();
 </script>
-<!-- POLES UI (v17): perapian tampilan HP. Hanya CSS; mudah dicabut dengan menghapus blok ini. -->
-<style id="polesUI">
-/* cuaca: warna malam/sore selaras tema teal (tanpa ungu) */
-.weather-card.wx-malam{background:linear-gradient(135deg,#0B2433 0%,#0E3A4F 55%,#0E5A73 100%)}
-.weather-card.wx-sore{background:linear-gradient(135deg,#F97316 0%,#DB2777 55%,#0E7490 100%)}
-@media(max-width:1023px){
-  /* tombol WhatsApp melayang: ikon saja di HP, tidak menutupi isi */
-  #floatingWaBtn{padding:4px!important;gap:0!important;right:12px!important;bottom:104px!important}
-  #floatingWaBtn>div:last-child{display:none!important}
-  #floatingWaBtn>div:first-child{width:48px!important;height:48px!important}
-}
-@media(max-width:767px){
-  /* jarak antarbagian lebih rapat */
-  section.py-24{padding-top:3.5rem!important;padding-bottom:3.5rem!important}
-  section.py-16{padding-top:2.5rem!important;padding-bottom:2.5rem!important}
-  .mb-16{margin-bottom:2rem!important}
-  .mb-12{margin-bottom:1.75rem!important}
-  .hero{min-height:62vh}
-  .hero-inner{padding:112px 20px 72px}
-  /* kartu cuaca lebih ringkas */
-  .weather-card{padding:18px;border-radius:26px}
-  .wx-icon{width:64px;height:64px;min-width:64px;font-size:46px}
-  #weather-temp{font-size:44px!important}
-  #weather-main-card .mt-6{margin-top:1rem}
-  #weather-main-card .mt-8{margin-top:1.1rem}
-  #weather-main-card .grid.grid-cols-3.gap-3 .wx-glass{padding:10px}
-  #wxLocs{grid-template-columns:repeat(3,1fr)!important;gap:8px!important;margin-top:1rem!important}
-  #wxLocs>div{flex-direction:column;align-items:flex-start!important;justify-content:flex-start!important;gap:4px;padding:10px 12px!important}
-  #wxLocs p.wx-muted{display:none}
-  #wxLocs .text-right{display:flex;align-items:center;gap:6px;text-align:left}
-  #wxLocs .text-right>div{font-size:18px!important}
-  /* tabel harga armada: di HP sudah ada di kartu di atasnya */
-  #armadaTabel{display:none}
-}
-</style>
+<!-- Hero: mulai unduh foto sedini mungkin (alamat terakhir diingat di perangkat; bawaan images/hero.webp). main.js yang memasangnya. -->
+<script>(function(){try{var u=localStorage.getItem('tempera_hero');if(u==='-')return;if(!u)u='images/hero.webp';var i=new Image();i.src=u;}catch(e){}})();</script>
 </head>
 
 <body>
@@ -149,6 +116,7 @@
       <li data-i18n="hero_p1">BBM termasuk</li>
       <li data-i18n="hero_p2">Sewa 12 jam</li>
       <li data-i18n="hero_p3">Bisa bayar DP</li>
+      <li data-i18n="hero_p4">Invoice &amp; surat jalan digital</li>
     </ul>
     <div class="hero-cta">
       <a href="#destinasi" class="hero-btn hero-btn-main" data-i18n="hero_cta1">Pilih Destinasi</a>
@@ -310,7 +278,7 @@
 <!-- FORM BOOKING -->
 <section id="pesan" class="py-24 theme-section border-t" style="border-color:var(--border-soft)"><div class="max-w-6xl mx-auto px-4">
 <div class="text-center mb-16"><h2 class="text-3xl font-serif uppercase tracking-widest" style="color:var(--accent)" data-i18n="book_title">Booking Sewa Mobil &amp; Paket Wisata Bandung</h2><div class="w-16 h-[2px] mx-auto mt-4" style="background:var(--accent)"></div></div>
-<form id="travelForm" onsubmit="handleFormSubmitMidtrans(event)" class="border p-6 md:p-10 rounded-3xl grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 shadow-lg" style="background:var(--bg-card);border-color:var(--border-color)">
+<form id="travelForm" novalidate onsubmit="handleFormSubmitMidtrans(event)" class="border p-6 md:p-10 rounded-3xl grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 shadow-lg" style="background:var(--bg-card);border-color:var(--border-color)">
 <div class="lg:col-span-2 space-y-6">
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div><label for="formNama" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_name">Nama Lengkap *</label><input id="formNama" type="text" required autocomplete="name" data-i18n-ph="ph_name" placeholder="Nama Anda" class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></div>
@@ -321,11 +289,14 @@
     <label class="block text-[10px] uppercase font-bold mb-3" style="color:var(--accent)" data-i18n="picked_title">Destinasi pilihanmu</label>
     <div id="pickedBox" aria-live="polite"></div>
   </div>
-  <div>
-    <label for="formDestLain" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="lain_label">Destinasi lain (konsultasi dengan driver)</label>
-    <textarea id="formDestLain" rows="2" maxlength="300" data-i18n-ph="lain_ph" placeholder="Contoh: nama tempat lain di empat wilayah layanan" class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></textarea>
-    <p class="text-[11px] mt-2 leading-relaxed" style="color:var(--text-muted)" data-i18n="lain_note">Hanya untuk tempat di empat wilayah layanan. Tidak dijamin: driver atau admin mengonfirmasi lewat WhatsApp apakah waktunya cukup. Di luar area, gunakan Trip Custom.</p>
-  </div>
+  <details id="lainBox">
+    <summary class="text-[12px] font-semibold cursor-pointer" style="color:var(--accent)" data-i18n="lain_toggle">+ Ada tempat lain? (opsional)</summary>
+    <div class="mt-3">
+      <label for="formDestLain" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="lain_label">Destinasi lain (konsultasi dengan driver)</label>
+      <textarea id="formDestLain" rows="2" maxlength="300" data-i18n-ph="lain_ph" placeholder="Contoh: nama tempat lain di empat wilayah layanan" class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></textarea>
+      <p class="text-[11px] mt-2 leading-relaxed" style="color:var(--text-muted)" data-i18n="lain_note">Hanya untuk tempat di empat wilayah layanan. Tidak dijamin: driver atau admin mengonfirmasi lewat WhatsApp apakah waktunya cukup. Di luar area, gunakan Trip Custom.</p>
+    </div>
+  </details>
   <div id="oldPicker" style="display:none" aria-hidden="true">
   <div>
     <label class="block text-[10px] uppercase font-bold mb-3" style="color:var(--accent)" data-i18n="step1">Langkah 1: Pilih Wilayah Biar Hemat</label>
@@ -339,21 +310,21 @@
     <div id="crossTripWarning" class="hidden"></div>
   </div>
   </div>
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div><label for="formTanggal" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_date">Tanggal *</label><input id="formTanggal" type="date" required class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></div>
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+    <div class="col-span-2 sm:col-span-1"><label for="formTanggal" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_date">Tanggal *</label><input id="formTanggal" type="date" required class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></div>
     <div><label for="formJam" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_time">Jam Jemput</label><select id="formJam" class="w-full border rounded-xl py-3 px-4 text-sm theme-input"><option>05:00</option><option selected>07:00</option><option>08:00</option><option>09:00</option></select></div>
     <div><label for="formJumlah" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_pax">Jumlah Peserta *</label><input id="formJumlah" type="number" min="1" max="30" required placeholder="4" oninput="checkCapacityLive()" class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></div>
   </div>
   <div id="durasiNote" class="rounded-xl p-3 text-[12px]" style="background:color-mix(in srgb, var(--accent) 10%, var(--bg-card));border:1px solid var(--border-color);color:var(--text-secondary)"></div>
-  <div><label for="formCatatan" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_note">Catatan / Lokasi Jemput</label><textarea id="formCatatan" rows="3" data-i18n-ph="ph_note" placeholder="Jemput di Stasiun Bandung..." class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></textarea></div>
+  <div><label for="formCatatan" class="block text-[10px] uppercase font-bold mb-2" style="color:var(--text-muted)" data-i18n="form_note">Catatan / Lokasi Jemput</label><textarea id="formCatatan" rows="2" data-i18n-ph="ph_note" placeholder="Jemput di Stasiun Bandung..." class="w-full border rounded-xl py-3 px-4 text-sm theme-input"></textarea></div>
 </div>
 <div class="border rounded-2xl p-6 sm:p-8 h-fit lg:sticky lg:top-28" style="background:var(--bg-section-alt);border-color:var(--border-color)">
   <h3 class="text-xs uppercase tracking-[0.2em] font-bold mb-6 pb-3 border-b" style="color:var(--accent);border-color:var(--border-soft)" data-i18n="summary">Rincian Biaya</h3>
   <div class="border rounded-xl p-4 mb-4" style="background:var(--bg-card);border-color:var(--border-color)"><div class="flex justify-between gap-3"><div><span class="text-[10px] uppercase font-bold block mb-1" style="color:var(--accent)" data-i18n="sum_armada">🚐 Armada</span><span id="resArmadaName" class="font-bold text-[14px]">Belum dipilih</span><span id="resArmadaCap" class="text-[10px] block" style="color:var(--text-muted)">Pilih armada di atas</span></div><div class="text-right"><span id="resBasePrice" class="font-bold text-[14px]" style="color:var(--accent)">Rp 0</span></div></div></div>
   <div class="space-y-4 text-xs" style="color:var(--text-secondary)">
-    <div class="flex justify-between gap-3"><span data-i18n="sum_dur">Durasi sewa:</span><span id="resDurasi" class="font-bold text-right" style="color:var(--text-primary)">12 jam</span></div>
+    <div id="rowDurasi" class="flex justify-between gap-3"><span data-i18n="sum_dur">Durasi sewa:</span><span id="resDurasi" class="font-bold text-right" style="color:var(--text-primary)">12 jam</span></div>
     <div class="flex justify-between gap-3"><span data-i18n="sum_cross">Biaya lintas:</span><div class="text-right"><span id="resRegionCost" class="font-bold" style="color:var(--text-primary)">Rp 0</span><span id="resRegionLabel" class="text-[10px]" style="color:var(--text-muted)"></span></div></div>
-    <div class="pt-3 border-t" style="border-color:var(--border-soft)"><span class="uppercase text-[10px] block mb-1" style="color:var(--text-muted)" data-i18n="sum_dest">Destinasi:</span><span id="resSelectedList" class="text-[11px]">Belum ada</span></div>
+    <div id="rowDest" class="pt-3 border-t" style="border-color:var(--border-soft)"><span class="uppercase text-[10px] block mb-1" style="color:var(--text-muted)" data-i18n="sum_dest">Destinasi:</span><span id="resSelectedList" class="text-[11px]">Belum ada</span></div>
     <div id="resCapacityInfo" class="hidden pt-3 border-t" style="border-color:var(--border-soft)"><span class="text-[10px] uppercase block mb-1" style="color:var(--text-muted)" data-i18n="sum_cap">Kapasitas:</span><span id="resCapacityText" class="text-[11px]"></span></div>
   </div>
   <div class="pt-8 mt-8 border-t" style="border-color:var(--border-soft)">
@@ -363,6 +334,8 @@
       <p><b data-i18n="inc_title">✅ Termasuk</b><br><span data-i18n="inc_list">Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam</span></p>
       <p><b data-i18n="exc_title">❌ Tidak termasuk</b><br><span data-i18n="exc_list">Tol, parkir, makan driver</span></p>
     </div>
+    <div id="trustBox" class="trust-box"><p data-i18n="trust1">Bayar hanya ke rekening resmi Tempera, atas nama Anwar Alzazali Mufti.</p><p data-i18n="trust2">Setelah bayar, konfirmasi dan invoice dikirim ke WhatsApp Anda.</p><p data-i18n-html="trust3">DP, pembatalan, dan ganti jadwal: lihat <a href="syarat.html#pembatalan" target="_blank" rel="noopener">Syarat &amp; Ketentuan</a>.</p></div>
+    <p id="formHint" role="alert" hidden data-i18n="gate_fields">Lengkapi dulu kolom yang bertanda merah.</p>
     <label id="termsRow" class="flex gap-2 items-start text-[12px] leading-relaxed mb-4 cursor-pointer" style="color:var(--text-secondary)"><input id="formSetuju" type="checkbox" required class="mt-1 w-4 h-4 shrink-0"><span data-i18n-html="terms_html">Saya telah membaca dan menyetujui <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Syarat &amp; Ketentuan</a>, termasuk kebijakan DP dan pembatalan.</span></label>
     <button type="submit" id="submitBtn" class="w-full font-bold py-4 rounded-xl uppercase text-[11px]" style="background:var(--accent);color:var(--on-accent)" data-i18n="submit">Konfirmasi &amp; Bayar</button>
   </div>
