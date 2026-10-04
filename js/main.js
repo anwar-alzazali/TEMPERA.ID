@@ -725,7 +725,7 @@ let DEST_CARDS=[
   {id:'dago',img:'fomoso.jpg',tag:'tag_utara',title:'card_dago',secs:[{g:'dago',items:DEST_SEC.dago}]},
   {id:'kota',img:'gedung-sate.webp',tag:'tag_titik0',title:'card_kota',secs:[{g:'dago',h:'sec_wisata',items:DEST_SEC.kotaWisata},{g:'dago',h:'sec_kuliner',items:DEST_SEC.kotaKuliner}]},
   {id:'ciwidey',img:'kawah_putih.jpg',tag:'tag_selatan',title:'card_ciwidey',secs:[{g:'ciwidey',items:DESTINASI_DATA.ciwidey}]},
-  {id:'pangalengan',img:'nimo_pangalengan.jpg',tag:'tag_selatan',title:'card_pangalengan',secs:[{g:'pangalengan',items:DESTINASI_DATA.pangalengan}]}
+  {id:'pangalengan',img:'nimo_pangalengan.webp',tag:'tag_selatan',title:'card_pangalengan',secs:[{g:'pangalengan',items:DESTINASI_DATA.pangalengan}]}
 ];
 const APPROVED=new Set();   // kombinasi wilayah luar kota yang sudah disetujui pelanggan (popup tidak muncul lagi)
 function regionKey(list){ return list.slice().sort().join('+'); }
