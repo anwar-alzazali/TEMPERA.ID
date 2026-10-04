@@ -1,4 +1,4 @@
-/* [MAIN.JS] v17b (158) -- persetujuan biaya lintas hanya berlaku selama kombinasi wilayahnya masih dipilih: dihapus lalu dipilih lagi = popup muncul lagi. v17 (158) -- jendela pilihan destinasi/armada saat data kurang, tanda kolom merah, kotak pesanan mirip, tanda kepercayaan (teks ikut pengaturan teks_pembayaran), hero dimuat lebih awal (alamat terakhir diingat), animasi muncul + angka total halus. v16 (156) -- destinasi, kartu, dan foto kartu dibaca dari database (tabel destinasi_kartu + destinasi_item, SQL 153; diatur di panel -> Pengaturan); daftar di kode = cadangan bila database tidak terjangkau. v15 (152) -- bar melayang kini bisa dibuka: daftar destinasi terpilih (bisa dihapus) + rincian biaya (armada, biaya lintas, total); tetap tampil setelah armada dipilih. v14 (150) -- halaman PILIH DESTINASI (lima kartu geser, label di formulir, popup biaya lintas, bar melayang) menggantikan kartu paket; kotak centang lama tetap ada TERSEMBUNYI sebagai penyimpan data; Cara Pesan; kolom Destinasi lain; persetujuan S&K; destinasi kota baru. v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
+/* [MAIN.JS] v18 (163) -- popup biaya lintas BERWARNA (kuning/oranye/hitam) + saran memecah jadi pesanan terpisah di hari berbeda (bukan paket 2 hari); panel penjelasan biaya lintas dikembalikan di bawah Destinasi pilihanmu (jarak, macet tengah kota, waktu di jalan); Cara Bayar + tanda kepercayaan pindah ke kolom kiri formulir. v17b (158) -- persetujuan biaya lintas hanya berlaku selama kombinasi wilayahnya masih dipilih: dihapus lalu dipilih lagi = popup muncul lagi. v17 (158) -- jendela pilihan destinasi/armada saat data kurang, tanda kolom merah, kotak pesanan mirip, tanda kepercayaan (teks ikut pengaturan teks_pembayaran), hero dimuat lebih awal (alamat terakhir diingat), animasi muncul + angka total halus. v16 (156) -- destinasi, kartu, dan foto kartu dibaca dari database (tabel destinasi_kartu + destinasi_item, SQL 153; diatur di panel -> Pengaturan); daftar di kode = cadangan bila database tidak terjangkau. v15 (152) -- bar melayang kini bisa dibuka: daftar destinasi terpilih (bisa dihapus) + rincian biaya (armada, biaya lintas, total); tetap tampil setelah armada dipilih. v14 (150) -- halaman PILIH DESTINASI (lima kartu geser, label di formulir, popup biaya lintas, bar melayang) menggantikan kartu paket; kotak centang lama tetap ada TERSEMBUNYI sebagai penyimpan data; Cara Pesan; kolom Destinasi lain; persetujuan S&K; destinasi kota baru. v13 (147) -- layar bayar manual menampilkan KODE UNIK (data.kode_unik, data.amount_base). v12 (140) -- layar bayar manual: DAFTAR REKENING BANK (logo + nomor + tombol salin) dari data.banks. v11 (131) -- semua tautan WhatsApp tanpa pesan otomatis diberi pesan pembuka saat diklik (+ ikon footer membawa pesan). v10 (124): + layar PEMBAYARAN MANUAL (data.manual dari create-order v6) + bagian 'Galeri Perjalanan' di beranda (tabel galeri, SQL 126).
    v9 (115): + tag (Ref: TMP-xxx) di pesan tombol WA + formulir terisi otomatis dari link chat (?dest=&armada=&tgl=&pax=#pesan).
    v8 (96): + bagian ulasan pelanggan. v7 (88): + label 'tinggal X unit' (sisa 1–3). v6: ketersediaan armada per tanggal. v4 -- tema 2 warna, bahasa Indonesia + Melayu, paket = template destinasi,
    Trip Custom, cuaca ikut waktu, termasuk/tidak termasuk, hero & media sosial dari panel. */
@@ -58,7 +58,13 @@ id: {
   trust1_mt: 'Pembayaran diproses aman lewat Midtrans (QRIS, transfer bank, e-wallet).', trust2_mt: 'Konfirmasi dan invoice dikirim ke WhatsApp setelah pembayaran diterima.',
   faq_a7_mt: 'Bisa. Saat checkout, pilih "Bayar DP". Anda cukup membayar sebagian lewat Midtrans, sisanya dibayar tunai langsung ke driver saat perjalanan. DP tidak dapat dikembalikan jika pelanggan membatalkan; detail kebijakan ada di Syarat & Ketentuan.',
   faq_a8_mt: 'Lewat Midtrans: bisa QRIS, transfer bank, atau e-wallet.',
-  xp_title: 'Menggabung wilayah', xp_text: 'Menambahkan {dest} membuat perjalananmu mencakup {n} wilayah di luar Kota Bandung ({list}). Ada biaya lintas {cost}.',
+  xp_title: 'Menggabung wilayah', xp_text: 'Menambahkan {dest} membuat perjalananmu mencakup {n} wilayah di luar Kota Bandung ({list}).', xp_cost: 'Biaya lintas',
+  xp_tip: 'Lebih santai kalau dipecah jadi pesanan terpisah di hari yang berbeda. Tiap pesanan sewa 12 jam di satu wilayah, tanpa biaya lintas.',
+  xp_tip3: 'Lebih santai kalau dipecah jadi tiga pesanan terpisah di hari yang berbeda. Tiap pesanan sewa 12 jam di satu wilayah, tanpa biaya lintas.',
+  lt_bl_title: 'Sama-sama Selatan, tapi beda lembah', lt_bl: 'Ciwidey ada di Selatan Barat dan Pangalengan di Selatan Timur. Tidak ada jalan tembus langsung, jadi harus memutar lewat Banjaran: sekitar 62 km, kurang lebih 2 jam di jalan.',
+  lt_us_title: 'Utara dan Selatan: lewat tengah kota', lt_us: 'Lembang ada di Utara, sedangkan Ciwidey dan Pangalengan di Selatan. Rutenya harus melewati tengah Kota Bandung yang sering macet, dua kali (berangkat dan pulang). Total memutar sekitar 90 km, 3 sampai 4 jam di jalan.',
+  lt_3_title: 'Tiga wilayah dalam satu hari', lt_3: 'Utara, Selatan Barat, dan Selatan Timur sekaligus: sekitar 152 km dan 7 sampai 8 jam di jalan, melewati tengah Kota Bandung yang macet sebanyak dua kali. Waktu untuk berfoto dan menikmati tempat tinggal sekitar 2 jam.',
+  lt_why: 'Biaya lintas menutup BBM tambahan dan waktu tempuh driver, karena jam di jalan ikut memakan jam sewa 12 jam.', lt_cost: 'Biaya lintas', lt_total: 'Total',
   xp_yes: 'Tetap gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Armada Sewa Mobil Bandung',
@@ -239,7 +245,13 @@ ms: {
   trust1_mt: 'Bayaran diproses dengan selamat melalui Midtrans (QRIS, pindahan bank, e-dompet).', trust2_mt: 'Pengesahan dan invois dihantar ke WhatsApp selepas bayaran diterima.',
   faq_a7_mt: 'Boleh. Semasa pembayaran, pilih "Bayar Deposit". Anda hanya perlu membayar sebahagian melalui Midtrans, bakinya dibayar tunai terus kepada pemandu semasa perjalanan. Deposit tidak boleh dikembalikan jika pelanggan membatalkan; butiran dasar ada dalam Terma & Syarat.',
   faq_a8_mt: 'Melalui Midtrans: QRIS, pindahan bank atau e-dompet.',
-  xp_title: 'Menggabungkan kawasan', xp_text: 'Menambah {dest} menjadikan perjalanan anda merangkumi {n} kawasan di luar Bandar Bandung ({list}). Ada caj rentas {cost}.',
+  xp_title: 'Menggabungkan kawasan', xp_text: 'Menambah {dest} menjadikan perjalanan anda merangkumi {n} kawasan di luar Bandar Bandung ({list}).', xp_cost: 'Caj rentas',
+  xp_tip: 'Lebih santai jika dipecahkan kepada tempahan berasingan pada hari yang berbeza. Setiap tempahan sewa 12 jam di satu kawasan, tanpa caj rentas.',
+  xp_tip3: 'Lebih santai jika dipecahkan kepada tiga tempahan berasingan pada hari yang berbeza. Setiap tempahan sewa 12 jam di satu kawasan, tanpa caj rentas.',
+  lt_bl_title: 'Sama-sama Selatan, tetapi lembah berbeza', lt_bl: 'Ciwidey di Selatan Barat dan Pangalengan di Selatan Timur. Tiada jalan terus antara keduanya, jadi perlu berpusing melalui Banjaran: kira-kira 62 km, lebih kurang 2 jam di jalan.',
+  lt_us_title: 'Utara dan Selatan: melalui tengah bandar', lt_us: 'Lembang di Utara, manakala Ciwidey dan Pangalengan di Selatan. Laluan perlu melalui tengah Bandar Bandung yang kerap sesak, dua kali (pergi dan balik). Jumlah perjalanan kira-kira 90 km, 3 hingga 4 jam di jalan.',
+  lt_3_title: 'Tiga kawasan dalam satu hari', lt_3: 'Utara, Selatan Barat dan Selatan Timur sekaligus: kira-kira 152 km dan 7 hingga 8 jam di jalan, melalui tengah Bandar Bandung yang sesak sebanyak dua kali. Masa untuk bergambar dan menikmati tempat tinggal kira-kira 2 jam.',
+  lt_why: 'Caj rentas menampung petrol tambahan dan masa perjalanan pemandu, kerana jam di jalan turut menggunakan jam sewa 12 jam.', lt_cost: 'Caj rentas', lt_total: 'Jumlah',
   xp_yes: 'Teruskan gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Kereta Sewa di Bandung',
@@ -793,16 +805,27 @@ function showCrossPopup(dest,regions,cost){
     ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-labelledby','crossPopupTitle');
     ov.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483200;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);touch-action:none;overscroll-behavior:contain';
     ov.addEventListener('click',(e)=>{ e.preventDefault(); e.stopPropagation(); });   // latar menahan klik: tidak menutup, tidak meneruskan ke halaman
+    const tiga=regions.length===3, bl=regions.includes('ciwidey')&&regions.includes('pangalengan');
+    const W=tiga?{bg:'#18181B',fg:'#FBBF24',ikon:'#FBBF24',ikonfg:'#18181B'}:(bl?{bg:'#FBBF24',fg:'#1F2937',ikon:'#1F2937',ikonfg:'#FBBF24'}:{bg:'#F97316',fg:'#111827',ikon:'#111827',ikonfg:'#F97316'});   // kuning: beda lembah, oranye: utara-selatan, hitam: tiga wilayah
     const card=document.createElement('div');
-    card.style.cssText='width:100%;max-width:380px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);border-radius:20px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.4);touch-action:auto';
-    const h=document.createElement('b'); h.id='crossPopupTitle'; h.textContent=t('xp_title'); h.style.cssText='display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px';
-    const p=document.createElement('p'); p.textContent=t('xp_text',{dest,n:regions.length,list:regions.map(r=>REGION_NAME[r]).join(', '),cost:formatPrice(cost)});
-    p.style.cssText='margin:0 0 18px;font-size:14px;line-height:1.55;color:var(--text-secondary)';
+    card.style.cssText='width:100%;max-width:400px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-color);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45);touch-action:auto';
+    const band=document.createElement('div'); band.style.cssText=`display:flex;align-items:center;gap:12px;padding:14px 20px;background:${W.bg};color:${W.fg}`;
+    const ik=document.createElement('span'); ik.textContent='!'; ik.setAttribute('aria-hidden','true'); ik.style.cssText=`flex:none;width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;background:${W.ikon};color:${W.ikonfg}`;
+    const h=document.createElement('b'); h.id='crossPopupTitle'; h.textContent=t('xp_title'); h.style.cssText='font-size:13px;letter-spacing:.14em;text-transform:uppercase';
+    band.append(ik,h);
+    const isi=document.createElement('div'); isi.style.cssText='padding:18px 22px 22px';
+    const p=document.createElement('p'); p.textContent=t('xp_text',{dest,n:regions.length,list:regions.map(r=>REGION_NAME[r]).join(', ')});
+    p.style.cssText='margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text-secondary)';
+    const bi=document.createElement('div'); bi.style.cssText='display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 0 12px;padding:10px 12px;border-radius:12px;background:var(--bg-section-alt);border:1px solid var(--border-soft)';
+    const bl1=document.createElement('span'); bl1.textContent=t('xp_cost'); bl1.style.cssText='font-size:12px;font-weight:700;color:var(--text-muted)';
+    const bl2=document.createElement('b'); bl2.textContent=formatPrice(cost); bl2.style.cssText='font-size:20px;color:var(--text-primary)';
+    bi.append(bl1,bl2);
+    const tip=document.createElement('p'); tip.textContent=t(tiga?'xp_tip3':'xp_tip'); tip.style.cssText='margin:0 0 18px;font-size:13px;line-height:1.55;color:var(--text-secondary)';
     const row=document.createElement('div'); row.style.cssText='display:flex;flex-direction:column;gap:10px';
     const gaya='width:100%;padding:12px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;';
     const yes=document.createElement('button'); yes.type='button'; yes.textContent=t('xp_yes',{cost:formatPrice(cost)}); yes.style.cssText=gaya+'border:0;background:var(--accent);color:var(--on-accent)';
     const no=document.createElement('button'); no.type='button'; no.textContent=t('xp_no'); no.style.cssText=gaya+'background:transparent;color:var(--text-primary);border:1px solid var(--border-color)';
-    row.append(yes,no); card.append(h,p,row); ov.appendChild(card); document.body.appendChild(ov);
+    row.append(yes,no); isi.append(p,bi,tip,row); card.append(band,isi); ov.appendChild(card); document.body.appendChild(ov);
     const kunci=document.body.style.overflow; document.body.style.overflow='hidden';
     try{ history.pushState({crossPopup:1},''); }catch(e){}
     let selesai=false;
@@ -1132,51 +1155,22 @@ function calculateLive(){
 }
 
 function renderCrossWarning(crossType,base,cost){
-  const warn=document.getElementById('crossTripWarning'); if(!warn) return;
-  warn.classList.add('hidden'); warn.innerHTML=''; return;   // v14: diganti popup biaya lintas saat memilih destinasi (baris biaya di Rincian tetap)
-  if(crossType==='none'){ warn.classList.add('hidden'); warn.innerHTML=''; return; }
-  const rp=(v)=>formatPrice(v);
-  if(crossType==='beda_lembah'){
-    warn.className='rounded-[20px] border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 p-5 mt-4';
-    warn.innerHTML=`<div class="flex gap-3"><div class="w-9 h-9 rounded-full bg-amber-400 flex items-center justify-center text-white font-bold shrink-0">!</div><div class="flex-1">
-      <div class="flex items-center gap-2 flex-wrap"><p class="text-[11px] font-black tracking-[0.12em] text-amber-800 uppercase">${t('w_bl_title')}</p><span class="rounded-full bg-amber-400 px-2.5 py-0.5 text-[10px] font-bold text-white">${t('w_bl_badge')}</span></div>
-      <p class="mt-2 text-[13px] font-semibold leading-snug text-zinc-800">${t('w_bl_desc')}</p>
-      <div class="mt-3 bg-white rounded-xl border border-amber-200 p-3 flex items-center justify-between"><div class="text-center"><div class="text-[9px] text-zinc-400">CIWIDEY</div><div class="font-bold text-[11px]">Kawah Putih</div></div><div class="flex-1 px-2 text-center"><div class="text-[9px] text-zinc-400">${t('w_bl_via')}</div><div class="text-[10px] font-bold text-amber-600">${t('w_bl_route')}</div><div class="h-0.5 bg-amber-200 my-1 border-dashed border-t"></div></div><div class="text-center"><div class="text-[9px] text-zinc-400">PANGALENGAN</div><div class="font-bold text-[11px]">Wayang Windu</div></div></div>
-      <div class="mt-3 rounded-xl bg-white/90 p-3 border border-amber-200"><div class="flex justify-between text-[11px]"><span class="text-zinc-500">${t('w_base')}</span><span class="font-semibold">${rp(base)}</span></div><div class="flex justify-between text-[11px] mt-1"><span class="text-amber-700 font-medium">${t('w_bl_add')}</span><span class="font-bold text-amber-700">${rp(cost)}</span></div><div class="mt-2 flex justify-between border-t pt-2 text-[13px] font-black"><span>${t('w_total')}</span><span>${rp(base+cost)}</span></div></div>
-      <div class="mt-3 flex gap-2 flex-wrap"><button type="button" onclick="selectAllInGroup('pangalengan',false)" class="px-3 py-1.5 bg-white border rounded-full text-[10px] font-bold">${t('w_only_ciw')}</button><button type="button" onclick="selectAllInGroup('ciwidey',false)" class="px-3 py-1.5 bg-white border rounded-full text-[10px] font-bold">${t('w_only_pgl')}</button></div>
-    </div></div>`;
-  } else if(crossType==='utara_selatan'){
-    warn.className='rounded-[20px] border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 p-5 mt-4';
-    warn.innerHTML=`<div class="flex gap-3"><div class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold shrink-0">!</div><div class="flex-1">
-      <p class="text-[11px] font-black tracking-[0.12em] text-orange-800 uppercase">${t('w_us_title')}</p>
-      <p class="mt-2 text-[13px] font-semibold text-zinc-800">${t('w_us_desc')}</p>
-      <div class="mt-3 bg-white rounded-xl border border-orange-200 p-3 text-center"><div class="flex items-center justify-center gap-2 text-[11px] font-bold"><span>LEMBANG</span><span class="text-orange-500">↔ 65KM ↕</span><span>CIWIDEY / PANGALENGAN</span></div><div class="text-[10px] text-zinc-500 mt-1">${t('w_us_dist')}</div></div>
-      <div class="mt-3 rounded-xl bg-white/90 p-3 border border-orange-200"><div class="flex justify-between text-[11px] mt-1"><span class="text-orange-700 font-medium">${t('w_us_add')}</span><span class="font-bold text-orange-700">${rp(cost)}</span></div><div class="mt-2 flex justify-between border-t pt-2 text-[13px] font-black"><span>${t('w_total')}</span><span>${rp(base+cost)}</span></div></div>
-      <div class="mt-3"><button type="button" onclick="goTripCustom(2)" class="w-full bg-zinc-900 text-white rounded-full py-2.5 text-[11px] font-bold">${t('w_us_btn')}</button></div>
-    </div></div>`;
-  } else {
-    warn.className='rounded-[20px] border-2 border-zinc-900 bg-zinc-900 text-white p-5 mt-4';
-    warn.innerHTML=`<div class="flex flex-col">
-      <div class="flex items-center gap-2 flex-wrap"><span class="bg-amber-400 text-black text-[10px] font-black px-2.5 py-1 rounded-full">${t('w_3_badge')}</span><span class="text-[10px] text-zinc-400">${t('w_3_dirs')}</span></div>
-      <p class="mt-3 text-[15px] font-bold leading-tight">${t('w_3_title')}</p>
-      <div class="mt-4 grid grid-cols-3 gap-2 text-center">
-        <div class="bg-zinc-800 rounded-xl p-2.5 border border-zinc-700"><div class="text-[9px] text-zinc-400">07:00</div><div class="text-[11px] font-bold mt-1">LEMBANG</div><div class="text-[9px] text-amber-300">${t('w_north')}</div></div>
-        <div class="bg-zinc-800 rounded-xl p-2.5 border border-zinc-700"><div class="text-[9px] text-zinc-400">11:30</div><div class="text-[11px] font-bold mt-1">CIWIDEY</div><div class="text-[9px] text-amber-300">${t('w_sw')}</div></div>
-        <div class="bg-zinc-800 rounded-xl p-2.5 border-2 border-amber-400"><div class="text-[9px] text-amber-400">14:30</div><div class="text-[11px] font-bold mt-1">PANGALENGAN</div><div class="text-[9px] text-amber-300">${t('w_se')}</div></div>
-      </div>
-      <div class="mt-4 rounded-xl bg-white text-black p-3">
-        <div class="flex justify-between gap-2 text-[11px]"><span class="text-zinc-500">${t('w_3_dist_l')}</span><span class="font-bold text-right">${t('w_3_dist_v')}</span></div>
-        <div class="flex justify-between gap-2 text-[11px] mt-1.5"><span class="text-zinc-500">${t('w_3_photo_l')}</span><span class="font-bold text-red-500 text-right">${t('w_3_photo_v')}</span></div>
-        <div class="mt-2 pt-2 border-t flex justify-between gap-2 text-[12px] font-black"><span>${t('w_3_add')}</span><span class="whitespace-nowrap">${rp(cost)}</span></div>
-        <div class="mt-1 flex justify-between text-[13px] font-black"><span>${t('w_total')}</span><span>${rp(base+cost)}</span></div>
-      </div>
-      <p class="text-[11px] text-zinc-400 mt-3 leading-snug">${t('w_3_honest')}</p>
-      <button type="button" onclick="goTripCustom(3)" class="mt-4 w-full bg-amber-400 text-black rounded-full py-3 text-[12px] font-black">${t('w_3_btn')}</button>
-      <p class="text-[11px] text-zinc-400 mt-4 mb-2">${t('w_3_one')}</p>
-      <div class="grid grid-cols-3 gap-2">${OUTER.map(r=>`<button type="button" onclick="onlyRegion('${r}')" class="bg-zinc-800 border border-zinc-700 rounded-full py-2.5 text-[11px] font-bold">${t('w_only',{r:REGION_NAME[r]})}</button>`).join('')}</div>
-      <p class="text-[10px] text-zinc-500 mt-3">${t('w_3_keep')}</p>
-    </div>`;
-  }
+  const box=document.getElementById('lintasInfo'); if(!box) return;
+  if(crossType==='none'){ box.hidden=true; box.innerHTML=''; return; }
+  const W={
+    beda_lembah:{bg:'#FFFBEB',bd:'#FCD34D',hd:'#92400E',tt:'lt_bl_title',tx:'lt_bl',fg:'#3F3F46',fg2:'#18181B'},
+    utara_selatan:{bg:'#FFF7ED',bd:'#FDBA74',hd:'#9A3412',tt:'lt_us_title',tx:'lt_us',fg:'#3F3F46',fg2:'#18181B'},
+    tiga_penjuru:{bg:'#18181B',bd:'#18181B',hd:'#FBBF24',tt:'lt_3_title',tx:'lt_3',fg:'#E4E4E7',fg2:'#FFFFFF'}
+  }[crossType];
+  const a=getSelectedArmada();
+  const baris=(k,v,tebal)=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid ${W.bd};font-size:${tebal?14:12}px;font-weight:${tebal?800:600};color:${W.fg2}"><span>${esc(k)}</span><span>${esc(v)}</span></div>`;
+  box.hidden=false;
+  box.style.cssText=`border:2px solid ${W.bd};background:${W.bg};border-radius:18px;padding:16px;margin-top:12px`;
+  box.innerHTML=`<p style="margin:0 0 6px;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:${W.hd}">${esc(t(W.tt))}</p>
+    <p style="margin:0 0 8px;font-size:13px;line-height:1.55;color:${W.fg}">${esc(t(W.tx))}</p>
+    <p style="margin:0 0 10px;font-size:12px;line-height:1.55;color:${W.fg}">${esc(t('lt_why'))}</p>
+    ${baris(t('lt_cost'),formatPrice(cost))}${a?baris(t('lt_total'),formatPrice(base+cost),true):''}
+    <p style="margin:10px 0 0;font-size:12px;line-height:1.55;font-weight:600;color:${W.fg2}">${esc(t(crossType==='tiga_penjuru'?'xp_tip3':'xp_tip'))}</p>`;
 }
 
 /* ---------- Trip Custom: pilihan tujuan mengisi link WhatsApp ---------- */
@@ -1305,7 +1299,8 @@ function initPaymentModeUI(){
       <label class="pm-opt"><input type="radio" name="paymentMode" value="dp"><span data-pm-card="dp" class="pm-card"><b id="pmDpLabel"></b><small data-i18n="pm_dp_d"></small></span></label>
     </div>
     <p id="pmPreview" class="pm-preview"></p>`;
-  btn.parentNode.insertBefore(box,document.getElementById('termsRow')||btn);
+  const holder=document.getElementById('payHolder');
+  if(holder) holder.insertBefore(box,holder.firstChild); else btn.parentNode.insertBefore(box,document.getElementById('termsRow')||btn);   // kolom kiri formulir, sesudah Catatan
   applyStaticText(box);
   box.querySelectorAll('input[name="paymentMode"]').forEach(r=>r.addEventListener('change',()=>{
     PAYMENT_MODE=r.value;
