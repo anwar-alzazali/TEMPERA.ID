@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#EEF1F7">
+<title>Kartu Nama Digital</title>
+<!-- Kartu Nama Digital (uji coba anggota). Alamat: /k/<alamat> -> 404.html mengalihkan ke sini (?k=<alamat>). Data dari fungsi kd_ambil (SQL 167). -->
+<style>
+:root{--bg:#EEF1F7;--card:#FFFFFF;--ink:#0F172A;--muted:#475569;--line:#CBD5E1;--soft:#F1F5F9;--ac:#1D4ED8;--on:#FFFFFF}
+@media (prefers-color-scheme:dark){:root{--bg:#0B1020;--card:#151B2E;--ink:#F1F5F9;--muted:#A7B3C7;--line:#2A3350;--soft:#1B2340}}
+body[data-w="hijau"]{--ac:#15803D}
+body[data-w="ungu"]{--ac:#6D28D9}
+body[data-w="bata"]{--ac:#B91C1C}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.5;padding:max(20px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));display:flex;justify-content:center;overflow-x:hidden}
+main{width:100%;max-width:440px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.avatar{width:96px;height:96px;border-radius:50%;background:var(--ac);color:var(--on);font-weight:800;font-size:34px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:16px;flex:none}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+h1{margin:6px 0 0;font-size:26px;line-height:1.2;text-align:center;letter-spacing:-0.01em;overflow-wrap:anywhere}
+.bio{margin:0 0 8px;color:var(--muted);text-align:center;font-size:16px;overflow-wrap:anywhere}
+.btn,summary.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;padding:0 18px;border-radius:14px;font:inherit;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn.main{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.btn:focus-visible,summary:focus-visible{outline:3px solid var(--ac);outline-offset:3px}
+.sec{width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+.sec h2{margin:12px 0 4px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:16px}
+.row:first-of-type{border-top:0}
+.row b{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.row span{overflow-wrap:anywhere}
+details{width:100%}
+details>summary{list-style:none}details>summary::-webkit-details-marker{display:none}
+.pay{padding:4px 0 14px;display:flex;flex-direction:column;gap:12px}
+.pay pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;font-size:16px}
+.pay img{display:block;max-width:240px;width:100%;margin:0 auto;border-radius:12px;background:#fff}
+.small{font-size:13px;color:var(--muted);text-align:center;margin-top:8px}
+.small a{color:inherit}
+.skel{width:100%;height:52px;border-radius:14px;background:var(--line);opacity:.5}
+.err{margin-top:48px;text-align:center}
+.err h1{font-size:24px}
+.err p{color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){main>*{animation:rise .35s ease both}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body data-w="biru">
+<main id="app" aria-live="polite">
+<div class="avatar" aria-hidden="true"></div>
+<div class="skel" style="max-width:220px"></div>
+<div class="skel"></div><div class="skel"></div>
+</main>
+<script>
+(function(){
+  'use strict';
+  var SB='https://wjmotidelqgcyyujacud.supabase.co';
+  var KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+  var app=document.getElementById('app');
+  var q=new URLSearchParams(location.search);
+  var m=location.pathname.match(/\/k\/([a-z0-9-]+)/i);
+  var slug=String(q.get('k')||(m&&m[1])||'').toLowerCase();
+  var via=q.get('s')==='qr'?'qr':'link';
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
+  function httpsUrl(u){u=String(u||'');return /^https:\/\/[^\s"'<>]+$/i.test(u)?u:'';}
+  function rpc(fn,body){return fetch(SB+'/rest/v1/rpc/'+fn,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});}
+  function tidakAda(){
+    document.title='Kartu tidak tersedia';
+    app.replaceChildren();
+    var w=el('div','err');
+    w.appendChild(el('h1',null,'Kartu ini tidak tersedia'));
+    w.appendChild(el('p',null,'Kartunya belum aktif, sudah berakhir, atau alamatnya salah. Coba hubungi pemilik kartu langsung.'));
+    app.appendChild(w);
+  }
+  function inisial(n){var p=String(n).trim().split(/\s+/);return ((p[0]||'?')[0]+((p[1]||'')[0]||'')).toUpperCase();}
+  function tampil(d){
+    document.title=d.nama+' | Kartu Nama Digital';
+    document.body.setAttribute('data-w',['hijau','ungu','bata'].indexOf(d.warna)>=0?d.warna:'biru');
+    app.replaceChildren();
+    var av=el('div','avatar');
+    var foto=httpsUrl(d.foto_url);
+    if(foto){var im=document.createElement('img');im.src=foto;im.alt=d.nama;im.decoding='async';im.onerror=function(){av.replaceChildren(document.createTextNode(inisial(d.nama)));};av.appendChild(im);}
+    else{av.textContent=inisial(d.nama);av.setAttribute('aria-hidden','true');}
+    app.appendChild(av);
+    app.appendChild(el('h1',null,d.nama));
+    if(d.bio)app.appendChild(el('p','bio',d.bio));
+    var wa=String(d.wa||'').replace(/[^0-9]/g,'');
+    if(/^[0-9]{9,15}$/.test(wa)){
+      var a=el('a','btn main','Chat WhatsApp');
+      a.href='https://wa.me/'+wa+'?text='+encodeURIComponent('Halo '+d.nama+', saya lihat kartu nama digitalmu.');
+      a.target='_blank';a.rel='noopener';
+      app.appendChild(a);
+    }
+    var lay=Array.isArray(d.layanan)?d.layanan.filter(function(x){return x&&x.nama;}):[];
+    if(lay.length){
+      var s=el('section','sec');s.setAttribute('aria-label','Layanan dan harga');
+      s.appendChild(el('h2',null,'Layanan dan harga'));
+      lay.forEach(function(x){var r=el('div','row');r.appendChild(el('span',null,String(x.nama)));if(x.harga)r.appendChild(el('b',null,String(x.harga)));s.appendChild(r);});
+      app.appendChild(s);
+    }
+    var qris=httpsUrl(d.qris_url),rek=String(d.rekening||'').trim();
+    if(rek||qris){
+      var dt=el('details');
+      var sm=el('summary','btn','Rekening dan QRIS');dt.appendChild(sm);
+      var pay=el('div','pay');
+      var box=el('div','sec');box.style.marginTop='10px';
+      var inner=el('div','pay');
+      if(rek){inner.appendChild(el('pre',null,rek));var cp=el('button','btn','Salin rekening');cp.type='button';cp.onclick=function(){try{navigator.clipboard.writeText(rek).then(function(){cp.textContent='Tersalin';});}catch(e){}};inner.appendChild(cp);}
+      if(qris){var qi=document.createElement('img');qi.src=qris;qi.alt='QRIS '+d.nama;qi.loading='lazy';inner.appendChild(qi);}
+      box.appendChild(inner);dt.appendChild(box);app.appendChild(dt);
+    }
+    var sh=el('button','btn','Bagikan kartu');sh.type='button';
+    sh.onclick=function(){var u=location.origin+'/k/'+slug;
+      if(navigator.share){navigator.share({title:d.nama,url:u}).catch(function(){});}
+      else{try{navigator.clipboard.writeText(u).then(function(){sh.textContent='Link tersalin';});}catch(e){}}};
+    app.appendChild(sh);
+    var f=el('p','small');f.appendChild(document.createTextNode('dibuat oleh '));
+    var fa=el('a',null,'Tempera');fa.href='https://tempera.id/';fa.rel='noopener';f.appendChild(fa);
+    app.appendChild(f);
+    try{var k='kd_'+slug;if(!sessionStorage.getItem(k)){sessionStorage.setItem(k,'1');rpc('kd_lihat',{p_slug:slug,p_via:via}).catch(function(){});}}catch(e){}
+  }
+  if(!/^[a-z0-9][a-z0-9-]{1,38}$/.test(slug)){tidakAda();return;}
+  rpc('kd_ambil',{p_slug:slug}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(d){if(d&&typeof d==='object'&&d.nama)tampil(d);else tidakAda();})
+    .catch(function(){
+      app.replaceChildren();var w=el('div','err');w.appendChild(el('h1',null,'Kartu belum bisa dimuat'));w.appendChild(el('p',null,'Periksa sambungan internetmu lalu muat ulang halaman ini.'));app.appendChild(w);
+    });
+})();
+</script>
+</body>
+</html>

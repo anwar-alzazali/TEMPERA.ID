@@ -36,6 +36,16 @@ p.sub{margin:0 0 16px;color:var(--muted);font-size:14px}
 label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:0 0 12px}
 input{display:block;width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:16px}
 input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+textarea,select{display:block;width:100%;margin-top:6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+textarea{resize:vertical;min-height:84px}
+textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+label.cek{display:flex;gap:10px;align-items:flex-start;font-weight:600}
+label.cek input{width:20px;height:20px;margin:2px 0 0;flex:none;padding:0}
+.kfoto{display:flex;gap:14px;align-items:center;margin:8px 0}
+.kfoto img{width:84px;height:84px;border-radius:50%;object-fit:cover;background:var(--accent-soft);flex:none}
+.kfoto img.qr{border-radius:12px;object-fit:contain;background:#fff}
+.kfoto input[type=file]{font-size:14px;padding:8px}
+.kbadge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;color:#fff}
 .pin{letter-spacing:.5em;font-variant-numeric:tabular-nums}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:12px;padding:12px 16px;font-weight:700;background:var(--accent);color:var(--on-accent);cursor:pointer;text-decoration:none;font-size:14px}
 .btn.full{width:100%}
@@ -180,12 +190,14 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
     <button type="button" data-tab="pendapatan">Pendapatan</button>
     <button type="button" data-tab="referral">Referral</button>
     <button type="button" data-tab="kas">Kas</button>
+    <button type="button" data-tab="kartu">Kartu</button>
     <button type="button" data-tab="akun">Akun</button>
   </nav>
   <section id="tTrip" class="list"><div class="loading">Memuat…</div></section>
   <section id="tPendapatan" class="list" hidden></section>
   <section id="tReferral" class="list" hidden></section>
   <section id="tKas" class="list" hidden></section>
+  <section id="tKartu" class="list" hidden><div id="kdBox" class="list"></div></section>
   <section id="tAkun" hidden>
     <div class="card">
       <h2>Ganti PIN</h2>
@@ -483,11 +495,134 @@ function kartuRiwayat(o){
     <div style="margin-top:6px">${o.dibayar?`<span class="tag paid" style="margin-left:0">✓ Sudah dibayar admin ${rp(o.bayar_admin)}</span>`:`<span class="tag unpaid" style="margin-left:0">Belum dibayar ${o.bayar_admin>=0?rp(o.bayar_admin):'(kamu setor '+rp(-o.bayar_admin)+')'}</span>`}${o.dp&&!o.dibayar?'<div class="note">Pesanan DP: admin membayar DP dikurangi potongan; sisanya sudah kamu terima tunai.</div>':''}</div>
   </article>`;
 }
-const TABS={trip:'#tTrip',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#tKas',akun:'#tAkun'};
+const TABS={trip:'#tTrip',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#tKas',kartu:'#tKartu',akun:'#tAkun'};
+/* ---------- Kartu Nama Digital: driver mengisi sendiri (function driver-kartu; SQL 167 + 169). Langsung tampil begitu disimpan dan disetujui pemilik. ---------- */
+let KARTU, KUOTA=null;   // KARTU: undefined = belum dimuat, null = belum punya kartu, objek = kartu
+const kLayananTeks=(a)=>(Array.isArray(a)?a:[]).map((x)=>x.harga?`${x.nama} | ${x.harga}`:x.nama).join('\n');
+const kTeksLayanan=(t)=>String(t||'').split('\n').map((x)=>x.trim()).filter(Boolean).map((x)=>{ const i=x.indexOf('|'); return i<0?{nama:x.slice(0,60),harga:''}:{nama:x.slice(0,i).trim().slice(0,60),harga:x.slice(i+1).trim().slice(0,30)}; }).filter((x)=>x.nama);
+function kKeluar(r){ if(r&&r.keluar){ token.del(); KARTU=undefined; tampil('vMasuk'); pesan($('#mMsg'),r.error,'err'); return true; } return false; }
+async function muatKartu(){
+  const box=$('#kdBox'); box.innerHTML='<div class="card"><div class="loading">Memuat…</div></div>';
+  const r=await api('driver-kartu',{token:token.get(),aksi:'ambil'});
+  if(!r.ok){ if(kKeluar(r)) return; box.innerHTML=`<div class="card empty">${esc(r.error)}<br><br><button class="btn sm" type="button" data-k="ulang">Coba lagi</button></div>`; return; }
+  KARTU=r.kartu; KUOTA=r.kuota||null; gambarKartu();
+}
+function kStatus(k){
+  if(k.tampil) return ['#15803d','Tampil untuk umum','Kartumu bisa dibuka siapa saja lewat link dan QR di bawah.'];
+  if(!k.aktif) return ['#b45309','Disembunyikan admin','Hubungi admin Tempera kalau kamu ingin kartumu ditampilkan lagi.'];
+  if(!k.setuju) return ['#b45309','Belum tampil','Centang persetujuan di bawah, lalu tekan Simpan.'];
+  return ['#b91c1c','Masa berlaku berakhir','Hubungi admin Tempera untuk memperpanjang.'];
+}
+function tglPanjang(iso){ try{ return new Date(iso+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return iso; } }
+function gambarBuat(){
+  const box=$('#kdBox'), q=KUOTA;
+  if(q&&q.penuh){ box.innerHTML='<div class="card empty">Kuota uji coba kartu nama digital sudah penuh.<br>Hubungi admin Tempera untuk masuk daftar tunggu.</div>'; return; }
+  const kend=String((DATA&&DATA.driver&&DATA.driver.kendaraan)||'').replace(/\s+/g,' ').trim().slice(0,60), nama=String((DATA&&DATA.driver&&DATA.driver.nama)||'');
+  box.innerHTML=`<form class="card" id="fBuat" novalidate>
+      <h2>Buat kartu nama digitalmu</h2>
+      <p class="sub">Satu halaman berisi nama, foto, mobil, harga, dan tombol WhatsApp, lengkap dengan link dan QR yang bisa kamu bagikan. Gratis bulan pertama, setelah itu Rp 20.000 per bulan.</p>
+      <label>Nama yang tampil di kartu<input id="kdBNama" maxlength="60" value="${esc(nama)}" autocomplete="name"></label>
+      <label>Nomor WhatsApp untuk pelanggan<input id="kdBWa" type="tel" inputmode="tel" maxlength="20" placeholder="0812xxxxxxx"></label>
+      <label>Mobil dan layanan (opsional, bisa diisi nanti)<textarea id="kdBLay" rows="3" placeholder="Avanza 2022, 6 kursi | Rp 650.000 per hari">${esc(kend)}</textarea></label>
+      <label class="cek"><input type="checkbox" id="kdBSetuju"><span>Saya setuju nomor WhatsApp dan data di kartu ini bisa dilihat siapa saja, dan kartu langsung tampil setelah dibuat.</span></label>
+      <button class="btn full" type="submit">Buat kartuku</button>
+      <div class="msg" id="kdBMsg" role="alert"></div>
+      ${q?`<div class="help">Sisa kuota uji coba: ${esc(q.sisa)} dari ${esc(q.kuota)}</div>`:''}
+    </form>`;
+}
+function gambarKartu(){
+  const box=$('#kdBox'), k=KARTU;
+  if(!k){ gambarBuat(); return; }
+  const [warna,judul,ket]=kStatus(k);
+  const adaLay=Array.isArray(k.layanan)&&k.layanan.length>0, kend=String((DATA&&DATA.driver&&DATA.driver.kendaraan)||'').replace(/\s+/g,' ').trim().slice(0,60);
+  const awalDariData=!adaLay&&!!kend, awalLayanan=adaLay?kLayananTeks(k.layanan):(awalDariData?kend:'');   // belum ada isian: nama mobil dari data Tempera (bisa diubah; baru tersimpan kalau driver menekan Simpan). Plat tidak dipakai.
+  box.innerHTML=`<div class="card">
+      <h2>Kartu Nama Digital</h2>
+      <div><span class="kbadge" style="background:${warna}">${esc(judul)}</span></div>
+      <div class="note" style="margin-top:8px">${esc(ket)}${k.berlaku_sampai?` Berlaku sampai ${esc(tglPanjang(k.berlaku_sampai))}.`:''}</div>
+      <div class="linkbox" id="kdLink">${esc(k.link)}</div>
+      <div class="acts" style="margin-top:0"><button class="btn sm" type="button" data-k="salin">Salin link</button><a class="btn ghost sm" href="${esc(k.link)}" target="_blank" rel="noopener">Lihat kartu</a>${navigator.share?'<button class="btn ghost sm" type="button" data-k="bagi">Bagikan</button>':''}</div>
+      <div class="note" style="margin-top:10px">Dilihat: lewat QR <b>${esc(k.lihat_qr)}</b> · lewat link <b>${esc(k.lihat_link)}</b></div>
+    </div>
+    <div class="card">
+      <h2>Foto</h2>
+      <div class="kfoto"><img id="kdFotoPrev" alt="Foto profil" ${k.foto_url?`src="${esc(k.foto_url)}"`:'hidden'}><label style="margin:0;flex:1">Foto profil<input type="file" accept="image/*" id="kdFoto" data-kjenis="foto"></label></div>
+      <div class="msg" id="kdFotoMsg" role="status"></div>
+      <div class="kfoto"><img class="qr" id="kdQrisPrev" alt="QRIS" ${k.qris_url?`src="${esc(k.qris_url)}"`:'hidden'}><label style="margin:0;flex:1">Gambar QRIS (opsional)<input type="file" accept="image/*" id="kdQris" data-kjenis="qris"></label></div>
+      <div class="msg" id="kdQrisMsg" role="status"></div>
+      <div class="help">Foto otomatis dikecilkan dan data lokasinya dibuang. Maksimal 6 unggahan per hari.</div>
+    </div>
+    <form class="card" id="fKd" novalidate>
+      <h2>Isi kartu</h2>
+      <label>Nama<input id="kdNama" maxlength="60" value="${esc(k.nama)}" autocomplete="name"></label>
+      <label>Nomor WhatsApp<input id="kdWa" type="tel" inputmode="tel" maxlength="20" value="${esc(k.wa)}" placeholder="0812xxxxxxx"></label>
+      <label>Bio satu baris<input id="kdBio" maxlength="140" value="${esc(k.bio)}" placeholder="mis. Sewa mobil dan antar-jemput di Bandung"></label>
+      <label>Mobil dan layanan<textarea id="kdLayanan" rows="5" placeholder="Avanza 2022, 6 kursi | Rp 650.000 per hari&#10;Hiace 14 kursi | Rp 1.100.000 per hari&#10;Antar bandara | Rp 150.000">${esc(awalLayanan)}</textarea></label>
+      <div class="help">Satu baris untuk satu mobil atau layanan. Tulis nama mobil dan jumlah kursi, lalu tanda | dan harganya. Maksimal 12 baris.${awalDariData?' <b>Nama mobil di bawah diisi dari data Tempera; tambahkan jumlah kursi dan harga.</b>':''}</div>
+      <label>Rekening (opsional)<textarea id="kdRek" rows="2" maxlength="300" placeholder="BCA 1234567890 a.n. Nama Lengkap">${esc(k.rekening)}</textarea></label>
+      <label>Warna kartu<select id="kdWarna">${[['biru','Biru'],['hijau','Hijau'],['ungu','Ungu'],['bata','Merah bata']].map(([v,t])=>`<option value="${v}"${v===k.warna?' selected':''}>${t}</option>`).join('')}</select></label>
+      <label class="cek"><input type="checkbox" id="kdSetuju"${k.setuju?' checked':''}><span>Saya setuju nomor WhatsApp, foto, dan rekening di kartu ini bisa dilihat siapa saja.</span></label>
+      <button class="btn full" type="submit">Simpan</button>
+      <div class="msg" id="kdMsg" role="alert"></div>
+    </form>`;
+}
+// Gambar dikecilkan dan digambar ulang di HP: ukuran kecil, rotasi benar, data lokasi (EXIF) terbuang.
+async function kKecilkan(file,sisi,kotak,maksByte){
+  let bmp;
+  try{ bmp=await createImageBitmap(file,{imageOrientation:'from-image'}); }
+  catch(e){ bmp=await new Promise((ok,gagal)=>{ const u=URL.createObjectURL(file), im=new Image(); im.onload=()=>{ URL.revokeObjectURL(u); ok(im); }; im.onerror=()=>{ URL.revokeObjectURL(u); gagal(new Error('Foto tidak bisa dibaca.')); }; im.src=u; }); }
+  const w=bmp.width||bmp.naturalWidth, h=bmp.height||bmp.naturalHeight;
+  let sx=0,sy=0,sw=w,sh=h; if(kotak){ const m=Math.min(w,h); sx=(w-m)/2; sy=(h-m)/2; sw=sh=m; }
+  const skala=Math.min(1,sisi/Math.max(sw,sh)), cw=Math.max(1,Math.round(sw*skala)), ch=Math.max(1,Math.round(sh*skala));
+  const c=document.createElement('canvas'); c.width=cw; c.height=ch; const x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,cw,ch); x.drawImage(bmp,sx,sy,sw,sh,0,0,cw,ch);
+  let q=0.88, d=c.toDataURL('image/jpeg',q);
+  while(d.length*0.75>maksByte&&q>0.45){ q-=0.08; d=c.toDataURL('image/jpeg',q); }
+  if(d.length*0.75>maksByte) throw new Error('Foto terlalu besar. Pilih foto lain.');
+  return d;
+}
+async function kUnggah(jenis,file){
+  const msg=$(jenis==='qris'?'#kdQrisMsg':'#kdFotoMsg'), inp=$(jenis==='qris'?'#kdQris':'#kdFoto');
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ pesan(msg,'Pilih berkas gambar.','err'); inp.value=''; return; }
+  pesan(msg,'Mengecilkan dan mengunggah…'); inp.disabled=true;
+  try{
+    const data=await kKecilkan(file,jenis==='qris'?800:600,jenis!=='qris',jenis==='qris'?420000:230000);
+    const r=await api('driver-kartu',{token:token.get(),aksi:'foto',jenis,data});
+    if(!r.ok){ if(kKeluar(r)) return; pesan(msg,r.error,'err'); return; }
+    KARTU=r.kartu; const im=$(jenis==='qris'?'#kdQrisPrev':'#kdFotoPrev'), u=jenis==='qris'?KARTU.qris_url:KARTU.foto_url;
+    if(im&&u){ im.src=u; im.hidden=false; }
+    pesan(msg,'Tersimpan.','ok');
+  }catch(e){ pesan(msg,(e&&e.message)||'Gagal memproses foto.','err'); }
+  finally{ inp.disabled=false; inp.value=''; }
+}
+$('#kdBox').addEventListener('change',(e)=>{ const f=e.target.closest('input[data-kjenis]'); if(f) kUnggah(f.dataset.kjenis,f.files&&f.files[0]); });
+$('#kdBox').addEventListener('click',async(e)=>{
+  const b=e.target.closest('[data-k]'); if(!b) return;
+  if(b.dataset.k==='ulang') muatKartu();
+  else if(b.dataset.k==='salin'){ try{ await navigator.clipboard.writeText(KARTU.link); b.textContent='Tersalin'; }catch(er){ b.textContent='Tekan lama untuk menyalin'; } }
+  else if(b.dataset.k==='bagi'){ try{ await navigator.share({title:KARTU.nama,url:KARTU.link}); }catch(er){} }
+});
+$('#kdBox').addEventListener('submit',async(e)=>{
+  if(e.target.matches('#fBuat')){
+    e.preventDefault(); const f=e.target, m=$('#kdBMsg'); pesan(m,'Membuat kartu…'); sibuk(f,true);
+    const r=await api('driver-kartu',{token:token.get(),aksi:'buat',nama:$('#kdBNama').value,wa:$('#kdBWa').value,layanan:kTeksLayanan($('#kdBLay').value),setuju:$('#kdBSetuju').checked});
+    sibuk(f,false);
+    if(!r.ok){ if(kKeluar(r)) return; if(r.penuh){ KUOTA=r.kuota||{penuh:true}; gambarBuat(); return; } pesan(m,r.error,'err'); return; }
+    KARTU=r.kartu; gambarKartu(); window.scrollTo(0,0); pesan($('#kdMsg'),KARTU.tampil?'Kartumu sudah jadi dan tampil. Tambahkan foto, lalu bagikan linknya.':'Kartu dibuat.','ok'); return;
+  }
+  if(!e.target.matches('#fKd')) return; e.preventDefault();
+  const f=e.target, m=$('#kdMsg'); pesan(m,'Menyimpan…'); sibuk(f,true);
+  const r=await api('driver-kartu',{token:token.get(),aksi:'simpan',nama:$('#kdNama').value,wa:$('#kdWa').value,bio:$('#kdBio').value,layanan:kTeksLayanan($('#kdLayanan').value),rekening:$('#kdRek').value,warna:$('#kdWarna').value,setuju:$('#kdSetuju').checked});
+  sibuk(f,false);
+  if(!r.ok){ if(kKeluar(r)) return; pesan(m,r.error,'err'); return; }
+  KARTU=r.kartu; gambarKartu(); pesan($('#kdMsg'),KARTU.tampil?'Tersimpan. Kartumu sudah tampil.':'Tersimpan.','ok');
+});
+
 function pilihTab(tab){
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
   Object.entries(TABS).forEach(([k,sel])=>{ $(sel).hidden=k!==tab; });
   if(tab==='referral') gambarQR();
+  if(tab==='kartu') muatKartu();
 }
 $('#tabs').addEventListener('click',(e)=>{ const b=e.target.closest('[data-tab]'); if(b) pilihTab(b.dataset.tab); });
 $('#dMuat').addEventListener('click',muatDashboard);
@@ -502,7 +637,7 @@ $('#fGanti').addEventListener('submit',async(e)=>{
   token.set(r.token); ['#gLama','#gBaru','#gBaru2'].forEach(s=>$(s).value=''); pesan(m,'PIN berhasil diganti.','ok');
 });
 $('#dKeluar').addEventListener('click',async()=>{
-  const t=token.get(); token.del(); DATA=null; api('driver-auth',{aksi:'keluar',token:t}); pilihTab('trip'); tampil('vMasuk');
+  const t=token.get(); token.del(); DATA=null; KARTU=undefined; api('driver-auth',{aksi:'keluar',token:t}); pilihTab('trip'); tampil('vMasuk');
 });
 
 muatDashboard();
