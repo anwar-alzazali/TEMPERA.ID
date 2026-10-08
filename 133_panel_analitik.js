@@ -46,7 +46,7 @@
 
   const kartu = (judul, isi, lebar) => `<section class="card" style="flex:${lebar || '1 1 300px'};min-width:0"><h2 style="font-size:15px;margin:0 0 10px">${esc(judul)}</h2>${isi}</section>`;
   const stat = (l, v, sub) => `<div class="stat"><div class="l">${esc(l)}</div><div class="v">${v}</div>${sub ? `<div class="small">${sub}</div>` : ''}</div>`;
-  const batang = (label, nilai, maks, warna, teks) => `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>${esc(label)}</span><b>${esc(teks == null ? nilai : teks)}</b></div><div style="height:10px;border-radius:5px;background:#e2e8f0;margin-top:4px"><div style="width:${maks > 0 ? Math.max(2, Math.round(100 * nilai / maks)) : 0}%;height:10px;border-radius:5px;background:${warna || 'var(--accent)'}"></div></div></div>`;
+  const batang = (label, nilai, maks, warna, teks) => `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;font-weight:600"><span>${esc(label)}</span><b>${esc(teks == null ? nilai : teks)}</b></div><div style="height:10px;border-radius:5px;background:var(--line);margin-top:4px"><div style="width:${maks > 0 ? Math.max(2, Math.round(100 * nilai / maks)) : 0}%;height:10px;border-radius:5px;background:${warna || 'var(--accent)'}"></div></div></div>`;
 
   function grafik(paid) {
     if (!paid.length) return '<div class="empty">Belum ada pesanan terbayar pada periode ini.</div>';
@@ -125,8 +125,25 @@
       <div style="display:flex;justify-content:space-between;align-items:center;min-height:40px"><span>Cadangan terakhir</span>${NA}</div>`;
   }
 
+  /* ---- bagian dari tab Laporan lama (digabung) ---- */
+  function rincianPembawa(paid) {
+    const m = {};
+    paid.forEach((o) => { const k = earner(o) || '(belum ditentukan)'; const x = (m[k] = m[k] || { n: 0, omzet: 0, hasil: 0 }); x.n++; x.omzet += Number(o.total) || 0; x.hasil += Number(o.driver_earning) || 0; });
+    const ks = Object.keys(m).sort((a, b) => m[b].omzet - m[a].omzet);
+    if (!ks.length) return '<div class="empty">Belum ada data pada periode ini.</div>';
+    return `<div class="tablewrap"><table><thead><tr><th>Pembawa pesanan</th><th class="num">Trip</th><th class="num">Omzet</th><th class="num">Pendapatan</th></tr></thead><tbody>
+      ${ks.map((k) => `<tr><td>${esc(k === '(belum ditentukan)' ? k : driverName(k))}</td><td class="num">${m[k].n}</td><td class="num">${rp(m[k].omzet)}</td><td class="num">${rp(m[k].hasil)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="help" style="margin-top:8px">Pendapatan dicatat untuk yang membawa pesanan (pemilik link/QR). Bila driver itu melemparkan trip ke orang lain, pendapatan tetap di sini.</div>`;
+  }
+  function rincianSumber(funnel) {
+    if (!funnel || !funnel.length) return '<div class="empty">Belum ada data.</div>';
+    return `<div class="tablewrap"><table><thead><tr><th>Sumber</th><th class="num">Visit</th><th class="num">Scan</th><th class="num">Order dibuat</th><th class="num">Closing</th><th class="num">Omzet</th></tr></thead><tbody>
+      ${funnel.map((x) => `<tr><td>${esc(x.sumber === 'direct' ? 'Langsung dari web' : driverName(x.sumber))}</td><td class="num">${esc(x.visit)}</td><td class="num">${esc(x.scan)}</td><td class="num">${esc(x.order_dibuat)}</td><td class="num">${esc(x.closing)}</td><td class="num">${rp(x.omzet)}</td></tr>`).join('')}</tbody></table></div>
+      <div class="help" style="margin-top:8px">Visit = hanya berkunjung. Scan = lewat link/QR driver. Closing = pesanan yang sudah dibayar.</div>`;
+  }
+
   VIEWS.analitik = async function () {
-    $('#view').innerHTML = `<div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Analitik</h2>
+    $('#view').innerHTML = `<div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Analitik &amp; Laporan</h2>
       <select id="anPer" style="width:auto"><option value="7">7 hari terakhir</option><option value="30">30 hari terakhir</option><option value="bulan">Bulan ini</option><option value="semua">Semua waktu</option></select></div><div id="anIsi"><div class="empty">Memuat…</div></div>`;
     $('#anPer').value = PER; $('#anPer').addEventListener('change', (e) => { PER = e.target.value; VIEWS.analitik(); });
     const d = await muat(PER);
@@ -140,7 +157,7 @@
     $('#anIsi').innerHTML = `
       <div class="stats">${stat('Omzet', rp(omzet), esc(delta(omzet, omzetLalu)))}${stat('Pesanan terbayar', d.paid.length, esc(delta(d.paid.length, d.prev.length)))}
         ${stat('Rata-rata nilai pesanan', d.paid.length ? rp(omzet / d.paid.length) : '-')}${stat('Dibuat jadi terbayar', persen(d.paid.length, aWilayah), `dari ${aWilayah} pesanan dibuat`)}
-        ${stat('Potongan admin', rp(adm), 'sebelum biaya gateway (belum dicatat)')}${stat('Komisi sales', NA)}</div>
+        ${stat('Potongan admin', rp(adm), 'sebelum biaya gateway (belum dicatat)')}${stat('Pendapatan driver', rp(pel), 'bagian pelaksana trip')}${stat('Komisi sales', NA)}</div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px">${kartu('Omzet dan jumlah pesanan per hari', grafik(d.paid), '2 1 460px')}
         ${kartu('Corong', fl.map((x, i) => batang(x[0], x[1], fm, ['#0e7490', '#0891b2', '#22a7c6', '#b45309'][i])).join('') + '<div class="small">Pesanan lewat WA pribadi driver tidak tercatat.</div>')}</div>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px">${kartu('Pesanan per wilayah (dibuat)', wilayah(d.dibuat))}
@@ -148,10 +165,12 @@
         ${kartu('Pembagian uang (terbayar)', batang('Pelaksana', pel, omzet, '#0e7490', rp(pel)) + batang('Admin (sebelum biaya gateway)', adm, omzet, '#d97706', rp(adm)) + '<div class="small">Komisi sales dan biaya gateway: belum dicatat.</div>')}</div>
       ${kartu('Pemakaian armada, 14 hari ke depan', peta(d.armada, d.heat), '1 1 100%')}
       <div style="height:12px"></div>${kartu('Papan peringkat pembawa pesanan', peringkat(d.paid, d.dibuat, d.funnel), '1 1 100%')}
+      <div style="height:12px"></div>${kartu('Pendapatan per pembawa pesanan', rincianPembawa(d.paid), '1 1 100%')}
+      <div style="height:12px"></div>${kartu('Kunjungan sampai terbayar per sumber (semua waktu)', rincianSumber(d.funnel), '1 1 100%')}
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin:12px 0">${kartu('Chat WhatsApp dan AI', chat(d.inbox, d.balasan, d.perluAdmin))}${kartu('Perlu tindakan', tindakan(d))}${kartu('Kesehatan sistem', kesehatan(d))}</div>
       ${kartu('Pesanan terbaru', d.recent.length ? `<div class="tablewrap"><table style="min-width:640px"><tbody>${d.recent.map((o) => `<tr><td><b>${esc(o.invoice_no || o.order_id)}</b></td><td>${esc(o.customer_name)}</td><td class="small">${esc(tglPendek(o.trip_date))}</td><td>${esc(o.fleet_name || '')}</td><td class="num">${rp(o.total)}</td><td>${badge(o.status)}</td><td class="small">${o.driver_slug ? esc(driverName(o.driver_slug)) : 'Langsung'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Belum ada pesanan.</div>', '1 1 100%')}`;
   };
 
-  NAVS.splice(0, 0, ['analitik', 'Analitik']);
+  NAVS.splice(Math.max(0, NAVS.findIndex((n) => n[0] === 'pesanan')) + 1, 0, ['analitik', 'Analitik & Laporan']);
   try { if ($('#shell') && !$('#shell').hidden) nav(location.hash.replace('#', '') || 'pesanan'); } catch (_e) { /* belum login */ }
 })();

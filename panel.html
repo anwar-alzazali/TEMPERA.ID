@@ -11,7 +11,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Admin Tempera">
 <style>
-:root{--accent:#0891b2;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9;--card:#fff;--danger:#dc2626}
+:root{color-scheme:light dark;--accent:#0891b2;--accent-ink:#0e7490;--ink:#0f172a;--muted:#64748b;--line:#e5e9f0;--bg:#f4f6fa;--card:#fff;--field:#fff;--danger:#dc2626;--warn:#fef2f2;--side:#fff;--side-ink:#475569;--side-hover:#f1f5f9;--side-on:rgba(8,145,178,.12);--side-on-ink:#0e7490;--shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.05)}
+@media (prefers-color-scheme:dark){:root{--accent:#22b8d6;--accent-ink:#67e8f9;--ink:#e6ebf4;--muted:#94a3b8;--line:#243049;--bg:#0b1220;--card:#131c2e;--field:#0e1627;--danger:#f87171;--warn:#2d1a20;--side:#0e1526;--side-ink:#a8b3c7;--side-hover:#18223a;--side-on:rgba(34,184,214,.16);--side-on-ink:#67e8f9;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25)}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
@@ -33,14 +34,8 @@ label.chk input{width:auto;margin:0}
 .loginbox h1{margin:0 0 4px;font-size:22px}
 .loginbox p{margin:0 0 18px;color:var(--muted)}
 .err{color:var(--danger);font-size:13px;margin:8px 0 0}
-header{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.02em}
 .logo{--w:34px;display:inline-block;flex:none;width:var(--w);height:calc(var(--w)*1287/1328);background:var(--accent);-webkit-mask-image:url(images/logo_sky_blue_transparent.png);mask-image:url(images/logo_sky_blue_transparent.png);-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-size:var(--w) auto;mask-size:var(--w) auto;-webkit-mask-position:0 calc(var(--w)*-151/1328);mask-position:0 calc(var(--w)*-151/1328)}
-nav{display:flex;gap:4px;padding:0 12px 10px;overflow-x:auto}
-nav button{border:0;background:transparent;padding:8px 14px;border-radius:999px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
-nav button.on{background:var(--accent);color:#fff}
-main{max-width:1100px;margin:0 auto;padding:16px}
 h2{margin:0 0 12px;font-size:18px}
 .bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .bar select,.bar input{width:auto;flex:1 1 150px}
@@ -85,6 +80,116 @@ dl.det dd{margin:0}
 #toast.show{opacity:1}
 #toast.err{background:var(--danger)}
 @media (max-width:560px){.fgrid{grid-template-columns:1fr}.setrow{grid-template-columns:1fr}dl.det{grid-template-columns:100px 1fr}}
+
+/* ===== SIDEBAR + penyegaran tampilan ===== */
+#shell{display:flex;min-height:100vh}
+#side{width:248px;flex:none;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;background:var(--side);border-right:1px solid var(--line);z-index:40}
+.side-brand{display:flex;align-items:center;gap:10px;padding:18px 18px 12px;font-weight:800;letter-spacing:.04em}
+.side-brand small{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:block;line-height:1.1}
+#nav{display:flex;flex-direction:column;gap:2px;padding:8px 12px;overflow-y:auto;flex:1}
+#nav button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:transparent;padding:10px 12px;border-radius:10px;font-weight:600;color:var(--side-ink);cursor:pointer;transition:background .15s,color .15s}
+#nav button svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#nav button:hover{background:var(--side-hover)}
+#nav button.on{background:var(--side-on);color:var(--side-on-ink)}
+#nav button:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.side-foot{padding:12px;border-top:1px solid var(--line)}
+.side-foot .btn{width:100%}
+.content{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{display:none;align-items:center;gap:12px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.topbar b{font-size:16px}
+.hamb{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.hamb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+#scrim{display:none}
+main{width:100%;max-width:1240px;margin:0 auto;padding:24px 28px 48px}
+@media (max-width:900px){
+  #side{position:fixed;left:0;top:0;transform:translateX(-102%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.35)}
+  body.nav-open #side{transform:none}
+  body.nav-open #scrim{display:block;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:35}
+  .topbar{display:flex}
+  main{padding:16px 14px 40px}
+}
+h2{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.card,.stat{border:1px solid var(--line);box-shadow:var(--shadow);border-radius:16px}
+.stat .v{font-size:22px;letter-spacing:-.01em}
+.btn{transition:filter .15s,transform .05s}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:var(--card);color:var(--ink)}
+input,select,textarea{background:var(--field);color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px var(--side-on)}
+th{font-weight:700}
+tr.click:hover{background:var(--side-hover)}
+tbody tr:last-child td{border-bottom:0}
+.chip{background:var(--side-hover)}
+.mcard{background:var(--card);color:var(--ink);border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#modal{backdrop-filter:blur(3px)}
+.loginbox{border:1px solid var(--line)}
+.empty{border:1px dashed var(--line);border-radius:14px}
+
+/* ===== TOPBAR, BOTTOM NAV, KARTU RINGKASAN ===== */
+.topbar{display:flex;gap:10px;padding:10px 20px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topbar .logo{display:none;--w:36px}
+.tb-search{flex:1;min-width:0;display:flex;align-items:center;gap:8px;margin:0;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:0 14px;height:42px}
+.tb-search svg{width:18px;height:18px;flex:none;fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round}
+.tb-search input{border:0;background:transparent;padding:0;margin:0;height:100%;box-shadow:none!important;border-radius:0;font-weight:400}
+.tb-btn{position:relative;flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.tb-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tb-btn i{position:absolute;top:8px;right:9px;width:10px;height:10px;border-radius:50%;background:#ef4444;border:2px solid var(--card)}
+.tb-av{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:var(--card);font-weight:800;cursor:pointer}
+#bnav{display:none}
+.pagehead h1{margin:0;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+.pagehead p{margin:6px 0 18px;color:var(--muted);font-size:14px}
+.dash{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.kpi{--k-bg:var(--side-on);--k-ink:var(--accent-ink);display:flex;flex-direction:column;gap:4px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+.kpi .top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:6px}
+.kpi .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--k-bg);color:var(--k-ink)}
+.kpi .ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.kpi .cp{font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px;background:var(--k-bg);color:var(--k-ink);white-space:nowrap}
+.kpi .l{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kpi .v{font-size:23px;font-weight:800;letter-spacing:-.02em;line-height:1.15;overflow-wrap:anywhere}
+.kpi .s{font-size:12.5px;color:var(--muted)}
+.kpi.t-green{--k-bg:rgba(22,163,74,.14);--k-ink:#15803d}
+.kpi.t-amber{--k-bg:rgba(245,158,11,.2);--k-ink:#b45309}
+.kpi.t-blue{--k-bg:rgba(59,130,246,.14);--k-ink:#1d4ed8}
+.kpi.hot{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.4)}
+@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#4ade80}.kpi.t-amber{--k-ink:#fbbf24}.kpi.t-blue{--k-ink:#93c5fd}}
+.pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;border:1px solid var(--line);background:var(--card);color:var(--muted);padding:9px 16px;border-radius:999px;font-weight:700;cursor:pointer;white-space:nowrap}
+.pill.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
+#fStatus{display:none}
+@media (max-width:900px){
+  .topbar{padding:10px 14px}
+  .topbar .logo{display:inline-block}
+  .dash{grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{padding:12px}
+  .kpi .v{font-size:19px}
+  .pagehead h1{font-size:26px}
+  main{padding:16px 14px 100px}
+  #toast{bottom:84px}
+  #bnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:36;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+  #bnav button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:600;padding:6px 2px;border-radius:12px;cursor:pointer}
+  #bnav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  #bnav button.on{color:var(--side-on-ink)}
+  #bnav button.on svg{stroke-width:2.2}
+}
+
+/* HP: tabel jadi kartu (tidak perlu geser ke kanan). Tabel matriks lebar bertanda data-grid tetap bisa digeser. */
+@media (max-width:700px){
+  table:not([data-grid]){min-width:0!important;display:block}
+  table:not([data-grid]) thead{display:none}
+  table:not([data-grid]) tbody{display:block}
+  table:not([data-grid]) tr{display:block;border:1px solid var(--line);border-radius:12px;padding:4px 12px;margin-bottom:10px;background:var(--card)}
+  table:not([data-grid]) td{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;border-bottom:1px dashed var(--line);padding:8px 0;text-align:right;word-break:break-word}
+  table:not([data-grid]) td:last-child{border-bottom:0}
+  table:not([data-grid]) td>.v{min-width:0;text-align:right}
+  table:not([data-grid]) td::before{content:attr(data-label);flex:none;max-width:40%;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;padding-top:2px}
+  table:not([data-grid]) td[data-label=""]::before,table:not([data-grid]) td:not([data-label])::before{display:none}
+  table:not([data-grid]) td[data-label=""]{justify-content:flex-end;flex-wrap:wrap}
+  table:not([data-grid]) td[colspan]{display:block;text-align:center}
+  table:not([data-grid]) td.num{white-space:normal}
+  table:not([data-grid]) tr.click:active{background:var(--side-hover)}
+}
 </style>
 </head>
 <body>
@@ -102,14 +207,22 @@ dl.det dd{margin:0}
 </div>
 </div>
 <div id="shell" hidden>
-<header>
-<div class="topbar">
-<div class="brand"><span class="logo"></span>TEMPERA · Admin</div>
-<button class="btn ghost sm" id="btnLogout" type="button">Keluar</button>
-</div>
+<aside id="side">
+<div class="side-brand"><span class="logo"></span><div>TEMPERA<small>Panel Admin</small></div></div>
 <nav id="nav"></nav>
-</header>
+<div class="side-foot"><button class="btn ghost sm" id="btnLogout" type="button">Keluar</button></div>
+</aside>
+<div id="scrim"></div>
+<div class="content">
+<div class="topbar">
+<span class="logo tb-logo"></span>
+<label class="tb-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gSearch" type="search" placeholder="Cari pesanan, customer, invoice…" autocomplete="off"></label>
+<button class="tb-btn" id="bell" type="button" aria-label="Perlu diproses"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg><i id="bellDot" hidden></i></button>
+<button class="tb-av" id="avatar" type="button" aria-label="Akun">A</button>
+</div>
 <main id="view"></main>
+</div>
+<div id="bnav"></div>
 </div>
 <div id="modal" hidden><div class="mcard" id="modalBody"></div></div>
 <div id="toast"></div>
@@ -275,6 +388,7 @@ async function enter() {
   if (error || data !== true) { await sb.auth.signOut(); showLogin('Akun ini bukan admin.'); return; }
   $('#login').hidden = true; $('#shell').hidden = false;
   await loadShared();
+  refreshStats();
   nav(location.hash.replace('#', '') || 'pesanan');
 }
 async function loadShared() {
@@ -292,20 +406,108 @@ async function loadShared() {
 /* ---------- navigasi ---------- */
 const VIEWS = {};
 const NAVS = [['pesanan', 'Pesanan'], ['laporan', 'Laporan'], ['kas', 'Kas'], ['armada', 'Armada'], ['pengaturan', 'Pengaturan'], ['template', 'Template WA'], ['banner', 'Banner'], ['driver', 'Driver'], ['persetujuan', 'Persetujuan']];
+const ICON = {
+  pesanan: '<path d="M9 5h6M9 3h6a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1zM8 5H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2M9 12h6M9 16h4"/>',
+  analitik: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  laporan: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6"/>',
+  kas: '<path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-1zM16 14h2"/>',
+  armada: '<path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1h10a2 2 0 0 1 2 1l2 6v4H3zM7 17v2M17 17v2M7 13h.01M17 13h.01"/>',
+  pengaturan: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  template: '<path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2zM8 9h8M8 13h5"/>',
+  banner: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="m21 16-5-5-8 8"/>',
+  driver: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5a6.5 6.5 0 0 1 3.5 5.5"/>',
+  ulasan: '<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+  galeri: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="m3 15 5-5 4 4 3-3 6 6M8.5 8.5h.01"/>',
+  ketersediaan: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  halaman: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  persetujuan: '<path d="M20 6 9 17l-5-5"/><circle cx="12" cy="12" r="9"/>'
+};
+const ICON_DEF = '<circle cx="12" cy="12" r="3"/>';
 function nav(key) {
+  if (key === 'laporan' && VIEWS.analitik) key = 'analitik';
   if (!VIEWS[key]) key = 'pesanan';
   location.hash = key;
-  $('#nav').innerHTML = NAVS.map(([k, l]) => `<button type="button" data-k="${k}" class="${k === key ? 'on' : ''}">${l}</button>`).join('');
+  const sc = $('#nav').scrollTop;
+  $('#nav').innerHTML = NAVS.filter(([k]) => !(k === 'laporan' && VIEWS.analitik)).map(([k, l]) => `<button type="button" data-k="${k}" class="${k === key ? 'on' : ''}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k] || ICON_DEF}</svg><span>${l}</span></button>`).join('');
+  $('#nav').scrollTop = sc;
   $$('#nav button').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
+  $$('#bnav button[data-k]').forEach((b) => b.classList.toggle('on', b.dataset.k === key));
+  if ($('#bMore')) $('#bMore').classList.toggle('on', !BNAV.some((x) => x[0] === key));
+  document.body.classList.remove('nav-open');
+  window.scrollTo(0, 0);
   $('#view').innerHTML = '<div class="empty">Memuat…</div>';
-  VIEWS[key]();
+  return VIEWS[key]();
 }
+
+function labelTables() {
+  $$('#view table:not([data-grid])').forEach((t) => {
+    const hs = $$('thead th', t).map((h) => h.textContent.trim());
+    $$('tbody tr', t).forEach((tr) => { [...tr.children].forEach((td, i) => { if (hs[i] !== undefined && !td.hasAttribute('data-label')) td.setAttribute('data-label', hs[i]); if (!td.hasAttribute('colspan') && !(td.firstElementChild && td.firstElementChild.classList.contains('v') && td.children.length === 1)) { const w = document.createElement('span'); w.className = 'v'; while (td.firstChild) w.appendChild(td.firstChild); td.appendChild(w); } }); });
+  });
+}
+new MutationObserver(labelTables).observe($('#view'), { childList: true, subtree: true });
+const BNAV = [['pesanan', 'Pesanan'], ['analitik', 'Analitik'], ['kas', 'Kas'], ['armada', 'Armada']];
+$('#bnav').innerHTML = BNAV.map(([k, l]) => `<button type="button" data-k="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${l}</span></button>`).join('')
+  + '<button type="button" id="bMore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span>Lainnya</span></button>';
+$$('#bnav button[data-k]').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
+$('#bMore').addEventListener('click', () => document.body.classList.toggle('nav-open'));
+async function goSearch(v) {
+  if (location.hash.replace('#', '') !== 'pesanan') await nav('pesanan');
+  const f = $('#fQ'); if (f) { f.value = v; f.dispatchEvent(new Event('input')); }
+}
+$('#gSearch').addEventListener('keydown', (e) => { if (e.key === 'Enter') { goSearch(e.target.value); e.target.blur(); } });
+$('#gSearch').addEventListener('input', (e) => { if (location.hash.replace('#', '') === 'pesanan') { const f = $('#fQ'); if (f) { f.value = e.target.value; f.dispatchEvent(new Event('input')); } } });
+$('#bell').addEventListener('click', () => nav('pesanan'));
+$('#avatar').addEventListener('click', () => { if (confirm('Keluar dari panel?')) $('#btnLogout').click(); });
+$('#scrim').addEventListener('click', () => document.body.classList.remove('nav-open'));
 
 /* ---------- PESANAN ---------- */
 let ORDERS = [];
+let STATS = null;
+const wibDay = (iso) => { const t = new Date(iso).getTime(); return isNaN(t) ? '' : new Date(t + 7 * 3600000).toISOString().slice(0, 10); };
+async function refreshStats() {
+  const r = await sb.from('orders').select('status,total,created_at,assigned_driver,driver_slug').order('created_at', { ascending: false }).limit(1000);
+  if (r.error) return;
+  const rows = r.data || [];
+  const hari = wibDay(new Date().toISOString());
+  const kemarin = wibDay(new Date(Date.now() - 86400000).toISOString());
+  const nilai = (day) => rows.filter((o) => wibDay(o.created_at) === day && PAID_SET.includes(o.status)).reduce((a, o) => a + (Number(o.total) || 0), 0);
+  STATS = {
+    nilaiHariIni: nilai(hari), nilaiKemarin: nilai(kemarin),
+    jumlahHariIni: rows.filter((o) => wibDay(o.created_at) === hari && PAID_SET.includes(o.status)).length,
+    lunas: rows.filter((o) => ['paid', 'confirmed', 'completed'].includes(o.status)).length,
+    total: rows.length,
+    perlu: rows.filter((o) => ['dp_paid', 'paid'].includes(o.status) && !drv(o)).length,
+    pending: rows.filter((o) => o.status === 'pending').length
+  };
+  renderDash(); updateBell();
+  try { const se = await sb.auth.getSession(); const em = se.data && se.data.session && se.data.session.user && se.data.session.user.email; if (em) $('#avatar').textContent = em.charAt(0).toUpperCase(); } catch (_e) { /* abaikan */ }
+}
+function updateBell() { if (STATS) $('#bellDot').hidden = !(STATS.perlu > 0); }
+const KI = {
+  uang: '<path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-1zM16 14h2"/>',
+  ok: '<path d="m4 12 5 5L20 6M2 12l5 5"/>',
+  jam: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  dompet: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>'
+};
+function renderDash() {
+  const el = $('#dash'); if (!el || !STATS) return;
+  const st = STATS;
+  let chip = 'hari ini';
+  if (st.nilaiKemarin > 0) { const p = Math.round((st.nilaiHariIni - st.nilaiKemarin) / st.nilaiKemarin * 100); chip = (p >= 0 ? '↗ +' : '↘ ') + p + '%'; }
+  else if (st.nilaiHariIni > 0) chip = 'baru';
+  const k = (tone, ic, cp, l, v, sub, hot) => `<div class="kpi t-${tone}${hot ? ' hot' : ''}"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${KI[ic]}</svg></span><span class="cp">${esc(cp)}</span></div><div class="l">${esc(l)}</div><div class="v">${v}</div><div class="s">${esc(sub)}</div></div>`;
+  el.innerHTML =
+    k('accent', 'uang', chip, 'Nilai pesanan hari ini', rp(st.nilaiHariIni), `dari ${st.jumlahHariIni} pesanan berbayar`) +
+    k('green', 'ok', st.total + ' total', 'Pesanan lunas', st.lunas + ' pesanan', `dari ${st.total} pesanan tercatat`) +
+    k('amber', 'jam', st.perlu > 0 ? '⚠ Action' : 'Aman', 'Perlu diproses', st.perlu + ' pesanan', st.perlu > 0 ? 'sudah bayar, belum ada driver' : 'semua sudah punya driver', st.perlu > 0) +
+    k('blue', 'dompet', 'belum bayar', 'Menunggu bayar', st.pending + ' pesanan', 'belum dibayar pelanggan');
+}
 VIEWS.pesanan = async function () {
   $('#view').innerHTML = `
-    <h2>Pesanan</h2>
+    <div class="pagehead"><h1>Pesanan</h1><p>Pantau pembayaran, driver, dan jadwal trip • ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' })}</p></div>
+    <div class="dash" id="dash"></div>
+    <div class="pills" id="pills">${[['', 'Semua'], ['pending', 'Perlu bayar'], ['dp_paid', 'DP'], ['paid', 'Lunas'], ['confirmed', 'Dikonfirmasi'], ['completed', 'Selesai'], ['cancelled', 'Batal']].map(([v, l]) => `<button type="button" class="pill${v === '' ? ' on' : ''}" data-v="${v}">${l}</button>`).join('')}</div>
     <div class="bar">
       <select id="fStatus"><option value="">Semua status</option>${Object.keys(STATUS).map((k) => `<option value="${k}">${STATUS[k]}</option>`).join('')}</select>
       <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option></select>
@@ -317,6 +519,13 @@ VIEWS.pesanan = async function () {
   $('#fStatus').addEventListener('change', loadOrders);
   $('#fSumber').addEventListener('change', loadOrders);
   $('#fQ').addEventListener('input', renderOrders);
+  $$('#pills .pill').forEach((b) => b.addEventListener('click', () => {
+    $('#fStatus').value = b.dataset.v;
+    $$('#pills .pill').forEach((x) => x.classList.toggle('on', x === b));
+    loadOrders();
+  }));
+  renderDash();
+  refreshStats();
   await loadOrders();
 };
 async function loadOrders() {
@@ -909,13 +1118,13 @@ async function loadWaFail() {
     .eq('ok', false).is('resolved_at', null)
     .order('created_at', { ascending: false }).limit(50);
   if (error || !data || !data.length) { box.innerHTML = ''; return; }
-  box.innerHTML = `<div class="card" style="border-left:4px solid var(--danger);background:#fef2f2;margin-bottom:14px">
+  box.innerHTML = `<div class="card" style="border-left:4px solid var(--danger);background:var(--warn);margin-bottom:14px">
     <h2 style="color:var(--danger);margin-bottom:6px">⚠️ ${data.length} WA gagal terkirim</h2>
     <div class="help" style="margin:0 0 10px">Tekan <b>Kirim manual</b> untuk membuka WhatsApp dengan pesan yang sama, lalu <b>Tandai selesai</b>.</div>
     ${data.map((w) => {
       const nomor = String(w.target || '').replace(/\D/g, '');
       const link = nomor ? `https://wa.me/${nomor}?text=${encodeURIComponent(w.message || '')}` : '';
-      return `<div style="border-top:1px solid #fecaca;padding:10px 0">
+      return `<div style="border-top:1px solid var(--line);padding:10px 0">
         <div><b>${esc(PENERIMA_WA[w.recipient] || w.recipient || '-')}</b> · ${esc(w.order_id || '-')} <span class="small">· ${esc(waktu(w.created_at))}</span></div>
         <div class="small">Nomor: ${esc(nomor || '-')} · Alasan: ${esc(w.reason || '-')}</div>
         <div class="mbtns" style="justify-content:flex-start;margin-top:6px">
@@ -1039,7 +1248,7 @@ async function muatKetersediaan(armada) {
     const isi = x.ditutup ? 'tutup' : `${x.terpakai}/${x.unit == null ? '∞' : x.unit}`;
     return `<td class="num" style="${penuh ? 'background:#fee2e2;color:#991b1b;font-weight:700' : ''}">${esc(isi)}</td>`;
   };
-  $('#kbGrid').innerHTML = `<div class="tablewrap"><table><thead><tr><th>Tanggal</th>${armada.map((f) => `<th class="num">${esc(f.short_name)}</th>`).join('')}</tr></thead><tbody>
+  $('#kbGrid').innerHTML = `<div class="tablewrap"><table data-grid><thead><tr><th>Tanggal</th>${armada.map((f) => `<th class="num">${esc(f.short_name)}</th>`).join('')}</tr></thead><tbody>
     ${tgl.map((d) => `<tr><td>${esc(tglPendek(d))}</td>${armada.map((f) => { const x = g.data.find((y) => y.tanggal === d && y.fleet_id === f.id); return x ? sel(x) : '<td></td>'; }).join('')}</tr>`).join('')}
   </tbody></table></div>`;
 }
@@ -1147,7 +1356,7 @@ function htmlRekap(d, jumlahBulan) {
   const kol = jumlahBulan ? d.semua.slice(-jumlahBulan) : d.semua;
   const rows = [...d.per].sort((a, b) => b.tunggakan - a.tunggakan || String(a.kode).localeCompare(String(b.kode)));
   const st = (v) => (!v ? '-' : v.terbayar >= v.tagihan ? 'lunas' : v.terbayar > 0 ? 'sebagian' : 'belum');
-  return `<div class="tablewrap"><table style="min-width:${260 + kol.length * 56}px"><thead><tr><th>Anggota</th>${kol.map((b) => `<th class="num">${esc(blnP(b))}</th>`).join('')}<th class="num">Tunggakan</th></tr></thead><tbody>
+  return `<div class="tablewrap"><table data-grid style="min-width:${260 + kol.length * 56}px"><thead><tr><th>Anggota</th>${kol.map((b) => `<th class="num">${esc(blnP(b))}</th>`).join('')}<th class="num">Tunggakan</th></tr></thead><tbody>
     ${rows.map((a) => `<tr><td>${esc(a.nama)} <span class="small">${esc(a.kode || '')}${a.dimuka ? ` · di muka ${a.dimuka} bln` : ''}</span></td>${kol.map((b) => `<td class="num">${IKN[st(a.bulan[b])]}</td>`).join('')}
       <td class="num ${a.tunggakan > 0 ? 'hutang' : ''}" style="${a.tunggakan > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${a.tunggakan > 0 ? rp(a.tunggakan) : '–'}</td></tr>`).join('') || '<tr><td colspan="99" class="empty">Belum ada anggota yang ditagih.</td></tr>'}
     <tr><td><b>Total tunggakan</b></td>${kol.map(() => '<td></td>').join('')}<td class="num"><b>${rp(rows.reduce((s, a) => s + a.tunggakan, 0))}</b></td></tr>
