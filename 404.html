@@ -11,14 +11,6 @@ if(path.includes('/r/')){
   } else {
     location.replace(base + '/r/index.html');
   }
-} else if(path.includes('/k/')){
-  const slug = path.split('/k/')[1].split('/')[0].split('?')[0].split('#')[0];
-  const extra = location.search ? '&' + location.search.slice(1) : '';
-  if(slug && slug!='index.html' && slug!=''){
-    location.replace(base + '/kartu-digital.html?k=' + slug + extra);
-  } else {
-    location.replace(base + '/index.html');
-  }
 } else if(path.includes('/driver/')){
   const slug = path.split('/driver/')[1].split('/')[0].split('?')[0].split('#')[0];
   if(slug && slug!='index.html' && slug!=''){
