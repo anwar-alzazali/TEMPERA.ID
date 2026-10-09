@@ -210,6 +210,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;
 <form id="loginForm">
 <label>Email<input id="lEmail" type="email" autocomplete="username" required></label>
 <label>Password<input id="lPass" type="password" autocomplete="current-password" required></label>
+<div id="lTs" style="display:flex;justify-content:center;margin:12px 0 0"></div>
 <button class="btn" id="lBtn" style="width:100%" type="submit">Masuk</button>
 <div class="err" id="lErr"></div>
 </form>
@@ -378,16 +379,31 @@ function destText(o) {
 }
 
 /* ---------- login ---------- */
+/* Captcha Cloudflare Turnstile di formulir login */
+let tsToken = '', tsWidget = null, tsMuat = false;
+function muatTurnstile() {
+  if (tsMuat) return; tsMuat = true;
+  window.__tsSiap = () => {
+    tsWidget = window.turnstile.render('#lTs', { sitekey: '0x4AAAAAAFSZKDiTs-n7JFdW', theme: 'auto',
+      callback: (t) => { tsToken = t; }, 'expired-callback': () => { tsToken = ''; }, 'error-callback': () => { tsToken = ''; } });
+  };
+  const sc = document.createElement('script');
+  sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=__tsSiap'; sc.async = true;
+  document.head.appendChild(sc);
+}
+function ulangTurnstile() { tsToken = ''; try { if (tsWidget !== null) window.turnstile.reset(tsWidget); } catch (e) {} }
 function showLogin(msg) {
   $('#shell').hidden = true; $('#login').hidden = false;
   $('#lErr').textContent = msg || '';
+  muatTurnstile();
 }
 $('#loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (tsWidget !== null && !tsToken) { $('#lErr').textContent = 'Tunggu verifikasi keamanan selesai, lalu coba lagi.'; return; }
   const btn = $('#lBtn'); btn.disabled = true; $('#lErr').textContent = '';
-  const { error } = await sb.auth.signInWithPassword({ email: $('#lEmail').value.trim(), password: $('#lPass').value });
-  btn.disabled = false;
-  if (error) { $('#lErr').textContent = 'Email atau password salah.'; return; }
+  const { error } = await sb.auth.signInWithPassword({ email: $('#lEmail').value.trim(), password: $('#lPass').value, options: { captchaToken: tsToken || undefined } });
+  btn.disabled = false; ulangTurnstile();
+  if (error) { $('#lErr').textContent = /captcha/i.test(error.message || '') ? 'Verifikasi keamanan gagal. Muat ulang halaman lalu coba lagi.' : 'Email atau password salah.'; return; }
   await enter();
 });
 $('#btnLogout').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(); });
