@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Admin Tempera">
 <style>
 :root{color-scheme:light dark;--accent:#0891b2;--accent-ink:#0e7490;--ink:#0f172a;--muted:#64748b;--line:#e5e9f0;--bg:#f4f6fa;--card:#fff;--field:#fff;--danger:#dc2626;--warn:#fef2f2;--side:#fff;--side-ink:#475569;--side-hover:#f1f5f9;--side-on:rgba(8,145,178,.12);--side-on-ink:#0e7490;--shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.05)}
-@media (prefers-color-scheme:dark){:root{--accent:#c9a25a;--accent-ink:#e3c585;--ink:#ece4d3;--muted:#a39a86;--line:#2f2a21;--bg:#0c0a08;--card:#15120e;--field:#100e0b;--danger:#e57f6e;--warn:#2a1a16;--side:#0f0d0a;--side-ink:#b9af9a;--side-hover:#1d1913;--side-on:rgba(201,162,90,.14);--side-on-ink:#e3c585;--shadow:0 1px 2px rgba(0,0,0,.5),0 6px 20px rgba(0,0,0,.35)}}
+@media (prefers-color-scheme:dark){:root{--accent:#d4af37;--accent-ink:#f0cf72;--ink:#f1e9d4;--muted:#b3a68a;--line:#3a2f17;--bg:#000;--card:#0b0905;--field:#050403;--danger:#e57f6e;--warn:#241510;--side:#050403;--side-ink:#cdbf9f;--side-hover:#17120a;--side-on:rgba(212,175,55,.18);--side-on-ink:#f0cf72;--shadow:0 1px 2px rgba(0,0,0,.8),0 8px 26px rgba(0,0,0,.6)}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
@@ -152,16 +152,20 @@ tbody tr:last-child td{border-bottom:0}
 .kpi.t-amber{--k-bg:rgba(245,158,11,.2);--k-ink:#b45309}
 .kpi.t-blue{--k-bg:rgba(59,130,246,.14);--k-ink:#1d4ed8}
 .kpi.hot{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.4)}
-@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#9bc79a}.kpi.t-amber{--k-ink:#e3c585}.kpi.t-blue{--k-ink:#b7c4d6}
-:root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
+@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#a7d4a3}.kpi.t-amber{--k-ink:#f0cf72}.kpi.t-blue{--k-ink:#c3cfe0}
+:root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--emas:linear-gradient(180deg,#f0d27a,#d4af37 55%,#b88f1f)}
 .pagehead h1,h2,.brand{font-family:var(--serif);font-weight:600;letter-spacing:.01em}
-.pagehead h1{font-size:32px}.kpi .v{font-family:var(--serif);font-weight:600;letter-spacing:0}
-.btn{color:#17120a}.btn.danger{color:#fff}.btn.ghost{color:var(--ink);border-color:#3d3527}
-.card,.kpi{border-color:#2f2a21}.kpi{background:linear-gradient(180deg,#1a160f,#15120e)}
-#nav button.on{box-shadow:inset 2px 0 0 var(--accent)}
-.pills .pill.on{background:var(--accent);border-color:var(--accent);color:#17120a}
-.badge{background:#2a241a;color:#d9c9a3}.chip{background:#221e16;color:#d9c9a3}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(201,162,90,.22)}}
+.pagehead h1,h2{color:#ecc95f}.brand{color:#ecc95f}
+.pagehead h1{font-size:32px}.kpi .v{font-family:var(--serif);font-weight:600;letter-spacing:0;color:#f0d27a}
+.btn{background:var(--emas);color:#1a1304;box-shadow:0 1px 0 rgba(255,236,170,.45) inset,0 2px 10px rgba(212,175,55,.18)}.btn.danger{background:var(--danger);color:#fff;box-shadow:none}.btn.ghost{background:transparent;color:#ecc95f;border:1px solid rgba(212,175,55,.5);box-shadow:none}
+.card,.kpi,.stat{border-color:rgba(212,175,55,.28)}.kpi{background:linear-gradient(180deg,#14100a,#0b0905)}
+#side,aside{border-color:rgba(212,175,55,.25)}
+#nav button.on{box-shadow:inset 3px 0 0 var(--accent)}
+.pills .pill.on{background:var(--emas);border-color:#d4af37;color:#1a1304}.pill{border-color:rgba(212,175,55,.3)}
+.badge{background:rgba(212,175,55,.16);color:#f0d27a}.chip{background:#17120a;color:#e6cf8a}
+th{color:#e0c35f}
+input,select,textarea{border-color:rgba(212,175,55,.3)}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(212,175,55,.28)}}
 .pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
 .pill{flex:none;border:1px solid var(--line);background:var(--card);color:var(--muted);padding:9px 16px;border-radius:999px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -210,7 +214,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;
 <form id="loginForm">
 <label>Email<input id="lEmail" type="email" autocomplete="username" required></label>
 <label>Password<input id="lPass" type="password" autocomplete="current-password" required></label>
-<div id="lTs" style="display:flex;justify-content:center;margin:12px 0 0"></div>
+<div id="lTs" style="width:100%;min-height:65px;margin:14px 0 4px;overflow:hidden;border-radius:12px"></div>
 <button class="btn" id="lBtn" style="width:100%" type="submit">Masuk</button>
 <div class="err" id="lErr"></div>
 </form>
@@ -384,7 +388,7 @@ let tsToken = '', tsWidget = null, tsMuat = false;
 function muatTurnstile() {
   if (tsMuat) return; tsMuat = true;
   window.__tsSiap = () => {
-    tsWidget = window.turnstile.render('#lTs', { sitekey: '0x4AAAAAAFSZKDiTs-n7JFdW', theme: 'auto',
+    tsWidget = window.turnstile.render('#lTs', { sitekey: '0x4AAAAAAFSZKDiTs-n7JFdW', theme: 'auto', size: 'flexible',
       callback: (t) => { tsToken = t; }, 'expired-callback': () => { tsToken = ''; }, 'error-callback': () => { tsToken = ''; } });
   };
   const sc = document.createElement('script');
