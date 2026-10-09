@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masuk Tempera</title>
+<style>
+:root{--bg:#f4f1ea;--card:#fff;--ink:#1f2a24;--muted:#6b7770;--line:#dcd8cc;--accent:#2f6b4f;--accent-ink:#fff;--bad:#b3402f;--fur:#e9a35c;--fur2:#cf8441;--belly:#fbe8cf}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#17201b;--card:#202b25;--ink:#eef2ee;--muted:#9aa8a0;--line:#33423a;--accent:#6fbf94;--accent-ink:#10231a;--bad:#ef8b78}}
+:root[data-theme=dark]{--bg:#17201b;--card:#202b25;--ink:#eef2ee;--muted:#9aa8a0;--line:#33423a;--accent:#6fbf94;--accent-ink:#10231a;--bad:#ef8b78}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+main{width:100%;max-width:380px}
+.merek{text-align:center;font-weight:700;letter-spacing:.02em;color:var(--accent);margin-bottom:4px}
+.kucing{display:block;margin:0 auto -18px;width:170px;height:auto;position:relative;z-index:1;overflow:visible}
+.kartu{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 20px 20px;position:relative}
+h1{font-size:20px;margin:0 0 2px;text-align:center}
+.sub{margin:0 0 16px;text-align:center;color:var(--muted);font-size:14px}
+.tab{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:16px}
+.tab button{border:0;background:transparent;color:var(--muted);padding:9px 6px;border-radius:9px;font:inherit;font-size:14px;cursor:pointer}
+.tab button[aria-selected=true]{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}
+input{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);outline:none}
+input:focus{border-color:var(--accent)}
+.kode{letter-spacing:.5em;text-align:center;font-size:22px;font-weight:600}
+.btn{width:100%;margin-top:16px;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:600;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn:disabled{opacity:.55;cursor:default}
+.link{background:none;border:0;color:var(--accent);font:inherit;font-size:14px;cursor:pointer;padding:6px 0}
+.pesan{min-height:22px;margin:10px 0 0;font-size:14px;text-align:center;color:var(--muted)}
+.pesan.salah{color:var(--bad)}
+.baris{display:flex;justify-content:space-between;align-items:center}
+.demo{margin-top:14px;font-size:12px;text-align:center;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+[hidden]{display:none!important}
+.geser{animation:geser .4s}
+@keyframes geser{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+
+/* kucing */
+.mata{transition:transform .25s ease;transform-box:fill-box}
+.kedip{animation:kedip 4.5s infinite;transform-origin:center;transform-box:fill-box}
+@keyframes kedip{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+.ekor{transform-origin:150px 150px;animation:ekor 2.4s ease-in-out infinite}
+@keyframes ekor{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(10deg)}}
+.tangan{transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.m-bahagia,.m-sedih,.m-pusing,.m-tidur,.hp,.air{opacity:0;transition:opacity .2s}
+.mulut{opacity:1}
+[data-s=tutup] .tangan-kiri{transform:translate(22px,-62px)}
+[data-s=tutup] .tangan-kanan{transform:translate(-22px,-62px)}
+[data-s=tutup] .mata-grup{opacity:0}
+[data-s=sedih] .m-sedih,[data-s=sedih] .air{opacity:1}
+[data-s=sedih] .mulut-biasa,[data-s=sedih] .mata-grup{opacity:0}
+[data-s=sedih] .kepala{animation:geleng .6s}
+@keyframes geleng{25%{transform:rotate(-7deg)}75%{transform:rotate(7deg)}}
+.kepala{transform-origin:100px 118px;transform-box:view-box}
+[data-s=bahagia] .m-bahagia{opacity:1}
+[data-s=bahagia] .mata-grup{opacity:0}
+[data-s=bahagia] .kucing-badan{animation:loncat .5s 2}
+@keyframes loncat{50%{transform:translateY(-10px)}}
+[data-s=tunggu] .hp{opacity:1}
+[data-s=tunggu] .tangan-kiri{transform:translate(14px,-10px)}
+[data-s=pusing] .m-pusing{opacity:1}
+[data-s=pusing] .mata-grup,[data-s=pusing] .mulut-biasa{opacity:0}
+[data-s=pusing] .kepala{animation:pusing 1s ease-in-out infinite}
+@keyframes pusing{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+[data-s=tidur] .m-tidur{opacity:1}
+[data-s=tidur] .mata-grup{opacity:0}
+@media(prefers-reduced-motion:reduce){.kedip,.ekor,.geser,.kepala,.kucing-badan{animation:none!important}.tangan,.mata{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<div class="merek">Tempera</div>
+
+<svg class="kucing" id="kucing" data-s="diam" viewBox="0 0 200 190" role="img" aria-label="Maskot kucing">
+  <g class="ekor"><path d="M150 150 C190 150 196 110 178 100" fill="none" stroke="var(--fur2)" stroke-width="12" stroke-linecap="round"/></g>
+  <g class="kucing-badan">
+    <ellipse cx="100" cy="172" rx="50" ry="30" fill="var(--fur)"/>
+    <ellipse cx="100" cy="176" rx="28" ry="22" fill="var(--belly)"/>
+    <g class="kepala">
+      <path d="M52 78 L56 36 L86 60 Z" fill="var(--fur)"/><path d="M148 78 L144 36 L114 60 Z" fill="var(--fur)"/>
+      <path d="M60 70 L62 48 L78 62 Z" fill="#f2b6b0"/><path d="M140 70 L138 48 L122 62 Z" fill="#f2b6b0"/>
+      <ellipse cx="100" cy="102" rx="54" ry="46" fill="var(--fur)"/>
+      <path d="M92 60 L100 74 L108 60" fill="none" stroke="var(--fur2)" stroke-width="4" stroke-linecap="round"/>
+      <ellipse cx="100" cy="116" rx="26" ry="19" fill="var(--belly)"/>
+      <g class="mata-grup">
+        <g class="kedip"><g class="mata" id="mataK"><ellipse cx="78" cy="100" rx="7" ry="9" fill="#1f2a24"/><circle cx="80" cy="97" r="2.6" fill="#fff"/></g></g>
+        <g class="kedip"><g class="mata" id="mataR"><ellipse cx="122" cy="100" rx="7" ry="9" fill="#1f2a24"/><circle cx="124" cy="97" r="2.6" fill="#fff"/></g></g>
+      </g>
+      <g class="m-bahagia" fill="none" stroke="#1f2a24" stroke-width="4" stroke-linecap="round"><path d="M70 104 Q78 92 86 104"/><path d="M114 104 Q122 92 130 104"/></g>
+      <g class="m-sedih" fill="none" stroke="#1f2a24" stroke-width="4" stroke-linecap="round"><path d="M70 98 Q78 106 86 98"/><path d="M114 98 Q122 106 130 98"/><path d="M90 128 Q100 120 110 128"/></g>
+      <g class="air" fill="#7cc4ee"><path d="M70 110 q-5 9 0 12 q5 -3 0 -12z"/></g>
+      <g class="m-pusing" fill="none" stroke="#1f2a24" stroke-width="3" stroke-linecap="round"><path d="M72 100 a6 6 0 1 1 6 6 a3 3 0 1 1 -3 -3"/><path d="M116 100 a6 6 0 1 1 6 6 a3 3 0 1 1 -3 -3"/><path d="M92 128 q4 -4 8 0 t8 0"/></g>
+      <g class="m-tidur" fill="none" stroke="#1f2a24" stroke-width="4" stroke-linecap="round"><path d="M70 102 Q78 108 86 102"/><path d="M114 102 Q122 108 130 102"/><text x="136" y="70" fill="var(--muted)" stroke="none" font-size="14" font-weight="700">z</text><text x="146" y="58" fill="var(--muted)" stroke="none" font-size="11" font-weight="700">z</text></g>
+      <path d="M96 111 L104 111 L100 116 Z" fill="#d9776f"/>
+      <g class="mulut mulut-biasa" fill="none" stroke="#1f2a24" stroke-width="3" stroke-linecap="round"><path d="M100 116 Q94 124 88 120"/><path d="M100 116 Q106 124 112 120"/></g>
+      <g stroke="#1f2a24" stroke-width="2" stroke-linecap="round" opacity=".5"><path d="M64 112 L40 108"/><path d="M64 118 L42 122"/><path d="M136 112 L160 108"/><path d="M136 118 L158 122"/></g>
+    </g>
+    <g class="hp"><rect x="86" y="132" width="28" height="44" rx="5" fill="#27332d"/><rect x="89" y="136" width="22" height="34" rx="3" fill="#7be0a5"/><path d="M95 148 h10 M95 154 h7" stroke="#1f2a24" stroke-width="2.5" stroke-linecap="round"/></g>
+    <g class="tangan tangan-kiri"><ellipse cx="70" cy="160" rx="13" ry="10" fill="var(--fur)"/><ellipse cx="70" cy="163" rx="7" ry="4" fill="var(--belly)"/></g>
+    <g class="tangan tangan-kanan"><ellipse cx="130" cy="160" rx="13" ry="10" fill="var(--fur)"/><ellipse cx="130" cy="163" rx="7" ry="4" fill="var(--belly)"/></g>
+  </g>
+</svg>
+
+<section class="kartu">
+  <h1>Masuk ke panel</h1>
+  <p class="sub">Kelola halaman usaha Anda</p>
+  <div class="tab" role="tablist">
+    <button role="tab" id="tKode" aria-selected="true">Kode WhatsApp</button>
+    <button role="tab" id="tSandi" aria-selected="false">Kata sandi</button>
+  </div>
+
+  <form id="f" autocomplete="on" novalidate>
+    <label for="hp">Nomor HP</label>
+    <input id="hp" name="hp" type="tel" inputmode="tel" autocomplete="tel" placeholder="0812 3456 7890">
+
+    <div id="bKode" hidden>
+      <label for="kode">Kode 6 angka dari WhatsApp</label>
+      <input id="kode" class="kode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••">
+    </div>
+    <div id="bSandi" hidden>
+      <label for="sandi">Kata sandi</label>
+      <input id="sandi" type="password" autocomplete="current-password" placeholder="Kata sandi">
+    </div>
+
+    <button class="btn" id="aksi" type="submit">Kirim kode</button>
+    <div class="baris"><button class="link" id="ulang" type="button" hidden>Kirim ulang kode</button><span></span></div>
+    <p class="pesan" id="pesan" aria-live="polite"></p>
+  </form>
+  <p class="demo" id="demo" hidden>Pratinjau: belum tersambung ke server. Kode yang benar 123456, kata sandi contoh <b>kucing</b>.</p>
+</section>
+</main>
+
+<script>
+/* Adaptor autentikasi. Ganti objek AUTH ini saat tersambung ke Supabase. */
+const SB='https://wjmotidelqgcyyujacud.supabase.co';
+const ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
+const TUJUAN='/panel/';
+const H={apikey:ANON,'content-type':'application/json'};
+async function pos(url,body,hdr){
+  let r;try{r=await fetch(SB+url,{method:'POST',headers:{...H,...(hdr||{})},body:JSON.stringify(body)})}catch(e){throw new Error('Tidak ada koneksi internet')}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw Object.assign(new Error(j.pesan||j.msg||j.error_description||'Gagal, coba lagi'),{status:r.status});
+  return j;
+}
+function simpan(s){try{localStorage.setItem('tempera_sesi',JSON.stringify({access_token:s.access_token,refresh_token:s.refresh_token,expires_at:s.expires_at||Math.floor(Date.now()/1000)+(s.expires_in||3600),user:s.user}))}catch(e){}}
+const AUTH={
+  demo:false,
+  tujuan:TUJUAN,
+  async kirimKode(hp){await pos('/functions/v1/masuk',{aksi:'kirim',hp},{authorization:'Bearer '+ANON});return{ok:true}},
+  async verifikasiKode(hp,kode){
+    const r=await pos('/functions/v1/masuk',{aksi:'cek',hp,kode},{authorization:'Bearer '+ANON});
+    const s=await pos('/auth/v1/verify',{type:'magiclink',token_hash:r.token_hash});
+    simpan(s);return{ok:true,baru:r.baru};
+  },
+  async masukSandi(hp,sandi){
+    try{const s=await pos('/auth/v1/token?grant_type=password',{email:hp+'@hp.tempera.id',password:sandi});simpan(s);return{ok:true}}
+    catch(e){throw new Error(e.status===400?'Nomor atau kata sandi salah':e.message)}
+  }
+};
+const tunda=ms=>new Promise(r=>setTimeout(r,ms));
+const $=s=>document.querySelector(s);
+const K=$('#kucing'),hp=$('#hp'),kode=$('#kode'),sandi=$('#sandi'),pesan=$('#pesan'),aksi=$('#aksi'),f=$('#f');
+let mode='kode',tahap='nomor',salah=0,kunci=0,tdiam;
+if(AUTH.demo)$('#demo').hidden=false;
+
+function s(x){K.dataset.s=x}
+function diam(){clearTimeout(tdiam);tdiam=setTimeout(()=>{if(!['bahagia','pusing','tidur'].includes(K.dataset.s))s(tahap==='kode'&&mode==='kode'?'tunggu':'diam')},1800)}
+function lihat(el){
+  const r=el.getBoundingClientRect(),k=K.getBoundingClientRect();
+  const dx=Math.max(-1,Math.min(1,(r.left+r.width/2-(k.left+k.width/2))/160));
+  const dy=Math.max(-1,Math.min(1,(r.top-(k.top+k.height/2))/220));
+  ['#mataK','#mataR'].forEach(q=>$(q).style.transform='translate('+dx*4+'px,'+(2+dy*3)+'px)');
+}
+function lurus(){['#mataK','#mataR'].forEach(q=>$(q).style.transform='')}
+function ket(t,bad){pesan.textContent=t||'';pesan.className='pesan'+(bad?' salah':'')}
+function atur(m){
+  mode=m;tahap='nomor';
+  $('#tKode').setAttribute('aria-selected',m==='kode');$('#tSandi').setAttribute('aria-selected',m==='sandi');
+  $('#bKode').hidden=true;$('#bSandi').hidden=m!=='sandi';$('#ulang').hidden=true;
+  aksi.textContent=m==='kode'?'Kirim kode':'Masuk';ket('');s('diam');lurus();
+}
+$('#tKode').onclick=()=>atur('kode');$('#tSandi').onclick=()=>atur('sandi');
+
+hp.addEventListener('focus',()=>{s('diam');lihat(hp)});
+hp.addEventListener('input',()=>lihat(hp));
+kode.addEventListener('focus',()=>{s('tunggu');lihat(kode)});
+kode.addEventListener('input',()=>{kode.value=kode.value.replace(/\D/g,'');lihat(kode)});
+sandi.addEventListener('focus',()=>{s('tutup');lurus()});
+sandi.addEventListener('blur',()=>{if(K.dataset.s==='tutup')s('diam')});
+[hp,kode,sandi].forEach(e=>e.addEventListener('blur',lurus));
+
+function gagal(t){
+  salah++;ket(t,true);s('sedih');f.classList.remove('geser');void f.offsetWidth;f.classList.add('geser');
+  if(salah>=3){kunci=Date.now()+30000;aksi.disabled=true;setTimeout(()=>s('pusing'),900);
+    let i=setInterval(()=>{const sisa=Math.ceil((kunci-Date.now())/1000);
+      if(sisa<=0){clearInterval(i);aksi.disabled=false;salah=0;ket('Silakan coba lagi.');s('diam')}
+      else{ket('Terlalu banyak salah. Tunggu '+sisa+' detik.',true)}},500);
+  }else setTimeout(()=>{if(K.dataset.s==='sedih')s(mode==='sandi'?'tutup':'diam')},1800);
+}
+function berhasil(){s('bahagia');ket('Berhasil. Membuka panel…');aksi.disabled=true;
+  setTimeout(()=>{ if(AUTH.demo)ket('Pratinjau: di sini panel akan terbuka.'); else location.href=AUTH.tujuan; },1400)}
+
+const normal=v=>{v=v.replace(/\D/g,'');if(v.startsWith('0'))v='62'+v.slice(1);else if(v.startsWith('8'))v='62'+v;return v};
+f.addEventListener('submit',async e=>{
+  e.preventDefault();if(aksi.disabled)return;
+  const n=normal(hp.value);
+  if(n.length<10||n.length>15||!n.startsWith('62')){return gagal('Nomor HP belum benar')}
+  aksi.disabled=true;ket('');
+  try{
+    if(mode==='sandi'){
+      if(!sandi.value){aksi.disabled=false;return gagal('Isi kata sandi')}
+      await AUTH.masukSandi(n,sandi.value);berhasil();
+    }else if(tahap==='nomor'){
+      await AUTH.kirimKode(n);tahap='kode';$('#bKode').hidden=false;$('#ulang').hidden=false;
+      aksi.textContent='Masuk';ket('Kode dikirim ke WhatsApp '+hp.value);s('tunggu');kode.focus();aksi.disabled=false;
+    }else{
+      if(kode.value.length!==6){aksi.disabled=false;return gagal('Kode terdiri dari 6 angka')}
+      await AUTH.verifikasiKode(n,kode.value);berhasil();
+    }
+  }catch(err){aksi.disabled=false;gagal(err.message)}
+  if(K.dataset.s!=='bahagia')aksi.disabled=salah>=3;
+});
+$('#ulang').onclick=async()=>{ket('Mengirim ulang…');try{await AUTH.kirimKode(normal(hp.value));ket('Kode baru dikirim')}catch(e){ket(e.message,true)}};
+
+/* tertidur jika lama tidak disentuh */
+let idle;function bangun(){clearTimeout(idle);if(K.dataset.s==='tidur')s('diam');idle=setTimeout(()=>{if(K.dataset.s==='diam')s('tidur')},40000)}
+['pointerdown','keydown','focusin'].forEach(ev=>addEventListener(ev,bangun));bangun();
+atur('kode');
+</script>
+</body>
+</html>
