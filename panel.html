@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Admin Tempera">
 <style>
 :root{color-scheme:light dark;--accent:#0891b2;--accent-ink:#0e7490;--ink:#0f172a;--muted:#64748b;--line:#e5e9f0;--bg:#f4f6fa;--card:#fff;--field:#fff;--danger:#dc2626;--warn:#fef2f2;--side:#fff;--side-ink:#475569;--side-hover:#f1f5f9;--side-on:rgba(8,145,178,.12);--side-on-ink:#0e7490;--shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.05)}
-@media (prefers-color-scheme:dark){:root{--accent:#22b8d6;--accent-ink:#67e8f9;--ink:#e6ebf4;--muted:#94a3b8;--line:#243049;--bg:#0b1220;--card:#131c2e;--field:#0e1627;--danger:#f87171;--warn:#2d1a20;--side:#0e1526;--side-ink:#a8b3c7;--side-hover:#18223a;--side-on:rgba(34,184,214,.16);--side-on-ink:#67e8f9;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25)}}
+@media (prefers-color-scheme:dark){:root{--accent:#c9a25a;--accent-ink:#e3c585;--ink:#ece4d3;--muted:#a39a86;--line:#2f2a21;--bg:#0c0a08;--card:#15120e;--field:#100e0b;--danger:#e57f6e;--warn:#2a1a16;--side:#0f0d0a;--side-ink:#b9af9a;--side-hover:#1d1913;--side-on:rgba(201,162,90,.14);--side-on-ink:#e3c585;--shadow:0 1px 2px rgba(0,0,0,.5),0 6px 20px rgba(0,0,0,.35)}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
@@ -152,7 +152,16 @@ tbody tr:last-child td{border-bottom:0}
 .kpi.t-amber{--k-bg:rgba(245,158,11,.2);--k-ink:#b45309}
 .kpi.t-blue{--k-bg:rgba(59,130,246,.14);--k-ink:#1d4ed8}
 .kpi.hot{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.4)}
-@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#4ade80}.kpi.t-amber{--k-ink:#fbbf24}.kpi.t-blue{--k-ink:#93c5fd}}
+@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#9bc79a}.kpi.t-amber{--k-ink:#e3c585}.kpi.t-blue{--k-ink:#b7c4d6}
+:root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif}
+.pagehead h1,h2,.brand{font-family:var(--serif);font-weight:600;letter-spacing:.01em}
+.pagehead h1{font-size:32px}.kpi .v{font-family:var(--serif);font-weight:600;letter-spacing:0}
+.btn{color:#17120a}.btn.danger{color:#fff}.btn.ghost{color:var(--ink);border-color:#3d3527}
+.card,.kpi{border-color:#2f2a21}.kpi{background:linear-gradient(180deg,#1a160f,#15120e)}
+#nav button.on{box-shadow:inset 2px 0 0 var(--accent)}
+.pills .pill.on{background:var(--accent);border-color:var(--accent);color:#17120a}
+.badge{background:#2a241a;color:#d9c9a3}.chip{background:#221e16;color:#d9c9a3}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(201,162,90,.22)}}
 .pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
 .pill{flex:none;border:1px solid var(--line);background:var(--card);color:var(--muted);padding:9px 16px;border-radius:999px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -1695,6 +1704,5 @@ document.addEventListener('click', async (e) => {
 <script src="148_panel_kode_unik.js"></script>
 <script src="154_panel_destinasi.js"></script>
 <script src="166_panel_pengumuman.js"></script>
-
 </body>
 </html>
