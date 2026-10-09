@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-title" content="Admin Tempera">
 <style>
 :root{color-scheme:light dark;--accent:#0891b2;--accent-ink:#0e7490;--ink:#0f172a;--muted:#64748b;--line:#e5e9f0;--bg:#f4f6fa;--card:#fff;--field:#fff;--danger:#dc2626;--warn:#fef2f2;--side:#fff;--side-ink:#475569;--side-hover:#f1f5f9;--side-on:rgba(8,145,178,.12);--side-on-ink:#0e7490;--shadow:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.05)}
-@media (prefers-color-scheme:dark){:root{--accent:#d4af37;--accent-ink:#f0cf72;--ink:#f1e9d4;--muted:#b3a68a;--line:#3a2f17;--bg:#000;--card:#0b0905;--field:#050403;--danger:#e57f6e;--warn:#241510;--side:#050403;--side-ink:#cdbf9f;--side-hover:#17120a;--side-on:rgba(212,175,55,.18);--side-on-ink:#f0cf72;--shadow:0 1px 2px rgba(0,0,0,.8),0 8px 26px rgba(0,0,0,.6)}}
+@media (prefers-color-scheme:dark){:root{--accent:#E5B80B;--accent-ink:#FFD700;--ink:#eef0f7;--muted:#a2abc6;--line:#1d2a4d;--bg:#050a18;--card:#0a1228;--field:#060c1e;--kpi1:#0e1833;--kpi2:#0a1228;--chipbg:#111c3a;--danger:#ef8a7a;--warn:#2a1620;--side:#060c1c;--side-ink:#c3cadf;--side-hover:#101a36;--side-on:rgba(229,184,11,.16);--side-on-ink:#FFD700;--glow:rgba(229,184,11,.25);--shadow:0 1px 2px rgba(0,0,0,.6),0 8px 26px rgba(2,6,20,.6)}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
@@ -152,20 +152,67 @@ tbody tr:last-child td{border-bottom:0}
 .kpi.t-amber{--k-bg:rgba(245,158,11,.2);--k-ink:#b45309}
 .kpi.t-blue{--k-bg:rgba(59,130,246,.14);--k-ink:#1d4ed8}
 .kpi.hot{background:rgba(245,158,11,.09);border-color:rgba(245,158,11,.4)}
-@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#a7d4a3}.kpi.t-amber{--k-ink:#f0cf72}.kpi.t-blue{--k-ink:#c3cfe0}
-:root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--emas:linear-gradient(180deg,#f0d27a,#d4af37 55%,#b88f1f)}
+@media (prefers-color-scheme:dark){.kpi.t-green{--k-ink:#9fd9b0}.kpi.t-amber{--k-ink:#FFD700}.kpi.t-blue{--k-ink:#b9c8ee}
+:root{--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--emas:linear-gradient(135deg,#FFD700,#E5B80B 60%,#C99A08);--emas-teks:linear-gradient(90deg,#E5B80B,#FFD700,#E5B80B)}
 .pagehead h1,h2,.brand{font-family:var(--serif);font-weight:600;letter-spacing:.01em}
-.pagehead h1,h2{color:#ecc95f}.brand{color:#ecc95f}
-.pagehead h1{font-size:32px}.kpi .v{font-family:var(--serif);font-weight:600;letter-spacing:0;color:#f0d27a}
-.btn{background:var(--emas);color:#1a1304;box-shadow:0 1px 0 rgba(255,236,170,.45) inset,0 2px 10px rgba(212,175,55,.18)}.btn.danger{background:var(--danger);color:#fff;box-shadow:none}.btn.ghost{background:transparent;color:#ecc95f;border:1px solid rgba(212,175,55,.5);box-shadow:none}
-.card,.kpi,.stat{border-color:rgba(212,175,55,.28)}.kpi{background:linear-gradient(180deg,#14100a,#0b0905)}
-#side,aside{border-color:rgba(212,175,55,.25)}
+.pagehead h1{font-size:32px;background:var(--emas-teks);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2,.brand{color:#F2C70F}
+.kpi .v{font-family:var(--serif);font-weight:600;letter-spacing:0;color:#FFD700}
+.btn{background:var(--emas);color:#0A0A0A;box-shadow:0 1px 0 rgba(255,244,190,.5) inset,0 2px 12px var(--glow)}.btn.danger{background:var(--danger);color:#0A0A0A;box-shadow:none}.btn.ghost{background:transparent;color:#FFD700;border:1px solid rgba(229,184,11,.5);box-shadow:none}
+.card,.kpi,.stat{border-color:rgba(229,184,11,.25)}.kpi{background:linear-gradient(180deg,var(--kpi1),var(--kpi2))}
+#side,aside{border-color:rgba(229,184,11,.22)}
 #nav button.on{box-shadow:inset 3px 0 0 var(--accent)}
-.pills .pill.on{background:var(--emas);border-color:#d4af37;color:#1a1304}.pill{border-color:rgba(212,175,55,.3)}
-.badge{background:rgba(212,175,55,.16);color:#f0d27a}.chip{background:#17120a;color:#e6cf8a}
-th{color:#e0c35f}
-input,select,textarea{border-color:rgba(212,175,55,.3)}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(212,175,55,.28)}}
+.pills .pill.on{background:var(--emas);border-color:#E5B80B;color:#0A0A0A}.pill{border-color:rgba(229,184,11,.3)}
+.badge{background:rgba(229,184,11,.16);color:#FFD700}.chip{background:var(--chipbg);color:#f0d77a}
+th{color:#F2C70F}
+.loginbox h1{font-family:var(--serif);font-weight:600;color:#FFD700}.loginbox{border:1px solid rgba(229,184,11,.28)}
+input,select,textarea{border-color:rgba(229,184,11,.28)}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--glow)}}
+/* ---- Gerak halus (berlaku di semua mode; dimatikan bila pengguna memilih kurangi gerakan) ---- */
+@media (prefers-reduced-motion:no-preference){
+@keyframes naik{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes muncul{from{opacity:0;transform:translateY(16px) scale(.97);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@keyframes kilau{from{transform:translateX(-130%)}to{transform:translateX(230%)}}
+@keyframes denyut{0%,100%{filter:drop-shadow(0 0 0 rgba(229,184,11,0))}50%{filter:drop-shadow(0 0 9px rgba(229,184,11,.6))}}
+@keyframes geser{from{background-position:0 0}to{background-position:200% 0}}
+.loginbox{animation:muncul .6s cubic-bezier(.2,.8,.2,1) backwards}
+.loginbox .logo{animation:denyut 3.4s ease-in-out infinite}
+#view>*{animation:naik .45s cubic-bezier(.2,.8,.2,1) backwards}
+.kpi,.stat{animation:naik .5s cubic-bezier(.2,.8,.2,1) backwards;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.kpi:nth-child(2),.stat:nth-child(2){animation-delay:.06s}.kpi:nth-child(3),.stat:nth-child(3){animation-delay:.12s}.kpi:nth-child(4),.stat:nth-child(4){animation-delay:.18s}.kpi:nth-child(5),.stat:nth-child(5){animation-delay:.24s}.kpi:nth-child(6),.stat:nth-child(6){animation-delay:.3s}
+.kpi:hover,.stat:hover{transform:translateY(-3px);border-color:rgba(229,184,11,.55);box-shadow:0 10px 28px rgba(0,0,0,.45),0 0 0 1px rgba(229,184,11,.2)}
+.card{transition:border-color .22s ease,box-shadow .22s ease}.card:hover{border-color:rgba(229,184,11,.4)}
+.btn{position:relative;overflow:hidden;transition:transform .12s ease,filter .15s ease,box-shadow .2s ease}
+.btn::after{content:"";position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.38),transparent);transform:translateX(-130%);pointer-events:none}
+.btn:hover::after{animation:kilau .75s ease}
+.btn:hover{box-shadow:0 4px 18px var(--glow)}
+.pill,#nav button{transition:background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease}
+tr.click{transition:background .15s ease}
+.pagehead h1{background-size:200% 100%;animation:geser 6s linear infinite}
+}
+/* ---- Mobil di form login ---- */
+#login{--v:1s}
+#login.ngebut{--v:.28s}
+.jalan{position:relative;height:68px;margin:18px -28px -28px;overflow:hidden;border-top:1px solid var(--line);border-radius:0 0 16px 16px}
+.jalan::before{content:"";position:absolute;left:0;right:0;bottom:9px;height:2px;background:repeating-linear-gradient(90deg,var(--muted) 0 16px,transparent 16px 36px);opacity:.55}
+.mobil{position:absolute;left:50%;bottom:7px;margin-left:-75px;color:var(--accent)}
+.roda{transform-box:fill-box;transform-origin:center}
+.lampu{filter:drop-shadow(0 0 5px #FFE98A)}.rem-lampu{opacity:.55}
+@media (prefers-reduced-motion:no-preference){
+@keyframes jalan{from{background-position:0 0}to{background-position:-36px 0}}
+@keyframes putar{to{transform:rotate(360deg)}}
+@keyframes goyang{from{transform:translateY(0)}to{transform:translateY(-1.4px)}}
+@keyframes ngerem{0%{transform:rotate(0)}35%{transform:rotate(3.5deg) translateX(3px)}100%{transform:rotate(0)}}
+@keyframes pergi{0%{transform:translateX(0)}20%{transform:translateX(-8px) rotate(-2deg)}100%{transform:translateX(330px) rotate(0)}}
+.jalan::before{animation:jalan var(--v) linear infinite}
+.roda{animation:putar calc(var(--v)*.45) linear infinite}
+.mobil{animation:goyang .45s ease-in-out infinite alternate}
+#login.rem .jalan::before,#login.rem .roda{animation-play-state:paused}
+#login.rem .mobil{animation:ngerem .6s ease-out}
+#login.rem .rem-lampu{opacity:1;filter:drop-shadow(0 0 5px #ff5a4d)}
+#login.pergi .mobil{animation:pergi .85s cubic-bezier(.5,0,.9,.45) forwards}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .pills{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin-bottom:6px;scrollbar-width:none}
 .pills::-webkit-scrollbar{display:none}
 .pill{flex:none;border:1px solid var(--line);background:var(--card);color:var(--muted);padding:9px 16px;border-radius:999px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -218,6 +265,36 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;
 <button class="btn" id="lBtn" style="width:100%" type="submit">Masuk</button>
 <div class="err" id="lErr"></div>
 </form>
+<div class="jalan" aria-hidden="true"><svg class="mobil" viewBox="0 0 224 66" width="150" height="44" overflow="visible">
+<defs>
+<linearGradient id="cahaya" x1="0" x2="1"><stop offset="0" stop-color="#FFF1A8" stop-opacity=".6"/><stop offset="1" stop-color="#FFF1A8" stop-opacity="0"/></linearGradient>
+<linearGradient id="kilap" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset=".62" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
+<linearGradient id="kaca" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#27406e"/><stop offset=".55" stop-color="#0a1226"/><stop offset="1" stop-color="#16264a"/></linearGradient>
+<radialGradient id="pelek" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></radialGradient>
+</defs>
+<ellipse cx="112" cy="56" rx="98" ry="3.2" fill="#000" opacity=".45"/>
+<polygon class="sorot" points="214,40 262,28 262,52" fill="url(#cahaya)"/>
+<!-- spoiler -->
+<path d="M11 32l18-4.500 2 2.600-18 4.900z" fill="#05070f"/>
+<!-- bodi -->
+<path class="badan" fill="currentColor" d="M13 48C10 45 10 39 14 36l17-4c11-1 21-3 33-8 9-6 25-8.500 44-8.500 15 0 28 4 38 11.500l26 7.500c12 3 24 6 33 11 4 2 5 6 4 9l-3 3h-9a15 15 0 0 0-30 0H78a15 15 0 0 0-30 0H18z"/>
+<path fill="url(#kilap)" d="M13 48C10 45 10 39 14 36l17-4c11-1 21-3 33-8 9-6 25-8.500 44-8.500 15 0 28 4 38 11.500l26 7.500c12 3 24 6 33 11 4 2 5 6 4 9l-3 3h-9a15 15 0 0 0-30 0H78a15 15 0 0 0-30 0H18z"/>
+<!-- kaca -->
+<path fill="url(#kaca)" d="M71 26c8-4.500 21-7 37-7 12 0 23 2.500 32 7.500z"/>
+<path fill="#fff" opacity=".16" d="M82 24.500c8-3 18-4.500 28-4.800l-8 6.300H78z"/>
+<path d="M108 19.300v7.600" stroke="#05070f" stroke-width="2.200"/>
+<!-- garis pintu, lubang udara, kaca spion -->
+<path d="M108 27v17M70 27l-4 17M146 28l6 9" stroke="#000" stroke-opacity=".38" stroke-width="1" fill="none"/>
+<path d="M118 38h22" stroke="#000" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+<path d="M144 27l8 1-1.500 3-8-.5z" fill="#05070f"/>
+<path d="M80 48.500h82" stroke="#05070f" stroke-opacity=".7" stroke-width="2.400"/>
+<!-- lampu -->
+<path class="lampu" d="M196 36l17 4.500-2 2.500-17-3.500z" fill="#FFF6C9"/>
+<path class="rem-lampu" d="M11.500 38l.2 3.800 3.800-.6.200-3.400z" fill="#ff4a3d"/>
+<!-- roda -->
+<g class="rodaw" transform="translate(63 48)"><circle r="14.500" fill="#06080f"/><g class="roda"><circle r="9.800" fill="#c8ced8"/><circle r="9.800" fill="url(#pelek)"/><g stroke="#06080f" stroke-width="2.400"><path d="M0-9.800V9.800M-9.800 0H9.800M-6.900-6.900L6.900 6.900M-6.900 6.900L6.900-6.900"/></g><circle r="9.800" fill="none" stroke="#9aa3b2" stroke-width="1.200"/><circle r="3" fill="#e9edf3"/><circle r="1.100" fill="#06080f"/></g></g>
+<g class="rodaw" transform="translate(178 48)"><circle r="14.500" fill="#06080f"/><g class="roda"><circle r="9.800" fill="#c8ced8"/><circle r="9.800" fill="url(#pelek)"/><g stroke="#06080f" stroke-width="2.400"><path d="M0-9.800V9.800M-9.800 0H9.800M-6.900-6.900L6.900 6.900M-6.900 6.900L6.900-6.900"/></g><circle r="9.800" fill="none" stroke="#9aa3b2" stroke-width="1.200"/><circle r="3" fill="#e9edf3"/><circle r="1.100" fill="#06080f"/></g></g>
+</svg></div>
 </div>
 </div>
 <div id="shell" hidden>
@@ -399,15 +476,20 @@ function ulangTurnstile() { tsToken = ''; try { if (tsWidget !== null) window.tu
 function showLogin(msg) {
   $('#shell').hidden = true; $('#login').hidden = false;
   $('#lErr').textContent = msg || '';
+  $('#login').classList.remove('pergi', 'ngebut');
   muatTurnstile();
 }
 $('#loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   if (tsWidget !== null && !tsToken) { $('#lErr').textContent = 'Tunggu verifikasi keamanan selesai, lalu coba lagi.'; return; }
   const btn = $('#lBtn'); btn.disabled = true; $('#lErr').textContent = '';
+  $('#login').classList.remove('rem'); $('#login').classList.add('ngebut');
   const { error } = await sb.auth.signInWithPassword({ email: $('#lEmail').value.trim(), password: $('#lPass').value, options: { captchaToken: tsToken || undefined } });
   btn.disabled = false; ulangTurnstile();
-  if (error) { $('#lErr').textContent = /captcha/i.test(error.message || '') ? 'Verifikasi keamanan gagal. Muat ulang halaman lalu coba lagi.' : 'Email atau password salah.'; return; }
+  $('#login').classList.remove('ngebut');
+  if (error) { $('#login').classList.add('rem'); setTimeout(() => $('#login').classList.remove('rem'), 900); $('#lErr').textContent = /captcha/i.test(error.message || '') ? 'Verifikasi keamanan gagal. Muat ulang halaman lalu coba lagi.' : 'Email atau password salah.'; return; }
+  $('#login').classList.add('pergi');
+  await new Promise((r) => setTimeout(r, 750));
   await enter();
 });
 $('#btnLogout').addEventListener('click', async () => { await sb.auth.signOut(); showLogin(); });
