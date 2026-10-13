@@ -499,6 +499,20 @@ function renderBanners(rows){
   }).join('')+'</div>';
 }
 
+// Catat kunjungan: scan (lewat link/QR driver) atau visit, sekali per sesi
+function logTraffic(){
+  try{
+    if(sessionStorage.getItem('tempera_logged')) return;
+    sessionStorage.setItem('tempera_logged','1');
+    const q=new URLSearchParams(location.search), fresh=q.get('r');
+    const kind=(fresh&&/^[a-z0-9_-]{1,40}$/i.test(fresh))?'scan':'visit';
+    const via=kind==='scan'?(q.get('s')==='qr'?'qr':'link'):null;   // QR referral baru membawa &s=qr
+    fetch(`${SB_URL}/rest/v1/traffic`,{method:'POST',
+      headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json',Prefer:'return=minimal'},
+      body:JSON.stringify({kind,driver_slug:getRef()||null,via})}).catch(()=>{});
+  }catch(e){}
+}
+
 /* ---------- Hero, kontak & media sosial: isinya bisa diatur di panel -> Pengaturan ---------- */
 // Gambar latar: nama file di folder images, atau alamat https penuh. Tanda kutip/kurung ditolak (aman untuk CSS url()).
 function heroImageUrl(v){
@@ -586,6 +600,7 @@ function updateBatasWaktu(){
 }
 
 async function initRemoteData(){
+  logTraffic();
   const pSet=sbGet('app_settings?select=key,value&is_public=eq.true'); pSet.catch(()=>{});   // diminta bersamaan dengan armada (hero tidak menunggu armada)
   try{
     const rows=await sbGet('fleet?select=*&is_active=eq.true&order=sort_order.asc');
