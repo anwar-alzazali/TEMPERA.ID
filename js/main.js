@@ -503,7 +503,13 @@ function renderBanners(rows){
 function logTraffic(){
   try{
     if(sessionStorage.getItem('tempera_logged')) return;
-    if(localStorage.getItem('tempera_sesi')) return;   // driver/admin yang sedang login tidak dihitung
+    // Bukan pengunjung murni -> tidak dihitung: perangkat yang ditandai (login / ?abaikan=1) dan bot
+    try{
+      if(new URLSearchParams(location.search).get('abaikan')==='1') localStorage.setItem('tempera_abaikan','1');
+      if(localStorage.getItem('tempera_sesi')) localStorage.setItem('tempera_abaikan','1');
+      if(localStorage.getItem('tempera_abaikan')) return;
+    }catch(e){}
+    if(navigator.webdriver||/bot|crawl|spider|slurp|facebookexternalhit|whatsapp|preview|headless|lighthouse|pingdom|uptime/i.test(navigator.userAgent||'')) return;
     sessionStorage.setItem('tempera_logged','1');
     const q=new URLSearchParams(location.search), fresh=q.get('r');
     const kind=(fresh&&/^[a-z0-9_-]{1,40}$/i.test(fresh))?'scan':'visit';

@@ -141,7 +141,7 @@ async function pos(url,body,hdr){
   if(!r.ok)throw Object.assign(new Error(j.pesan||j.msg||j.error_description||'Gagal, coba lagi'),{status:r.status});
   return j;
 }
-function simpan(s){try{localStorage.setItem('tempera_sesi',JSON.stringify({access_token:s.access_token,refresh_token:s.refresh_token,expires_at:s.expires_at||Math.floor(Date.now()/1000)+(s.expires_in||3600),user:s.user}))}catch(e){}}
+function simpan(s){try{localStorage.setItem('tempera_abaikan','1');localStorage.setItem('tempera_sesi',JSON.stringify({access_token:s.access_token,refresh_token:s.refresh_token,expires_at:s.expires_at||Math.floor(Date.now()/1000)+(s.expires_in||3600),user:s.user}))}catch(e){}}
 const AUTH={
   demo:false,
   tujuan:TUJUAN,
