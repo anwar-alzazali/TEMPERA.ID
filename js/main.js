@@ -503,6 +503,7 @@ function renderBanners(rows){
 function logTraffic(){
   try{
     if(sessionStorage.getItem('tempera_logged')) return;
+    if(localStorage.getItem('tempera_sesi')) return;   // driver/admin yang sedang login tidak dihitung
     sessionStorage.setItem('tempera_logged','1');
     const q=new URLSearchParams(location.search), fresh=q.get('r');
     const kind=(fresh&&/^[a-z0-9_-]{1,40}$/i.test(fresh))?'scan':'visit';
