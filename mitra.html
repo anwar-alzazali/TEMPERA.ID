@@ -89,6 +89,8 @@ header.top .who span{font-size:13px;color:var(--muted)}
 .linkbox{font-size:13px;word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0 12px}
 .qrwrap{display:flex;justify-content:center;margin:6px 0 12px}
 .qrwrap canvas{width:100%;max-width:240px;height:auto;border-radius:12px;background:#fff}
+#rStiker canvas{max-width:300px;background:transparent;box-shadow:0 6px 22px rgba(15,23,42,.18)}
+.seg{display:flex;gap:8px;margin:10px 0}.seg button{flex:1;padding:9px 0;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-weight:600;font-size:13px}.seg button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
 .grid3 .v{font-size:20px;font-weight:800}
 .grid3 .l{font-size:11px;color:var(--muted)}
@@ -325,7 +327,7 @@ function gambar(){
   $('#tPendapatan').innerHTML=`<div class="card owed"><div class="note">Belum dibayar admin</div><div class="v">${bd.jumlah>=0?rp(bd.jumlah):'− '+rp(-bd.jumlah)}</div><div class="note">${bd.pesanan?`${bd.pesanan} pesanan menunggu pembayaran dari admin.`:'Semua pesanan sudah dibayar. 👍'}${bd.jumlah<0?' Angka minus: kamu yang perlu menyetor ke admin.':''}</div></div><div class="card"><div class="row" style="border-top:0"><span>Total semua (${r.ringkasan.semua.trip} trip)</span><span><b>${rp(r.ringkasan.semua.pendapatan)}</b></span></div><div class="note">Pendapatan dicatat untuk pembawa pesanan (pemilik link/QR). Kalau pesanan langsung dari web, dicatat untuk driver yang ditugaskan.</div></div>`
     +(r.riwayat.length?r.riwayat.map(kartuRiwayat).join(''):'<div class="card empty">Belum ada riwayat.</div>');
   gambarReferral(r); gambarKas(r.kas, r.iuran); gambarPeringatan(r.iuran); qrDigambar='';
-  if(!$('#tReferral').hidden) gambarQR();
+  if(!$('#tReferral').hidden) gambarStiker();
 }
 function gambarReferral(r){
   const ref=r.referral, t=r.trafik, w=r.web_pusat;
@@ -337,10 +339,14 @@ function gambarReferral(r){
       <div class="acts" style="margin-top:0"><button class="btn sm" type="button" id="rSalin">Salin link</button>${navigator.share?'<button class="btn ghost sm" type="button" id="rBagi">Bagikan</button>':''}</div>
     </div>
     <div class="card">
-      <h2>QR referral</h2>
-      <div class="note">Cetak atau tempel di mobil. Kunjungan lewat QR ini tercatat terpisah dari klik link.</div>
-      <div class="qrwrap" id="rQr"></div>
-      <button class="btn full" type="button" id="rUnduh">Unduh QR (PNG)</button>
+      <h2>Stiker promosi</h2>
+      <div class="note">Cetak lalu tempel di kaca atau bodi mobil. Pelanggan scan, langsung masuk ke halaman pesan atas namamu. Ukuran cetak 9 x 12 cm (tegak) atau 7 x 7 cm (kotak).</div>
+      <div class="seg" id="rJenis"><button type="button" data-j="tegak" class="on">Tegak 9x12</button><button type="button" data-j="kotak">Kotak 7x7</button></div>
+      <div class="qrwrap" id="rStiker"></div>
+      <button class="btn full" type="button" id="rUnduhStiker">Unduh stiker (PNG)</button>
+      <button class="btn ghost full" type="button" id="rUnduh" style="margin-top:8px">Unduh QR saja (PNG)</button>
+      <div class="qrwrap" id="rQr" hidden></div>
+    </div>
     </div>`:'<div class="card empty">Alamat situs belum diatur admin.</div>')
     +`<div class="card">
       <h2>Performa referral</h2>
@@ -359,6 +365,8 @@ function gambarReferral(r){
     $('#rSalin').addEventListener('click',()=>{ navigator.clipboard.writeText(ref.link).then(()=>{ $('#rSalin').textContent='Tersalin ✓'; setTimeout(()=>{ $('#rSalin').textContent='Salin link'; },1500); },()=>{ alert(ref.link); }); });
     if($('#rBagi')) $('#rBagi').addEventListener('click',()=>{ navigator.share({title:'Tempera - Private Trip Bandung',text:'Pesan sewa mobil & private trip Bandung di sini:',url:ref.link}).catch(()=>{}); });
     $('#rUnduh').addEventListener('click',unduhQR);
+    $('#rUnduhStiker').addEventListener('click',unduhStiker);
+    $('#rJenis').addEventListener('click',(e)=>{ const b=e.target.closest('[data-j]'); if(!b) return; stikerJenis=b.dataset.j; document.querySelectorAll('#rJenis button').forEach(q=>q.classList.toggle('on',q===b)); gambarStiker(); });
   }
 }
 const KAS_JENIS={setoran_driver:'Setoran driver',komisi_admin:'Komisi admin (otomatis)',pengeluaran:'Pengeluaran',lainnya:'Lainnya'};
@@ -467,6 +475,75 @@ async function unduhQR(){
   const a=document.createElement('a'); a.href=qrCanvas.toDataURL('image/png'); a.download=`qr-tempera-${(DATA.driver.kode||'mitra').toLowerCase()}.png`;
   document.body.appendChild(a); a.click(); a.remove();
 }
+/* STIKER promosi (cetak 9x12 cm atau 7x7 cm, 300 dpi): QR referral + ajakan pesan, dibuat di HP tanpa server */
+function bungkusTeks(x,teks,maks){ const kata=String(teks).split(' '), baris=[]; let b=''; kata.forEach(k=>{ const c=b?b+' '+k:k; if(x.measureText(c).width>maks&&b){ baris.push(b); b=k; } else b=c; }); if(b) baris.push(b); return baris; }
+function kotakBulat(x,a,b,w,h,r){ x.beginPath(); if(x.roundRect) x.roundRect(a,b,w,h,r); else x.rect(a,b,w,h); }
+async function logoPutih(){
+  const img=await muatGambar('images/logo_sky_blue_transparent.png');
+  const t=document.createElement('canvas'); t.width=1328; t.height=1287; const tx=t.getContext('2d');
+  tx.drawImage(img,0,151,1328,1287,0,0,1328,1287); tx.globalCompositeOperation='source-in'; tx.fillStyle='#fff'; tx.fillRect(0,0,1328,1287);
+  return t;
+}
+async function buatStiker(teksQR,nama,kode,jenis){
+  const F='system-ui,"Segoe UI",Roboto,Arial,sans-serif', TEAL='#0891b2', TEAL2='#0e7490', GOLD='#E5B80B';
+  const qr=await buatQR(teksQR,900); let logo=null; try{ logo=await logoPutih(); }catch(e){}
+  const kotak=jenis==='kotak';
+  const W=kotak?827:1063, H=kotak?827:1417;
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+  x.textAlign='center'; x.textBaseline='alphabetic';
+  // badan stiker (sudut membulat, luar transparan)
+  x.save(); kotakBulat(x,0,0,W,H,kotak?64:78); x.clip();
+  x.fillStyle='#fff'; x.fillRect(0,0,W,H);
+  if(kotak){
+    const g=x.createLinearGradient(0,0,W,H); g.addColorStop(0,TEAL2); g.addColorStop(1,TEAL); x.fillStyle=g; x.fillRect(0,0,W,H);
+    x.fillStyle=GOLD; x.beginPath(); x.arc(W-70,70,150,0,Math.PI*2); x.globalAlpha=.16; x.fill(); x.globalAlpha=1;
+    x.fillStyle='#fff'; x.font=`800 50px ${F}`; x.fillText('SCAN UNTUK PESAN',W/2,80);
+    const q=510, qx=(W-q)/2, qy=108; x.fillStyle='#fff'; kotakBulat(x,qx-14,qy-14,q+28,q+28,34); x.fill();
+    x.drawImage(qr,qx,qy,q,q);
+    const ly=qy+q+98; let lw=0;
+    if(logo){ lw=74; const lh=Math.round(lw*1287/1328); x.drawImage(logo,W/2-215,ly-lh+8,lw,lh); }
+    x.textAlign='left'; x.fillStyle='#fff'; x.font=`800 58px ${F}`; x.fillText('tempera.id',W/2-215+lw+14,ly);
+    x.textAlign='center'; x.font=`600 27px ${F}`; x.globalAlpha=.92; x.fillText('Sewa Mobil & Private Trip Bandung',W/2,ly+42); x.globalAlpha=1;
+  } else {
+    // pita atas biru dengan lengkung
+    const g=x.createLinearGradient(0,0,W,470); g.addColorStop(0,TEAL2); g.addColorStop(1,TEAL); x.fillStyle=g;
+    x.beginPath(); x.moveTo(0,0); x.lineTo(W,0); x.lineTo(W,420); x.quadraticCurveTo(W/2,520,0,420); x.closePath(); x.fill();
+    x.fillStyle=GOLD; x.globalAlpha=.18; x.beginPath(); x.arc(W-60,40,190,0,Math.PI*2); x.fill(); x.globalAlpha=1;
+    let lw=0; const tx0=W/2;
+    if(logo){ lw=100; const lh=Math.round(lw*1287/1328); x.drawImage(logo,tx0-215,86,lw,lh); }
+    x.textAlign='left'; x.fillStyle='#fff'; x.font=`800 76px ${F}`; x.fillText('tempera.id',tx0-215+lw+18,150);
+    x.textAlign='center'; x.font=`600 28px ${F}`; x.globalAlpha=.9; x.fillText('TEMAN PERJALANAN',W/2,212); x.globalAlpha=1;
+    x.font=`800 72px ${F}`; x.fillStyle='#fff'; ['Sewa Mobil &','Private Trip Bandung'].forEach((t,i)=>x.fillText(t,W/2,312+i*80));
+    // QR
+    const q=590, qx=(W-q)/2, qy=498;
+    x.save(); x.shadowColor='rgba(8,70,90,.28)'; x.shadowBlur=36; x.shadowOffsetY=10; x.fillStyle='#fff'; kotakBulat(x,qx-16,qy-16,q+32,q+32,44); x.fill(); x.restore();
+    x.lineWidth=8; x.strokeStyle=TEAL; kotakBulat(x,qx-16,qy-16,q+32,q+32,44); x.stroke();
+    x.drawImage(qr,qx,qy,q,q);
+    x.fillStyle=TEAL2; x.font=`800 92px ${F}`; x.fillText('SCAN & PESAN',W/2,qy+q+112);
+    x.fillStyle='#334155'; x.font=`600 36px ${F}`; x.fillText('Lembang · Dago · Ciwidey · Pangalengan',W/2,qy+q+164);
+    x.fillStyle='#64748b'; x.font=`500 32px ${F}`; x.fillText('Sudah termasuk BBM & air mineral · Bisa bayar DP',W/2,qy+q+208);
+    // pita emas bawah
+    x.fillStyle=GOLD; x.fillRect(0,H-108,W,108);
+    x.fillStyle='#1f1a05'; x.font=`800 42px ${F}`;
+    let tt='Driver: '+(nama||''); if(kode) tt+=' · '+kode; tt=tt.trim();
+    while(x.measureText(tt).width>W-110&&tt.length>8) tt=tt.slice(0,-2);
+    x.fillText(tt,W/2,H-42);
+  }
+  x.restore();
+  return c;
+}
+let stikerJenis='tegak', stikerCanvas=null, stikerKunci='';
+async function gambarStiker(){
+  const ref=DATA&&DATA.referral, box=$('#rStiker'); if(!ref||!box) return;
+  if(typeof qrcode!=='function'){ box.innerHTML='<div class="note">Pembuat QR belum termuat. Muat ulang halaman.</div>'; return; }
+  const kunci=ref.link_qr+'|'+stikerJenis; if(stikerKunci===kunci&&box.firstChild) return;
+  stikerCanvas=await buatStiker(ref.link_qr,DATA.driver.nama,DATA.driver.kode,stikerJenis); stikerKunci=kunci; box.innerHTML=''; box.appendChild(stikerCanvas);
+}
+async function unduhStiker(){
+  await gambarStiker(); if(!stikerCanvas) return;
+  const a=document.createElement('a'); a.href=stikerCanvas.toDataURL('image/png'); a.download=`stiker-tempera-${stikerJenis}-${(DATA.driver.kode||'mitra').toLowerCase()}.png`;
+  document.body.appendChild(a); a.click(); a.remove();
+}
 function kartuTrip(o){
   const dest=Object.entries(o.destinasi||{}).filter(([,v])=>Array.isArray(v)&&v.length).map(([k,v])=>`<li><b>${esc(WIL[k]||k)}:</b> ${esc(v.join(', '))}</li>`).join('');
   const wa=String(o.wa||'').replace(/\D/g,'');
@@ -497,7 +574,7 @@ const TABS={trip:'#tTrip',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#
 function pilihTab(tab){
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
   Object.entries(TABS).forEach(([k,sel])=>{ $(sel).hidden=k!==tab; });
-  if(tab==='referral') gambarQR();
+  if(tab==='referral') gambarStiker();
 }
 $('#tabs').addEventListener('click',(e)=>{ const b=e.target.closest('[data-tab]'); if(b) pilihTab(b.dataset.tab); });
 $('#dMuat').addEventListener('click',muatDashboard);
