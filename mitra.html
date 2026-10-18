@@ -341,6 +341,7 @@ function gambarReferral(r){
     <div class="card">
       <h2>Stiker promosi</h2>
       <div class="note">Cetak lalu tempel di kaca atau bodi mobil. Pelanggan scan, langsung masuk ke halaman pesan atas namamu. Ukuran cetak 9 x 12 cm (tegak) atau 7 x 7 cm (kotak).</div>
+      <label class="note" for="rWa" style="display:block;margin-top:10px">Nomor WA yang dicetak di stiker (boleh dikosongkan)</label><input id="rWa" type="tel" inputmode="tel" maxlength="20" placeholder="0812-3456-7890" autocomplete="off" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-size:15px">
       <div class="seg" id="rJenis"><button type="button" data-j="tegak" class="on">Tegak 9x12</button><button type="button" data-j="kotak">Kotak 7x7</button></div>
       <div class="qrwrap" id="rStiker"></div>
       <button class="btn full" type="button" id="rUnduhStiker">Unduh stiker (PNG)</button>
@@ -365,6 +366,8 @@ function gambarReferral(r){
     $('#rSalin').addEventListener('click',()=>{ navigator.clipboard.writeText(ref.link).then(()=>{ $('#rSalin').textContent='Tersalin ✓'; setTimeout(()=>{ $('#rSalin').textContent='Salin link'; },1500); },()=>{ alert(ref.link); }); });
     if($('#rBagi')) $('#rBagi').addEventListener('click',()=>{ navigator.share({title:'Tempera - Private Trip Bandung',text:'Pesan sewa mobil & private trip Bandung di sini:',url:ref.link}).catch(()=>{}); });
     $('#rUnduh').addEventListener('click',unduhQR);
+    try{ $('#rWa').value=localStorage.getItem('stikerWa')||''; }catch(e){}
+    $('#rWa').addEventListener('input',()=>{ try{ localStorage.setItem('stikerWa',stikerWa()); }catch(e){} clearTimeout(window._tWa); window._tWa=setTimeout(gambarStiker,350); });
     $('#rUnduhStiker').addEventListener('click',unduhStiker);
     $('#rJenis').addEventListener('click',(e)=>{ const b=e.target.closest('[data-j]'); if(!b) return; stikerJenis=b.dataset.j; document.querySelectorAll('#rJenis button').forEach(q=>q.classList.toggle('on',q===b)); gambarStiker(); });
   }
@@ -484,7 +487,7 @@ async function logoPutih(){
   tx.drawImage(img,0,151,1328,1287,0,0,1328,1287); tx.globalCompositeOperation='source-in'; tx.fillStyle='#fff'; tx.fillRect(0,0,1328,1287);
   return t;
 }
-async function buatStiker(teksQR,nama,kode,jenis){
+async function buatStiker(teksQR,nama,kode,jenis,wa,tautan){
   const F='system-ui,"Segoe UI",Roboto,Arial,sans-serif', TEAL='#0891b2', TEAL2='#0e7490', GOLD='#E5B80B';
   const qr=await buatQR(teksQR,900); let logo=null; try{ logo=await logoPutih(); }catch(e){}
   const kotak=jenis==='kotak';
@@ -504,7 +507,8 @@ async function buatStiker(teksQR,nama,kode,jenis){
     const ly=qy+q+98; let lw=0;
     if(logo){ lw=74; const lh=Math.round(lw*1287/1328); x.drawImage(logo,W/2-215,ly-lh+8,lw,lh); }
     x.textAlign='left'; x.fillStyle='#fff'; x.font=`800 58px ${F}`; x.fillText('tempera.id',W/2-215+lw+14,ly);
-    x.textAlign='center'; x.font=`600 27px ${F}`; x.globalAlpha=.92; x.fillText('Sewa Mobil & Private Trip Bandung',W/2,ly+42); x.globalAlpha=1;
+    x.textAlign='center'; x.font=`600 27px ${F}`; x.globalAlpha=.95; x.fillText(tautan||'Sewa Mobil & Private Trip Bandung',W/2,ly+42);
+    if(wa){ x.font=`700 30px ${F}`; x.fillStyle=GOLD; x.fillText('WA '+wa,W/2,ly+82); } x.globalAlpha=1;
   } else {
     // pita atas biru dengan lengkung
     const g=x.createLinearGradient(0,0,W,470); g.addColorStop(0,TEAL2); g.addColorStop(1,TEAL); x.fillStyle=g;
@@ -517,29 +521,31 @@ async function buatStiker(teksQR,nama,kode,jenis){
     x.textAlign='center'; x.font=`600 28px ${F}`; x.globalAlpha=.9; x.fillText('TEMAN PERJALANAN',W/2,212); x.globalAlpha=1;
     x.font=`800 72px ${F}`; x.fillStyle='#fff'; ['Sewa Mobil &','Private Trip Bandung'].forEach((t,i)=>x.fillText(t,W/2,288+i*78));
     // QR
-    const q=590, qx=(W-q)/2, qy=498;
+    const q=560, qx=(W-q)/2, qy=480;
     x.save(); x.shadowColor='rgba(8,70,90,.28)'; x.shadowBlur=36; x.shadowOffsetY=10; x.fillStyle='#fff'; kotakBulat(x,qx-16,qy-16,q+32,q+32,44); x.fill(); x.restore();
     x.lineWidth=8; x.strokeStyle=TEAL; kotakBulat(x,qx-16,qy-16,q+32,q+32,44); x.stroke();
     x.drawImage(qr,qx,qy,q,q);
-    x.fillStyle=TEAL2; x.font=`800 92px ${F}`; x.fillText('SCAN & PESAN',W/2,qy+q+112);
-    x.fillStyle='#334155'; x.font=`600 36px ${F}`; x.fillText('Lembang · Dago · Ciwidey · Pangalengan',W/2,qy+q+164);
-    x.fillStyle='#64748b'; x.font=`500 32px ${F}`; x.fillText('Sudah termasuk BBM & air mineral · Bisa bayar DP',W/2,qy+q+208);
+    x.fillStyle=TEAL2; x.font=`800 88px ${F}`; x.fillText('SCAN & PESAN',W/2,qy+q+112);
+    if(tautan){ x.fillStyle='#0f172a'; x.font=`700 40px ${F}`; let tl=tautan; while(x.measureText(tl).width>W-100&&tl.length>8) tl=tl.slice(0,-1); x.fillText(tl,W/2,qy+q+160); }
+    x.fillStyle='#475569'; x.font=`600 30px ${F}`; x.fillText('Lembang · Dago · Ciwidey · Pangalengan',W/2,qy+q+204);
     // pita emas bawah
-    x.fillStyle=GOLD; x.fillRect(0,H-108,W,108);
+    const ph=wa?160:108; x.fillStyle=GOLD; x.fillRect(0,H-ph,W,ph);
     x.fillStyle='#1f1a05'; x.font=`800 42px ${F}`;
     let tt='Driver: '+(nama||''); if(kode) tt+=' · '+kode; tt=tt.trim();
     while(x.measureText(tt).width>W-110&&tt.length>8) tt=tt.slice(0,-2);
-    x.fillText(tt,W/2,H-42);
+    x.fillText(tt,W/2,wa?H-96:H-42);
+    if(wa){ x.font=`800 54px ${F}`; x.fillText('WA '+wa,W/2,H-34); }
   }
   x.restore();
   return c;
 }
 let stikerJenis='tegak', stikerCanvas=null, stikerKunci='';
+function stikerWa(){ const e=$('#rWa'); return e?e.value.replace(/[^0-9+\- ]/g,'').trim().slice(0,20):''; }
 async function gambarStiker(){
   const ref=DATA&&DATA.referral, box=$('#rStiker'); if(!ref||!box) return;
   if(typeof qrcode!=='function'){ box.innerHTML='<div class="note">Pembuat QR belum termuat. Muat ulang halaman.</div>'; return; }
-  const kunci=ref.link_qr+'|'+stikerJenis; if(stikerKunci===kunci&&box.firstChild) return;
-  stikerCanvas=await buatStiker(ref.link_qr,DATA.driver.nama,DATA.driver.kode,stikerJenis); stikerKunci=kunci; box.innerHTML=''; box.appendChild(stikerCanvas);
+  const wa=stikerWa(), kunci=ref.link_qr+'|'+stikerJenis+'|'+wa; if(stikerKunci===kunci&&box.firstChild) return;
+  stikerCanvas=await buatStiker(ref.link_qr,DATA.driver.nama,DATA.driver.kode,stikerJenis,wa,String(ref.link||'').replace(/^https?:\/\//,'')); stikerKunci=kunci; box.innerHTML=''; box.appendChild(stikerCanvas);
 }
 async function unduhStiker(){
   await gambarStiker(); if(!stikerCanvas) return;
