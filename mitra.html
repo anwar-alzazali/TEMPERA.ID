@@ -512,9 +512,8 @@ async function buatStiker(teksQR,nama,kode,jenis,wa,tautan){
     // pita atas biru dengan lengkung
     x.fillStyle='#bfe6f2'; x.beginPath(); x.moveTo(0,0); x.lineTo(W,0); x.lineTo(W,392); x.bezierCurveTo(W*.78,352,W*.6,430,W*.38,404); x.bezierCurveTo(W*.2,386,W*.1,372,0,392); x.closePath(); x.fill();
     x.fillStyle=TEAL; x.beginPath(); x.moveTo(0,0); x.lineTo(W,0); x.lineTo(W,356); x.bezierCurveTo(W*.8,318,W*.62,396,W*.4,372); x.bezierCurveTo(W*.2,352,W*.1,338,0,358); x.closePath(); x.fill();
-    let lw=0; const tx0=W/2;
-    if(logo){ lw=100; const lh=Math.round(lw*1287/1328); x.drawImage(logo,tx0-215,50,lw,lh); }
-    x.textAlign='left'; x.fillStyle='#fff'; x.font=`800 76px ${F}`; x.fillText('tempera.id',tx0-215+lw+18,114);
+    if(logo){ const lw=130, lh=Math.round(lw*1287/1328); x.drawImage(logo,60,56,lw,lh); }
+    x.textAlign='center'; x.fillStyle='#fff'; x.font=`800 76px ${F}`; x.fillText('tempera.id',W/2,114);
     x.textAlign='center'; x.font=`600 28px ${F}`; x.globalAlpha=.9; x.fillText('TEMAN PERJALANAN',W/2,178); x.globalAlpha=1;
     x.font=`800 64px ${F}`; x.fillStyle='#fff'; ['Sewa Mobil &','Private Trip Bandung'].forEach((t,i)=>x.fillText(t,W/2,254+i*70));
     // QR
