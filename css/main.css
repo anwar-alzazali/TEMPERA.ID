@@ -366,3 +366,5 @@ h2.sec-judul + div.w-16{display:none}
 #armada-cards .armada-img-container>div.absolute.top-3 span{font-size:8px!important;letter-spacing:.02em}
 @media(min-width:768px){#armada-cards .armada-img-container>div.absolute.top-3{top:10px!important;left:10px!important;padding:4px 10px!important}#armada-cards .armada-img-container>div.absolute.top-3 span{font-size:9px!important}}
 body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
+
+.fleet-bag{max-width:640px;margin:-14px auto 22px;text-align:center;font-size:12px;line-height:1.55;color:var(--text-muted)}

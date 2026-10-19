@@ -33,7 +33,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <!-- ===================== [02] CSS & LIBRARY ===================== -->
-<link rel="stylesheet" href="css/main.css?v=20261019m">
+<link rel="stylesheet" href="css/main.css?v=20261019n">
 <link rel="stylesheet" href="css/driver.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{serif:['Cormorant Garamond','serif'],sans:['Inter','sans-serif']}}}}</script>
@@ -240,6 +240,7 @@
     <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
     <p class="inline-block mt-6 border rounded-full px-4 py-2 text-[12px] font-semibold" style="background:var(--bg-card);border-color:var(--border-color);color:var(--text-primary)" data-i18n-html="fleet_note"><span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.</p>
   </div>
+  <p class="fleet-bag" data-i18n="fleet_bag">Jumlah penumpang di kartu untuk bagasi secukupnya. Kalau bawa koper banyak, kursi dikurangi (van seperti Hiace dan Elf sekitar 4 kursi). Tulis jumlah koper saat pesan, admin akan mengonfirmasi.</p>
   <div class="flex items-center gap-3">
     <button type="button" class="slider-arrow hidden sm:flex" data-slide="armada-cards" data-dir="-1" data-i18n-aria="aria_left" aria-label="Geser ke kiri">‹</button>
     <div id="armada-cards" style="flex:1"></div>
@@ -459,6 +460,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261019m"></script>
+<script src="js/main.js?v=20261019n"></script>
 </body>
 </html>
