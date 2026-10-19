@@ -1587,10 +1587,10 @@ function renderGaleri(){
 }
 /* Foto galeri terbuka seperti tirai (dari bawah ke atas) sambil mengecil pelan; bergiliran per baris. Dipasang oleh JS, jadi bila JS gagal foto tetap tampil. */
 function revealGaleri(sec){
-  if(REDUCE||!('IntersectionObserver' in window)) return;
+  if(!('IntersectionObserver' in window)) return;   // pengguna 'kurangi gerakan' tetap dapat fade lembut (diatur di CSS)
   const fotos=[...sec.querySelectorAll('.gl-item')]; if(!fotos.length) return;
-  const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('gl-in'); io.unobserve(en.target); } }); },{threshold:0.15,rootMargin:'0px 0px -5% 0px'});
-  fotos.forEach((e,i)=>{ e.style.setProperty('--rvd',((i%2)*0.14)+'s'); e.classList.add('gl-pre'); io.observe(e); });
+  const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('gl-in'); io.unobserve(en.target); } }); },{threshold:0.25,rootMargin:'0px 0px -8% 0px'});
+  fotos.forEach((e,i)=>{ e.style.setProperty('--rvd',((i%2)*0.2)+'s'); e.classList.add('gl-pre'); io.observe(e); });
   setTimeout(()=>fotos.forEach(e=>e.classList.add('gl-in')),5000);   // jaring pengaman
 }
 
