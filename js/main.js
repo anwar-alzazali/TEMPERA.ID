@@ -1570,13 +1570,22 @@ function renderGaleri(){
   let sec=document.getElementById('galeri');
   if(!GALERI.length){ if(sec) sec.remove(); return; }
   if(!sec){ const faq=document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='galeri'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
-  const foto=GALERI.map(g=>`<a href="galeri.html" style="display:block;border-radius:14px;overflow:hidden;aspect-ratio:4/3;background:var(--bg-section-alt)"><img src="${esc(g.url)}" alt="${esc(g.keterangan||'Perjalanan bersama Tempera')}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block"></a>`).join('');
+  const foto=GALERI.map(g=>`<a href="galeri.html" class="gl-item"><img src="${esc(g.url)}" alt="${esc(g.keterangan||'Perjalanan bersama Tempera')}" loading="lazy" decoding="async"></a>`).join('');
   sec.innerHTML=`<div class="max-w-7xl mx-auto px-4">
     <div class="text-center max-w-2xl mx-auto mb-10"><h2 class="text-3xl md:text-[38px] font-serif uppercase tracking-widest" style="color:var(--accent)">${esc(t('gl_title'))}</h2>
       <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
       <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)">${esc(t('gl_sub'))}</p></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">${foto}</div>
+    <div class="gl-grid">${foto}</div>
     <div class="text-center mt-8"><a href="galeri.html" class="inline-block px-6 py-3 rounded-full text-[12px] font-bold" style="background:var(--accent);color:var(--on-accent);text-decoration:none">${esc(t('gl_all'))}</a></div></div>`;
+  revealGaleri(sec);
+}
+/* Foto galeri terbuka seperti tirai (dari bawah ke atas) sambil mengecil pelan; bergiliran per baris. Dipasang oleh JS, jadi bila JS gagal foto tetap tampil. */
+function revealGaleri(sec){
+  if(REDUCE||!('IntersectionObserver' in window)) return;
+  const fotos=[...sec.querySelectorAll('.gl-item')]; if(!fotos.length) return;
+  const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('gl-in'); io.unobserve(en.target); } }); },{threshold:0.15,rootMargin:'0px 0px -5% 0px'});
+  fotos.forEach((e,i)=>{ e.style.setProperty('--rvd',((i%2)*0.14)+'s'); e.classList.add('gl-pre'); io.observe(e); });
+  setTimeout(()=>fotos.forEach(e=>e.classList.add('gl-in')),5000);   // jaring pengaman
 }
 
 /* ---------- Jaring pengaman: tautan wa.me mana pun yang belum membawa pesan diberi pesan pembuka (+ penanda Ref) tepat saat diklik ---------- */
