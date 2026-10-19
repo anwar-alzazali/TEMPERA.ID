@@ -71,6 +71,7 @@ id: {
   tr1_t: 'BBM dan air mineral termasuk', tr1_s: 'Tanpa biaya bensin tambahan', tr2_t: 'Bisa bayar DP', tr2_s: 'Sisanya tunai ke driver',
   tr3_t: 'Invoice dan surat jalan digital', tr3_s: 'Bisa dicek keasliannya lewat QR', tr4_t: 'Usaha terdaftar', tr4_s: 'NIB 1710260026226 (OSS)',
   pb_text: 'Nikmati Bandungnya. Urusan jalan, serahkan ke driver kami.',
+  dest_all: 'Lihat semua ({n})', dest_less: 'Tutup', dest_sel: '{n} dipilih',
   fleet_bag: 'Jumlah penumpang di kartu untuk bagasi secukupnya. Kalau bawa koper banyak, kursi dikurangi (van seperti Hiace dan Elf sekitar 4 kursi). Tulis jumlah koper saat pesan, admin akan mengonfirmasi.',
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
   th_fleet: 'Armada', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
@@ -262,6 +263,7 @@ ms: {
   tr1_t: 'Petrol dan air mineral termasuk', tr1_s: 'Tiada caj petrol tambahan', tr2_t: 'Boleh bayar deposit', tr2_s: 'Baki secara tunai kepada pemandu',
   tr3_t: 'Invois dan surat jalan digital', tr3_s: 'Boleh disahkan melalui QR', tr4_t: 'Perniagaan berdaftar', tr4_s: 'NIB 1710260026226 (OSS)',
   pb_text: 'Nikmati Bandung. Urusan jalan, serahkan kepada pemandu kami.',
+  dest_all: 'Lihat semua ({n})', dest_less: 'Tutup', dest_sel: '{n} dipilih',
   fleet_bag: 'Jumlah penumpang pada kad untuk bagasi secukupnya. Jika bawa banyak beg, kerusi dikurangkan (van seperti Hiace dan Elf sekitar 4 kerusi). Nyatakan bilangan beg semasa menempah, admin akan mengesahkan.',
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (kereta + pemandu + petrol). Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam.',
   th_fleet: 'Kereta', th_cap: 'Selesa / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Tindakan',
@@ -741,6 +743,13 @@ const DEST_SEC={
   kotaWisata:["Gedung Sate, Braga & Alun-alun","Trans Studio Bandung","Masjid Raya Al Jabbar","Paskal 23"],
   kotaKuliner:["Bubur DPR","Batagor Kingsley","Batagor Serayu","Kupat Tahu Gempol","Kartikasari","Pasar Baru"]
 };
+// Urutan populer (perkiraan dari ulasan dan paket wisata Bandung): lima teratas per bagian tampil dulu, sisanya dilipat
+const DEST_POPULER=["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","The Great Asia Africa","Dusun Bambu",
+  "Kawah Putih","Situ Patenggang","Ranca Upas & Rusa","Glamping Lakeside Rancabali","Kebun Teh Rancabali","Ciwidey Valley",
+  "Situ Cileunca & Rafting","Nimo Highland","Kebun Teh Malabar","Wayang Windu Panenjoan","Pineus Tilu",
+  "Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Bukit Bintang",
+  "Gedung Sate, Braga & Alun-alun","Masjid Raya Al Jabbar","Trans Studio Bandung","Paskal 23",
+  "Batagor Kingsley","Kartikasari","Bubur DPR","Batagor Serayu","Kupat Tahu Gempol","Pasar Baru"];
 let DEST_CARDS=[
   {id:'lembang',img:'floating_market.jpg',tag:'tag_utara',title:'card_lembang',secs:[{g:'lembang',items:DESTINASI_DATA.lembang}]},
   {id:'dago',img:'fomoso.jpg',tag:'tag_utara',title:'card_dago',secs:[{g:'dago',items:DEST_SEC.dago}]},
@@ -794,7 +803,15 @@ async function muatDestinasiDB(){
 function renderDestinasi(){
   const track=document.getElementById('destinasiTrack'); if(!track) return;
   track.innerHTML=DEST_CARDS.map(c=>{
-    const secs=c.secs.map(sc=>`${sc.h?`<p class="dsec">${esc(t(sc.h))}</p>`:''}<div class="dchips">${sc.items.map(n=>`<button type="button" class="dchip" data-g="${esc(sc.g)}" data-n="${esc(n)}" aria-pressed="false">${esc(n)}</button>`).join('')}</div>`).join('');
+    const chip=(sc,n)=>`<button type="button" class="dchip" data-g="${esc(sc.g)}" data-n="${esc(n)}" aria-pressed="false">${esc(n)}</button>`;
+    const secs=c.secs.map(sc=>{
+      const head=sc.h?`<p class="dsec">${esc(t(sc.h))}</p>`:'';
+      const rk=n=>{ const i=DEST_POPULER.indexOf(n); return i<0?1e9:i; };
+      const urut=sc.items.map((n,i)=>[n,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(x=>x[0]);
+      if(urut.length<7) return head+`<div class="dchips">${urut.map(n=>chip(sc,n)).join('')}</div>`;
+      const atas=urut.slice(0,5), sisa=urut.slice(5);
+      return head+`<div class="dchips">${atas.map(n=>chip(sc,n)).join('')}</div><details class="dmore"><summary data-all="${esc(t('dest_all',{n:sisa.length}))}" data-less="${esc(t('dest_less'))}"></summary><div class="dchips">${sisa.map(n=>chip(sc,n)).join('')}</div></details>`;
+    }).join('');
     const ms=currentLang==='ms';
     const judul=c.judul?((ms&&c.judul_ms)||c.judul):t(c.title);
     const tag=c.judul?((ms&&c.tag_ms)||c.tag||''):t(c.tag);
@@ -875,6 +892,7 @@ function syncPicker(){
   const cbs=[...document.querySelectorAll('input[name="destinasi"]:checked')];
   const on=new Set(cbs.map(cb=>cb.dataset.group+'|'+cb.value));
   document.querySelectorAll('.dchip').forEach(b=>{ const s=on.has(b.dataset.g+'|'+b.dataset.n); b.classList.toggle('on',s); b.setAttribute('aria-pressed',String(s)); });
+  document.querySelectorAll('details.dmore').forEach(d=>{ const n=d.querySelectorAll('.dchip.on').length; d.dataset.n=n?t('dest_sel',{n}):''; });
   const box=document.getElementById('pickedBox');
   if(box){
     box.textContent='';

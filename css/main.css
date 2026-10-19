@@ -368,3 +368,17 @@ h2.sec-judul + div.w-16{display:none}
 body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
 
 .fleet-bag{max-width:640px;margin:-14px auto 22px;text-align:center;font-size:12px;line-height:1.55;color:var(--text-muted)}
+
+/* Destinasi 19 Okt 2026: foto lebih tinggi, tempat populer di atas, sisanya dilipat */
+.dcard .paket-img{height:230px}
+@media(min-width:640px){.dcard .paket-img{height:260px}}
+.dmore{margin-top:10px}
+.dmore>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--accent);padding:6px 2px}
+.dmore>summary::-webkit-details-marker{display:none}
+.dmore>summary::before{content:attr(data-all)}
+.dmore[open]>summary::before{content:attr(data-less)}
+.dmore>summary::after{content:'';width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+.dmore[open]>summary::after{transform:rotate(-135deg)}
+.dmore[data-n]:not([data-n=""])>summary{}
+.dmore:not([open])[data-n]:not([data-n=""])>summary::before{content:attr(data-all) " • " attr(data-n)}
+.dmore>.dchips{margin-top:8px}
