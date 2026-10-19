@@ -382,3 +382,9 @@ body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
 .dmore[data-n]:not([data-n=""])>summary{}
 .dmore:not([open])[data-n]:not([data-n=""])>summary::before{content:attr(data-all) " • " attr(data-n)}
 .dmore>.dchips{margin-top:8px}
+
+/* Destinasi: chip dua kolom rapi, tombol Lihat semua di tengah */
+.dcard .dchips{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+.dcard .dchip{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;padding:8px 10px;font-size:12.5px}
+.dmore{text-align:center}
+.dmore>summary{display:flex;justify-content:center;width:100%;padding:12px 2px 4px}

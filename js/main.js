@@ -732,7 +732,10 @@ function renderUlasan(){
 }
 
 /* ---------- Destinasi & paket (paket = template destinasi, harga tetap dari armada) ---------- */
+const DEST_RENAME={"Farmhouse Susu Lembang":"Farmhouse","De Ranch Lembang":"De Ranch","Kebun Strawberry Lembang":"Kebun Stroberi","Ranca Upas & Rusa":"Ranca Upas","Glamping Lakeside Rancabali":"Glamping Lakeside","Pinisi Resto & Danau":"Pinisi Resto","Situ Cileunca & Rafting":"Situ Cileunca","Punclut & Cakrawala":"Punclut","Lawangwangi & Dago Tea House":"Lawangwangi","Gedung Sate, Braga & Alun-alun":"Gedung Sate & Braga","Paskal 23":"Paskal Hyper Square","Kartikasari":"Kartika Sari"};
+const dn=n=>{ n=String(n||'').trim(); return DEST_RENAME[n]||n; };
 const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung","Masjid Raya Al Jabbar","Paskal 23","Bubur DPR","Batagor Kingsley","Batagor Serayu","Kupat Tahu Gempol","Kartikasari","Pasar Baru"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
+Object.keys(DESTINASI_DATA).forEach(g=>{ DESTINASI_DATA[g]=DESTINASI_DATA[g].map(dn); });
 const OUTER=['lembang','ciwidey','pangalengan'];
 const REGION_NAME={lembang:'Lembang',ciwidey:'Ciwidey',pangalengan:'Pangalengan'};
 
@@ -743,13 +746,14 @@ const DEST_SEC={
   kotaWisata:["Gedung Sate, Braga & Alun-alun","Trans Studio Bandung","Masjid Raya Al Jabbar","Paskal 23"],
   kotaKuliner:["Bubur DPR","Batagor Kingsley","Batagor Serayu","Kupat Tahu Gempol","Kartikasari","Pasar Baru"]
 };
+Object.keys(DEST_SEC).forEach(k=>{ DEST_SEC[k]=DEST_SEC[k].map(dn); });
 // Urutan populer (perkiraan dari ulasan dan paket wisata Bandung): lima teratas per bagian tampil dulu, sisanya dilipat
-const DEST_POPULER=["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","The Great Asia Africa","Dusun Bambu",
-  "Kawah Putih","Situ Patenggang","Ranca Upas & Rusa","Glamping Lakeside Rancabali","Kebun Teh Rancabali","Ciwidey Valley",
-  "Situ Cileunca & Rafting","Nimo Highland","Kebun Teh Malabar","Wayang Windu Panenjoan","Pineus Tilu",
-  "Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Bukit Bintang",
-  "Gedung Sate, Braga & Alun-alun","Masjid Raya Al Jabbar","Trans Studio Bandung","Paskal 23",
-  "Batagor Kingsley","Kartikasari","Bubur DPR","Batagor Serayu","Kupat Tahu Gempol","Pasar Baru"];
+const DEST_POPULER=["Tangkuban Perahu","Floating Market","Farmhouse","Orchid Forest Cikole","The Great Asia Africa","Dusun Bambu",
+  "Kawah Putih","Situ Patenggang","Ranca Upas","Kawah Rengganis","Glamping Lakeside","Kebun Teh Rancabali","Ciwidey Valley",
+  "Situ Cileunca","Nimo Highland","Kebun Teh Malabar","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul",
+  "Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut","Bukit Bintang",
+  "Gedung Sate & Braga","Masjid Raya Al Jabbar","Trans Studio Bandung","Paskal Hyper Square",
+  "Batagor Kingsley","Kartika Sari","Bubur DPR","Batagor Serayu","Kupat Tahu Gempol","Pasar Baru"];
 let DEST_CARDS=[
   {id:'lembang',img:'floating_market.jpg',tag:'tag_utara',title:'card_lembang',secs:[{g:'lembang',items:DESTINASI_DATA.lembang}]},
   {id:'dago',img:'fomoso.jpg',tag:'tag_utara',title:'card_dago',secs:[{g:'dago',items:DEST_SEC.dago}]},
@@ -783,11 +787,11 @@ async function muatDestinasiDB(){
     const GR=['lembang','dago','ciwidey','pangalengan'];
     const data={lembang:[],dago:[],ciwidey:[],pangalengan:[]}, cards=[], dipakai=new Set();
     k.filter(x=>GR.includes(x.grup)).forEach(x=>{
-      const items=it.filter(y=>y.kartu_id===x.id&&typeof y.nama==='string'&&y.nama.trim()&&!dipakai.has(y.nama.trim()));
+      const items=it.filter(y=>y.kartu_id===x.id&&typeof y.nama==='string'&&y.nama.trim()&&!dipakai.has(dn(y.nama)));
       if(!items.length) return;
-      items.forEach(y=>{ dipakai.add(y.nama.trim()); data[x.grup].push(y.nama.trim()); });
+      items.forEach(y=>{ y.nama=dn(y.nama); dipakai.add(y.nama); data[x.grup].push(y.nama); });
       const bag=[...new Set(items.map(y=>y.bagian||''))];
-      const secs=['','wisata','kuliner'].filter(b=>bag.includes(b)).map(b=>({g:x.grup,h:(bag.length>1&&b)?'sec_'+b:null,items:items.filter(y=>(y.bagian||'')===b).map(y=>y.nama.trim())}));
+      const secs=['','wisata','kuliner'].filter(b=>bag.includes(b)).map(b=>({g:x.grup,h:(bag.length>1&&b)?'sec_'+b:null,items:items.filter(y=>(y.bagian||'')===b).map(y=>y.nama)}));
       cards.push({id:x.id,img:x.foto||'',judul:String(x.judul||'').trim()||x.id,judul_ms:x.judul_ms,tag:x.tag,tag_ms:x.tag_ms,secs});
     });
     if(!cards.length) return;
@@ -796,7 +800,7 @@ async function muatDestinasiDB(){
     DEST_CARDS=cards;
     refreshDynamic();
     // link dari chat AI yang memuat destinasi baru (belum ada di daftar bawaan saat halaman dibuka)
-    const minta=(new URLSearchParams(location.search).get('dest')||'').split('|').map(x=>x.trim().toLowerCase()).filter(Boolean);
+    const minta=(new URLSearchParams(location.search).get('dest')||'').split('|').map(x=>dn(x).toLowerCase()).filter(Boolean);
     if(minta.length){ let ada=false; document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ if(!lama.has(cb.value)&&minta.includes(cb.value.toLowerCase())){ cb.checked=true; ada=true; } }); if(ada){ approveCurrent(); calculateLive(); } }
   }catch(e){ console.warn('destinasi:',e); }
 }
@@ -808,8 +812,8 @@ function renderDestinasi(){
       const head=sc.h?`<p class="dsec">${esc(t(sc.h))}</p>`:'';
       const rk=n=>{ const i=DEST_POPULER.indexOf(n); return i<0?1e9:i; };
       const urut=sc.items.map((n,i)=>[n,i]).sort((a,b)=>rk(a[0])-rk(b[0])||a[1]-b[1]).map(x=>x[0]);
-      if(urut.length<7) return head+`<div class="dchips">${urut.map(n=>chip(sc,n)).join('')}</div>`;
-      const atas=urut.slice(0,5), sisa=urut.slice(5);
+      if(urut.length<8) return head+`<div class="dchips">${urut.map(n=>chip(sc,n)).join('')}</div>`;
+      const atas=urut.slice(0,6), sisa=urut.slice(6);
       return head+`<div class="dchips">${atas.map(n=>chip(sc,n)).join('')}</div><details class="dmore"><summary data-all="${esc(t('dest_all',{n:sisa.length}))}" data-less="${esc(t('dest_less'))}"></summary><div class="dchips">${sisa.map(n=>chip(sc,n)).join('')}</div></details>`;
     }).join('');
     const ms=currentLang==='ms';
