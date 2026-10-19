@@ -774,6 +774,7 @@ async function openOrder(id) {
       <div class="row2"><label>Driver bertugas<select id="oDriver">${drOpts}</select></label><button class="btn" id="oSaveDriver" type="button">Simpan driver</button></div>
       <div class="mbtns" style="justify-content:flex-start">
         ${invLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(invLink)}">Salin link invoice</button><a class="btn ghost sm" href="${esc(invLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka invoice</a>` : ''}
+        ${invLink ? `<button class="btn sm" type="button" id="oKirimInv">Kirim invoice ke pelanggan (WA)</button>` : ''}
         ${sjLink ? `<button class="btn ghost sm" type="button" data-copy="${esc(sjLink)}">Salin link surat</button><a class="btn ghost sm" href="${esc(sjLink)}" target="_blank" rel="noopener" style="text-decoration:none">Buka surat jalan</a>` : ''}
         ${sjChanged ? `<button class="btn sm" type="button" id="oRevisi">Terbitkan revisi</button>` : ''}
         ${waDriver ? `<a class="btn ghost sm" href="${esc(waDriver)}" target="_blank" rel="noopener" style="text-decoration:none">Kirim detail ke driver (WA)</a>` : ''}
@@ -795,6 +796,16 @@ async function openOrder(id) {
     const r = await sb.from('orders').update({ assigned_driver: v }).eq('id', o.id);
     if (r.error) { toast(r.error.message, true); return; }
     toast('Driver disimpan'); closeModal(); loadOrders();
+  });
+  if ($('#oKirimInv')) $('#oKirimInv').addEventListener('click', async () => {
+    const ulang = o.invoice_sent_at ? ' Invoice ini sudah pernah dikirim, kirim lagi?' : '';
+    if (!confirm(`Kirim link invoice${o.sj_no ? ' dan surat jalan' : ''} ke WhatsApp ${o.customer_name} (${o.customer_wa}) lewat sistem Tempera?${ulang}`)) return;
+    const btn = $('#oKirimInv'); btn.disabled = true; btn.textContent = 'Mengirim…';
+    const ses = await sb.auth.getSession(); const tok = ses.data && ses.data.session && ses.data.session.access_token;
+    const r = await fetch(`${SB_URL}/functions/v1/kirim-invoice`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${tok}` }, body: JSON.stringify({ id: o.id }) });
+    const j = await r.json().catch(() => ({ ok: false, error: 'Balasan tidak terbaca' }));
+    if (!j.ok) { btn.disabled = false; btn.textContent = 'Kirim invoice ke pelanggan (WA)'; toast(j.error || 'Gagal mengirim', true); return; }
+    toast('Invoice terkirim ke WhatsApp pelanggan'); loadOrders();
   });
   if ($('#oRevisi')) $('#oRevisi').addEventListener('click', async () => {
     if (!confirm(`Terbitkan revisi baru surat jalan ${o.sj_no} dengan data pesanan saat ini? Revisi sebelumnya tidak berlaku lagi.`)) return;
