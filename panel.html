@@ -445,7 +445,7 @@ document.addEventListener('click', async (e) => {
 const S = { drivers: [], siteUrl: '', cards: {} };
 const STATUS = { pending: 'Menunggu bayar', dp_paid: 'DP Diterima', paid: 'Lunas', confirmed: 'Dikonfirmasi', completed: 'Selesai', cancelled: 'Dibatalkan', expired: 'Kedaluwarsa' };
 const PAID_SET = ['dp_paid', 'paid', 'confirmed', 'completed'];
-const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
+const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan', custom: 'Rute', catatan: 'Catatan' };
 const badge = (st) => `<span class="badge b-${esc(st)}">${esc(STATUS[st] || st)}</span>`;
 // Pelaksana trip (tampil di daftar pesanan & surat jalan): yang ditugaskan, atau pembawa bila belum ditugaskan.
 const drv = (o) => o.assigned_driver || o.driver_slug || '';
@@ -455,7 +455,7 @@ const earner = (o) => o.driver_slug || o.assigned_driver || '';
 const driverName = (slug) => { const d = S.drivers.find((x) => x.slug === slug); return d ? d.name : (slug || '-'); };
 function destText(o) {
   const d = o.destinations || {};
-  const lines = Object.keys(WILAYAH).filter((k) => Array.isArray(d[k]) && d[k].length).map((k) => `${WILAYAH[k]}: ${d[k].join(', ')}`);
+  const lines = Object.keys(WILAYAH).filter((k) => Array.isArray(d[k]) && d[k].length).map((k) => `${WILAYAH[k]}: ${d[k].join(k === 'custom' ? ' \u2192 ' : k === 'catatan' ? '; ' : ', ')}`);
   return lines.length ? lines.join('\n') : '-';
 }
 
@@ -621,12 +621,14 @@ VIEWS.pesanan = async function () {
     <div class="pills" id="pills">${[['', 'Semua'], ['pending', 'Perlu bayar'], ['dp_paid', 'DP'], ['paid', 'Lunas'], ['confirmed', 'Dikonfirmasi'], ['completed', 'Selesai'], ['cancelled', 'Batal']].map(([v, l]) => `<button type="button" class="pill${v === '' ? ' on' : ''}" data-v="${v}">${l}</button>`).join('')}</div>
     <div class="bar">
       <select id="fStatus"><option value="">Semua status</option>${Object.keys(STATUS).map((k) => `<option value="${k}">${STATUS[k]}</option>`).join('')}</select>
-      <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option></select>
+      <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option><option value="manual">Trip custom</option></select>
       <input id="fQ" placeholder="Cari nama / order / invoice / WA">
       <button class="btn" id="fGo" type="button">Muat ulang</button>
+      <button class="btn" id="fCustom" type="button">+ Trip custom</button>
     </div>
     <div class="card" id="list"></div>`;
   $('#fGo').addEventListener('click', loadOrders);
+  $('#fCustom').addEventListener('click', formTripCustom);
   $('#fStatus').addEventListener('change', loadOrders);
   $('#fSumber').addEventListener('change', loadOrders);
   $('#fQ').addEventListener('input', renderOrders);
@@ -660,9 +662,65 @@ function renderOrders() {
       <td>${esc(o.customer_name)}<div class="small">${esc(o.customer_wa)}</div></td>
       <td>${esc(tglPendek(o.trip_date))} ${esc(o.trip_time || '')}<div class="small">${esc(o.fleet_name || '')}</div></td>
       <td class="num">${rp(o.total)}</td>
-      <td>${badge(o.status)}<div class="small">${o.source === 'driver' ? 'Link driver' : 'Langsung'}</div></td>
+      <td>${badge(o.status)}<div class="small">${o.source === 'driver' ? 'Link driver' : o.source === 'manual' ? 'Trip custom' : 'Langsung'}</div></td>
       <td>${esc(driverName(drv(o)))}</td></tr>`).join('')}</tbody></table></div>`;
   $$('#list tr.click').forEach((tr) => tr.addEventListener('click', () => openOrder(tr.dataset.id)));
+}
+
+/* ---------- TRIP CUSTOM (pesanan manual, rute bebas) ---------- */
+function formTripCustom() {
+  const drOpts = '<option value="">— pilih driver —</option>' + S.drivers.filter((d) => d.is_active !== false)
+    .map((d) => `<option value="${esc(d.slug)}" data-plat="${esc(d.plate || '')}">${esc(d.name)} (${esc(d.slug)})</option>`).join('');
+  const hariIni = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+  openModal(`
+    <h2>Trip custom</h2>
+    <p class="small">Rute bebas. Setelah disimpan dan berstatus bayar + ada driver, invoice dan surat jalan (QR verifikasi) terbit otomatis seperti pesanan biasa.</p>
+    <div class="row2"><label>Nama pelanggan<input id="tcNama"></label><label>WhatsApp pelanggan<input id="tcWa" inputmode="tel"></label></div>
+    <div class="row2"><label>Tanggal trip<input id="tcTgl" type="date" value="${hariIni}"></label><label>Jam<input id="tcJam" placeholder="08.00"></label><label>Peserta<input id="tcPax" type="number" min="1" value="1"></label></div>
+    <label>Titik jemput<input id="tcJemput" placeholder="mis. Stasiun Cimahi"></label>
+    <label>Rute / tujuan (satu pemberhentian per baris, berurutan)<textarea id="tcRute" rows="3" placeholder="Stasiun Cimahi&#10;Resort Raisa Space, Cianjur"></textarea></label>
+    <label>Catatan (muncul di invoice &amp; surat jalan)<input id="tcCat" placeholder="mis. Belum termasuk tol dan parkir"></label>
+    <label>Nama layanan / armada<input id="tcArmada" value="Trip custom"></label>
+    <div class="row2"><label>Harga (Rp)<input id="tcHarga" type="number" min="0" inputmode="numeric"></label><label>Diskon (Rp)<input id="tcDisk" type="number" min="0" value="0"></label><label>Potongan admin (Rp)<input id="tcCut" type="number" min="0" value="0"></label></div>
+    <div class="row2"><label>Status pembayaran<select id="tcSt"><option value="paid">Lunas</option><option value="dp_paid">DP diterima (sisa tunai ke driver)</option><option value="pending">Belum bayar</option></select></label><label id="tcDpW" hidden>Jumlah DP (Rp)<input id="tcDp" type="number" min="0" inputmode="numeric"></label></div>
+    <div class="row2"><label>Driver bertugas<select id="tcDriver">${drOpts}</select></label><label>Plat (kosongkan = plat driver)<input id="tcPlat"></label></div>
+    <div class="mbtns" style="justify-content:flex-start"><button class="btn" id="tcSimpan" type="button">Simpan trip</button><button class="btn ghost" id="tcBatal" type="button">Batal</button></div>`);
+  $('#tcBatal').addEventListener('click', closeModal);
+  $('#tcSt').addEventListener('change', () => { $('#tcDpW').hidden = $('#tcSt').value !== 'dp_paid'; });
+  $('#tcSimpan').addEventListener('click', async () => {
+    const nama = $('#tcNama').value.trim(), wa = normWA($('#tcWa').value);
+    const rute = $('#tcRute').value.split('\n').map((x) => x.trim()).filter(Boolean);
+    const harga = Math.max(0, Math.round(Number($('#tcHarga').value) || 0));
+    const disk = Math.max(0, Math.round(Number($('#tcDisk').value) || 0));
+    const cut = Math.max(0, Math.round(Number($('#tcCut').value) || 0));
+    const st = $('#tcSt').value, drv0 = $('#tcDriver').value || null;
+    const total = harga - disk;
+    if (!nama || !wa) { toast('Nama dan WhatsApp pelanggan wajib diisi', true); return; }
+    if (!$('#tcTgl').value) { toast('Tanggal trip wajib diisi', true); return; }
+    if (!rute.length) { toast('Isi rute / tujuan', true); return; }
+    if (harga <= 0 || total <= 0) { toast('Harga belum benar', true); return; }
+    if (cut > total) { toast('Potongan admin melebihi total', true); return; }
+    if (PAID_SET.includes(st) && !drv0) { toast('Pilih driver supaya surat jalan terbit', true); return; }
+    const dp = st === 'dp_paid' ? Math.round(Number($('#tcDp').value) || 0) : 0;
+    if (st === 'dp_paid' && (dp <= 0 || dp >= total)) { toast('Jumlah DP harus di antara 0 dan total', true); return; }
+    const destinations = { custom: rute };
+    const cat = $('#tcCat').value.trim(); if (cat) destinations.catatan = [cat];
+    const row = {
+      order_id: 'MAN-' + Date.now(), source: 'manual', product_type: 'rental', status: st,
+      customer_name: nama, customer_wa: wa, fleet_name: $('#tcArmada').value.trim() || 'Trip custom',
+      trip_date: $('#tcTgl').value, trip_time: $('#tcJam').value.trim() || null, pax: Math.max(1, Math.round(Number($('#tcPax').value) || 1)),
+      pickup_note: $('#tcJemput').value.trim() || null, regions: [], destinations,
+      base_price: harga, cross_cost: 0, discount: disk, total,
+      admin_cut_type: 'flat', admin_cut_value: cut, admin_cut_amount: cut, driver_earning: total - cut,
+      assigned_driver: drv0, driver_slug: drv0, vehicle_plate: $('#tcPlat').value.trim() || null,
+      payment_type: 'manual', midtrans_status: 'manual',
+      payment_mode: st === 'dp_paid' ? 'dp' : 'lunas', dp_amount: st === 'dp_paid' ? dp : null,
+    };
+    $('#tcSimpan').disabled = true;
+    const r = await sb.from('orders').insert(row).select('id').single();
+    if (r.error) { $('#tcSimpan').disabled = false; toast(r.error.message, true); return; }
+    toast('Trip custom disimpan'); closeModal(); await loadOrders(); openOrder(r.data.id);
+  });
 }
 function driverMsg(o, d, sjLink) {
   const dpInfo = o.payment_mode === 'dp'
@@ -706,7 +764,7 @@ async function openOrder(id) {
         Sisa transfer admin ke driver dari DP: <b>${rp(Math.max(0, Number(o.dp_amount || 0) - Number(o.admin_cut_amount || 0)))}</b></dd>` : ''}
       <dt>Potongan admin</dt><dd>${rp(o.admin_cut_amount)} (${esc(o.admin_cut_value)}${o.admin_cut_type === 'flat' ? ' Rp' : '%'})</dd>
       <dt>Pendapatan driver</dt><dd>${rp(o.driver_earning)}</dd>
-      <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : 'Langsung dari web'}</dd>
+      <dt>Sumber</dt><dd>${o.source === 'driver' ? 'Link/QR driver: ' + esc(driverName(o.driver_slug)) : o.source === 'manual' ? 'Trip custom (dibuat admin)' : 'Langsung dari web'}</dd>
       <dt>Pembayaran</dt><dd>${esc(o.midtrans_status || '-')} · ${esc(o.payment_type || '-')} · ${esc(waktu(o.paid_at))}</dd>
       <dt>Invoice dikirim</dt><dd>${esc(waktu(o.invoice_sent_at))}</dd>
       <dt>Surat jalan</dt><dd>${sjInfo}</dd>

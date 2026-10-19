@@ -125,7 +125,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 // urutan tampil rute
-const WILAYAH = [['lembang','Lembang'],['dago','Dago'],['ciwidey','Ciwidey'],['pangalengan','Pangalengan']];
+const WILAYAH = [['lembang','Lembang'],['dago','Dago'],['ciwidey','Ciwidey'],['pangalengan','Pangalengan'],['custom','Rute'],['catatan','Catatan']];
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -295,13 +295,13 @@ function buildSurat(d, qrLogoImg) {
   const dests = s.destinations || {};
   const nodes = WILAYAH
     .filter(([k]) => Array.isArray(dests[k]) && dests[k].length)
-    .map(([k, nama]) => `<li><div class="place">${esc(nama)}</div><div class="sub">${dests[k].map(esc).join(' &rarr; ')}</div></li>`)
+    .map(([k, nama]) => `<li><div class="place">${esc(nama)}</div><div class="sub">${dests[k].map(esc).join(k === 'catatan' ? '; ' : ' &rarr; ')}</div></li>`)
     .join('');
   const route = `
     <ol class="route">
       <li class="pin"><div class="place">Titik jemput</div><div class="sub">${esc(s.pickup_note || '-')}</div></li>
       ${nodes || '<li><div class="place">Destinasi</div><div class="sub">-</div></li>'}
-      <li class="pin"><div class="place">Selesai</div><div class="sub">Diantar kembali ke titik jemput</div></li>
+      <li class="pin"><div class="place">Selesai</div><div class="sub">${Array.isArray(dests.custom) && dests.custom.length ? 'Sesuai rute dan kesepakatan perjalanan' : 'Diantar kembali ke titik jemput'}</div></li>
     </ol>`;
 
   // QR verifikasi

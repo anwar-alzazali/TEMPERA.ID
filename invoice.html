@@ -87,8 +87,9 @@ const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 
 const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-const WILAYAH = { lembang:'Lembang', dago:'Dago', ciwidey:'Ciwidey', pangalengan:'Pangalengan' };
-const METODE = { qris:'QRIS', bank_transfer:'Transfer Bank', credit_card:'Kartu Kredit', gopay:'GoPay', shopeepay:'ShopeePay', cstore:'Gerai Retail', akulaku:'Akulaku', echannel:'Mandiri Bill' };
+const WILAYAH = { lembang:'Lembang', dago:'Dago', ciwidey:'Ciwidey', pangalengan:'Pangalengan', custom:'Rute', catatan:'Catatan' };
+const sepDest = (k) => (k === 'custom' ? ' \u2192 ' : k === 'catatan' ? '; ' : ', ');
+const METODE = { manual:'Transfer / tunai', qris:'QRIS', bank_transfer:'Transfer Bank', credit_card:'Kartu Kredit', gopay:'GoPay', shopeepay:'ShopeePay', cstore:'Gerai Retail', akulaku:'Akulaku', echannel:'Mandiri Bill' };
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rp = (v) => 'Rp ' + Number(v || 0).toLocaleString('id-ID');
@@ -155,7 +156,7 @@ function buildInvoice(d) {
 
   const destItems = Object.keys(WILAYAH)
     .filter((k) => Array.isArray(inv.destinations[k]) && inv.destinations[k].length)
-    .map((k) => `<li><b>${WILAYAH[k]}:</b> ${inv.destinations[k].map(esc).join(', ')}</li>`)
+    .map((k) => `<li><b>${WILAYAH[k]}:</b> ${inv.destinations[k].map(esc).join(sepDest(k))}</li>`)
     .join('');
 
   const rows = [`<tr><td>${esc(inv.fleet_name || 'Sewa mobil')}</td><td class="num">${rp(inv.base_price)}</td></tr>`];

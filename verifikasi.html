@@ -67,7 +67,7 @@
 <script>
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
-const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan' };
+const WILAYAH = { lembang: 'Lembang', dago: 'Dago', ciwidey: 'Ciwidey', pangalengan: 'Pangalengan', custom: 'Rute', catatan: 'Catatan' };
 const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const FALLBACK_CO = { name: 'Tempera', tagline: '', logo_url: '', site_url: '' };
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -84,7 +84,7 @@ function suratView(d) {
   if (d.status === 'diganti') { return `${band(co)}<div class="hero">${heroIcon('warn', '&#8635;')}<div class="title">Surat Sudah Diganti</div><div class="sub">${esc(d.sj_no)} revisi ${esc(d.rev)} sudah tidak berlaku.<br>Revisi terbaru: <b>Rev ${esc(d.rev_terbaru)}</b></div></div>`; }
   const s = d.surat, dr = d.driver;
   const cfg = { sah: { kind: 'ok', glyph: '&#10003;', title: 'Surat Jalan Sah' }, dibatalkan: { kind: 'bad', glyph: '&times;', title: 'Dibatalkan' }, tidak_berlaku: { kind: 'bad', glyph: '&times;', title: 'Tidak Berlaku' }, lewat: { kind: 'grey', glyph: '&#8987;', title: 'Trip Sudah Lewat' }, driver_nonaktif:{ kind: 'warn', glyph: '&#9888;', title: 'Driver Tidak Aktif' }, }[d.status] || { kind: 'grey', glyph: '?', title: d.status };
-  const nodes = Object.keys(WILAYAH).filter((k) => Array.isArray(s.destinations[k]) && s.destinations[k].length).map((k) => `<li><b>${WILAYAH[k]}:</b> ${s.destinations[k].map(esc).join(', ')}</li>`).join('');
+  const nodes = Object.keys(WILAYAH).filter((k) => Array.isArray(s.destinations[k]) && s.destinations[k].length).map((k) => `<li><b>${WILAYAH[k]}:</b> ${s.destinations[k].map(esc).join(k === 'custom' ? ' \u2192 ' : k === 'catatan' ? '; ' : ', ')}</li>`).join('');
   const photo = dr.photo_url ? `<img src="${esc(imgSrc(dr.photo_url, co.site_url))}" alt="" crossorigin="anonymous">` : `<span class="init">${esc(initials(dr.name))}</span>`;
   return `${band(co)}<div class="hero">${heroIcon(cfg.kind, cfg.glyph)}<div class="title">${cfg.title}</div><div class="sub">${esc(s.sj_no)} &middot; Rev ${esc(s.rev)}${d.hari_ini ? ' &middot; Trip hari ini' : ''}</div></div><div class="body"><div class="photo">${photo}</div><dl class="det"><dt>Mitra pengemudi</dt><dd>${esc(dr.name || '-')} (${esc(dr.code || '-')})</dd><dt>Kendaraan</dt><dd>${esc(dr.vehicle_type || '-')}</dd><dt>Plat nomor</dt><dd><span class="plate">${esc(dr.plate || '-')}</span></dd></dl><div class="sec"><h3>Perjalanan</h3><dl class="det"><dt>Pemesan</dt><dd>${esc(s.customer_name || '-')}</dd><dt>Tanggal</dt><dd>${esc(tglPanjang(s.trip_date))}, ${esc(s.trip_time || '-')}</dd><dt>Peserta</dt><dd>${esc(s.pax != null ? s.pax : '-')} orang</dd><dt>Armada</dt><dd>${esc(s.fleet_name || '-')}</dd></dl></div>${nodes ? `<div class="sec"><h3>Destinasi</h3><ul class="route">${nodes}</ul></div>` : ''}</div><div class="time">Diperiksa ${esc(waktuWIB(d.cek_pada))}</div>`;
 }
