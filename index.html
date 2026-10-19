@@ -46,9 +46,9 @@
 <!-- MIDTRANS SNAP (sandbox). Saat go-live: ganti ke https://app.midtrans.com/snap/snap.js + client key production -->
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-W43YJb2YDRcRFv6F"></script>
 
-<!-- ANTI-KEDIP TEMA: pilihan manual (kalau pernah menekan tombol tema) dipasang sebelum halaman digambar -->
+<!-- TEMA: ikut pengaturan perangkat; pilihan manual lama dibersihkan -->
 <script>
-(function(){ try{ const m=localStorage.getItem('tempera_theme_manual'); if(m==='light'||m==='dark') document.documentElement.setAttribute('data-theme',m); }catch(e){} })();
+(function(){ try{ localStorage.removeItem('tempera_theme_manual'); }catch(e){}   /* tombol tema dihapus: semua pengunjung mengikuti pengaturan perangkat */ })();
 </script>
 <!-- Hero: mulai unduh foto sedini mungkin (alamat terakhir diingat di perangkat; bawaan images/hero.webp). main.js yang memasangnya. -->
 <script>(function(){try{var u=localStorage.getItem('tempera_hero');if(u==='-')return;if(!u)u='images/hero.webp';var i=new Image();i.src=u;}catch(e){}})();</script>
@@ -85,7 +85,6 @@
             <button type="button" onclick="changeLanguage('ms')" data-lang="ms" class="w-full text-left px-4 py-3 text-[12px] flex justify-between" style="color:var(--text-primary)">🇲🇾 Bahasa Melayu <span class="check hidden">✓</span></button>
           </div>
         </div>
-        <button id="themeToggleBtn" type="button" data-i18n-aria="aria_theme" aria-label="Ganti tema terang/gelap">☀️</button>
         <a href="#pesan" onclick="handlePesanSekarang(event)" class="hidden sm:inline-flex items-center justify-center font-bold px-4 py-2 rounded-full text-[11px] uppercase tracking-wider shadow-lg hover:brightness-110 ml-1" style="background:var(--accent);color:var(--on-accent)" data-i18n="nav_book">Pesan Sekarang</a>
         <button type="button" onclick="toggleMobileMenu(event)" id="hamburgerBtn" data-i18n-aria="aria_menu" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobileMenu" class="lg:hidden flex flex-col justify-center items-center w-9 h-9 rounded-full border" style="background:var(--bg-card);border-color:var(--border-color)">
           <span class="w-4 h-0.5 mb-1" style="background:var(--accent)"></span><span class="w-4 h-0.5 mb-1" style="background:var(--accent)"></span><span class="w-4 h-0.5" style="background:var(--accent)"></span>
