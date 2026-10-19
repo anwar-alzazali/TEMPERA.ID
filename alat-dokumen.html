@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Alat Invoice dan Surat Jalan | Tempera</title>
+<style>
+  :root{--accent:#0891b2;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f1f5f9}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;line-height:1.5}
+  .app{max-width:1180px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:18px;align-items:start}
+  .panel{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(15,23,42,.08);padding:16px}
+  h1{margin:0 0 2px;font-size:18px}.sub{color:var(--muted);font-size:12px;margin:0 0 12px}
+  .tabs{display:flex;gap:8px;margin-bottom:12px}
+  .tab{flex:1;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px;font-weight:700;cursor:pointer;color:var(--ink)}
+  .tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  fieldset{border:1px solid var(--line);border-radius:12px;margin:0 0 12px;padding:10px 12px 12px}
+  legend{padding:0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  label{display:block;font-size:12px;color:var(--muted);margin:8px 0 0}
+  input,select,textarea{width:100%;margin-top:3px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:inherit;color:var(--ink);background:#fff}
+  textarea{resize:vertical}
+  .dua{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .item{display:grid;grid-template-columns:1fr 110px 32px;gap:6px;margin-top:6px;align-items:start}
+  .item button{border:0;background:#fee2e2;color:#991b1b;border-radius:8px;height:38px;cursor:pointer;font-weight:800}
+  .btn{border:0;border-radius:999px;padding:10px 18px;font-weight:700;font-size:13px;cursor:pointer}
+  .btn-primary{background:var(--accent);color:#fff}.btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.6;cursor:wait}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .prev{position:sticky;top:12px}
+  .actions{display:flex;gap:10px;justify-content:flex-end;margin-bottom:10px;flex-wrap:wrap}
+  .kertas{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(15,23,42,.08);overflow:hidden}
+  #inv{padding:36px 40px}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:20px;border-bottom:3px solid var(--accent)}
+  .brand{display:flex;gap:14px;align-items:center}.brand img{height:54px;width:auto}
+  .brand-name{font-size:20px;font-weight:800;letter-spacing:.02em}.brand-sub{color:var(--muted);font-size:12px}
+  .inv-title{text-align:right}.inv-title h1{margin:0;font-size:26px;letter-spacing:.12em;color:var(--accent)}
+  .inv-no{font-weight:700}
+  .badge{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:800;font-size:12px;letter-spacing:.08em}
+  .badge.dp,.badge.tg{background:#fef3c7;color:#92400e}
+  .dp-note{margin-top:16px;padding:12px 14px;border-radius:10px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:12.5px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+  .box h3{margin:0 0 6px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .box p{margin:0}.strong{font-weight:700}.big{font-size:16px}
+  .rute{display:grid;grid-template-columns:1fr 28px 1fr;gap:8px;align-items:center;margin:4px 0 20px;padding:14px 16px;border:1px solid var(--line);border-radius:12px}
+  .rute small{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.rute b{font-size:15px;white-space:pre-line}
+  .rute .pnh{text-align:center;color:var(--accent);font-size:20px;font-weight:800}
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  td.num,th.num{text-align:right;white-space:nowrap}
+  tr.total td{border-bottom:0;border-top:2px solid var(--ink);font-weight:800;font-size:16px}
+  .disc{color:#166534}
+  .ket{margin-top:14px;padding:12px 14px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:13px;white-space:pre-line}
+  .foot{margin-top:24px;text-align:center;color:var(--muted);font-size:12px}
+  /* surat jalan */
+  .band{background:var(--accent);color:#fff;padding:20px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .band .brand img{background:#fff;border-radius:10px;padding:5px;height:56px}
+  .band .brand-sub{color:#fff;opacity:.85}
+  .doc{text-align:right}.doc-title{font-size:22px;font-weight:800;letter-spacing:.16em}.doc-no{font-weight:700;font-size:15px}
+  .sbody{padding:22px 28px 10px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px}
+  .driver{display:flex;justify-content:space-between;align-items:center;gap:16px;border:1.5px solid var(--accent);border-radius:12px;padding:12px 16px;margin-bottom:18px}
+  .driver h3{margin:0 0 2px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.driver .nm{font-size:17px;font-weight:800}
+  .plate{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;font-size:18px;letter-spacing:.08em;border:2px solid var(--ink);border-radius:8px;padding:4px 12px;white-space:nowrap;text-align:center}
+  .plate small{display:block;font-family:system-ui,sans-serif;font-size:9px;letter-spacing:.12em;color:var(--muted)}
+  .route{list-style:none;margin:8px 0 0;padding:0}.route li{position:relative;padding:0 0 14px 30px}.route li:last-child{padding-bottom:0}
+  .route li::before{content:"";position:absolute;left:7px;top:5px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--accent)}
+  .route li::after{content:"";position:absolute;left:13px;top:21px;bottom:-3px;width:2px;background:var(--accent);opacity:.35}
+  .route li:last-child::after{display:none}.route li.pin::before{background:var(--accent)}
+  .route .place{font-weight:800}.route .sub2{color:var(--muted);font-size:13px;white-space:pre-line}
+  .ttd{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;text-align:center;margin:26px 28px 6px}
+  .ttd .gr{height:64px;border-bottom:1px solid var(--ink);margin-bottom:4px}.ttd small{color:var(--muted);font-size:11px}
+  .sjn{margin:12px 28px 0;padding:10px 12px;border-radius:10px;background:#f8fafc;color:var(--muted);font-size:12px;white-space:pre-line}
+  .sfoot{padding:14px 28px 20px;text-align:center;color:var(--muted);font-size:11.5px}
+  @media (max-width:900px){.app{grid-template-columns:1fr}.prev{position:static}#inv{padding:22px}.grid,.cols{grid-template-columns:1fr}.head{flex-direction:column}.inv-title{text-align:left}.band{flex-direction:column;align-items:flex-start}.doc{text-align:left}.ttd{grid-template-columns:1fr}.rute{grid-template-columns:1fr}.rute .pnh{transform:rotate(90deg)}}
+  @media print{@page{size:A4;margin:8mm}body{background:#fff}.app{display:block;padding:0}.panel.form,.actions{display:none}.prev{position:static}.kertas{box-shadow:none;border-radius:0}.band{-webkit-print-color-adjust:exact;print-color-adjust:exact}.badge,.ket,.dp-note{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel form">
+    <h1>Invoice dan Surat Jalan</h1>
+    <p class="sub">Alat manual Tempera, terpisah dari sistem. Data disimpan hanya di perangkat ini.</p>
+    <div class="tabs"><button class="tab on" data-t="inv" type="button">Invoice</button><button class="tab" data-t="sj" type="button">Surat Jalan</button></div>
+    <div id="form"></div>
+    <div class="bar"><button class="btn btn-ghost" id="bBaru" type="button">Kosongkan</button></div>
+  </div>
+  <div class="prev">
+    <div class="actions"><button class="btn btn-ghost" id="bCetak" type="button">Cetak</button><button class="btn btn-primary" id="bPdf" type="button">Simpan PDF</button></div>
+    <div id="out"></div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+var KEY='tempera_alat_dokumen_v1';
+var BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function hari(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function awal(){return {tab:'inv',kontak:'',no_inv:'',no_sj:'',tgl:hari(),pel_nama:'',pel_wa:'',layanan:'',trip_tgl:'',trip_jam:'',pax:'',dari:'',tujuan:'',driver:'',driver_wa:'',plat:'',
+ items:[{n:'',h:''}],diskon:'',status:'tagihan',dp:'',metode:'',catatan:'Belum termasuk biaya tol dan parkir.',sj_catatan:'',ttd:''}}
+var D=awal();
+try{var t=localStorage.getItem(KEY);if(t){var o=JSON.parse(t);for(var k in o)D[k]=o[k];if(!Array.isArray(D.items)||!D.items.length)D.items=[{n:'',h:''}]}}catch(e){}
+function simpan(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function rp(v){return 'Rp '+Number(v||0).toLocaleString('id-ID')}
+function tgl(s){var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(s||'');return m?(+m[3])+' '+BULAN[+m[2]-1]+' '+m[1]:''}
+function num(v){return Number(String(v||'').replace(/[^\d.-]/g,''))||0}
+var LOGO='images/logo_tempera_teal.png';
+
+function fld(k,label,o){o=o||{};var id='f_'+k;
+ var inp=o.rows?'<textarea id="'+id+'" rows="'+o.rows+'" placeholder="'+esc(o.ph||'')+'">'+esc(D[k])+'</textarea>':
+  o.pilih?'<select id="'+id+'">'+o.pilih.map(function(p){return '<option value="'+p[0]+'"'+(D[k]===p[0]?' selected':'')+'>'+p[1]+'</option>'}).join('')+'</select>':
+  '<input id="'+id+'" type="'+(o.type||'text')+'" value="'+esc(D[k])+'" placeholder="'+esc(o.ph||'')+'"'+(o.im?' inputmode="'+o.im+'"':'')+'>';
+ return '<label for="'+id+'">'+label+inp+'</label>'}
+function formInv(){
+ return '<fieldset><legend>Dokumen</legend><div class="dua">'+fld('no_inv','Nomor invoice',{ph:'INV-2610-0137'})+fld('tgl','Tanggal',{type:'date'})+'</div>'+fld('kontak','Kontak Tempera (tampil di bawah)',{ph:'WhatsApp 08xx-xxxx-xxxx'})+'</fieldset>'+
+ '<fieldset><legend>Penumpang dan driver</legend>'+fld('pel_nama','Nama penumpang / pemesan')+fld('pel_wa','WhatsApp penumpang',{type:'tel',im:'tel'})+fld('driver','Nama driver')+fld('driver_wa','WhatsApp driver',{type:'tel',im:'tel'})+'</fieldset>'+
+ '<fieldset><legend>Perjalanan</legend>'+fld('layanan','Layanan / armada',{ph:'Contoh: Antar penumpang, Innova Reborn'})+'<div class="dua">'+fld('trip_tgl','Tanggal berangkat',{type:'date'})+fld('trip_jam','Jam',{type:'time'})+'</div>'+fld('pax','Jumlah penumpang',{type:'number',im:'numeric'})+fld('dari','Dari',{ph:'Stasiun Cimahi'})+fld('tujuan','Tujuan (boleh beberapa baris)',{rows:2,ph:'Resorz Raisaespace, Cianjur'})+'</fieldset>'+
+ '<fieldset><legend>Rincian biaya</legend><div id="items"></div><div class="bar"><button class="btn btn-ghost" id="bItem" type="button">+ Tambah baris</button></div>'+fld('diskon','Diskon (Rp)',{type:'number',im:'numeric'})+'</fieldset>'+
+ '<fieldset><legend>Pembayaran</legend>'+fld('status','Status',{pilih:[['tagihan','Tagihan (belum dibayar)'],['dp','DP diterima'],['lunas','Lunas']]})+fld('dp','Jumlah DP (Rp, bila DP)',{type:'number',im:'numeric'})+fld('metode','Metode bayar',{ph:'Transfer BCA, QRIS, tunai'})+fld('catatan','Catatan',{rows:2})+'</fieldset>'}
+function formSj(){
+ return '<fieldset><legend>Dokumen</legend><div class="dua">'+fld('no_sj','Nomor surat jalan',{ph:'SJ-2610-0137'})+fld('tgl','Tanggal',{type:'date'})+'</div>'+fld('kontak','Kontak Tempera (tampil di bawah)',{ph:'WhatsApp 08xx-xxxx-xxxx'})+'</fieldset>'+
+ '<fieldset><legend>Penumpang dan driver</legend>'+fld('pel_nama','Nama penumpang / pemesan')+fld('pel_wa','WhatsApp penumpang',{type:'tel',im:'tel'})+fld('driver','Nama driver')+fld('driver_wa','WhatsApp driver',{type:'tel',im:'tel'})+fld('plat','Plat nomor',{ph:'D 1234 AB'})+'</fieldset>'+
+ '<fieldset><legend>Perjalanan</legend>'+fld('layanan','Armada',{ph:'Innova Reborn'})+'<div class="dua">'+fld('trip_tgl','Tanggal berangkat',{type:'date'})+fld('trip_jam','Jam jemput',{type:'time'})+'</div>'+fld('pax','Jumlah penumpang',{type:'number',im:'numeric'})+fld('dari','Titik jemput',{ph:'Stasiun Cimahi'})+fld('tujuan','Tujuan (satu per baris)',{rows:3,ph:'Resorz Raisaespace, Cianjur'})+'</fieldset>'+
+ '<fieldset><legend>Catatan dan tanda tangan</legend>'+fld('sj_catatan','Catatan',{rows:2,ph:'Opsional'})+fld('ttd','Nama penanda tangan Tempera',{ph:'Opsional'})+'</fieldset>'}
+function itemsUI(){var box=document.getElementById('items');if(!box)return;box.textContent='';
+ D.items.forEach(function(it,i){var r=document.createElement('div');r.className='item';
+  var a=document.createElement('input');a.placeholder='Keterangan';a.value=it.n;a.oninput=function(){it.n=a.value;ubah()};
+  var b=document.createElement('input');b.placeholder='Jumlah (Rp)';b.inputMode='numeric';b.value=it.h;b.oninput=function(){it.h=b.value;ubah()};
+  var x=document.createElement('button');x.type='button';x.textContent='×';x.onclick=function(){if(D.items.length>1)D.items.splice(i,1);else D.items=[{n:'',h:''}];itemsUI();ubah()};
+  r.appendChild(a);r.appendChild(b);r.appendChild(x);box.appendChild(r)})}
+function pasangForm(){var f=document.getElementById('form');f.innerHTML=D.tab==='inv'?formInv():formSj();
+ f.querySelectorAll('input,textarea,select').forEach(function(el){var k=el.id.slice(2);var h=function(){D[k]=el.value;ubah()};el.addEventListener('input',h);el.addEventListener('change',h)});
+ if(D.tab==='inv'){itemsUI();document.getElementById('bItem').onclick=function(){D.items.push({n:'',h:''});itemsUI()}}
+ document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.t===D.tab)})}
+function kop(){return '<div class="brand"><img src="'+LOGO+'" alt="Tempera"><div><div class="brand-name">TEMPERA</div><div class="brand-sub">Teman Perjalanan</div></div></div>'}
+function footer(){return '<div class="foot">Terima kasih telah memilih TEMPERA.<br>'+(D.kontak?esc(D.kontak)+'<br>':'')+'tempera.id</div>'}
+function gambarInv(){
+ var sub=0,rows='';D.items.forEach(function(it){var h=num(it.h);if(!it.n&&!h)return;sub+=h;rows+='<tr><td>'+esc(it.n||'-')+'</td><td class="num">'+rp(h)+'</td></tr>'});
+ if(!rows)rows='<tr><td colspan="2" style="color:#64748b">Belum ada rincian biaya</td></tr>';
+ var dis=num(D.diskon),total=Math.max(0,sub-dis),dp=num(D.dp);
+ var st=D.status,badge=st==='lunas'?'<span class="badge">LUNAS</span>':st==='dp'?'<span class="badge dp">DP DITERIMA</span>':'<span class="badge tg">TAGIHAN</span>';
+ var note=st==='dp'&&dp>0?'<div class="dp-note"><b>Uang muka (DP) sudah diterima: '+rp(dp)+'</b>Sisa '+rp(Math.max(0,total-dp))+' dibayar saat perjalanan berlangsung.</div>':'';
+ var tr=[];if(D.trip_tgl)tr.push('<p class="strong">'+esc(tgl(D.trip_tgl))+(D.trip_jam?', jam '+esc(D.trip_jam):'')+'</p>');if(D.pax)tr.push('<p>'+esc(D.pax)+' penumpang</p>');if(D.layanan)tr.push('<p>'+esc(D.layanan)+'</p>');
+ var rute=(D.dari||D.tujuan)?'<div class="box" style="margin-bottom:6px"><h3>Rute perjalanan</h3></div><div class="rute"><div><small>Dari</small><b>'+esc(D.dari||'-')+'</b></div><div class="pnh">&rarr;</div><div><small>Tujuan</small><b>'+esc(D.tujuan||'-')+'</b></div></div>':'';
+ var bayar=[];if(D.metode)bayar.push('Metode: '+esc(D.metode));
+ return '<div class="kertas" id="inv"><div class="head">'+kop()+'<div class="inv-title"><h1>INVOICE</h1><div class="inv-no">'+esc(D.no_inv||'-')+'</div>'+badge+'</div></div>'+note+
+  '<div class="grid"><div class="box"><h3>Penumpang</h3><p class="strong">'+esc(D.pel_nama||'-')+'</p>'+(D.pel_wa?'<p>WhatsApp '+esc(D.pel_wa)+'</p>':'')+'</div>'+
+  '<div class="box"><h3>Driver</h3><p class="strong">'+esc(D.driver||'-')+'</p>'+(D.driver_wa?'<p>WhatsApp '+esc(D.driver_wa)+'</p>':'')+'</div></div>'+
+  '<div class="grid"><div class="box"><h3>Tanggal invoice</h3><p class="strong">'+esc(tgl(D.tgl)||'-')+'</p>'+(bayar.length?'<p>'+bayar.join(' · ')+'</p>':'')+'</div><div class="box"><h3>Perjalanan</h3>'+(tr.join('')||'<p>-</p>')+'</div></div>'+rute+
+  '<table><thead><tr><th>Keterangan</th><th class="num">Jumlah</th></tr></thead><tbody>'+rows+(dis>0?'<tr><td class="disc">Diskon</td><td class="num disc">- '+rp(dis)+'</td></tr>':'')+'<tr class="total"><td>'+(st==='lunas'?'Total dibayar':'Total tagihan')+'</td><td class="num">'+rp(total)+'</td></tr></tbody></table>'+
+  (D.catatan?'<div class="ket">'+esc(D.catatan)+'</div>':'')+footer()+'</div>'}
+function gambarSj(){
+ var lines=String(D.tujuan||'').split('\n').map(function(s){return s.trim()}).filter(Boolean);
+ var rute='<ol class="route"><li class="pin"><div class="place">Titik jemput</div><div class="sub2">'+esc(D.dari||'-')+'</div></li>'+lines.map(function(l){return '<li><div class="place">'+esc(l)+'</div></li>'}).join('')+'<li class="pin"><div class="place">Selesai</div></li></ol>';
+ return '<div class="kertas" id="inv"><div class="band">'+kop()+'<div class="doc"><div class="doc-title">SURAT JALAN</div><div class="doc-no">'+esc(D.no_sj||'-')+'</div></div></div>'+
+  '<div class="sbody"><div class="cols"><div class="box"><h3>Perjalanan</h3><p class="strong big">'+esc(tgl(D.trip_tgl)||'-')+'</p><p>Jam jemput '+esc(D.trip_jam||'-')+(D.pax?' · '+esc(D.pax)+' penumpang':'')+'</p>'+(D.layanan?'<p>'+esc(D.layanan)+'</p>':'')+'</div>'+
+  '<div class="box"><h3>Penumpang / pemesan</h3><p class="strong big">'+esc(D.pel_nama||'-')+'</p>'+(D.pel_wa?'<p>WhatsApp '+esc(D.pel_wa)+'</p>':'')+'</div></div>'+
+  '<div class="driver"><div><h3>Pelaksana · mitra pengemudi</h3><div class="nm">'+esc(D.driver||'-')+'</div>'+(D.driver_wa?'<div style="color:#64748b;font-size:13px">WhatsApp '+esc(D.driver_wa)+'</div>':'')+'</div><div class="plate"><small>PLAT NOMOR</small>'+esc(D.plat||'-')+'</div></div>'+
+  '<div class="box"><h3>Rute perjalanan</h3>'+rute+'</div></div>'+(D.sj_catatan?'<div class="sjn">'+esc(D.sj_catatan)+'</div>':'')+
+  '<div class="ttd"><div><div class="gr"></div><b>'+esc(D.pel_nama||'Penumpang')+'</b><br><small>Penumpang</small></div><div><div class="gr"></div><b>'+esc(D.driver||'Driver')+'</b><br><small>Driver</small></div><div><div class="gr"></div><b>'+esc(D.ttd||'TEMPERA')+'</b><br><small>Tempera</small></div></div>'+
+  '<div class="sfoot">'+(D.kontak?esc(D.kontak)+' · ':'')+'tempera.id</div></div>'}
+function ubah(){simpan();gambar()}
+function gambar(){document.getElementById('out').innerHTML=D.tab==='inv'?gambarInv():gambarSj()}
+document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){D.tab=b.dataset.t;simpan();pasangForm();gambar()}});
+document.getElementById('bBaru').onclick=function(){if(!confirm('Kosongkan semua isian?'))return;var tab=D.tab,k=D.kontak;D=awal();D.tab=tab;D.kontak=k;simpan();pasangForm();gambar()};
+document.getElementById('bCetak').onclick=function(){window.print()};
+document.getElementById('bPdf').onclick=async function(){var btn=this,src=document.getElementById('inv');if(!src)return;btn.disabled=true;var old=btn.textContent;btn.textContent='Menyiapkan…';
+ var clone=src.cloneNode(true);clone.style.margin='0';clone.style.boxShadow='none';clone.style.borderRadius='0';if(D.tab==='inv')clone.style.padding='40px';
+ var nama=(D.tab==='inv'?D.no_inv:D.no_sj)||(D.tab==='inv'?'invoice':'surat-jalan');
+ try{if(typeof html2pdf==='undefined')throw new Error('x');await html2pdf().set({margin:0,filename:nama+'.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,windowWidth:794,scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(clone).save()}
+ catch(e){window.print()}finally{btn.disabled=false;btn.textContent=old}};
+pasangForm();gambar();
+</script>
+</body>
+</html>
