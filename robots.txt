@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Disallow: /panel.html
+Disallow: /panel/
+Disallow: /masuk.html
+Disallow: /mitra.html
+Disallow: /driver/
+Disallow: /kas-bayar.html
+Disallow: /kartu.html
+Disallow: /kartu-anggota.html
+Disallow: /lanyard.html
+Disallow: /verifikasi.html
+Disallow: /invoice.html
+Disallow: /surat-jalan.html
+Disallow: /alat-dokumen.html
+Disallow: /ulasan.html
+
+Sitemap: https://tempera.id/sitemap.xml
