@@ -1591,7 +1591,7 @@ function revealGaleri(sec){
   const fotos=[...sec.querySelectorAll('.gl-item')]; if(!fotos.length) return;
   const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('gl-in'); io.unobserve(en.target); } }); },{threshold:0.25,rootMargin:'0px 0px -8% 0px'});
   fotos.forEach((e,i)=>{ e.style.setProperty('--rvd',((i%2)*0.2)+'s'); e.classList.add('gl-pre'); io.observe(e); });
-  setTimeout(()=>fotos.forEach(e=>e.classList.add('gl-in')),5000);   // jaring pengaman
+  // (tanpa pewaktu pengaman: pewaktu membuka semua foto sebelum pengunjung sampai ke galeri, sehingga animasi tidak pernah terlihat)
 }
 
 /* ---------- Jaring pengaman: tautan wa.me mana pun yang belum membawa pesan diberi pesan pembuka (+ penanda Ref) tepat saat diklik ---------- */
@@ -1619,7 +1619,7 @@ function initReveal(){
   const kartuTc=document.querySelector('#tripcustom .theme-card'); if(kartuTc) daftar.push([kartuTc,0.05]);
   const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('rv-in'); io.unobserve(en.target); } }); },{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
   daftar.forEach(([e,d])=>{ e.style.setProperty('--rvd',d+'s'); e.classList.add('rv-pre'); io.observe(e); });
-  setTimeout(()=>daftar.forEach(([e])=>e.classList.add('rv-in')),3500);   // jaring pengaman
+  // (tanpa pewaktu pengaman 3,5 dtk: itu membuat semua elemen tampil sebelum digulir, jadi animasi muncul-saat-digulir tidak terlihat)
 }
 
 /* ---------- Mulai ---------- */
