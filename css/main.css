@@ -324,3 +324,8 @@ h2.sec-judul + div.w-16{display:none}
 .photo-break::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(4,30,40,.72) 0%,rgba(4,30,40,.15) 55%,rgba(4,30,40,0) 100%)}
 .photo-break p{position:absolute;z-index:1;left:0;right:0;bottom:0;margin:0;padding:0 20px 26px;max-width:640px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(24px,5.6vw,38px);line-height:1.15;color:#fff;text-wrap:balance;text-shadow:0 2px 14px rgba(0,0,0,.35)}
 @media (min-width:768px){.photo-break p{left:max(24px,calc(50% - 640px));padding-bottom:36px}}
+
+/* Hero 19 Okt 2026: kalimat penjelas disembunyikan (info sudah ada di baris keunggulan); teks tetap di HTML dan panel. Hapus aturan ini untuk menampilkannya lagi. */
+.hero-sub{display:none}
+.hero-btn-ghost{border-width:1.5px;border-color:rgba(255,255,255,.88)}
+.hero-cta{margin-top:34px}
