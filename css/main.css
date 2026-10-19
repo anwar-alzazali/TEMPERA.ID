@@ -5,7 +5,7 @@ html{scroll-behavior:smooth}
 .accordion-content.open{max-height:2000px}
 
 /* =====================================================================
-   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (teal gelap, 19 Okt 2026; sebelumnya emas-hitam: lihat riwayat git).
+   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (latar teal gelap + aksen emas, 19 Okt 2026; sebelumnya emas-hitam: lihat riwayat git).
    Ikut pengaturan perangkat (tombol ganti tema dihapus 19 Okt 2026).
    --on-accent = warna teks di atas tombol berwarna aksen.
    ===================================================================== */
@@ -18,19 +18,19 @@ html{scroll-behavior:smooth}
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --accent:#5ED0E0;--accent-light:#8BE3EE;--accent-glow:rgba(94,208,224,0.22);--on-accent:#062028;
+    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0B1F26;
     --bg-main:#0B1F26;--bg-section:#0B1F26;--bg-section-alt:#0E2831;--bg-card:#12313B;--bg-card-hover:#173C48;--bg-input:#163640;
-    --text-primary:#EAF4F7;--text-secondary:#8FD3DF;--text-muted:#93AAB3;
-    --border-color:rgba(94,208,224,0.32);--border-soft:rgba(255,255,255,0.08);
-    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(94,208,224,0.20) 0%,transparent 55%),linear-gradient(160deg,#0B1F26 0%,#0E2A33 100%);
+    --text-primary:#EAF4F7;--text-secondary:#B7D3DA;--text-muted:#93AAB3;
+    --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.08);
+    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.20) 0%,transparent 55%),linear-gradient(160deg,#0B1F26 0%,#0E2A33 100%);
   }
 }
 :root[data-theme="dark"]{
-  --accent:#5ED0E0;--accent-light:#8BE3EE;--accent-glow:rgba(94,208,224,0.22);--on-accent:#062028;
+  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0B1F26;
   --bg-main:#0B1F26;--bg-section:#0B1F26;--bg-section-alt:#0E2831;--bg-card:#12313B;--bg-card-hover:#173C48;--bg-input:#163640;
-  --text-primary:#EAF4F7;--text-secondary:#8FD3DF;--text-muted:#93AAB3;
-  --border-color:rgba(94,208,224,0.32);--border-soft:rgba(255,255,255,0.08);
-  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(94,208,224,0.20) 0%,transparent 55%),linear-gradient(160deg,#0B1F26 0%,#0E2A33 100%);
+  --text-primary:#EAF4F7;--text-secondary:#B7D3DA;--text-muted:#93AAB3;
+  --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.08);
+  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.20) 0%,transparent 55%),linear-gradient(160deg,#0B1F26 0%,#0E2A33 100%);
 }
 body{background:var(--bg-main);color:var(--text-primary);transition:background .4s ease,color .4s ease}
 .theme-section{background:var(--bg-section);transition:all 0.4s ease}
