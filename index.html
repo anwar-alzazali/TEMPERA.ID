@@ -33,7 +33,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <!-- ===================== [02] CSS & LIBRARY ===================== -->
-<link rel="stylesheet" href="css/main.css?v=20261019h">
+<link rel="stylesheet" href="css/main.css?v=20261019i">
 <link rel="stylesheet" href="css/driver.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{serif:['Cormorant Garamond','serif'],sans:['Inter','sans-serif']}}}}</script>
@@ -264,10 +264,15 @@
   <div class="text-center max-w-2xl mx-auto mb-12">
     <h2 class="text-3xl md:text-[38px] font-serif sec-judul" style="color:var(--accent)" data-i18n="tc_title">Trip Custom</h2>
     <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
-    <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)" data-i18n="tc_sub">Antar kota, bandara, mudik Lebaran, dan trip lebih dari 1 hari</p>
+    <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)" data-i18n="tc_sub">Untuk perjalanan di luar paket 12 jam: antar kota, bandara, mudik, atau menginap</p>
   </div>
   <div class="rounded-[28px] border p-6 md:p-10 theme-card">
     <p class="text-sm mb-6" style="color:var(--text-secondary)" data-i18n="tc_desc">Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Pilih tujuan, lalu tanyakan harganya lewat WhatsApp (tergantung jarak, jumlah hari, dan jam berangkat).</p>
+    <ol class="tc-steps">
+      <li data-i18n="tc_s1">Pilih tujuan</li>
+      <li data-i18n="tc_s2">Kirim lewat WhatsApp</li>
+      <li data-i18n="tc_s3">Admin balas dengan harga</li>
+    </ol>
     <div class="flex flex-wrap gap-2 mb-6" id="tcTujuan">
       <button type="button" class="tc-chip" data-tc="soetta" data-i18n="tc_soetta">Bandara Soetta</button>
       <button type="button" class="tc-chip" data-tc="garut" data-i18n="tc_garut">Bandung - Garut</button>
@@ -276,7 +281,7 @@
       <button type="button" class="tc-chip" data-tc="multi" data-i18n="tc_multi">Trip 2–3 hari</button>
       <button type="button" class="tc-chip" data-tc="other" data-i18n="tc_other">Tujuan lain</button>
     </div>
-    <a id="tcWa" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center font-bold px-8 py-3.5 rounded-full text-[11px] uppercase tracking-wider w-full sm:w-auto" style="background:var(--accent);color:var(--on-accent)" data-i18n="tc_btn">Tanya Harga Lewat WhatsApp</a>
+    <a id="tcWa" href="#" target="_blank" rel="noopener" class="inline-flex items-center justify-center font-bold px-8 py-3.5 rounded-full text-[11px] uppercase tracking-wider w-full sm:w-auto" style="background:var(--accent);color:var(--on-accent)" data-i18n="tc_btn">Tanya harga lewat WhatsApp</a>
   </div>
 </div>
 </section>
@@ -454,6 +459,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261019h"></script>
+<script src="js/main.js?v=20261019i"></script>
 </body>
 </html>

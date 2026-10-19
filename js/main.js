@@ -74,7 +74,7 @@ id: {
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
   th_fleet: 'Armada', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
   cap_comfort: '{n} Nyaman', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + driver • Maks {max}',
-  card_btn: 'Pilih Unit - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Armada Dulu —', opt_label: '{name} - {price} / 12 Jam',
+  card_btn: 'Pilih Unit - {price} / 12 Jam', card_12: '12 jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Armada Dulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh di tanggal ini', opt_left: ' — tinggal {n} unit!',
   av_low: '⏳ Tinggal sedikit di tanggal ini: {list}.',
   rv_title: 'Kata Pelanggan', rv_sub: '⭐ {rata} dari 5 · {n} ulasan asli pelanggan Tempera', rv_left: 'Geser ke kiri', rv_right: 'Geser ke kanan',
@@ -83,10 +83,10 @@ id: {
   av_card_full: '{car} penuh di tanggal yang dipilih. Pilih armada lain atau ubah tanggal.',
   av_wa_msg: 'Halo Admin Tempera, saya mau tanya ketersediaan armada untuk tanggal {tgl}.',
 
-  tc_title: 'Trip Custom', tc_sub: 'Antar kota, bandara, mudik Lebaran, dan trip lebih dari 1 hari',
-  tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Pilih tujuan, lalu tanyakan harganya lewat WhatsApp (tergantung jarak, jumlah hari, dan jam berangkat).',
+  tc_title: 'Trip Custom', tc_sub: 'Untuk perjalanan di luar paket 12 jam: antar kota, bandara, mudik, atau menginap',
+  tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Harga menyesuaikan jarak, jumlah hari, dan jam berangkat, jadi dihitung admin setelah Anda memilih tujuan.', tc_s1: 'Pilih tujuan', tc_s2: 'Kirim lewat WhatsApp', tc_s3: 'Admin balas dengan harga',
   tc_soetta: 'Bandara Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
-  tc_multi: 'Trip 2–3 hari', tc_other: 'Tujuan lain', tc_btn: 'Tanya Harga Lewat WhatsApp',
+  tc_multi: 'Trip 2–3 hari', tc_other: 'Tujuan lain', tc_btn: 'Tanya harga lewat WhatsApp',
   tc_msg_dest: 'Halo Admin Tempera, saya mau tanya Trip Custom: Bandung - {dest}.',
   tc_msg_multi: 'Halo Admin Tempera, saya mau tanya Trip Custom 2–3 hari.',
   tc_msg_other: 'Halo Admin Tempera, saya mau tanya Trip Custom ke tujuan lain.',
@@ -264,7 +264,7 @@ ms: {
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (kereta + pemandu + petrol). Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam.',
   th_fleet: 'Kereta', th_cap: 'Selesa / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Tindakan',
   cap_comfort: '{n} Selesa', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + pemandu • Maks {max}',
-  card_btn: 'Pilih - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Kereta Dahulu —', opt_label: '{name} - {price} / 12 Jam',
+  card_btn: 'Pilih - {price} / 12 Jam', card_12: '12 jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Kereta Dahulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh pada tarikh ini', opt_left: ' — tinggal {n} unit sahaja!',
   av_low: '⏳ Tinggal sedikit pada tarikh ini: {list}.',
   rv_title: 'Kata Pelanggan', rv_sub: '⭐ {rata} daripada 5 · {n} ulasan sebenar pelanggan Tempera', rv_left: 'Anjak ke kiri', rv_right: 'Anjak ke kanan',
@@ -273,10 +273,10 @@ ms: {
   av_card_full: '{car} penuh pada tarikh yang dipilih. Pilih kereta lain atau tukar tarikh.',
   av_wa_msg: 'Hai Admin Tempera, saya ingin bertanya tentang kekosongan kereta untuk tarikh {tgl}.',
 
-  tc_title: 'Trip Tersuai', tc_sub: 'Antara bandar, lapangan terbang, balik raya dan trip lebih dari 1 hari',
-  tc_desc: 'Kereta dan pemandu khas untuk rombongan anda, bukan pengangkutan awam. Pilih destinasi, kemudian tanya harga melalui WhatsApp (bergantung pada jarak, bilangan hari dan masa bertolak).',
+  tc_title: 'Trip Tersuai', tc_sub: 'Untuk perjalanan di luar pakej 12 jam: antara bandar, lapangan terbang, balik raya atau bermalam',
+  tc_desc: 'Kereta dan pemandu khas untuk rombongan anda, bukan pengangkutan awam. Harga bergantung pada jarak, bilangan hari dan masa bertolak, jadi dikira oleh admin selepas anda memilih destinasi.', tc_s1: 'Pilih destinasi', tc_s2: 'Hantar melalui WhatsApp', tc_s3: 'Admin balas dengan harga',
   tc_soetta: 'Lapangan Terbang Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
-  tc_multi: 'Trip 2–3 hari', tc_other: 'Destinasi lain', tc_btn: 'Tanya Harga Melalui WhatsApp',
+  tc_multi: 'Trip 2–3 hari', tc_other: 'Destinasi lain', tc_btn: 'Tanya harga melalui WhatsApp',
   tc_msg_dest: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai: Bandung - {dest}.',
   tc_msg_multi: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai 2–3 hari.',
   tc_msg_other: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai ke destinasi lain.',
@@ -1095,7 +1095,7 @@ function renderArmada(){
     const imgs=(unit.images&&unit.images.length)?unit.images:[''];
     const cap=t('cap_comfort',{n:unit.capacityNum});
     const card=document.createElement('div'); card.className='armada-card-uniform rounded-[24px] overflow-hidden flex flex-col h-full theme-card border';
-    card.innerHTML=`<div class="h-48 bg-white relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${imgs.map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}">${img?`<img src="${esc(imgSrc(img))}" loading="lazy" alt="Sewa ${esc(unit.name)} Bandung" class="w-full h-full object-contain p-2">`:''}</div>`).join('')}</div>${unit.badge?`<div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:var(--on-accent)"><span class="text-[9px] font-bold uppercase">${esc(unit.badge)}</span></div>`:''}<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${imgs.length>1?imgs.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join(''):''}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(unit.name)}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${esc(t('card_cap',{cap,max:unit.capacityMax}))}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>${t('card_people',{cap:esc(cap),max:esc(unit.capacityMax)})}</li>${unit.baggage?`<li><span class="ic ic-bag"></span>${esc(unit.baggage)}</li>`:''}${unit.maxInfo?`<li><span class="ic ic-seat"></span>${esc(unit.maxInfo)}</li>`:''}${unit.note?`<li class="${esc(unit.noteClass)}">${noteIkon(unit.note)}</li>`:''}</ul><button type="button" data-unit="${esc(unit.id)}" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:var(--on-accent)">${esc(t('card_btn',{price:formatPrice(unit.price)}))}</button></div>`;
+    card.innerHTML=`<div class="h-48 bg-white relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${imgs.map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}">${img?`<img src="${esc(imgSrc(img))}" loading="lazy" alt="Sewa ${esc(unit.name)} Bandung" class="w-full h-full object-contain p-2">`:''}</div>`).join('')}</div>${unit.badge?`<div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:var(--on-accent)"><span class="text-[9px] font-bold uppercase">${esc(unit.badge)}</span></div>`:''}<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${imgs.length>1?imgs.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join(''):''}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(unit.name)}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${esc(t('card_cap',{cap,max:unit.capacityMax}))}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>${t('card_people',{cap:esc(cap),max:esc(unit.capacityMax)})}</li>${unit.baggage?`<li><span class="ic ic-bag"></span>${esc(unit.baggage)}</li>`:''}${unit.maxInfo?`<li><span class="ic ic-seat"></span>${esc(unit.maxInfo)}</li>`:''}${unit.note?`<li class="${esc(unit.noteClass)}">${noteIkon(unit.note)}</li>`:''}</ul><p class="armada-harga"><b>${esc(formatPrice(unit.price))}</b><small> / ${esc(t('card_12'))}</small></p><button type="button" data-unit="${esc(unit.id)}" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:var(--on-accent)">${esc(t('tbl_pick'))}</button></div>`;
     cards.appendChild(card);
     const tr=document.createElement('tr');
     tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${esc(unit.name)}</td><td class="py-5 px-6 text-center"><b>${esc(unit.capacityNum)}</b> / ${esc(unit.capacityMax)}</td><td class="py-5 px-6 text-xs">${esc(unit.baggage)}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">${formatPrice(unit.price)}</td><td class="py-5 px-6 text-center"><button type="button" data-unit="${esc(unit.id)}" class="border text-[10px] px-4 py-1.5 rounded-full" style="background:var(--bg-card);border-color:var(--border-color)">${esc(t('tbl_pick'))}</button></td>`;
