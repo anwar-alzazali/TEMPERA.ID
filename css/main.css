@@ -5,7 +5,7 @@ html{scroll-behavior:smooth}
 .accordion-content.open{max-height:2000px}
 
 /* =====================================================================
-   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (latar teal gelap + aksen emas, 19 Okt 2026; sebelumnya emas-hitam: lihat riwayat git).
+   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (emas-hitam, tetap dipakai atas keputusan pemilik 19 Okt 2026).
    Ikut pengaturan perangkat (tombol ganti tema dihapus 19 Okt 2026).
    --on-accent = warna teks di atas tombol berwarna aksen.
    ===================================================================== */
@@ -18,19 +18,19 @@ html{scroll-behavior:smooth}
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0B1F26;
-    --bg-main:#0B1F26;--bg-section:#0B1F26;--bg-section-alt:#0E2831;--bg-card:#12313B;--bg-card-hover:#173C48;--bg-input:#163640;
-    --text-primary:#EAF4F7;--text-secondary:#B7D3DA;--text-muted:#93AAB3;
-    --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.08);
-    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.20) 0%,transparent 55%),linear-gradient(160deg,#0B1F26 0%,#0E2A33 100%);
+    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0A0A0A;
+    --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
+    --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
+    --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.22) 0%,transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1C1917 100%);
   }
 }
 :root[data-theme="dark"]{
-  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0B1F26;
-  --bg-main:#0B1F26;--bg-section:#0B1F26;--bg-section-alt:#0E2831;--bg-card:#12313B;--bg-card-hover:#173C48;--bg-input:#163640;
-  --text-primary:#EAF4F7;--text-secondary:#B7D3DA;--text-muted:#93AAB3;
-  --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.08);
-  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.20) 0%,transparent 55%),linear-gradient(160deg,#0B1F26 0%,#0E2A33 100%);
+  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0A0A0A;
+  --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
+  --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
+  --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
+  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.22) 0%,transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1C1917 100%);
 }
 body{background:var(--bg-main);color:var(--text-primary);transition:background .4s ease,color .4s ease}
 .theme-section{background:var(--bg-section);transition:all 0.4s ease}
@@ -278,3 +278,23 @@ button.wx-glass{cursor:pointer}
   .rv-pre{opacity:1!important;transform:none!important;transition:none!important}
   .ts-ov,.ts-box,#crossPopup>div,.dchip,.dcard{transition:none!important;animation:none!important}
 }
+
+/* ===== Perapian 19 Okt 2026: judul bagian biasa (bukan kapital berjarak), ikon garis menggantikan emoji, tombol WA satu efek ===== */
+h2.sec-judul{font-weight:600;font-size:clamp(28px,6.6vw,40px);line-height:1.15;letter-spacing:-.005em;text-transform:none;text-wrap:balance;padding-bottom:.35rem}
+h2.sec-judul + div.w-16{display:none}
+.ic{display:inline-block;width:1.1em;height:1.1em;margin-right:.4em;vertical-align:-.2em;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.ic-people{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M22 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E")}
+.ic-bag{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2'/%3E%3Cpath d='M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14'/%3E%3Cpath d='M10 20v2'/%3E%3Cpath d='M14 20v2'/%3E%3C/svg%3E")}
+.ic-seat{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3'/%3E%3Cpath d='M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z'/%3E%3Cpath d='M5 18v2'/%3E%3Cpath d='M19 18v2'/%3E%3C/svg%3E")}
+.ic-alert{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E")}
+.ic-check{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E")}
+.ic-x{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='m15 9-6 6'/%3E%3Cpath d='m9 9 6 6'/%3E%3C/svg%3E")}
+.ic-clock{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 6v6l4 2'/%3E%3C/svg%3E")}
+.ic-info{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4'/%3E%3Cpath d='M12 8h.01'/%3E%3C/svg%3E")}
+.wa-float,.wa-heart{animation:none!important}   /* tombol WA: hanya cincin pelan, tanpa melayang dan denyut */
+/* FAQ: daftar bergaris tanpa kartu (beda dari bagian lain, memberi ritme) */
+#faq .space-y-3{display:block}
+#faq .faq-item.theme-card{background:transparent;border-width:0 0 1px;border-radius:0;box-shadow:none;margin:0}
+#faq .faq-item.theme-card:hover{box-shadow:none}
+#faq .faq-item summary{padding:18px 4px}
+#faq .faq-item p{padding:0 4px 18px}

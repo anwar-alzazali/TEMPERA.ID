@@ -68,9 +68,9 @@ id: {
   xp_yes: 'Tetap gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Armada Sewa Mobil Bandung',
-  fleet_note: '⏱ Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
+  fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
   th_fleet: 'Armada', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
-  cap_comfort: '{n} Nyaman', card_cap: '{cap} • Maks {max}', card_people: '👥 <b>{cap}</b> + driver • Maks {max}',
+  cap_comfort: '{n} Nyaman', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + driver • Maks {max}',
   card_btn: 'Pilih Unit - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Armada Dulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh di tanggal ini', opt_left: ' — tinggal {n} unit!',
   av_low: '⏳ Tinggal sedikit di tanggal ini: {list}.',
@@ -111,10 +111,10 @@ id: {
   dur_none: '<b>Untuk tanggal ini semua jam jemput sudah terlalu dekat.</b> Pilih tanggal berikutnya atau hubungi admin.',
   res_dur: '12 jam', res_dur_val: '12 jam ({start} - {end})',
 
-  summary: 'Rincian Biaya', sum_armada: '🚐 Armada', not_chosen: 'Belum dipilih', choose_above: 'Pilih armada di atas',
+  summary: 'Rincian Biaya', sum_armada: 'Armada', not_chosen: 'Belum dipilih', choose_above: 'Pilih armada di atas',
   sum_dur: 'Durasi sewa:', sum_cross: 'Biaya lintas:', sum_dest: 'Destinasi:', none_yet: 'Belum ada', sum_cap: 'Kapasitas:',
-  sum_total: 'Total Tarif', inc_title: '✅ Termasuk', inc_list: 'Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam',
-  exc_title: '❌ Tidak termasuk', exc_list: 'Tol, parkir, makan driver',
+  sum_total: 'Total Tarif', inc_title: '<span class="ic ic-check"></span>Termasuk', inc_list: 'Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam',
+  exc_title: '<span class="ic ic-x"></span>Tidak termasuk', exc_list: 'Tol, parkir, makan driver',
   submit: 'Konfirmasi & Bayar', processing: 'Memproses...',
   lbl_beda_lembah: ' (Beda Lembah Selatan)', lbl_utsel: ' (Lintas Utara-Selatan)', lbl_tiga: ' (3 Penjuru)',
   cap_line: '{cap} Nyaman • Maks {max}', mb_sewa: 'Sewa 12 jam',
@@ -255,9 +255,9 @@ ms: {
   xp_yes: 'Teruskan gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Kereta Sewa di Bandung',
-  fleet_note: '⏱ Semua harga di bawah untuk <b>sewa 12 jam</b> (kereta + pemandu + petrol). Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam.',
+  fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (kereta + pemandu + petrol). Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam.',
   th_fleet: 'Kereta', th_cap: 'Selesa / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Tindakan',
-  cap_comfort: '{n} Selesa', card_cap: '{cap} • Maks {max}', card_people: '👥 <b>{cap}</b> + pemandu • Maks {max}',
+  cap_comfort: '{n} Selesa', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + pemandu • Maks {max}',
   card_btn: 'Pilih - {price} / 12 Jam', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Kereta Dahulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh pada tarikh ini', opt_left: ' — tinggal {n} unit sahaja!',
   av_low: '⏳ Tinggal sedikit pada tarikh ini: {list}.',
@@ -298,10 +298,10 @@ ms: {
   dur_none: '<b>Untuk tarikh ini semua masa jemputan sudah terlalu dekat.</b> Pilih tarikh lain atau hubungi admin.',
   res_dur: '12 jam', res_dur_val: '12 jam ({start} - {end})',
 
-  summary: 'Ringkasan Harga', sum_armada: '🚐 Kereta', not_chosen: 'Belum dipilih', choose_above: 'Pilih kereta di atas',
+  summary: 'Ringkasan Harga', sum_armada: 'Kereta', not_chosen: 'Belum dipilih', choose_above: 'Pilih kereta di atas',
   sum_dur: 'Tempoh sewa:', sum_cross: 'Caj rentas:', sum_dest: 'Destinasi:', none_yet: 'Belum ada', sum_cap: 'Kapasiti:',
-  sum_total: 'Jumlah Harga', inc_title: '✅ Termasuk', inc_list: 'Kereta, pemandu, petrol, air mineral, penggunaan sehingga 12 jam',
-  exc_title: '❌ Tidak termasuk', exc_list: 'Tol, parkir, makan pemandu',
+  sum_total: 'Jumlah Harga', inc_title: '<span class="ic ic-check"></span>Termasuk', inc_list: 'Kereta, pemandu, petrol, air mineral, penggunaan sehingga 12 jam',
+  exc_title: '<span class="ic ic-x"></span>Tidak termasuk', exc_list: 'Tol, parkir, makan pemandu',
   submit: 'Sahkan & Bayar', processing: 'Sedang diproses...',
   lbl_beda_lembah: ' (Lembah Selatan Berbeza)', lbl_utsel: ' (Rentas Utara-Selatan)', lbl_tiga: ' (3 Penjuru)',
   cap_line: '{cap} Selesa • Maks {max}', mb_sewa: 'Sewa 12 jam',
@@ -471,6 +471,12 @@ async function sbGet(path){
   const r=await fetch(`${SB_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`}});
   if(!r.ok) throw new Error('HTTP '+r.status);
   return r.json();
+}
+/* Catatan armada: emoji di awal (⚠ ✅ ℹ) diganti ikon garis */
+function noteIkon(n){
+  n=String(n||''); const m=n.match(/^(⚠|✅|ℹ)\uFE0F?\s*/); if(!m) return esc(n);
+  const k=m[1]==='⚠'?'alert':(m[1]==='ℹ'?'info':'check');
+  return '<span class="ic ic-'+k+'"></span>'+esc(n.slice(m[0].length));
 }
 function mapFleetRow(f){
   const note=f.note||'';
@@ -705,7 +711,7 @@ function renderUlasan(){
       <p style="margin:auto 0 0;font-size:12px;color:var(--text-muted)"><b style="color:var(--text-primary)">${esc(u.nama)}</b>${u.armada?' · '+esc(u.armada):''}${u.bulan?' · '+esc(bulan(u.bulan)):''}</p>
     </article>`; }).join('');
   sec.innerHTML=`<div class="max-w-7xl mx-auto px-4">
-    <div class="text-center max-w-2xl mx-auto mb-12"><h2 class="text-3xl md:text-[38px] font-serif uppercase tracking-widest" style="color:var(--accent)">${esc(t('rv_title'))}</h2>
+    <div class="text-center max-w-2xl mx-auto mb-12"><h2 class="text-3xl md:text-[38px] font-serif sec-judul" style="color:var(--accent)">${esc(t('rv_title'))}</h2>
       <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
       <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)">${esc(t('rv_sub',{rata,n:ULASAN.jumlah}))}</p></div>
     <div class="flex items-center gap-3">
@@ -917,7 +923,7 @@ function renderDestBar(cbs){
   });
   panel.appendChild(chips);
   const baris=(k,v,tebal)=>{ const r=document.createElement('div'); r.className='db-line'+(tebal?' db-total':''); const l=document.createElement('span'); l.textContent=k; const rv=document.createElement('span'); rv.textContent=v; r.append(l,rv); panel.appendChild(r); };
-  baris(t('sum_armada').replace(/^\S+\s/,''), a?(a.name+' · '+formatPrice(a.price)):t('not_chosen'));
+  baris(t('sum_armada'), a?(a.name+' · '+formatPrice(a.price)):t('not_chosen'));
   const lbl=region.count===3?t('lbl_tiga'):(region.count===2?(region.list.includes('ciwidey')&&region.list.includes('pangalengan')?t('lbl_beda_lembah'):t('lbl_utsel')):'');
   baris(t('sum_cross').replace(/:$/,''), formatPrice(cost)+lbl);
   baris(t('sum_total'), a?formatPrice(total):t('bar_hint'), true);
@@ -1083,7 +1089,7 @@ function renderArmada(){
     const imgs=(unit.images&&unit.images.length)?unit.images:[''];
     const cap=t('cap_comfort',{n:unit.capacityNum});
     const card=document.createElement('div'); card.className='armada-card-uniform rounded-[24px] overflow-hidden flex flex-col h-full theme-card border';
-    card.innerHTML=`<div class="h-48 bg-white relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${imgs.map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}">${img?`<img src="${esc(imgSrc(img))}" loading="lazy" alt="Sewa ${esc(unit.name)} Bandung" class="w-full h-full object-contain p-2">`:''}</div>`).join('')}</div>${unit.badge?`<div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:var(--on-accent)"><span class="text-[9px] font-bold uppercase">${esc(unit.badge)}</span></div>`:''}<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${imgs.length>1?imgs.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join(''):''}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(unit.name)}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${esc(t('card_cap',{cap,max:unit.capacityMax}))}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>${t('card_people',{cap:esc(cap),max:esc(unit.capacityMax)})}</li>${unit.baggage?`<li>🧳 ${esc(unit.baggage)}</li>`:''}${unit.maxInfo?`<li>💺 ${esc(unit.maxInfo)}</li>`:''}${unit.note?`<li class="${esc(unit.noteClass)}">${esc(unit.note)}</li>`:''}</ul><button type="button" data-unit="${esc(unit.id)}" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:var(--on-accent)">${esc(t('card_btn',{price:formatPrice(unit.price)}))}</button></div>`;
+    card.innerHTML=`<div class="h-48 bg-white relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${imgs.map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}">${img?`<img src="${esc(imgSrc(img))}" loading="lazy" alt="Sewa ${esc(unit.name)} Bandung" class="w-full h-full object-contain p-2">`:''}</div>`).join('')}</div>${unit.badge?`<div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:var(--on-accent)"><span class="text-[9px] font-bold uppercase">${esc(unit.badge)}</span></div>`:''}<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${imgs.length>1?imgs.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join(''):''}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(unit.name)}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${esc(t('card_cap',{cap,max:unit.capacityMax}))}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li>${t('card_people',{cap:esc(cap),max:esc(unit.capacityMax)})}</li>${unit.baggage?`<li><span class="ic ic-bag"></span>${esc(unit.baggage)}</li>`:''}${unit.maxInfo?`<li><span class="ic ic-seat"></span>${esc(unit.maxInfo)}</li>`:''}${unit.note?`<li class="${esc(unit.noteClass)}">${noteIkon(unit.note)}</li>`:''}</ul><button type="button" data-unit="${esc(unit.id)}" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:var(--on-accent)">${esc(t('card_btn',{price:formatPrice(unit.price)}))}</button></div>`;
     cards.appendChild(card);
     const tr=document.createElement('tr');
     tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${esc(unit.name)}</td><td class="py-5 px-6 text-center"><b>${esc(unit.capacityNum)}</b> / ${esc(unit.capacityMax)}</td><td class="py-5 px-6 text-xs">${esc(unit.baggage)}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">${formatPrice(unit.price)}</td><td class="py-5 px-6 text-center"><button type="button" data-unit="${esc(unit.id)}" class="border text-[10px] px-4 py-1.5 rounded-full" style="background:var(--bg-card);border-color:var(--border-color)">${esc(t('tbl_pick'))}</button></td>`;
@@ -1572,7 +1578,7 @@ function renderGaleri(){
   if(!sec){ const faq=document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='galeri'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
   const foto=GALERI.map(g=>`<a href="galeri.html" class="gl-item"><img src="${esc(g.url)}" alt="${esc(g.keterangan||'Perjalanan bersama Tempera')}" loading="lazy" decoding="async"></a>`).join('');
   sec.innerHTML=`<div class="max-w-7xl mx-auto px-4">
-    <div class="text-center max-w-2xl mx-auto mb-10"><h2 class="text-3xl md:text-[38px] font-serif uppercase tracking-widest" style="color:var(--accent)">${esc(t('gl_title'))}</h2>
+    <div class="text-center max-w-2xl mx-auto mb-10"><h2 class="text-3xl md:text-[38px] font-serif sec-judul" style="color:var(--accent)">${esc(t('gl_title'))}</h2>
       <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
       <p class="text-[13px] mt-3 font-semibold" style="color:var(--text-muted)">${esc(t('gl_sub'))}</p></div>
     <div class="gl-grid">${foto}</div>
@@ -1608,6 +1614,7 @@ function initReveal(){
   const daftar=[];
   document.querySelectorAll('#carapesan h2,#destinasi h2,#armada h2,#tripcustom h2,#faq h2').forEach(e=>daftar.push([e,0]));
   document.querySelectorAll('#carapesan .cp-step').forEach((e,i)=>daftar.push([e,i*0.08]));
+  document.querySelectorAll('#faq .faq-item').forEach((e,i)=>daftar.push([e,Math.min(i,5)*0.05]));
   ['destinasiTrack','armada-cards'].forEach(id=>{ const e=document.getElementById(id); if(e) daftar.push([e,0.05]); });
   const kartuTc=document.querySelector('#tripcustom .theme-card'); if(kartuTc) daftar.push([kartuTc,0.05]);
   const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('rv-in'); io.unobserve(en.target); } }); },{threshold:0.12,rootMargin:'0px 0px -6% 0px'});
