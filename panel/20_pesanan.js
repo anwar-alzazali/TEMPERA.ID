@@ -106,6 +106,7 @@ function formTripCustom() {
     <label>Rute / tujuan (satu pemberhentian per baris, berurutan)<textarea id="tcRute" rows="3" placeholder="Stasiun Cimahi&#10;Resort Raisa Space, Cianjur"></textarea></label>
     <label>Catatan (muncul di invoice &amp; surat jalan)<input id="tcCat" placeholder="mis. Belum termasuk tol dan parkir"></label>
     <label>Nama layanan / armada<input id="tcArmada" value="Trip custom"></label>
+    <label>Nomor invoice (kosongkan = otomatis)<input id="tcInv" placeholder="mis. INV-2610-0137" autocomplete="off"></label>
     <div class="row2"><label>Harga (Rp)<input id="tcHarga" type="number" min="0" inputmode="numeric"></label><label>Diskon (Rp)<input id="tcDisk" type="number" min="0" value="0"></label><label>Potongan admin (Rp)<input id="tcCut" type="number" min="0" value="0"></label></div>
     <div class="row2"><label>Status pembayaran<select id="tcSt"><option value="paid">Lunas</option><option value="dp_paid">DP diterima (sisa tunai ke driver)</option><option value="pending">Belum bayar</option></select></label><label id="tcDpW" hidden>Jumlah DP (Rp)<input id="tcDp" type="number" min="0" inputmode="numeric"></label></div>
     <div class="row2"><label>Driver bertugas<select id="tcDriver">${drOpts}</select></label><label>Plat (kosongkan = plat driver)<input id="tcPlat"></label></div>
@@ -126,6 +127,13 @@ function formTripCustom() {
     if (harga <= 0 || total <= 0) { toast('Harga belum benar', true); return; }
     if (cut > total) { toast('Potongan admin melebihi total', true); return; }
     if (PAID_SET.includes(st) && !drv0) { toast('Pilih driver supaya surat jalan terbit', true); return; }
+    let noInv = $('#tcInv').value.trim().toUpperCase();
+    if (noInv && !/^INV-\d{4}-\d{3,5}$/.test(noInv)) { toast('Format nomor invoice: INV-2610-0137', true); return; }
+    if (noInv) {
+      const ada = await sb.from('orders').select('id').eq('invoice_no', noInv).limit(1);
+      if (ada.error) { toast(ada.error.message, true); return; }
+      if (ada.data && ada.data.length) { toast('Nomor invoice ' + noInv + ' sudah dipakai pesanan lain', true); return; }
+    }
     const dp = st === 'dp_paid' ? Math.round(Number($('#tcDp').value) || 0) : 0;
     if (st === 'dp_paid' && (dp <= 0 || dp >= total)) { toast('Jumlah DP harus di antara 0 dan total', true); return; }
     const destinations = { custom: rute };
@@ -139,6 +147,7 @@ function formTripCustom() {
       admin_cut_type: 'flat', admin_cut_value: cut, admin_cut_amount: cut, driver_earning: total - cut,
       assigned_driver: drv0, driver_slug: drv0, vehicle_plate: $('#tcPlat').value.trim() || null,
       payment_type: 'manual', midtrans_status: 'manual',
+      ...(noInv ? { invoice_no: noInv } : {}),
       payment_mode: st === 'dp_paid' ? 'dp' : 'lunas', dp_amount: st === 'dp_paid' ? dp : null,
     };
     $('#tcSimpan').disabled = true;
