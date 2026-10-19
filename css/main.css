@@ -329,3 +329,10 @@ h2.sec-judul + div.w-16{display:none}
 .hero-sub{display:none}
 .hero-btn-ghost{border-width:1.5px;border-color:rgba(255,255,255,.88)}
 .hero-cta{margin-top:34px}
+
+/* Cuaca diringkas 19 Okt 2026: tujuan di atas, per jam dilipat */
+.wx-detail summary{display:flex;align-items:center;cursor:pointer;list-style:none;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24)}
+.wx-detail summary::-webkit-details-marker{display:none}
+.wx-detail summary::before{content:'';width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);margin-right:10px;transition:transform .2s}
+.wx-detail[open] summary::before{transform:rotate(45deg)}
+#weather-humidity,#weather-wind{color:#fff}

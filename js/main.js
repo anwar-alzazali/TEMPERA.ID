@@ -1272,7 +1272,7 @@ function renderWeather(){
   set('weather-humidity',c.relative_humidity_2m+'%');
   set('weather-wind',Math.round(c.wind_speed_10m)+' km/h');
   const sun=document.getElementById('weather-sun');
-  if(sun&&d.daily&&d.daily.sunrise){ const hm=(s)=>String(s||'').slice(11,16)||'--'; sun.textContent=`🌅 ${hm(d.daily.sunrise[0])} • 🌇 ${hm(d.daily.sunset[0])}`; }
+  if(sun&&d.daily&&d.daily.sunrise){ const hm=(s)=>String(s||'').slice(11,16)||'--'; sun.textContent=`↑ ${hm(d.daily.sunrise[0])}  ↓ ${hm(d.daily.sunset[0])}`; }
   const hc=document.getElementById('weather-hourly');
   if(hc&&d.hourly){
     const now=Date.now(); let start=0;
