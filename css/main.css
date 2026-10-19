@@ -271,7 +271,7 @@ button.wx-glass{cursor:pointer}
   .gl-item:nth-child(7),.gl-item:nth-child(8){grid-column:span 2;aspect-ratio:16/10}
 }
 /* clip-path dipasang pada gambar (bukan pada tautan) supaya IntersectionObserver tetap melihat tautannya */
-.gl-pre img{clip-path:inset(100% 0 0 0);transform:scale(1.14);transition:clip-path 1.3s cubic-bezier(.22,.61,.36,1),transform 1.7s cubic-bezier(.22,.61,.36,1);transition-delay:var(--rvd,0s)}
+.gl-pre img{clip-path:inset(100% 0 0 0);transform:scale(1.1);transition:clip-path .9s cubic-bezier(.22,.61,.36,1),transform 1.2s cubic-bezier(.22,.61,.36,1);transition-delay:var(--rvd,0s)}
 .gl-pre.gl-in img{clip-path:inset(0 0 0 0);transform:none}
 @media (prefers-reduced-motion: reduce){
   .gl-pre img{clip-path:none!important;transform:none!important;opacity:0;transition:opacity .9s ease!important;transition-delay:var(--rvd,0s)!important}

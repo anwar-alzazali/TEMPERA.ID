@@ -1589,8 +1589,10 @@ function renderGaleri(){
 function revealGaleri(sec){
   if(!('IntersectionObserver' in window)) return;   // pengguna 'kurangi gerakan' tetap dapat fade lembut (diatur di CSS)
   const fotos=[...sec.querySelectorAll('.gl-item')]; if(!fotos.length) return;
-  const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('gl-in'); io.unobserve(en.target); } }); },{threshold:0.25,rootMargin:'0px 0px -8% 0px'});
-  fotos.forEach((e,i)=>{ e.style.setProperty('--rvd',((i%2)*0.2)+'s'); e.classList.add('gl-pre'); io.observe(e); });
+  // Foto baru dibuka setelah gambarnya siap: kalau tirai menyapu kotak abu-abu yang belum terisi, terlihat seperti jaringan lelet.
+  const siap=(e)=>{ const im=e.querySelector('img'); return (im&&im.decode)?im.decode().catch(()=>{}):Promise.resolve(); };
+  const io=new IntersectionObserver((es)=>{ es.forEach(en=>{ if(en.isIntersecting){ io.unobserve(en.target); Promise.race([siap(en.target),new Promise(r=>setTimeout(r,2500))]).then(()=>en.target.classList.add('gl-in')); } }); },{threshold:0.25,rootMargin:'0px 0px -8% 0px'});
+  fotos.forEach((e,i)=>{ e.style.setProperty('--rvd',((i%2)*0.12)+'s'); e.classList.add('gl-pre'); io.observe(e); });
   // (tanpa pewaktu pengaman: pewaktu membuka semua foto sebelum pengunjung sampai ke galeri, sehingga animasi tidak pernah terlihat)
 }
 
