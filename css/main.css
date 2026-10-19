@@ -139,6 +139,7 @@ button.wx-glass{cursor:pointer}
 #armada-cards::-webkit-scrollbar{display:none}
 .armada-card-uniform{flex:0 0 auto!important;width:280px!important;scroll-snap-align:start;display:flex!important;flex-direction:column!important;min-height:460px!important}
 .armada-card-uniform .armada-img-container{height:200px!important;flex-shrink:0}
+.armada-card-uniform .armada-img-container::after{content:'';position:absolute;left:0;right:0;bottom:0;height:46%;pointer-events:none;background:linear-gradient(to bottom,transparent,color-mix(in srgb,var(--accent) 26%,transparent));border-bottom:2px solid color-mix(in srgb,var(--accent) 55%,transparent)}
 .armada-card-uniform .p-6{flex:1 1 auto;display:flex;flex-direction:column}
 .armada-card-uniform ul{flex:1 1 auto}
 .armada-card-uniform button{margin-top:auto!important}
