@@ -97,9 +97,9 @@ var KEY='tempera_alat_dokumen_v1';
 var BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 function hari(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
 function awal(){return {tab:'inv',kontak:'',no_inv:'',no_sj:'',tgl:hari(),pel_nama:'',pel_wa:'',layanan:'',trip_tgl:'',trip_jam:'',pax:'',dari:'',tujuan:'',driver:'',driver_wa:'',plat:'',
- items:[{n:'',h:''}],diskon:'',status:'tagihan',dp:'',metode:'',catatan:'Belum termasuk biaya tol dan parkir.',sj_catatan:'',ttd:''}}
+ items:[{n:'',h:''}],diskon:'',status:'tagihan',dp:'',metode:'',catatan:'Belum termasuk biaya tol dan parkir.',sj_catatan:'',ttd:'',drivers:[]}}
 var D=awal();
-try{var t=localStorage.getItem(KEY);if(t){var o=JSON.parse(t);for(var k in o)D[k]=o[k];if(!Array.isArray(D.items)||!D.items.length)D.items=[{n:'',h:''}]}}catch(e){}
+try{var t=localStorage.getItem(KEY);if(t){var o=JSON.parse(t);for(var k in o)D[k]=o[k];if(!Array.isArray(D.items)||!D.items.length)D.items=[{n:'',h:''}];if(!Array.isArray(D.drivers))D.drivers=[]}}catch(e){}
 function simpan(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function rp(v){return 'Rp '+Number(v||0).toLocaleString('id-ID')}
@@ -112,15 +112,19 @@ function fld(k,label,o){o=o||{};var id='f_'+k;
   o.pilih?'<select id="'+id+'">'+o.pilih.map(function(p){return '<option value="'+p[0]+'"'+(D[k]===p[0]?' selected':'')+'>'+p[1]+'</option>'}).join('')+'</select>':
   '<input id="'+id+'" type="'+(o.type||'text')+'" value="'+esc(D[k])+'" placeholder="'+esc(o.ph||'')+'"'+(o.im?' inputmode="'+o.im+'"':'')+'>';
  return '<label for="'+id+'">'+label+inp+'</label>'}
+function blokDriver(plat){
+ return '<label for="f_driver">Nama driver<input id="f_driver" list="dl_driver" autocomplete="off" value="'+esc(D.driver)+'" placeholder="Ketik atau pilih driver tersimpan"></label><datalist id="dl_driver">'+D.drivers.map(function(d){return '<option value="'+esc(d.nama)+'"></option>'}).join('')+'</datalist>'+
+ fld('driver_wa','WhatsApp driver',{type:'tel',im:'tel'})+fld('plat','Plat nomor',{ph:'D 1234 AB'})+
+ '<div class="bar"><button class="btn btn-ghost" id="bSimDrv" type="button">Simpan driver ini</button><button class="btn btn-ghost" id="bHapDrv" type="button">Hapus dari daftar</button></div><div class="sub" id="infoDrv" style="margin:6px 0 0"></div>'}
 function formInv(){
  return '<fieldset><legend>Dokumen</legend><div class="dua">'+fld('no_inv','Nomor invoice',{ph:'INV-2610-0137'})+fld('tgl','Tanggal',{type:'date'})+'</div>'+fld('kontak','Kontak Tempera (tampil di bawah)',{ph:'WhatsApp 08xx-xxxx-xxxx'})+'</fieldset>'+
- '<fieldset><legend>Penumpang dan driver</legend>'+fld('pel_nama','Nama penumpang / pemesan')+fld('pel_wa','WhatsApp penumpang',{type:'tel',im:'tel'})+fld('driver','Nama driver')+fld('driver_wa','WhatsApp driver',{type:'tel',im:'tel'})+'</fieldset>'+
+ '<fieldset><legend>Penumpang dan driver</legend>'+fld('pel_nama','Nama penumpang / pemesan')+fld('pel_wa','WhatsApp penumpang',{type:'tel',im:'tel'})+blokDriver()+'</fieldset>'+
  '<fieldset><legend>Perjalanan</legend>'+fld('layanan','Layanan / armada',{ph:'Contoh: Antar penumpang, Innova Reborn'})+'<div class="dua">'+fld('trip_tgl','Tanggal berangkat',{type:'date'})+fld('trip_jam','Jam',{type:'time'})+'</div>'+fld('pax','Jumlah penumpang',{type:'number',im:'numeric'})+fld('dari','Dari',{ph:'Stasiun Cimahi'})+fld('tujuan','Tujuan (boleh beberapa baris)',{rows:2,ph:'Resorz Raisaespace, Cianjur'})+'</fieldset>'+
  '<fieldset><legend>Rincian biaya</legend><div id="items"></div><div class="bar"><button class="btn btn-ghost" id="bItem" type="button">+ Tambah baris</button></div>'+fld('diskon','Diskon (Rp)',{type:'number',im:'numeric'})+'</fieldset>'+
  '<fieldset><legend>Pembayaran</legend>'+fld('status','Status',{pilih:[['tagihan','Tagihan (belum dibayar)'],['dp','DP diterima'],['lunas','Lunas']]})+fld('dp','Jumlah DP (Rp, bila DP)',{type:'number',im:'numeric'})+fld('metode','Metode bayar',{ph:'Transfer BCA, QRIS, tunai'})+fld('catatan','Catatan',{rows:2})+'</fieldset>'}
 function formSj(){
  return '<fieldset><legend>Dokumen</legend><div class="dua">'+fld('no_sj','Nomor surat jalan',{ph:'SJ-2610-0137'})+fld('tgl','Tanggal',{type:'date'})+'</div>'+fld('kontak','Kontak Tempera (tampil di bawah)',{ph:'WhatsApp 08xx-xxxx-xxxx'})+'</fieldset>'+
- '<fieldset><legend>Penumpang dan driver</legend>'+fld('pel_nama','Nama penumpang / pemesan')+fld('pel_wa','WhatsApp penumpang',{type:'tel',im:'tel'})+fld('driver','Nama driver')+fld('driver_wa','WhatsApp driver',{type:'tel',im:'tel'})+fld('plat','Plat nomor',{ph:'D 1234 AB'})+'</fieldset>'+
+ '<fieldset><legend>Penumpang dan driver</legend>'+fld('pel_nama','Nama penumpang / pemesan')+fld('pel_wa','WhatsApp penumpang',{type:'tel',im:'tel'})+blokDriver()+'</fieldset>'+
  '<fieldset><legend>Perjalanan</legend>'+fld('layanan','Armada',{ph:'Innova Reborn'})+'<div class="dua">'+fld('trip_tgl','Tanggal berangkat',{type:'date'})+fld('trip_jam','Jam jemput',{type:'time'})+'</div>'+fld('pax','Jumlah penumpang',{type:'number',im:'numeric'})+fld('dari','Titik jemput',{ph:'Stasiun Cimahi'})+fld('tujuan','Tujuan (satu per baris)',{rows:3,ph:'Resorz Raisaespace, Cianjur'})+'</fieldset>'+
  '<fieldset><legend>Catatan dan tanda tangan</legend>'+fld('sj_catatan','Catatan',{rows:2,ph:'Opsional'})+fld('ttd','Nama penanda tangan Tempera',{ph:'Opsional'})+'</fieldset>'}
 function itemsUI(){var box=document.getElementById('items');if(!box)return;box.textContent='';
@@ -131,6 +135,12 @@ function itemsUI(){var box=document.getElementById('items');if(!box)return;box.t
   r.appendChild(a);r.appendChild(b);r.appendChild(x);box.appendChild(r)})}
 function pasangForm(){var f=document.getElementById('form');f.innerHTML=D.tab==='inv'?formInv():formSj();
  f.querySelectorAll('input,textarea,select').forEach(function(el){var k=el.id.slice(2);var h=function(){D[k]=el.value;ubah()};el.addEventListener('input',h);el.addEventListener('change',h)});
+ var sd=document.getElementById('bSimDrv');
+ if(sd){var info=document.getElementById('infoDrv');
+  var isi=function(){var n=(D.driver||'').trim().toLowerCase();var m=D.drivers.filter(function(d){return d.nama.toLowerCase()===n})[0];if(!m)return;D.driver_wa=m.wa||'';D.plat=m.plat||'';var a=document.getElementById('f_driver_wa'),b=document.getElementById('f_plat');if(a)a.value=D.driver_wa;if(b)b.value=D.plat;ubah()};
+  document.getElementById('f_driver').addEventListener('change',isi);
+  sd.onclick=function(){var n=(D.driver||'').trim();if(!n){info.textContent='Isi nama driver dulu.';return}var m=D.drivers.filter(function(d){return d.nama.toLowerCase()===n.toLowerCase()})[0];if(m){m.nama=n;m.wa=D.driver_wa||'';m.plat=D.plat||''}else D.drivers.push({nama:n,wa:D.driver_wa||'',plat:D.plat||''});simpan();pasangForm();document.getElementById('infoDrv').textContent='Tersimpan. Lain kali pilih nama ini, nomor dan plat terisi otomatis.'};
+  document.getElementById('bHapDrv').onclick=function(){var n=(D.driver||'').trim().toLowerCase();D.drivers=D.drivers.filter(function(d){return d.nama.toLowerCase()!==n});simpan();pasangForm()}}
  if(D.tab==='inv'){itemsUI();document.getElementById('bItem').onclick=function(){D.items.push({n:'',h:''});itemsUI()}}
  document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.t===D.tab)})}
 function kop(){return '<div class="brand"><img src="'+LOGO+'" alt="Tempera"><div><div class="brand-name">TEMPERA</div><div class="brand-sub">Teman Perjalanan</div></div></div>'}
@@ -146,7 +156,7 @@ function gambarInv(){
  var bayar=[];if(D.metode)bayar.push('Metode: '+esc(D.metode));
  return '<div class="kertas" id="inv"><div class="head">'+kop()+'<div class="inv-title"><h1>INVOICE</h1><div class="inv-no">'+esc(D.no_inv||'-')+'</div>'+badge+'</div></div>'+note+
   '<div class="grid"><div class="box"><h3>Penumpang</h3><p class="strong">'+esc(D.pel_nama||'-')+'</p>'+(D.pel_wa?'<p>WhatsApp '+esc(D.pel_wa)+'</p>':'')+'</div>'+
-  '<div class="box"><h3>Driver</h3><p class="strong">'+esc(D.driver||'-')+'</p>'+(D.driver_wa?'<p>WhatsApp '+esc(D.driver_wa)+'</p>':'')+'</div></div>'+
+  '<div class="box"><h3>Driver</h3><p class="strong">'+esc(D.driver||'-')+'</p>'+(D.driver_wa?'<p>WhatsApp '+esc(D.driver_wa)+'</p>':'')+(D.plat?'<p>Plat '+esc(D.plat)+'</p>':'')+'</div></div>'+
   '<div class="grid"><div class="box"><h3>Tanggal invoice</h3><p class="strong">'+esc(tgl(D.tgl)||'-')+'</p>'+(bayar.length?'<p>'+bayar.join(' · ')+'</p>':'')+'</div><div class="box"><h3>Perjalanan</h3>'+(tr.join('')||'<p>-</p>')+'</div></div>'+rute+
   '<table><thead><tr><th>Keterangan</th><th class="num">Jumlah</th></tr></thead><tbody>'+rows+(dis>0?'<tr><td class="disc">Diskon</td><td class="num disc">- '+rp(dis)+'</td></tr>':'')+'<tr class="total"><td>'+(st==='lunas'?'Total dibayar':'Total tagihan')+'</td><td class="num">'+rp(total)+'</td></tr></tbody></table>'+
   (D.catatan?'<div class="ket">'+esc(D.catatan)+'</div>':'')+footer()+'</div>'}
