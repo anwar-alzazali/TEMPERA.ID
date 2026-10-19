@@ -60,6 +60,15 @@ tr.click:hover{background:#f8fafc}
 .stat{background:var(--card);border-radius:14px;padding:14px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
 .stat .v{font-size:20px;font-weight:800}
 .stat .l{font-size:12px;color:var(--muted)}
+.pgrp{background:var(--card);border-radius:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.pgrp>summary{cursor:pointer;list-style:none;padding:14px 16px;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pgrp>summary::-webkit-details-marker{display:none}
+.pgrp>summary::after{content:'▾';color:var(--muted);transition:transform .2s;flex:none}
+.pgrp[open]>summary::after{transform:rotate(180deg)}
+.pgrp>summary .n{color:var(--muted);font-weight:600;font-size:12px;margin-left:8px}
+.pgrp>.pgbody{padding:0 16px 10px}
+.pgrp .card{box-shadow:none;border:0;padding:0;background:transparent;margin:0 0 8px}
+.pgrp h2{margin-top:0}
 .setrow{display:grid;grid-template-columns:1fr 1.2fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .setrow small{display:block;color:var(--muted)}
 #modal{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto}
@@ -88,6 +97,8 @@ dl.det dd{margin:0}
 .side-brand small{font-size:10px;font-weight:700;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:block;line-height:1.1}
 #nav{display:flex;flex-direction:column;gap:2px;padding:8px 12px;overflow-y:auto;flex:1}
 #nav button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:transparent;padding:10px 12px;border-radius:10px;font-weight:600;color:var(--side-ink);cursor:pointer;transition:background .15s,color .15s}
+#nav .ngrp{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:14px 12px 4px}
+#nav .ngrp:first-child{padding-top:2px}
 #nav button svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 #nav button:hover{background:var(--side-hover)}
 #nav button.on{background:var(--side-on);color:var(--side-on-ink)}
@@ -138,6 +149,8 @@ tbody tr:last-child td{border-bottom:0}
 .tb-av{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--ink);color:var(--card);font-weight:800;cursor:pointer}
 #bnav{display:none}
 .pagehead h1{margin:0;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+.ph-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.ph-row .btn{margin-top:4px}
 .pagehead p{margin:6px 0 18px;color:var(--muted);font-size:14px}
 .dash{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
 .kpi{--k-bg:var(--side-on);--k-ink:var(--accent-ink);display:flex;flex-direction:column;gap:4px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
@@ -320,6 +333,11 @@ tr.click{transition:background .15s ease}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
+/* PETA PANEL (supaya mudah dirawat)
+   - Menu: NAVS = daftar tab; NAV_GRUP = pengelompokan di sidebar; BNAV/BNAV_ISI = menu bawah HP.
+     Tab baru: tambahkan ke NAVS, buat VIEWS.<kunci>, lalu masukkan ke NAV_GRUP (kalau lupa, otomatis masuk "Lainnya").
+   - Beberapa VIEWS (pesanan, kas, pengaturan) sengaja dibungkus berlapis: bagian bawah file ini lalu 133, 154, 166, 170
+     (berkas .js dimuat berurutan di ujung halaman; 170 harus terakhir karena merapikan hasil semuanya). */
 const SB_URL = 'https://wjmotidelqgcyyujacud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 const sb = supabase.createClient(SB_URL, SB_KEY);
@@ -534,16 +552,39 @@ const ICON = {
   persetujuan: '<path d="M20 6 9 17l-5-5"/><circle cx="12" cy="12" r="9"/>'
 };
 const ICON_DEF = '<circle cx="12" cy="12" r="3"/>';
+const NAV_GRUP = [
+  ['Pesanan', ['pesanan', 'ketersediaan', 'ulasan']],
+  ['Keuangan', ['analitik', 'laporan', 'kas']],
+  ['Mitra', ['driver', 'persetujuan']],
+  ['Isi situs', ['armada', 'galeri', 'banner']],
+  ['Sistem', ['pengaturan', 'template']]
+];
+function navHtml(aktif) {
+  const ada = new Map(NAVS.filter(([k]) => !(k === 'laporan' && VIEWS.analitik)).map(([k, l]) => [k, l]));
+  const tombol = (k) => `<button type="button" data-k="${k}" class="${k === aktif ? 'on' : ''}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k] || ICON_DEF}</svg><span>${esc(ada.get(k))}</span></button>`;
+  const dipakai = new Set();
+  let h = NAV_GRUP.map(([judul, ks]) => {
+    const isi = ks.filter((k) => ada.has(k)); isi.forEach((k) => dipakai.add(k));
+    return isi.length ? `<div class="ngrp">${esc(judul)}</div>${isi.map(tombol).join('')}` : '';
+  }).join('');
+  const sisa = [...ada.keys()].filter((k) => !dipakai.has(k));   // tab baru yang belum dimasukkan kelompok
+  if (sisa.length) h += `<div class="ngrp">Lainnya</div>${sisa.map(tombol).join('')}`;
+  return h;
+}
+// Tombol menu bawah (HP) mewakili satu kelompok tab
+const BNAV_ISI = { pesanan: ['pesanan', 'ketersediaan', 'ulasan'], analitik: ['analitik', 'laporan', 'kas'], driver: ['driver', 'persetujuan'], armada: ['armada', 'galeri', 'banner'] };
+const bnavDari = (key) => Object.keys(BNAV_ISI).find((b) => BNAV_ISI[b].includes(key)) || '';
 function nav(key) {
   if (key === 'laporan' && VIEWS.analitik) key = 'analitik';
   if (!VIEWS[key]) key = 'pesanan';
   location.hash = key;
   const sc = $('#nav').scrollTop;
-  $('#nav').innerHTML = NAVS.filter(([k]) => !(k === 'laporan' && VIEWS.analitik)).map(([k, l]) => `<button type="button" data-k="${k}" class="${k === key ? 'on' : ''}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k] || ICON_DEF}</svg><span>${l}</span></button>`).join('');
+  $('#nav').innerHTML = navHtml(key);
   $('#nav').scrollTop = sc;
   $$('#nav button').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
-  $$('#bnav button[data-k]').forEach((b) => b.classList.toggle('on', b.dataset.k === key));
-  if ($('#bMore')) $('#bMore').classList.toggle('on', !BNAV.some((x) => x[0] === key));
+  const bk = bnavDari(key);
+  $$('#bnav button[data-k]').forEach((b) => b.classList.toggle('on', b.dataset.k === bk));
+  if ($('#bMore')) $('#bMore').classList.toggle('on', !bk);
   document.body.classList.remove('nav-open');
   window.scrollTo(0, 0);
   $('#view').innerHTML = '<div class="empty">Memuat…</div>';
@@ -557,7 +598,7 @@ function labelTables() {
   });
 }
 new MutationObserver(labelTables).observe($('#view'), { childList: true, subtree: true });
-const BNAV = [['pesanan', 'Pesanan'], ['analitik', 'Analitik'], ['kas', 'Kas'], ['armada', 'Armada']];
+const BNAV = [['pesanan', 'Pesanan'], ['analitik', 'Keuangan'], ['driver', 'Mitra'], ['armada', 'Isi situs']];
 $('#bnav').innerHTML = BNAV.map(([k, l]) => `<button type="button" data-k="${k}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg><span>${l}</span></button>`).join('')
   + '<button type="button" id="bMore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span>Lainnya</span></button>';
 $$('#bnav button[data-k]').forEach((b) => b.addEventListener('click', () => nav(b.dataset.k)));
@@ -616,7 +657,7 @@ function renderDash() {
 }
 VIEWS.pesanan = async function () {
   $('#view').innerHTML = `
-    <div class="pagehead"><h1>Pesanan</h1><p>Pantau pembayaran, driver, dan jadwal trip • ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' })}</p></div>
+    <div class="pagehead ph-row"><div><h1>Pesanan</h1><p>Pantau pembayaran, driver, dan jadwal trip • ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' })}</p></div><button class="btn" id="fCustom" type="button">+ Trip custom</button></div>
     <div class="dash" id="dash"></div>
     <div class="pills" id="pills">${[['', 'Semua'], ['pending', 'Perlu bayar'], ['dp_paid', 'DP'], ['paid', 'Lunas'], ['confirmed', 'Dikonfirmasi'], ['completed', 'Selesai'], ['cancelled', 'Batal']].map(([v, l]) => `<button type="button" class="pill${v === '' ? ' on' : ''}" data-v="${v}">${l}</button>`).join('')}</div>
     <div class="bar">
@@ -624,7 +665,6 @@ VIEWS.pesanan = async function () {
       <select id="fSumber"><option value="">Semua sumber</option><option value="direct">Langsung dari web</option><option value="driver">Link/QR driver</option><option value="manual">Trip custom</option></select>
       <input id="fQ" placeholder="Cari nama / order / invoice / WA">
       <button class="btn" id="fGo" type="button">Muat ulang</button>
-      <button class="btn" id="fCustom" type="button">+ Trip custom</button>
     </div>
     <div class="card" id="list"></div>`;
   $('#fGo').addEventListener('click', loadOrders);
@@ -1875,5 +1915,6 @@ document.addEventListener('click', async (e) => {
 <script src="148_panel_kode_unik.js"></script>
 <script src="154_panel_destinasi.js"></script>
 <script src="166_panel_pengumuman.js"></script>
+<script src="170_panel_rapi.js"></script>
 </body>
 </html>
