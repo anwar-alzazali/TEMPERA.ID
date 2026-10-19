@@ -112,6 +112,10 @@ function formTripCustom() {
     <div class="row2"><label>Driver bertugas<select id="tcDriver">${drOpts}</select></label><label>Plat (kosongkan = plat driver)<input id="tcPlat"></label></div>
     <div class="mbtns" style="justify-content:flex-start"><button class="btn" id="tcSimpan" type="button">Simpan trip</button><button class="btn ghost" id="tcBatal" type="button">Batal</button></div>`);
   $('#tcBatal').addEventListener('click', closeModal);
+  $('#tcDriver').addEventListener('change', () => {
+    const o = $('#tcDriver').selectedOptions[0]; const plat = o && o.dataset.plat;
+    $('#tcPlat').placeholder = plat ? plat + ' (otomatis dari data driver)' : '';
+  });
   $('#tcSt').addEventListener('change', () => { $('#tcDpW').hidden = $('#tcSt').value !== 'dp_paid'; });
   $('#tcSimpan').addEventListener('click', async () => {
     const nama = $('#tcNama').value.trim(), wa = normWA($('#tcWa').value);
