@@ -361,3 +361,7 @@ h2.sec-judul + div.w-16{display:none}
 .tc-steps{list-style:none;counter-reset:tc;display:flex;flex-wrap:wrap;gap:8px 20px;margin:0 0 22px;padding:0;font-size:12.5px;font-weight:600;color:var(--text-primary)}
 .tc-steps li{counter-increment:tc;display:flex;align-items:center;gap:8px}
 .tc-steps li::before{content:counter(tc);width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:var(--accent);color:var(--on-accent)}
+/* Armada: label di atas foto dibuat kecil agar tidak menutup mobil */
+#armada-cards .armada-img-container>div.absolute.top-3{top:6px!important;left:6px!important;padding:3px 8px!important;max-width:calc(100% - 12px);line-height:1.2}
+#armada-cards .armada-img-container>div.absolute.top-3 span{font-size:8px!important;letter-spacing:.02em}
+@media(min-width:768px){#armada-cards .armada-img-container>div.absolute.top-3{top:10px!important;left:10px!important;padding:4px 10px!important}#armada-cards .armada-img-container>div.absolute.top-3 span{font-size:9px!important}}
