@@ -33,7 +33,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <!-- ===================== [02] CSS & LIBRARY ===================== -->
-<link rel="stylesheet" href="css/main.css?v=20261019d">
+<link rel="stylesheet" href="css/main.css?v=20261019e">
 <link rel="stylesheet" href="css/driver.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config={theme:{extend:{fontFamily:{serif:['Cormorant Garamond','serif'],sans:['Inter','sans-serif']}}}}</script>
@@ -123,6 +123,16 @@
     </div>
   </div>
 </header>
+
+<!-- BARIS KEPERCAYAAN: hanya hal yang benar adanya (tanpa klaim "unit baru") -->
+<section class="trust-strip theme-section border-t" style="border-color:var(--border-soft)" aria-label="Keunggulan layanan">
+  <ul class="trust-list max-w-5xl mx-auto">
+    <li><span class="ic ic-fuel"></span><div><b data-i18n="tr1_t">BBM dan air mineral termasuk</b><small data-i18n="tr1_s">Tanpa biaya bensin tambahan</small></div></li>
+    <li><span class="ic ic-wallet"></span><div><b data-i18n="tr2_t">Bisa bayar DP</b><small data-i18n="tr2_s">Sisanya tunai ke driver</small></div></li>
+    <li><span class="ic ic-file"></span><div><b data-i18n="tr3_t">Invoice dan surat jalan digital</b><small data-i18n="tr3_s">Bisa dicek keasliannya lewat QR</small></div></li>
+    <li><span class="ic ic-shield"></span><div><b data-i18n="tr4_t">Usaha terdaftar</b><small data-i18n="tr4_s">NIB 1710260026226 (OSS)</small></div></li>
+  </ul>
+</section>
 
 <!-- CUACA: latar mengikuti waktu (pagi/siang/sore/malam) -->
 <section id="cuaca" class="py-24 theme-section-alt border-t relative" style="border-color:var(--border-soft)">
@@ -249,6 +259,12 @@
     <tbody id="armada-harga-body" class="divide-y text-sm"></tbody>
   </table></div></div></div>
 </div>
+</section>
+
+<!-- JEDA FOTO: satu foto lebar + satu kalimat -->
+<section class="photo-break" aria-label="Kawah Putih">
+  <img src="images/kawah_putih_lebar.webp" alt="Kawah Putih Ciwidey, salah satu tujuan sewa mobil Bandung" loading="lazy" decoding="async">
+  <p data-i18n="pb_text">Nikmati Bandungnya. Urusan jalan, serahkan ke driver kami.</p>
 </section>
 
 <!-- TRIP CUSTOM (pengganti Antar Kota): harga lewat WhatsApp -->
@@ -447,6 +463,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261019d"></script>
+<script src="js/main.js?v=20261019e"></script>
 </body>
 </html>

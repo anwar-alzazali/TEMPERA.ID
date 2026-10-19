@@ -299,3 +299,28 @@ h2.sec-judul + div.w-16{display:none}
 #faq .faq-item.theme-card:hover{box-shadow:none}
 #faq .faq-item summary{padding:18px 4px}
 #faq .faq-item p{padding:0 4px 18px}
+
+/* ===== Baris kepercayaan + jeda foto (19 Okt 2026) ===== */
+.ic-fuel{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='3' x2='15' y1='22' y2='22'/%3E%3Cline x1='4' x2='14' y1='9' y2='9'/%3E%3Cpath d='M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18'/%3E%3Cpath d='M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5'/%3E%3C/svg%3E")}
+.ic-wallet{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1'/%3E%3Cpath d='M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4'/%3E%3C/svg%3E")}
+.ic-file{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E")}
+.ic-shield{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E")}
+.trust-list{list-style:none;margin:0 auto;padding:6px 16px;display:grid;grid-template-columns:1fr 1fr}
+.trust-list li{display:flex;gap:10px;align-items:flex-start;padding:16px 8px;border-bottom:1px solid var(--border-soft)}
+.trust-list li:nth-child(odd){border-right:1px solid var(--border-soft);padding-right:12px}
+.trust-list li:nth-last-child(-n+2){border-bottom:0}
+.trust-list .ic{flex:none;width:24px;height:24px;margin:2px 0 0;color:var(--accent)}
+.trust-list b{display:block;font-size:12.5px;line-height:1.3;color:var(--text-primary)}
+.trust-list small{display:block;margin-top:2px;font-size:11px;line-height:1.35;color:var(--text-muted)}
+@media (min-width:768px){
+  .trust-list{grid-template-columns:repeat(4,1fr)}
+  .trust-list li{border-bottom:0;padding:22px 16px}
+  .trust-list li:nth-child(odd){border-right:0;padding-right:16px}
+  .trust-list li:not(:last-child){border-right:1px solid var(--border-soft)}
+  .trust-list b{font-size:13.5px}.trust-list small{font-size:12px}
+}
+.photo-break{position:relative;height:clamp(240px,52vw,420px);overflow:hidden;background:#0e3a46}
+.photo-break img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-break::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(4,30,40,.72) 0%,rgba(4,30,40,.15) 55%,rgba(4,30,40,0) 100%)}
+.photo-break p{position:absolute;z-index:1;left:0;right:0;bottom:0;margin:0;padding:0 20px 26px;max-width:640px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(24px,5.6vw,38px);line-height:1.15;color:#fff;text-wrap:balance;text-shadow:0 2px 14px rgba(0,0,0,.35)}
+@media (min-width:768px){.photo-break p{left:max(24px,calc(50% - 640px));padding-bottom:36px}}

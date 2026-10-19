@@ -68,6 +68,9 @@ id: {
   xp_yes: 'Tetap gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Armada Sewa Mobil Bandung',
+  tr1_t: 'BBM dan air mineral termasuk', tr1_s: 'Tanpa biaya bensin tambahan', tr2_t: 'Bisa bayar DP', tr2_s: 'Sisanya tunai ke driver',
+  tr3_t: 'Invoice dan surat jalan digital', tr3_s: 'Bisa dicek keasliannya lewat QR', tr4_t: 'Usaha terdaftar', tr4_s: 'NIB 1710260026226 (OSS)',
+  pb_text: 'Nikmati Bandungnya. Urusan jalan, serahkan ke driver kami.',
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
   th_fleet: 'Armada', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
   cap_comfort: '{n} Nyaman', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + driver • Maks {max}',
@@ -255,6 +258,9 @@ ms: {
   xp_yes: 'Teruskan gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
   fleet_title: 'Kereta Sewa di Bandung',
+  tr1_t: 'Petrol dan air mineral termasuk', tr1_s: 'Tiada caj petrol tambahan', tr2_t: 'Boleh bayar deposit', tr2_s: 'Baki secara tunai kepada pemandu',
+  tr3_t: 'Invois dan surat jalan digital', tr3_s: 'Boleh disahkan melalui QR', tr4_t: 'Perniagaan berdaftar', tr4_s: 'NIB 1710260026226 (OSS)',
+  pb_text: 'Nikmati Bandung. Urusan jalan, serahkan kepada pemandu kami.',
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (kereta + pemandu + petrol). Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam.',
   th_fleet: 'Kereta', th_cap: 'Selesa / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Tindakan',
   cap_comfort: '{n} Selesa', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + pemandu • Maks {max}',
