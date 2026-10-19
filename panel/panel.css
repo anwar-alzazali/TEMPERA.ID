@@ -138,6 +138,7 @@ tbody tr:last-child td{border-bottom:0}
 .pagehead h1{margin:0;font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
 .ph-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .ph-row .btn{margin-top:4px}
+@media (max-width:700px){.ph-row{gap:0}.ph-row>div{width:100%}.ph-row .btn{margin:-6px 0 14px}}
 .pagehead p{margin:6px 0 18px;color:var(--muted);font-size:14px}
 .dash{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
 .kpi{--k-bg:var(--side-on);--k-ink:var(--accent-ink);display:flex;flex-direction:column;gap:4px;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
