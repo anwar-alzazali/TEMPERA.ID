@@ -388,3 +388,19 @@ body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
 .dcard .dchip{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;padding:8px 10px;font-size:12.5px}
 .dmore{text-align:center}
 .dmore>summary{display:flex;justify-content:center;width:100%;padding:12px 2px 4px}
+
+/* Kalkulator Trip Custom */
+.tc-hitung{margin:0 0 20px;padding:16px;border:1px solid var(--border-soft);border-radius:18px;display:grid;gap:12px}
+.tc-hitung[hidden]{display:none}
+.tc-jenis{display:grid;gap:8px}
+@media(min-width:560px){.tc-jenis{grid-template-columns:1fr 1fr}}
+.tc-jenis label{display:flex;gap:8px;align-items:center;padding:10px 14px;border:1px solid var(--border-soft);border-radius:14px;font-size:14px;font-weight:600;cursor:pointer}
+.tc-jenis label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.tc-jam{display:flex;gap:10px;align-items:center;font-size:14px;font-weight:600}
+.tc-jam[hidden]{display:none}
+.tc-jam select{padding:8px 12px;border-radius:12px;border:1px solid var(--border-soft);background:transparent;color:inherit;font:inherit}
+.tc-hasil{display:grid;gap:2px}
+.tc-hasil-l{font-size:12px;font-weight:700;color:var(--text-muted)}
+.tc-hasil b{font-size:28px;line-height:1.2;color:var(--accent)}
+.tc-hasil small{font-size:12px;color:var(--text-secondary)}
+.tc-cat{font-size:12px;color:var(--text-muted);margin:0}

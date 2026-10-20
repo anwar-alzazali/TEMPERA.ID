@@ -86,9 +86,14 @@ id: {
   av_wa_msg: 'Halo Admin Tempera, saya mau tanya ketersediaan armada untuk tanggal {tgl}.',
 
   tc_title: 'Trip Custom', tc_sub: 'Untuk perjalanan di luar paket 12 jam: antar kota, bandara, mudik, atau menginap',
-  tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Harga menyesuaikan jarak, jumlah hari, dan jam berangkat, jadi dihitung admin setelah Anda memilih tujuan.', tc_s1: 'Pilih tujuan', tc_s2: 'Kirim lewat WhatsApp', tc_s3: 'Admin balas dengan harga',
+  tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Pilih tujuan untuk melihat perkiraan ongkos, lalu kirim ke admin lewat WhatsApp. Trip lebih dari sehari atau tujuan lain dihitung admin.', tc_s1: 'Pilih tujuan', tc_s2: 'Kirim lewat WhatsApp', tc_s3: 'Admin konfirmasi harga',
   tc_soetta: 'Bandara Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
   tc_multi: 'Trip 2–3 hari', tc_other: 'Tujuan lain', tc_btn: 'Tanya harga lewat WhatsApp',
+  tc_j_antar: 'Antar saja (tidak ditunggu)', tc_j_tunggu: 'Ditunggu, lalu pulang', tc_jam: 'Ditunggu berapa jam?', tc_jam_n: '{n} jam', tc_est: 'Perkiraan ongkos',
+  tc_cat: 'Perkiraan dengan jemput di Kota Bandung, belum termasuk tol dan parkir. Harga akhir dikonfirmasi admin.',
+  tc_rinci_antar: '{km} km satu arah × {tarif}/km', tc_rinci_min: 'tarif minimum luar kota', tc_rinci_tunggu: '{km2} km pulang-pergi × {tarif}/km + {jam} jam tunggu × {tj}',
+  tc_msg_hit: 'Halo Admin Tempera, saya mau Trip Custom Bandung - {dest}, {jenis}. Perkiraan dari situs: {harga}. Mohon dikonfirmasi.',
+  tc_msg_j_antar: 'antar saja', tc_msg_j_tunggu: 'ditunggu {jam} jam lalu pulang',
   tc_msg_dest: 'Halo Admin Tempera, saya mau tanya Trip Custom: Bandung - {dest}.',
   tc_msg_multi: 'Halo Admin Tempera, saya mau tanya Trip Custom 2–3 hari.',
   tc_msg_other: 'Halo Admin Tempera, saya mau tanya Trip Custom ke tujuan lain.',
@@ -281,6 +286,11 @@ ms: {
   tc_desc: 'Kereta dan pemandu khas untuk rombongan anda, bukan pengangkutan awam. Harga bergantung pada jarak, bilangan hari dan masa bertolak, jadi dikira oleh admin selepas anda memilih destinasi.', tc_s1: 'Pilih destinasi', tc_s2: 'Hantar melalui WhatsApp', tc_s3: 'Admin balas dengan harga',
   tc_soetta: 'Lapangan Terbang Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
   tc_multi: 'Trip 2–3 hari', tc_other: 'Destinasi lain', tc_btn: 'Tanya harga melalui WhatsApp',
+  tc_j_antar: 'Hantar sahaja (tidak ditunggu)', tc_j_tunggu: 'Ditunggu, kemudian pulang', tc_jam: 'Ditunggu berapa jam?', tc_jam_n: '{n} jam', tc_est: 'Anggaran kos',
+  tc_cat: 'Anggaran dengan ambil di Bandung, belum termasuk tol dan parkir. Harga akhir disahkan admin.',
+  tc_rinci_antar: '{km} km sehala × {tarif}/km', tc_rinci_min: 'kadar minimum luar bandar', tc_rinci_tunggu: '{km2} km pergi-balik × {tarif}/km + {jam} jam menunggu × {tj}',
+  tc_msg_hit: 'Halo Admin Tempera, saya mahu Trip Custom Bandung - {dest}, {jenis}. Anggaran dari laman: {harga}. Mohon disahkan.',
+  tc_msg_j_antar: 'hantar sahaja', tc_msg_j_tunggu: 'ditunggu {jam} jam kemudian pulang',
   tc_msg_dest: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai: Bandung - {dest}.',
   tc_msg_multi: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai 2–3 hari.',
   tc_msg_other: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai ke destinasi lain.',
@@ -1219,8 +1229,38 @@ function renderCrossWarning(crossType,base,cost){
 /* ---------- Trip Custom: pilihan tujuan mengisi link WhatsApp ---------- */
 const TRIP_CUSTOM={ soetta:'dest_soetta', garut:'Garut', tasik:'Tasikmalaya', jakarta:'Jakarta' };
 let tcSelected='soetta', tcCustomMsg='';
+/* Kalkulator Trip Custom (antar saja / ditunggu). Ubah angka di sini bila tarif berubah. Jarak = km satu arah dari Kota Bandung (perkiraan). */
+const TC_TARIF={km:6000, minLuar:500000, tunggu:70000};
+const TC_JARAK={ soetta:160, garut:68, tasik:108, jakarta:150 };
+function tcHitung(){
+  const km=TC_JARAK[tcSelected]; if(!km) return null;
+  const tunggu=(document.querySelector('input[name="tcJenis"]:checked')||{}).value==='tunggu';
+  const jam=tunggu?Math.max(1,Number(document.getElementById('tcJam')?.value)||1):0;
+  const rp=n=>formatPrice(n);
+  if(!tunggu){
+    const dasar=km*TC_TARIF.km, total=Math.max(dasar,TC_TARIF.minLuar);
+    return {total,jam:0,tunggu:false,rinci:t('tc_rinci_antar',{km,tarif:rp(TC_TARIF.km)})+(total>dasar?' · '+t('tc_rinci_min'):'')};
+  }
+  const total=km*2*TC_TARIF.km+jam*TC_TARIF.tunggu;
+  return {total,jam,tunggu:true,rinci:t('tc_rinci_tunggu',{km2:km*2,tarif:rp(TC_TARIF.km),jam,tj:rp(TC_TARIF.tunggu)})};
+}
+function tcRender(){
+  const box=document.getElementById('tcHitung'); if(!box) return;
+  const ada=!!TC_JARAK[tcSelected]; box.hidden=!ada; if(!ada) return;
+  const sel=document.getElementById('tcJam');
+  if(sel&&!sel.options.length){ for(let i=1;i<=12;i++){ const o=document.createElement('option'); o.value=i; o.textContent=t('tc_jam_n',{n:i}); sel.appendChild(o); } sel.value='2'; }
+  const tunggu=(document.querySelector('input[name="tcJenis"]:checked')||{}).value==='tunggu';
+  document.getElementById('tcJamBox').hidden=!tunggu;
+  const r=tcHitung(); if(!r) return;
+  document.getElementById('tcHarga').textContent=formatPrice(r.total);
+  document.getElementById('tcRinci').textContent=r.rinci;
+}
+document.addEventListener('change',(e)=>{ if(e.target.name==='tcJenis'||e.target.id==='tcJam') refreshTripCustomLink(); });
 function tripCustomMessage(){
   if(tcCustomMsg) return tcCustomMsg;
+  const hit=tcHitung();
+  if(hit){ const d=TRIP_CUSTOM[tcSelected]; const dest=d&&d.startsWith('dest_')?t(d):d;
+    return t('tc_msg_hit',{dest,jenis:hit.tunggu?t('tc_msg_j_tunggu',{jam:hit.jam}):t('tc_msg_j_antar'),harga:formatPrice(hit.total)}); }
   if(tcSelected==='multi') return t('tc_msg_multi');
   if(tcSelected==='other') return t('tc_msg_other');
   const d=TRIP_CUSTOM[tcSelected]; return t('tc_msg_dest',{dest:d&&d.startsWith('dest_')?t(d):d});
@@ -1228,6 +1268,7 @@ function tripCustomMessage(){
 function refreshTripCustomLink(){
   const box=document.getElementById('tcTujuan'), a=document.getElementById('tcWa'); if(!box||!a) return;
   box.querySelectorAll('.tc-chip').forEach(b=>{ const on=b.dataset.tc===tcSelected; b.classList.toggle('on',on); b.setAttribute('aria-pressed',String(on)); });
+  tcRender();
   a.href=waLink(tripCustomMessage());
 }
 function setTujuan(key,customMsg){ tcSelected=key; tcCustomMsg=customMsg||''; refreshTripCustomLink(); }
