@@ -61,7 +61,7 @@ const RES = {
           return `<button class="btn ghost sm" type="button" data-print="${esc(r.slug)}">Cetak kartu</button>`;
         } }],
     fields: [
-      { key: 'slug', label: 'Slug (huruf kecil, untuk link ?r=slug)', type: 'text', required: true, createOnly: true },
+      { key: 'slug', label: 'Slug (otomatis dari kode ID, untuk link ?r=slug)', type: 'text', required: true, createOnly: true, autoNew: true },
       { key: 'name', label: 'Nama', type: 'text', required: true },
       { key: 'phone', label: 'Nomor WA (08... atau 62...)', type: 'text', required: true },
       { key: 'plate', label: 'Plat nomor kendaraan', type: 'text' },
@@ -70,7 +70,7 @@ const RES = {
       { key: 'motto', label: 'Motto', type: 'text' },
       { key: 'photo_url', label: 'Foto (pilih dari galeri HP)', type: 'photo', full: true },
       { key: 'is_active', label: 'Aktif', type: 'bool' }],
-    note: '<div class="help">ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama dan kartu cetak yang sudah dibuat.</div>'
+    note: '<div class="help">Kode ID (contoh TMP-024) dan slug (tmp-024) dibuat otomatis saat disimpan. ID Card driver dan link referral berbeda link. Ganti token akan langsung mematikan link ID card lama dan kartu cetak yang sudah dibuat.</div>'
   },
   template: {
     table: 'wa_templates', title: 'Template WA', pk: 'id', order: { col: 'id', asc: true }, noCreate: true, stamp: true,
@@ -147,7 +147,7 @@ function openForm(key, row) {
   openModal(`
     <h2>${isNew ? 'Tambah' : 'Ubah'} ${esc(R.title)}</h2>
     ${R.note || ''}
-    <div class="fgrid">${R.fields.map((f) => fieldHTML(f, src[f.key], f.createOnly && !isNew)).join('')}</div>
+    <div class="fgrid">${R.fields.filter((f) => !(f.autoNew && isNew)).map((f) => fieldHTML(f, src[f.key], f.createOnly && !isNew)).join('')}</div>
     <div class="mbtns">
       ${(!isNew && R.canDelete) ? '<button class="btn danger" id="mDel" type="button">Hapus</button>' : ''}
       <button class="btn ghost" id="mCancel" type="button">Batal</button>
@@ -193,6 +193,7 @@ async function saveForm(key, row) {
   const R = RES[key], isNew = !row, payload = {};
   for (const f of R.fields) {
     if (f.createOnly && !isNew) continue;
+    if (f.autoNew && isNew) continue; // diisi trigger database (kode ID dan slug)
     const v = readField(f, f.required);
     if (f.required && (v === null || v === '' || (Array.isArray(v) && !v.length))) { toast(`${f.label} wajib diisi`, true); return; }
     payload[f.key] = v;
