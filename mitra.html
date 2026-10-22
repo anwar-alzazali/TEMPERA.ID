@@ -612,42 +612,64 @@ function bukaKamera(orderId){ // dipanggil dari ketukan tombol: lokasi mulai dib
   kam.posP=ambilLokasi().then((c)=>{ kam.pos=c; return c; }); kam.posP.catch(()=>{});
   $('#fotoFile').value=''; $('#fotoFile').click();
 }
-async function namaLokasi(lat,lng){
+async function alamatLengkap(lat,lng){ // alamat dari OpenStreetMap: desa, kecamatan, kabupaten, provinsi, kode pos
   try{
-    const c=new AbortController(), t=setTimeout(()=>c.abort(),4000);
-    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=17&addressdetails=1&accept-language=id&lat=${lat}&lon=${lng}`,{signal:c.signal}); clearTimeout(t);
-    const a=(await r.json()).address||{};
-    const p=[a.road||a.pedestrian||a.neighbourhood,a.suburb||a.village||a.city_district,a.city||a.town||a.county||a.regency].filter(Boolean);
-    return [...new Set(p)].join(', ').slice(0,90);
+    const c=new AbortController(), t=setTimeout(()=>c.abort(),5000);
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=18&accept-language=id&lat=${lat}&lon=${lng}`,{signal:c.signal}); clearTimeout(t);
+    const j=await r.json();
+    const parts=String(j.display_name||'').split(',').map(x=>x.trim()).filter(x=>x&&x.toLowerCase()!=='indonesia');
+    return parts.slice(0,6).join(', ').slice(0,160);
   }catch(e){ return ''; }
 }
-function teksWaktu(d){
-  const p=new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).formatToParts(d);
-  const g=(t)=>(p.find(x=>x.type===t)||{}).value||'';
-  return `${g('day')} ${g('month')} ${g('year')}  ${g('hour')}.${g('minute')} WIB`;
+function teksWaktuParts(d){
+  const f=(o)=>{ const p=new Intl.DateTimeFormat('id-ID',Object.assign({timeZone:'Asia/Jakarta'},o)).formatToParts(d); return (t)=>(p.find(x=>x.type===t)||{}).value||''; };
+  const a=f({day:'numeric',month:'long',year:'numeric',weekday:'long'}), b=f({hour:'2-digit',minute:'2-digit',hour12:false});
+  return {jam:`${b('hour')}:${b('minute')}`, tanggal:`${a('day')} ${a('month')} ${a('year')}`, hari:a('weekday')};
 }
+function kodeFoto(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r=new Uint8Array(12); crypto.getRandomValues(r); return [...r].map(v=>A[v%A.length]).join(''); }
 async function logoEmas(){ // logo Tempera emas (aset resmi), dipotong tepat pada gambarnya
   const img=await muatGambar('images/logo_classic_gold_transparent.png');
   const t=document.createElement('canvas'); t.width=1328; t.height=1284; t.getContext('2d').drawImage(img,0,154,1328,1284,0,0,1328,1284);
   return t;
 }
-async function buatFoto(sumber,sw,sh){
+async function buatFoto(sumber,sw,sh){ // stempel gaya lapangan: logo, jam besar, tanggal+hari, alamat lengkap, Kode Foto
   const sk=Math.min(1,1280/Math.max(sw,sh)), W=Math.round(sw*sk), H=Math.round(sh*sk);
   const lat=kam.pos.latitude, lng=kam.pos.longitude;
-  const nama=await namaLokasi(lat,lng), waktu=teksWaktu(new Date());
+  const alamat=await alamatLengkap(lat,lng), wk=teksWaktuParts(new Date());
   const koor=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-  kam.lokasi=(nama?nama+' ('+koor+')':koor).slice(0,200);
+  kam.kode=kodeFoto(); kam.lokasi=((alamat?alamat+' | ':'')+koor).slice(0,250);
   const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
   x.drawImage(sumber,0,0,W,H);
-  const fs=Math.round(Math.min(W,H)*0.04), pad=Math.round(fs*0.7), F='system-ui,"Segoe UI",Roboto,Arial,sans-serif';
+  const F='system-ui,"Segoe UI",Roboto,Arial,sans-serif', u=Math.min(W,H), m=Math.round(u*0.045);
+  const fsB=Math.round(u*0.13), fsT=Math.round(u*0.037), fsK=Math.round(u*0.03), gap=Math.round(fsT*0.4);
   let logo=null; try{ logo=await logoEmas(); }catch(e){}
-  const lw=logo?Math.round(fs*3.2):0, lh=logo?Math.round(lw*1284/1328):0, tx=pad+(logo?lw+pad:0);
-  x.font=`${fs}px ${F}`; const baris=nama?bungkusTeks(x,nama,W-tx-pad).slice(0,2):[];
-  const lines=[waktu,...baris,koor], strip=Math.round(lines.length*fs*1.3+pad*1.4);
-  x.fillStyle='rgba(0,0,0,.62)'; x.fillRect(0,H-strip,W,strip);
-  if(logo) x.drawImage(logo,pad,H-strip+Math.round((strip-lh)/2),lw,lh);
-  x.textAlign='left'; x.textBaseline='top'; x.fillStyle='#fff';
-  lines.forEach((t,i)=>{ x.font=`${i===0?'700 ':''}${i===lines.length-1?Math.round(fs*0.85):fs}px ${F}`; x.fillText(t,tx,H-strip+Math.round(pad*0.7+i*fs*1.3)); });
+  x.font=`600 ${fsT}px ${F}`;
+  const baris=bungkusTeks(x,alamat||koor,W-2*m).slice(0,3);
+  const hLogo=logo?Math.round(fsB*0.75):0, hJam=Math.round(fsB*1.0), hAlm=baris.length*Math.round(fsT*1.3), hKode=Math.round(fsK*1.9);
+  const top=H-m-(hLogo+gap+hJam+gap+hAlm+gap+hKode);
+  const g=x.createLinearGradient(0,top-fsT*3,0,H); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(0.35,'rgba(0,0,0,.45)'); g.addColorStop(1,'rgba(0,0,0,.72)');
+  x.fillStyle=g; x.fillRect(0,top-Math.round(fsT*3),W,H-top+Math.round(fsT*3));
+  x.shadowColor='rgba(0,0,0,.55)'; x.shadowBlur=Math.round(fsT*0.3); x.textAlign='left'; x.textBaseline='alphabetic'; x.fillStyle='#fff';
+  let y=top;
+  if(logo){ x.drawImage(logo,m,y,Math.round(hLogo*1328/1284),hLogo); }
+  y+=hLogo+gap;
+  x.font=`800 ${fsB}px ${F}`; try{ x.letterSpacing=Math.round(-fsB*0.03)+'px'; }catch(e){}
+  const jb=y+Math.round(fsB*0.82); x.fillText(wk.jam,m,jb); const tw=x.measureText(wk.jam).width; try{ x.letterSpacing='0px'; }catch(e){}
+  const lx=m+tw+Math.round(fsT*0.8);
+  x.shadowBlur=0; x.fillStyle='#E5B80B'; x.fillRect(lx,y+Math.round(fsB*0.12),Math.max(3,Math.round(fsT*0.1)),Math.round(fsB*0.72));
+  x.shadowBlur=Math.round(fsT*0.3); x.fillStyle='#fff'; const dx=lx+Math.round(fsT*0.8);
+  x.font=`700 ${Math.round(fsT*1.05)}px ${F}`; x.fillText(wk.tanggal,dx,y+Math.round(fsB*0.40));
+  x.font=`500 ${Math.round(fsT*1.05)}px ${F}`; x.fillText(wk.hari,dx,y+Math.round(fsB*0.82));
+  y+=hJam+gap;
+  x.font=`600 ${fsT}px ${F}`; baris.forEach((t,i)=>{ x.fillText(t,m,y+Math.round(fsT*1.0)+i*Math.round(fsT*1.3)); });
+  y+=hAlm+gap;
+  x.shadowBlur=0; x.fillStyle='rgba(255,255,255,.4)'; x.fillRect(m,y,Math.round(W*0.45),2);
+  // perisai kecil + Kode Foto
+  const sz=Math.round(fsK*1.15), sx=m, sy=y+Math.round(fsK*0.55);
+  x.strokeStyle='#fff'; x.lineWidth=Math.max(2,Math.round(fsK*0.1)); x.beginPath();
+  x.moveTo(sx+sz/2,sy); x.lineTo(sx+sz,sy+sz*0.18); x.lineTo(sx+sz,sy+sz*0.55); x.lineTo(sx+sz/2,sy+sz); x.lineTo(sx,sy+sz*0.55); x.lineTo(sx,sy+sz*0.18); x.closePath(); x.stroke();
+  x.fillStyle='rgba(255,255,255,.85)'; x.font=`500 ${fsK}px ${F}`; x.fillText('Kode Foto:',m+sz+Math.round(fsK*0.5),sy+Math.round(fsK*0.95));
+  const kw=x.measureText('Kode Foto: ').width; x.font=`800 ${fsK}px ${F}`; x.fillStyle='#fff'; x.fillText(kam.kode,m+sz+Math.round(fsK*0.5)+kw,sy+Math.round(fsK*0.95));
   let q=0.82, url=c.toDataURL('image/jpeg',q);
   while(url.length*0.75>650000&&q>0.4){ q-=0.1; url=c.toDataURL('image/jpeg',q); }
   kam.foto=url; $('#fotoHasil').src=url; fotoMode('hasil'); fotoMsg('Periksa foto. Jika jelas, tekan Pakai foto.');
@@ -676,7 +698,7 @@ $('#fotoUlang').addEventListener('click',()=>{ if(!kam.sibuk) bukaKamera(kam.ord
 $('#fotoTutup').addEventListener('click',tutupKamera);
 $('#fotoPakai').addEventListener('click',async()=>{
   if(!kam.foto||kam.sibuk) return; kam.sibuk=true; $('#fotoPakai').disabled=true; fotoMsg('Mengirim foto…');
-  const r=await api('driver-foto',{token:token.get(),aksi:'unggah',order_id:kam.order,foto:kam.foto,lokasi:kam.lokasi,lat:kam.pos&&kam.pos.latitude,lng:kam.pos&&kam.pos.longitude,akurasi:kam.pos&&kam.pos.accuracy,jam_hp:new Date().toISOString()});
+  const r=await api('driver-foto',{token:token.get(),aksi:'unggah',order_id:kam.order,foto:kam.foto,lokasi:kam.lokasi,kode:kam.kode,lat:kam.pos&&kam.pos.latitude,lng:kam.pos&&kam.pos.longitude,akurasi:kam.pos&&kam.pos.accuracy,jam_hp:new Date().toISOString()});
   kam.sibuk=false;
   if(r&&r.ok){ fotoMsg('Foto tersimpan ('+r.nomor+'/'+FOTO_MAKS+').'); muatFoto(); setTimeout(tutupKamera,1200); return; }
   if(r&&r.keluar){ tutupKamera(); token.del(); tampil('vMasuk'); return; }
