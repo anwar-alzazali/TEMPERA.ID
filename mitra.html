@@ -645,13 +645,22 @@ async function buatFoto(sumber,sw,sh){ // stempel gaya lapangan: logo, jam besar
   let logo=null; try{ logo=await logoEmas(); }catch(e){}
   x.font=`600 ${fsT}px ${F}`;
   const baris=bungkusTeks(x,alamat||koor,W-2*m).slice(0,3);
-  const hLogo=logo?Math.round(fsB*1.15):0, hJam=Math.round(fsB*1.0), hAlm=baris.length*Math.round(fsT*1.3), hKode=Math.round(fsK*1.9);
+  const hLogo=Math.round(fsB*0.95), hJam=Math.round(fsB*1.0), hAlm=baris.length*Math.round(fsT*1.3), hKode=Math.round(fsK*1.9);
   const top=H-m-(hLogo+gap+hJam+gap+hAlm+gap+hKode);
   const g=x.createLinearGradient(0,top-fsT*3,0,H); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(0.35,'rgba(0,0,0,.45)'); g.addColorStop(1,'rgba(0,0,0,.72)');
   x.fillStyle=g; x.fillRect(0,top-Math.round(fsT*3),W,H-top+Math.round(fsT*3));
   x.shadowColor='rgba(0,0,0,.55)'; x.shadowBlur=Math.round(fsT*0.3); x.textAlign='left'; x.textBaseline='alphabetic'; x.fillStyle='#fff';
   let y=top;
-  if(logo){ x.drawImage(logo,m,y,Math.round(hLogo*1328/1284),hLogo); }
+  { // kunci merek tanpa latar: logo emas + tulisan TEMPERA + tagline
+    const lw=Math.round(hLogo*1328/1284); let tx0=m;
+    if(logo){ x.drawImage(logo,m,y,lw,hLogo); tx0=m+lw+Math.round(fsT*0.7); }
+    const SERIF='Georgia,"Times New Roman",serif';
+    x.fillStyle='#E5B80B'; x.font=`700 ${Math.round(fsT*1.75)}px ${SERIF}`; try{ x.letterSpacing=Math.round(fsT*0.12)+'px'; }catch(e){}
+    x.fillText('TEMPERA',tx0,y+Math.round(hLogo*0.55)); try{ x.letterSpacing='0px'; }catch(e){}
+    x.fillStyle='rgba(255,255,255,.88)'; x.font=`500 ${Math.round(fsK*0.95)}px ${F}`;
+    x.fillText('Teman Perjalanan \u2022 Private Trip Bandung',tx0,y+Math.round(hLogo*0.55)+Math.round(fsK*1.45));
+    x.fillStyle='#fff';
+  }
   y+=hLogo+gap;
   x.font=`800 ${fsB}px ${F}`; try{ x.letterSpacing=Math.round(-fsB*0.03)+'px'; }catch(e){}
   const jb=y+Math.round(fsB*0.82); x.fillText(wk.jam,m,jb); const tw=x.measureText(wk.jam).width; try{ x.letterSpacing='0px'; }catch(e){}
