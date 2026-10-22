@@ -85,6 +85,16 @@ header.top .who span{font-size:13px;color:var(--muted)}
 .hist .top{display:flex;justify-content:space-between;gap:10px}
 .hist .earn{font-weight:800;color:var(--ok);white-space:nowrap}
 .note{font-size:12px;color:var(--muted);margin-top:4px}
+.foto{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding:10px 12px;border:1px dashed var(--line);border-radius:12px}
+.fotoov{position:fixed;inset:0;z-index:100;background:#000;display:flex;flex-direction:column}
+.fotoov video,.fotoov img{flex:1;min-height:0;width:100%;object-fit:contain;background:#000}
+.fotoov video{object-fit:cover}
+.fotomsg{position:absolute;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0));padding:8px 12px;border-radius:10px;background:rgba(0,0,0,.65);color:#fff;font-size:13px;text-align:center}
+.fotomsg.err{background:rgba(185,28,28,.9)}
+.fotoctl{display:flex;align-items:center;justify-content:space-around;gap:10px;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0));background:#000}
+.fotoov .btn.ghost{background:#fff;color:#0f172a}
+.jepret{width:68px;height:68px;border-radius:50%;border:5px solid #fff;background:#e11d48;cursor:pointer}
+.jepret:disabled{opacity:.35}
 .loading{text-align:center;color:var(--muted);padding:40px 0}
 .linkbox{font-size:13px;word-break:break-all;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0 12px}
 .qrwrap{display:flex;justify-content:center;margin:6px 0 12px}
@@ -218,6 +228,17 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
   </section>
 </main>
 
+<div id="fotoOv" class="fotoov" hidden>
+  <video id="fotoVid" playsinline muted autoplay></video>
+  <img id="fotoHasil" alt="Hasil foto" hidden>
+  <div id="fotoMsg" class="fotomsg" role="status"></div>
+  <div class="fotoctl">
+    <button type="button" class="btn ghost" id="fotoTutup">Tutup</button>
+    <button type="button" class="jepret" id="fotoJepret" aria-label="Ambil foto" disabled></button>
+    <button type="button" class="btn ghost" id="fotoUlang" hidden>Ulangi</button>
+    <button type="button" class="btn" id="fotoPakai" hidden>Pakai foto</button>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 const SB_URL='https://wjmotidelqgcyyujacud.supabase.co';
@@ -313,7 +334,7 @@ async function muatDashboard(){
     if(r.keluar){ token.del(); pesan($('#mMsg'),r.error,'err'); tampil('vMasuk'); return; }
     $('#tTrip').innerHTML=`<div class="card empty">${esc(r.error)}<br><br><button class="btn sm" type="button" onclick="muatDashboard()">Coba lagi</button></div>`; return;
   }
-  DATA=r; gambar();
+  DATA=r; gambar(); muatFoto();
 }
 function gambar(){
   const r=DATA, d=r.driver;
@@ -322,7 +343,7 @@ function gambar(){
   $('#sBulanRp').textContent=rp(r.ringkasan.bulan_ini.pendapatan);
   $('#sBulanL').textContent=`Pendapatan bulan ini (${r.ringkasan.bulan_ini.trip} trip)`;
   $('#sTrip').textContent=r.trip_mendatang.length;
-  $('#tTrip').innerHTML=r.trip_mendatang.length?r.trip_mendatang.map(kartuTrip).join(''):'<div class="card empty">Belum ada trip mendatang.</div>';
+  renderTrip();
   const bd=r.belum_dibayar||{pesanan:0,jumlah:0};
   $('#tPendapatan').innerHTML=`<div class="card owed"><div class="note">Belum dibayar admin</div><div class="v">${bd.jumlah>=0?rp(bd.jumlah):'− '+rp(-bd.jumlah)}</div><div class="note">${bd.pesanan?`${bd.pesanan} pesanan menunggu pembayaran dari admin.`:'Semua pesanan sudah dibayar. 👍'}${bd.jumlah<0?' Angka minus: kamu yang perlu menyetor ke admin.':''}</div></div><div class="card"><div class="row" style="border-top:0"><span>Total semua (${r.ringkasan.semua.trip} trip)</span><span><b>${rp(r.ringkasan.semua.pendapatan)}</b></span></div><div class="note">Pendapatan dicatat untuk pembawa pesanan (pemilik link/QR). Kalau pesanan langsung dari web, dicatat untuk driver yang ditugaskan.</div></div>`
     +(r.riwayat.length?r.riwayat.map(kartuRiwayat).join(''):'<div class="card empty">Belum ada riwayat.</div>');
@@ -548,6 +569,101 @@ async function unduhStiker(){
   const a=document.createElement('a'); a.href=stikerCanvas.toDataURL('image/png'); a.download=`stiker-tempera-${stikerJenis}-${(DATA.driver.kode||'mitra').toLowerCase()}.png`;
   document.body.appendChild(a); a.click(); a.remove();
 }
+/* ---------- FOTO TUGAS: kamera langsung (bukan galeri) + stempel logo, lokasi, waktu; jam tugas dan batas 5 foto dijaga server ---------- */
+let FOTO={}, FOTO_MAKS=5;
+async function muatFoto(){
+  const r=await api('driver-foto',{token:token.get(),aksi:'status'});
+  if(!r||!r.ok) return;
+  FOTO={}; FOTO_MAKS=r.maks||5; (r.trip||[]).forEach(t=>{ FOTO[t.order_id]=t; });
+  if(DATA) renderTrip();
+}
+function renderTrip(){
+  const r=DATA; $('#tTrip').innerHTML=r.trip_mendatang.length?r.trip_mendatang.map(kartuTrip).join(''):'<div class="card empty">Belum ada trip mendatang.</div>';
+}
+function blokFoto(o){
+  const f=FOTO[o.order_id]; if(!f) return '';
+  const jam=(s)=>{ const p=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).formatToParts(new Date(s)); const g=(t)=>(p.find(x=>x.type===t)||{}).value||''; return g('hour')+'.'+g('minute'); };
+  let isi;
+  if(f.buka) isi=`<button class="btn sm" type="button" data-foto="${esc(o.order_id)}">Ambil foto</button>`;
+  else if(f.jumlah>=FOTO_MAKS) isi='<span class="note">Foto sudah penuh.</span>';
+  else if(Date.parse(f.mulai)>Date.now()) isi=`<span class="note">Dibuka pukul ${jam(f.mulai)} WIB</span>`;
+  else isi='<span class="note">Jam tugas sudah lewat.</span>';
+  return `<div class="foto"><div><b>Foto tugas</b> <span class="note">${f.jumlah}/${FOTO_MAKS}</span></div>${isi}</div>`;
+}
+document.addEventListener('click',(e)=>{ const b=e.target.closest('[data-foto]'); if(b) bukaKamera(b.dataset.foto); });
+
+const kam={strim:null,order:'',pos:null,foto:null,lokasi:'',sibuk:false};
+function fotoMsg(t,jenis){ const m=$('#fotoMsg'); m.textContent=t||''; m.className='fotomsg'+(jenis?' '+jenis:''); m.hidden=!t; }
+function fotoMode(m){
+  $('#fotoVid').hidden=m==='hasil'; $('#fotoHasil').hidden=m!=='hasil';
+  $('#fotoJepret').hidden=m==='hasil'; $('#fotoUlang').hidden=m!=='hasil'; $('#fotoPakai').hidden=m!=='hasil';
+}
+function matikanKamera(){ if(kam.strim){ kam.strim.getTracks().forEach(t=>t.stop()); kam.strim=null; } $('#fotoVid').srcObject=null; }
+function tutupKamera(){ matikanKamera(); $('#fotoOv').hidden=true; kam.foto=null; kam.pos=null; }
+async function bukaKamera(orderId){
+  kam.order=orderId; kam.pos=null; kam.foto=null; kam.sibuk=false;
+  $('#fotoOv').hidden=false; fotoMode('live'); $('#fotoJepret').disabled=true; $('#fotoPakai').disabled=false;
+  if(!navigator.geolocation||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){ fotoMsg('Peramban ini tidak mendukung kamera atau lokasi. Buka dengan Chrome.','err'); return; }
+  fotoMsg('Menyalakan kamera dan lokasi…');
+  try{
+    kam.strim=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:1280}},audio:false});
+    $('#fotoVid').srcObject=kam.strim; await $('#fotoVid').play();
+  }catch(e){ fotoMsg('Kamera tidak bisa dibuka. Izinkan akses kamera di pengaturan peramban, lalu coba lagi.','err'); return; }
+  navigator.geolocation.getCurrentPosition(
+    (p)=>{ kam.pos=p.coords; fotoMsg('Arahkan kamera, lalu tekan tombol merah.'); $('#fotoJepret').disabled=false; },
+    ()=>{ fotoMsg('Lokasi belum terbaca. Izinkan akses lokasi (GPS) dan nyalakan GPS, lalu tekan Tutup dan coba lagi.','err'); },
+    {enableHighAccuracy:true,timeout:20000,maximumAge:0});
+}
+async function namaLokasi(lat,lng){
+  try{
+    const c=new AbortController(), t=setTimeout(()=>c.abort(),4000);
+    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=17&addressdetails=1&accept-language=id&lat=${lat}&lon=${lng}`,{signal:c.signal}); clearTimeout(t);
+    const a=(await r.json()).address||{};
+    const p=[a.road||a.pedestrian||a.neighbourhood,a.suburb||a.village||a.city_district,a.city||a.town||a.county||a.regency].filter(Boolean);
+    return [...new Set(p)].join(', ').slice(0,90);
+  }catch(e){ return ''; }
+}
+function teksWaktu(d){
+  const p=new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).formatToParts(d);
+  const g=(t)=>(p.find(x=>x.type===t)||{}).value||'';
+  return `${g('day')} ${g('month')} ${g('year')}  ${g('hour')}.${g('minute')} WIB`;
+}
+$('#fotoJepret').addEventListener('click',async()=>{
+  const v=$('#fotoVid'); if(!v.videoWidth||!kam.pos||kam.sibuk) return;
+  kam.sibuk=true; $('#fotoJepret').disabled=true; fotoMsg('Memproses foto…');
+  try{
+    const sk=Math.min(1,1280/Math.max(v.videoWidth,v.videoHeight)), W=Math.round(v.videoWidth*sk), H=Math.round(v.videoHeight*sk);
+    const lat=kam.pos.latitude, lng=kam.pos.longitude;
+    const nama=await namaLokasi(lat,lng), waktu=teksWaktu(new Date());
+    const koor=`${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    kam.lokasi=(nama?nama+' ('+koor+')':koor).slice(0,200);
+    const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
+    x.drawImage(v,0,0,W,H);
+    const fs=Math.round(Math.min(W,H)*0.04), pad=Math.round(fs*0.7), F='system-ui,"Segoe UI",Roboto,Arial,sans-serif';
+    let logo=null; try{ logo=await logoPutih(); }catch(e){}
+    const lw=logo?Math.round(fs*3.2):0, lh=logo?Math.round(lw*1287/1328):0, tx=pad+(logo?lw+pad:0);
+    x.font=`${fs}px ${F}`; const baris=nama?bungkusTeks(x,nama,W-tx-pad).slice(0,2):[];
+    const lines=[waktu,...baris,koor], strip=Math.round(lines.length*fs*1.3+pad*1.4);
+    x.fillStyle='rgba(0,0,0,.62)'; x.fillRect(0,H-strip,W,strip);
+    if(logo) x.drawImage(logo,pad,H-strip+Math.round((strip-lh)/2),lw,lh);
+    x.textAlign='left'; x.textBaseline='top'; x.fillStyle='#fff';
+    lines.forEach((t,i)=>{ x.font=`${i===0?'700 ':''}${i===lines.length-1?Math.round(fs*0.85):fs}px ${F}`; x.fillText(t,tx,H-strip+Math.round(pad*0.7+i*fs*1.3)); });
+    let q=0.82, url=c.toDataURL('image/jpeg',q);
+    while(url.length*0.75>650000&&q>0.4){ q-=0.1; url=c.toDataURL('image/jpeg',q); }
+    kam.foto=url; $('#fotoHasil').src=url; matikanKamera(); fotoMode('hasil'); fotoMsg('Periksa foto. Jika jelas, tekan Pakai foto.');
+  }catch(e){ fotoMsg('Gagal memproses foto. Coba lagi.','err'); $('#fotoJepret').disabled=false; }
+  kam.sibuk=false;
+});
+$('#fotoUlang').addEventListener('click',()=>bukaKamera(kam.order));
+$('#fotoTutup').addEventListener('click',tutupKamera);
+$('#fotoPakai').addEventListener('click',async()=>{
+  if(!kam.foto||kam.sibuk) return; kam.sibuk=true; $('#fotoPakai').disabled=true; fotoMsg('Mengirim foto…');
+  const r=await api('driver-foto',{token:token.get(),aksi:'unggah',order_id:kam.order,foto:kam.foto,lokasi:kam.lokasi,lat:kam.pos&&kam.pos.latitude,lng:kam.pos&&kam.pos.longitude,akurasi:kam.pos&&kam.pos.accuracy,jam_hp:new Date().toISOString()});
+  kam.sibuk=false;
+  if(r&&r.ok){ fotoMsg('Foto tersimpan ('+r.nomor+'/'+FOTO_MAKS+').'); muatFoto(); setTimeout(tutupKamera,1200); return; }
+  if(r&&r.keluar){ tutupKamera(); token.del(); tampil('vMasuk'); return; }
+  $('#fotoPakai').disabled=false; fotoMsg((r&&r.error)||'Foto gagal dikirim. Coba lagi.','err');
+});
 function kartuTrip(o){
   const dest=Object.entries(o.destinasi||{}).filter(([,v])=>Array.isArray(v)&&v.length).map(([k,v])=>`<li><b>${esc(WIL[k]||k)}:</b> ${esc(v.join(', '))}</li>`).join('');
   const wa=String(o.wa||'').replace(/\D/g,'');
@@ -560,6 +676,7 @@ function kartuTrip(o){
     ${dest?`<ul class="dest">${dest}</ul>`:''}
     ${o.dp?`<div class="cash">💵 Tagih tunai ke pelanggan: ${rp(o.tagih_tunai)}</div>`:'<div class="cash lunas">✅ Sudah lunas, tidak ada yang ditagih</div>'}
     ${o.dari_link_lain?'<div class="note">Pesanan ini dari link driver lain; pendapatannya tercatat untuk pembawa pesanan.</div>':''}
+    ${blokFoto(o)}
     <div class="acts">
       ${wa?`<a class="btn sm" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WA pelanggan</a>`:''}
       ${o.surat_jalan&&/^https:\/\//i.test(o.surat_jalan)?`<a class="btn ghost sm" href="${esc(o.surat_jalan)}" target="_blank" rel="noopener">Surat jalan</a>`:'<span class="note">Surat jalan belum terbit</span>'}
