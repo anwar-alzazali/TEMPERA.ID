@@ -70,6 +70,7 @@ header.top .who span{font-size:13px;color:var(--muted)}
 .tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
 .tabs button{flex:1 0 auto;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:9px 12px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .tabs button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tabs button:disabled{opacity:.4;cursor:not-allowed}
 .list{display:grid;gap:12px}
 .trip .when{font-weight:800;font-size:16px}
 .trip .meta{color:var(--muted);font-size:13px;margin-top:2px}
@@ -198,12 +199,14 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
   </div>
   <nav class="tabs" id="tabs">
     <button type="button" data-tab="trip" class="on">Trip</button>
+    <button type="button" data-tab="foto" id="tabFoto" disabled title="Aktif saat ada tugas">Foto</button>
     <button type="button" data-tab="pendapatan">Pendapatan</button>
     <button type="button" data-tab="referral">Referral</button>
     <button type="button" data-tab="kas">Kas</button>
     <button type="button" data-tab="akun">Akun</button>
   </nav>
   <section id="tTrip" class="list"><div class="loading">Memuat…</div></section>
+  <section id="tFoto" class="list" hidden></section>
   <section id="tPendapatan" class="list" hidden></section>
   <section id="tReferral" class="list" hidden></section>
   <section id="tKas" class="list" hidden></section>
@@ -574,20 +577,27 @@ async function muatFoto(){
   const r=await api('driver-foto',{token:token.get(),aksi:'status'});
   if(!r||!r.ok) return;
   FOTO={}; FOTO_MAKS=r.maks||5; (r.trip||[]).forEach(t=>{ FOTO[t.order_id]=t; });
-  if(DATA) renderTrip();
+  renderFoto();
 }
 function renderTrip(){
   const r=DATA; $('#tTrip').innerHTML=r.trip_mendatang.length?r.trip_mendatang.map(kartuTrip).join(''):'<div class="card empty">Belum ada trip mendatang.</div>';
 }
-function blokFoto(o){
-  const f=FOTO[o.order_id]; if(!f) return '';
-  const jam=(s)=>{ const p=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).formatToParts(new Date(s)); const g=(t)=>(p.find(x=>x.type===t)||{}).value||''; return g('hour')+'.'+g('minute'); };
-  let isi;
-  if(f.buka) isi=`<button class="btn sm" type="button" data-foto="${esc(o.order_id)}">Ambil foto</button>`;
-  else if(f.jumlah>=FOTO_MAKS) isi='<span class="note">Foto sudah penuh.</span>';
-  else if(Date.parse(f.mulai)>Date.now()) isi=`<span class="note">Dibuka pukul ${jam(f.mulai)} WIB</span>`;
-  else isi='<span class="note">Jam tugas sudah lewat.</span>';
-  return `<div class="foto"><div><b>Foto tugas</b> <span class="note">${f.jumlah}/${FOTO_MAKS}</span></div>${isi}</div>`;
+const jamWib=(s)=>{ const p=new Intl.DateTimeFormat('id-ID',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Jakarta'}).formatToParts(new Date(s)); const g=(t)=>(p.find(x=>x.type===t)||{}).value||''; return g('hour')+'.'+g('minute'); };
+function kartuFoto(f){
+  const o=(DATA&&DATA.trip_mendatang||[]).find(t=>t.order_id===f.order_id)||{};
+  let aksi;
+  if(f.buka) aksi=`<button class="btn" type="button" data-foto="${esc(f.order_id)}">Ambil foto</button>`;
+  else if(f.jumlah>=FOTO_MAKS) aksi='<span class="note">Foto sudah penuh.</span>';
+  else if(Date.parse(f.mulai)>Date.now()) aksi=`<span class="note">Dibuka pukul ${jamWib(f.mulai)} WIB</span>`;
+  else aksi='<span class="note">Jam tugas sudah lewat.</span>';
+  return `<article class="card"><div class="row" style="border-top:0"><span><b>${esc(o.pelanggan||'Tugas')}</b><div class="note">${esc(o.invoice_no||f.order_id)}${o.jam?' • jemput '+esc(o.jam):''}</div></span><span><b>${f.jumlah}/${FOTO_MAKS}</b> foto</span></div><div class="acts">${aksi}</div></article>`;
+}
+function renderFoto(){
+  const daftar=Object.values(FOTO).filter(f=>(DATA&&DATA.trip_mendatang||[]).some(t=>t.order_id===f.order_id)||f.buka);
+  const aktif=daftar.some(f=>f.buka);
+  const tb=$('#tabFoto'); tb.disabled=!aktif;
+  $('#tFoto').innerHTML=daftar.length?'<div class="note" style="margin:0 2px 8px">Foto hanya bisa diambil saat jam tugas, maksimal '+FOTO_MAKS+' foto per pesanan.</div>'+daftar.map(kartuFoto).join(''):'<div class="card empty">Belum ada tugas untuk difoto.</div>';
+  if(!aktif&&!$('#tFoto').hidden) pilihTab('trip');
 }
 document.addEventListener('click',(e)=>{ const b=e.target.closest('[data-foto]'); if(b) bukaKamera(b.dataset.foto); });
 
@@ -725,7 +735,6 @@ function kartuTrip(o){
     ${dest?`<ul class="dest">${dest}</ul>`:''}
     ${o.dp?`<div class="cash">💵 Tagih tunai ke pelanggan: ${rp(o.tagih_tunai)}</div>`:'<div class="cash lunas">✅ Sudah lunas, tidak ada yang ditagih</div>'}
     ${o.dari_link_lain?'<div class="note">Pesanan ini dari link driver lain; pendapatannya tercatat untuk pembawa pesanan.</div>':''}
-    ${blokFoto(o)}
     <div class="acts">
       ${wa?`<a class="btn sm" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">WA pelanggan</a>`:''}
       ${o.surat_jalan&&/^https:\/\//i.test(o.surat_jalan)?`<a class="btn ghost sm" href="${esc(o.surat_jalan)}" target="_blank" rel="noopener">Surat jalan</a>`:'<span class="note">Surat jalan belum terbit</span>'}
@@ -740,7 +749,7 @@ function kartuRiwayat(o){
     <div style="margin-top:6px">${o.dibayar?`<span class="tag paid" style="margin-left:0">✓ Sudah dibayar admin ${rp(o.bayar_admin)}</span>`:`<span class="tag unpaid" style="margin-left:0">Belum dibayar ${o.bayar_admin>=0?rp(o.bayar_admin):'(kamu setor '+rp(-o.bayar_admin)+')'}</span>`}${o.dp&&!o.dibayar?'<div class="note">Pesanan DP: admin membayar DP dikurangi potongan; sisanya sudah kamu terima tunai.</div>':''}</div>
   </article>`;
 }
-const TABS={trip:'#tTrip',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#tKas',akun:'#tAkun'};
+const TABS={trip:'#tTrip',foto:'#tFoto',pendapatan:'#tPendapatan',referral:'#tReferral',kas:'#tKas',akun:'#tAkun'};
 function pilihTab(tab){
   document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));
   Object.entries(TABS).forEach(([k,sel])=>{ $(sel).hidden=k!==tab; });
