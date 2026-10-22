@@ -645,7 +645,7 @@ async function buatFoto(sumber,sw,sh){ // stempel gaya lapangan: logo, jam besar
   let logo=null; try{ logo=await logoEmas(); }catch(e){}
   x.font=`600 ${fsT}px ${F}`;
   const baris=bungkusTeks(x,alamat||koor,W-2*m).slice(0,3);
-  const hLogo=logo?Math.round(fsB*0.75):0, hJam=Math.round(fsB*1.0), hAlm=baris.length*Math.round(fsT*1.3), hKode=Math.round(fsK*1.9);
+  const hLogo=logo?Math.round(fsB*1.15):0, hJam=Math.round(fsB*1.0), hAlm=baris.length*Math.round(fsT*1.3), hKode=Math.round(fsK*1.9);
   const top=H-m-(hLogo+gap+hJam+gap+hAlm+gap+hKode);
   const g=x.createLinearGradient(0,top-fsT*3,0,H); g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(0.35,'rgba(0,0,0,.45)'); g.addColorStop(1,'rgba(0,0,0,.72)');
   x.fillStyle=g; x.fillRect(0,top-Math.round(fsT*3),W,H-top+Math.round(fsT*3));
