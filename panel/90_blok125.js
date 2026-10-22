@@ -162,6 +162,7 @@ VIEWS.galeri = async function () {
       <label class="chk"><input type="checkbox" id="glWm" checked> Pasang watermark logo Tempera</label>
       <div class="mbtns" style="justify-content:flex-start"><button class="btn" type="button" id="glGo">Unggah</button></div>
       <div class="help" id="glSt">Foto dikecilkan di HP (lebar maks 1200) dan data lokasi (GPS) otomatis terhapus. Pastikan pelanggan yang tampak jelas sudah mengizinkan.</div></div>
+    <div class="card" id="glMenunggu" style="margin-bottom:14px" hidden><h2>Foto driver menunggu persetujuan</h2><div class="help">Foto bersih dari tugas driver (tanpa alamat, jam, atau GPS). Setujui untuk menayangkannya di galeri dengan watermark logo.</div><div id="glMenList"></div></div>
     <div class="card"><h2>Foto di galeri</h2><div id="glList"><div class="empty">Memuat…</div></div></div>`;
   $('#glGo').addEventListener('click', async (e) => {
     const files = [...$('#glFile').files]; if (!files.length) { toast('Pilih foto dulu', true); return; }
@@ -176,8 +177,25 @@ VIEWS.galeri = async function () {
     }
     e.target.disabled = false; $('#glFile').value = ''; $('#glSt').textContent = `${ok} foto terunggah.`; muatGaleriPanel();
   });
-  muatGaleriPanel();
+  muatGaleriPanel(); muatFotoMenunggu();
 };
+async function muatFotoMenunggu() {
+  const box = $('#glMenunggu'); if (!box) return;
+  const r = await sb.from('trip_foto').select('id,order_id,nomor,driver_slug,bersih_path,diambil_pada').eq('galeri_status', 'menunggu').order('diambil_pada', { ascending: false }).limit(40);
+  if (r.error || !(r.data || []).length) { box.hidden = true; return; }
+  const rows = r.data, urls = {};
+  const sg = await sb.storage.from('trip-foto').createSignedUrls(rows.map((x) => x.bersih_path), 3600);
+  (sg.data || []).forEach((u) => { if (u.signedUrl) urls[u.path] = u.signedUrl; });
+  box.hidden = false;
+  $('#glMenList').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:10px">${rows.map((g) => `
+    <div style="border:1px solid var(--line);border-radius:12px;padding:8px">
+      <img src="${esc(urls[g.bersih_path] || '')}" alt="" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block">
+      <div class="help">${esc(g.driver_slug)} · ${esc(new Date(g.diambil_pada).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }))}</div>
+      <input data-fm-ket="${esc(g.id)}" placeholder="Keterangan, mis. Kawah Putih, Ciwidey" style="margin-top:6px">
+      <select data-fm-wil="${esc(g.id)}" style="margin-top:6px">${Object.keys(WIL_GL).map((k) => `<option value="${k}">${esc(WIL_GL[k])}</option>`).join('')}</select>
+      <div class="mbtns" style="justify-content:flex-start;margin-top:6px"><button class="btn sm" type="button" data-fm-ok="${esc(g.id)}" data-p="${esc(g.bersih_path)}">Setujui</button>
+        <button class="btn danger sm" type="button" data-fm-tolak="${esc(g.id)}" data-p="${esc(g.bersih_path)}">Tolak</button></div></div>`).join('')}</div>`;
+}
 async function muatGaleriPanel() {
   const r = await sb.from('galeri').select('*').order('created_at', { ascending: false }).limit(200);
   if (r.error) { $('#glList').innerHTML = `<div class="empty">Gagal memuat: ${esc(r.error.message)}</div>`; return; }
@@ -192,6 +210,22 @@ async function muatGaleriPanel() {
         <button class="btn danger sm" type="button" data-gl-hapus="${esc(g.id)}" data-url="${esc(g.url)}">Hapus</button></div></div>`).join('')}</div>` : '<div class="empty">Belum ada foto.</div>';
 }
 document.addEventListener('click', async (e) => {
+  const ok = e.target.closest('[data-fm-ok]'), tk = e.target.closest('[data-fm-tolak]');
+  if (ok || tk) {
+    const b = ok || tk, id = b.dataset.fmOk || b.dataset.fmTolak, path = b.dataset.p; b.disabled = true;
+    try {
+      if (ok) {
+        const dl = await sb.storage.from('trip-foto').download(path); if (dl.error) throw new Error(dl.error.message);
+        const url = await unggahGambar(new File([dl.data], 'foto.jpg', { type: 'image/jpeg' }), { lebar: 1200, folder: 'galeri', watermark: true });
+        const ins = await sb.from('galeri').insert({ url, keterangan: $(`[data-fm-ket="${CSS.escape(id)}"]`).value.trim() || null, wilayah: $(`[data-fm-wil="${CSS.escape(id)}"]`).value, tampil: true });
+        if (ins.error) throw new Error(ins.error.message);
+      } else if (!confirm('Tolak foto ini? Salinan bersihnya dihapus (foto bukti tugas tetap tersimpan).')) { b.disabled = false; return; }
+      const up = await sb.from('trip_foto').update({ galeri_status: ok ? 'disetujui' : 'ditolak' }).eq('id', id); if (up.error) throw new Error(up.error.message);
+      await sb.storage.from('trip-foto').remove([path]);
+      toast(ok ? 'Masuk galeri' : 'Ditolak'); muatFotoMenunggu(); muatGaleriPanel();
+    } catch (err) { toast(err.message, true); b.disabled = false; }
+    return;
+  }
   const s = e.target.closest('[data-gl-simpan]'), t = e.target.closest('[data-gl-tampil]'), h = e.target.closest('[data-gl-hapus]');
   if (s) { const id = s.dataset.glSimpan; const r = await sb.from('galeri').update({ keterangan: $(`[data-gl-ket="${CSS.escape(id)}"]`).value.trim() || null, wilayah: $(`[data-gl-wil="${CSS.escape(id)}"]`).value }).eq('id', id); if (r.error) toast(r.error.message, true); else toast('Tersimpan'); }
   if (t) { const r = await sb.from('galeri').update({ tampil: t.dataset.v === '1' }).eq('id', t.dataset.glTampil); if (r.error) toast(r.error.message, true); else { toast(t.dataset.v === '1' ? 'Ditampilkan' : 'Disembunyikan'); muatGaleriPanel(); } }

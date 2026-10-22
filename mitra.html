@@ -650,6 +650,10 @@ async function buatFoto(sumber,sw,sh){ // stempel gaya lapangan: logo, jam besar
   kam.kode=kodeFoto(); kam.lokasi=((alamat?alamat+' | ':'')+koor).slice(0,250);
   const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
   x.drawImage(sumber,0,0,W,H);
+  { // salinan bersih (tanpa stempel, tanpa GPS) untuk galeri setelah disetujui admin
+    const sb2=Math.min(1,1200/Math.max(W,H)), bc=document.createElement('canvas'); bc.width=Math.round(W*sb2); bc.height=Math.round(H*sb2); bc.getContext('2d').drawImage(c,0,0,bc.width,bc.height);
+    let bq=0.82, bu=bc.toDataURL('image/jpeg',bq); while(bu.length*0.75>450000&&bq>0.4){ bq-=0.1; bu=bc.toDataURL('image/jpeg',bq); } kam.bersih=bu;
+  }
   const F='system-ui,"Segoe UI",Roboto,Arial,sans-serif', u=Math.min(W,H), m=Math.round(u*0.045);
   const fsB=Math.round(u*0.13), fsT=Math.round(u*0.037), fsK=Math.round(u*0.03), gap=Math.round(fsT*0.4);
   let logo=null; try{ logo=await logoEmas(); }catch(e){}
@@ -717,7 +721,7 @@ $('#fotoUlang').addEventListener('click',()=>{ if(!kam.sibuk) bukaKamera(kam.ord
 $('#fotoTutup').addEventListener('click',tutupKamera);
 $('#fotoPakai').addEventListener('click',async()=>{
   if(!kam.foto||kam.sibuk) return; kam.sibuk=true; $('#fotoPakai').disabled=true; fotoMsg('Mengirim foto…');
-  const r=await api('driver-foto',{token:token.get(),aksi:'unggah',order_id:kam.order,foto:kam.foto,lokasi:kam.lokasi,kode:kam.kode,lat:kam.pos&&kam.pos.latitude,lng:kam.pos&&kam.pos.longitude,akurasi:kam.pos&&kam.pos.accuracy,jam_hp:new Date().toISOString()});
+  const r=await api('driver-foto',{token:token.get(),aksi:'unggah',order_id:kam.order,foto:kam.foto,foto_bersih:kam.bersih,lokasi:kam.lokasi,kode:kam.kode,lat:kam.pos&&kam.pos.latitude,lng:kam.pos&&kam.pos.longitude,akurasi:kam.pos&&kam.pos.accuracy,jam_hp:new Date().toISOString()});
   kam.sibuk=false;
   if(r&&r.ok){ fotoMsg('Foto tersimpan ('+r.nomor+'/'+FOTO_MAKS+').'); muatFoto(); setTimeout(tutupKamera,1200); return; }
   if(r&&r.keluar){ tutupKamera(); token.del(); tampil('vMasuk'); return; }
