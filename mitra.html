@@ -607,10 +607,14 @@ async function bukaKamera(orderId){
   $('#fotoOv').hidden=false; fotoMode('live'); $('#fotoJepret').disabled=true; $('#fotoPakai').disabled=false; $('#fotoBerkas').hidden=true;
   if(!navigator.geolocation){ fotoMsg('Peramban ini tidak mendukung lokasi. Buka dengan Chrome.','err'); return; }
   fotoMsg('Membaca lokasi dan kamera…');
-  navigator.geolocation.getCurrentPosition(
-    (p)=>{ kam.pos=p.coords; if(kam.siapKamera||kam.cadangan) fotoSiap(); },
-    ()=>{ fotoMsg('Lokasi belum terbaca. Izinkan akses lokasi (GPS) dan nyalakan GPS, lalu tekan Tutup dan coba lagi.','err'); },
-    {enableHighAccuracy:true,timeout:20000,maximumAge:0});
+  const lokOk=(p)=>{ kam.pos=p.coords; if(kam.siapKamera||kam.cadangan) fotoSiap(); };
+  const KODE={1:'izin lokasi ditolak',2:'posisi tidak tersedia',3:'waktu habis'};
+  const lokGagal=(e)=>{ fotoMsg('Lokasi belum terbaca ('+(KODE[e&&e.code]||'galat')+'). '+((e&&e.code===1)?'Izinkan akses lokasi untuk situs ini di pengaturan peramban, atau buka dengan Chrome.':'Pastikan GPS menyala dan sinyal baik, lalu tekan Tutup dan coba lagi.'),'err'); };
+  // cepat dulu (lokasi jaringan, boleh dari cache 30 dtk); bila gagal bukan karena izin, coba GPS teliti
+  navigator.geolocation.getCurrentPosition(lokOk,(e1)=>{
+    if(e1&&e1.code===1){ lokGagal(e1); return; }
+    navigator.geolocation.getCurrentPosition(lokOk,lokGagal,{enableHighAccuracy:true,timeout:25000,maximumAge:0});
+  },{enableHighAccuracy:false,timeout:10000,maximumAge:30000});
   kam.siapKamera=false;
   try{
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw {name:'Tidak didukung'};
