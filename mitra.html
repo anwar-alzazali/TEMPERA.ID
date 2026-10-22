@@ -626,6 +626,11 @@ function teksWaktu(d){
   const g=(t)=>(p.find(x=>x.type===t)||{}).value||'';
   return `${g('day')} ${g('month')} ${g('year')}  ${g('hour')}.${g('minute')} WIB`;
 }
+async function logoEmas(){ // logo Tempera emas (aset resmi), dipotong tepat pada gambarnya
+  const img=await muatGambar('images/logo_classic_gold_transparent.png');
+  const t=document.createElement('canvas'); t.width=1328; t.height=1284; t.getContext('2d').drawImage(img,0,154,1328,1284,0,0,1328,1284);
+  return t;
+}
 async function buatFoto(sumber,sw,sh){
   const sk=Math.min(1,1280/Math.max(sw,sh)), W=Math.round(sw*sk), H=Math.round(sh*sk);
   const lat=kam.pos.latitude, lng=kam.pos.longitude;
@@ -635,8 +640,8 @@ async function buatFoto(sumber,sw,sh){
   const c=document.createElement('canvas'); c.width=W; c.height=H; const x=c.getContext('2d');
   x.drawImage(sumber,0,0,W,H);
   const fs=Math.round(Math.min(W,H)*0.04), pad=Math.round(fs*0.7), F='system-ui,"Segoe UI",Roboto,Arial,sans-serif';
-  let logo=null; try{ logo=await logoPutih(); }catch(e){}
-  const lw=logo?Math.round(fs*3.2):0, lh=logo?Math.round(lw*1287/1328):0, tx=pad+(logo?lw+pad:0);
+  let logo=null; try{ logo=await logoEmas(); }catch(e){}
+  const lw=logo?Math.round(fs*3.2):0, lh=logo?Math.round(lw*1284/1328):0, tx=pad+(logo?lw+pad:0);
   x.font=`${fs}px ${F}`; const baris=nama?bungkusTeks(x,nama,W-tx-pad).slice(0,2):[];
   const lines=[waktu,...baris,koor], strip=Math.round(lines.length*fs*1.3+pad*1.4);
   x.fillStyle='rgba(0,0,0,.62)'; x.fillRect(0,H-strip,W,strip);
