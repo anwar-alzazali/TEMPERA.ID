@@ -233,6 +233,7 @@ table.mini thead th{border-top:0;font-size:12px;color:var(--muted)}
   <div class="fotoctl">
     <button type="button" class="btn ghost" id="fotoTutup">Tutup</button>
     <button type="button" class="btn ghost" id="fotoUlang" hidden>Ulangi</button>
+    <button type="button" class="btn" id="fotoLok" hidden>Coba lokasi lagi</button>
     <button type="button" class="btn" id="fotoPakai" hidden>Pakai foto</button>
   </div>
 </div>
@@ -593,7 +594,7 @@ document.addEventListener('click',(e)=>{ const b=e.target.closest('[data-foto]')
 const kam={order:'',pos:null,posP:null,foto:null,lokasi:'',sibuk:false};
 function fotoMsg(t,jenis){ const m=$('#fotoMsg'); m.textContent=t||''; m.className='fotomsg'+(jenis?' '+jenis:''); m.hidden=!t; }
 function fotoMode(m){ // 'proses' | 'hasil' | 'galat'
-  $('#fotoHasil').hidden=m!=='hasil'; $('#fotoUlang').hidden=m==='proses'; $('#fotoPakai').hidden=m!=='hasil';
+  $('#fotoLok').hidden=true; $('#fotoHasil').hidden=m!=='hasil'; $('#fotoUlang').hidden=m==='proses'; $('#fotoPakai').hidden=m!=='hasil';
 }
 function tutupKamera(){ $('#fotoOv').hidden=true; kam.foto=null; kam.pos=null; kam.posP=null; kam.sibuk=false; }
 const KODE_LOK={1:'izin lokasi ditolak',2:'posisi tidak tersedia',3:'waktu habis'};
@@ -607,7 +608,7 @@ function ambilLokasi(){ // cepat dulu (lokasi jaringan), bila gagal bukan karena
   });
 }
 function bukaKamera(orderId){ // dipanggil dari ketukan tombol: lokasi mulai dibaca, kamera bawaan HP langsung terbuka
-  kam.order=orderId; kam.pos=null; kam.foto=null; kam.sibuk=false;
+  kam.order=orderId; kam.pos=null; kam.foto=null; kam.sibuk=false; kam.berkas=null;
   kam.posP=ambilLokasi().then((c)=>{ kam.pos=c; return c; }); kam.posP.catch(()=>{});
   $('#fotoFile').value=''; $('#fotoFile').click();
 }
@@ -646,19 +647,26 @@ async function buatFoto(sumber,sw,sh){
   while(url.length*0.75>650000&&q>0.4){ q-=0.1; url=c.toDataURL('image/jpeg',q); }
   kam.foto=url; $('#fotoHasil').src=url; fotoMode('hasil'); fotoMsg('Periksa foto. Jika jelas, tekan Pakai foto.');
 }
-$('#fotoFile').addEventListener('change',async()=>{
-  const f=$('#fotoFile').files&&$('#fotoFile').files[0]; if(!f||kam.sibuk) return;
-  kam.sibuk=true; $('#fotoOv').hidden=false; $('#fotoPakai').disabled=false; fotoMode('proses'); fotoMsg('Membaca lokasi dan memproses foto…');
+async function prosesFoto(f,lewatUmur){
+  kam.sibuk=true; kam.berkas=f; $('#fotoOv').hidden=false; $('#fotoPakai').disabled=false; fotoMode('proses'); fotoMsg('Memproses foto…');
   try{
     // hanya foto yang baru saja diambil (bukan dari galeri): berkas harus berumur di bawah 3 menit
     const umur=Date.now()-(f.lastModified||Date.now());
-    if(umur>180000||umur<-120000){ fotoMode('galat'); fotoMsg('Foto ini bukan foto baru. Ambil foto langsung dengan kamera, jangan pilih dari galeri.','err'); kam.sibuk=false; return; }
-    try{ await kam.posP; }catch(e){ fotoMode('galat'); fotoMsg('Lokasi belum terbaca ('+(KODE_LOK[e&&e.code]||'galat')+'). '+((e&&e.code===1)?'Izinkan akses lokasi untuk situs ini di pengaturan peramban, atau buka dengan Chrome.':'Pastikan GPS menyala dan sinyal baik, lalu tekan Ulangi.'),'err'); kam.sibuk=false; return; }
+    if(!lewatUmur&&(umur>180000||umur<-120000)){ fotoMode('galat'); fotoMsg('Foto ini bukan foto baru. Ambil foto langsung dengan kamera, jangan pilih dari galeri.','err'); kam.sibuk=false; return; }
+    if(!kam.pos){ // aplikasi kamera menutup halaman sementara, jadi lokasi sering terlambat: baca lagi sekarang
+      fotoMsg('Membaca lokasi… (maks 35 detik)');
+      try{ kam.pos=await ambilLokasi(); }catch(e){
+        fotoMode('galat'); $('#fotoLok').hidden=false;
+        fotoMsg('Lokasi belum terbaca ('+(KODE_LOK[e&&e.code]||'galat')+'). '+((e&&e.code===1)?'Izinkan akses lokasi untuk situs ini di pengaturan peramban, atau buka dengan Chrome.':'Pastikan GPS menyala dan sinyal baik, lalu tekan Coba lokasi lagi (foto tidak perlu diulang).'),'err'); kam.sibuk=false; return;
+      }
+    }
     let bm; try{ bm=await createImageBitmap(f,{imageOrientation:'from-image'}); }catch(e){ bm=await createImageBitmap(f); }
     await buatFoto(bm,bm.width,bm.height);
   }catch(e){ fotoMode('galat'); fotoMsg('Foto tidak bisa diproses. Tekan Ulangi.','err'); }
   kam.sibuk=false;
-});
+}
+$('#fotoFile').addEventListener('change',()=>{ const f=$('#fotoFile').files&&$('#fotoFile').files[0]; if(f&&!kam.sibuk) prosesFoto(f,false); });
+$('#fotoLok').addEventListener('click',()=>{ if(kam.berkas&&!kam.sibuk) prosesFoto(kam.berkas,true); });
 $('#fotoUlang').addEventListener('click',()=>{ if(!kam.sibuk) bukaKamera(kam.order); });
 $('#fotoTutup').addEventListener('click',tutupKamera);
 $('#fotoPakai').addEventListener('click',async()=>{
