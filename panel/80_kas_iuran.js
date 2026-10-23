@@ -41,8 +41,9 @@ async function dataRekap() {
 function htmlRekap(d, jumlahBulan) {
   const kol = jumlahBulan ? d.semua.slice(-jumlahBulan) : d.semua;
   const rows = [...d.per].sort((a, b) => b.tunggakan - a.tunggakan || String(a.kode).localeCompare(String(b.kode)));
-  const st = (v) => (!v ? '-' : v.terbayar >= v.tagihan ? 'lunas' : v.terbayar > 0 ? 'sebagian' : 'belum');
-  return `<div class="tablewrap"><table data-grid style="min-width:${260 + kol.length * 56}px"><thead><tr><th>Anggota</th>${kol.map((b) => `<th class="num">${esc(blnP(b))}</th>`).join('')}<th class="num">Tunggakan</th></tr></thead><tbody>
+  const st = (v) => (!v || !(v.tagihan > 0) ? '-' : v.terbayar >= v.tagihan ? 'lunas' : v.terbayar > 0 ? 'sebagian' : 'belum');   // tagihan 0 = tidak ditagih, bukan lunas
+  const adaTarif = d.per.some((a) => Object.values(a.bulan).some((v) => v.tagihan > 0));
+  return `${adaTarif ? '' : '<div class="help" style="margin:0 0 10px;padding:8px 10px;background:#fef3c7;border-radius:8px;color:#92400e">Tarif iuran kas belum diatur (Rp0), jadi belum ada tagihan dan semua bulan tampil "–". Isi di kartu <b>Tarif iuran kas</b> di bawah.</div>'}<div class="tablewrap"><table data-grid style="min-width:${260 + kol.length * 56}px"><thead><tr><th>Anggota</th>${kol.map((b) => `<th class="num">${esc(blnP(b))}</th>`).join('')}<th class="num">Tunggakan</th></tr></thead><tbody>
     ${rows.map((a) => `<tr><td>${esc(a.nama)} <span class="small">${esc(a.kode || '')}${a.dimuka ? ` · di muka ${a.dimuka} bln` : ''}</span></td>${kol.map((b) => `<td class="num">${IKN[st(a.bulan[b])]}</td>`).join('')}
       <td class="num ${a.tunggakan > 0 ? 'hutang' : ''}" style="${a.tunggakan > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${a.tunggakan > 0 ? rp(a.tunggakan) : '–'}</td></tr>`).join('') || '<tr><td colspan="99" class="empty">Belum ada anggota yang ditagih.</td></tr>'}
     <tr><td><b>Total tunggakan</b></td>${kol.map(() => '<td></td>').join('')}<td class="num"><b>${rp(rows.reduce((s, a) => s + a.tunggakan, 0))}</b></td></tr>
