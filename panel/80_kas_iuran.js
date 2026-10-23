@@ -116,11 +116,11 @@ async function dataKhusus() {
              masuk: b.data.filter((y) => y.iuran_id === x.id).reduce((s, y) => s + y.jumlah, 0) };
   });
 }
-function htmlKhusus(x) {   // gaya sama dengan Rekap iuran kas: status ✅ ◐ ❌ per anggota
+function htmlKhusus(x, idx) {   // idx diberikan = tampil kolom aksi (Lunas / Catat) langsung di tabel   // gaya sama dengan Rekap iuran kas: status ✅ ◐ ❌ per anggota
   const st = (q) => (!(q.nominal > 0) ? '-' : q.terbayar >= q.nominal ? 'lunas' : q.terbayar > 0 ? 'sebagian' : 'belum');
-  return `<div class="tablewrap"><table data-grid style="min-width:340px"><thead><tr><th>Anggota</th><th class="num">Status</th><th class="num">Iuran</th><th class="num">Dibayar</th><th class="num">Sisa</th></tr></thead><tbody>
-    ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}</td><td class="num">${IKN[st(q)]}</td><td class="num">${rp(q.nominal)}</td><td class="num">${q.terbayar ? rp(Math.min(q.terbayar, q.nominal)) : '–'}</td><td class="num" style="${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">Belum ada peserta.</td></tr>'}
-    <tr><td><b>Total</b></td><td></td><td class="num"><b>${rp(x.target)}</b></td><td class="num"><b>${rp(x.terkumpul)}</b></td><td class="num"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
+  return `<div class="tablewrap"><table data-grid style="min-width:340px"><thead><tr><th>Anggota</th><th class="num">Status</th><th class="num">Iuran</th><th class="num">Dibayar</th><th class="num">Sisa</th>${idx != null ? '<th>Catat bayar</th>' : ''}</tr></thead><tbody>
+    ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}</td><td class="num">${IKN[st(q)]}</td><td class="num">${rp(q.nominal)}</td><td class="num">${q.terbayar ? rp(Math.min(q.terbayar, q.nominal)) : '–'}</td><td class="num" style="${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td>${idx != null ? `<td>${x.status === 'selesai' ? '' : q.sisa > 0 ? `<div style="display:flex;gap:4px;align-items:center"><button class="btn sm" type="button" data-ik-lunas="${idx}|${esc(q.driver_slug)}">Lunas</button><input type="number" min="1" step="1000" placeholder="Rp" data-ik-jml="${idx}|${esc(q.driver_slug)}" style="width:84px"><button class="btn ghost sm" type="button" data-ik-catat="${idx}|${esc(q.driver_slug)}">Catat</button></div>` : ''}</td>` : ''}</tr>`).join('') || '<tr><td colspan="6" class="empty">Belum ada peserta.</td></tr>'}
+    <tr><td><b>Total</b></td><td></td><td class="num"><b>${rp(x.target)}</b></td><td class="num"><b>${rp(x.terkumpul)}</b></td><td class="num"><b>${rp(x.target - x.terkumpul)}</b></td>${idx != null ? '<td></td>' : ''}</tr></tbody></table></div>`;
 }
 let IK = [];
 async function muatIuranKhusus() {
@@ -128,7 +128,7 @@ async function muatIuranKhusus() {
   $('#ikList').innerHTML = IK.length ? IK.map((x, i) => `<div style="border-top:1px solid var(--line);padding:10px 0">
       <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><b>${esc(x.judul)}</b> ${x.status === 'selesai' ? '<span class="badge b-cancelled">Ditutup</span>' : '<span class="badge b-paid">Aktif</span>'}
         <div class="small">${x.batas ? `Batas ${esc(tglPendek(x.batas))} · ` : ''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)} · ${x.peserta.filter((q) => q.sisa > 0).length} belum lunas${x.masuk > x.terkumpul ? ` · lebih bayar ${rp(x.masuk - x.terkumpul)}` : ''}</div></div>
-        <div class="mbtns" style="margin:0"><button class="btn ghost sm" type="button" data-ik-cetak="${i}">Cetak</button><button class="btn sm" type="button" data-ik-kelola="${i}">Kelola</button></div></div>${htmlKhusus(x)}</div>`).join('')
+        <div class="mbtns" style="margin:0"><button class="btn ghost sm" type="button" data-ik-cetak="${i}">Cetak</button><button class="btn sm" type="button" data-ik-kelola="${i}">Kelola</button></div></div>${htmlKhusus(x, i)}</div>`).join('')
     : '<div class="empty">Belum ada iuran khusus.</div>';
 }
 function kelolaIuran(x) {
@@ -167,7 +167,15 @@ function kelolaIuran(x) {
   $$('#modalBody [data-mk-hapusbayar]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); if (!confirm('Hapus catatan pembayaran manual ini?')) return;
     jalan(sb.from('iuran_khusus_bayar').delete().eq('id', a.dataset.mkHapusbayar), 'Catatan dihapus'); }));
 }
+async function catatCepat(idx, slug, jumlah) {
+  const x = IK[idx]; if (!x || !(jumlah > 0)) { toast('Nominal tidak valid', true); return; }
+  const r = await sb.from('iuran_khusus_bayar').insert({ iuran_id: x.id, driver_slug: slug, jumlah, keterangan: 'Dicatat admin (tunai/transfer)', dicatat_oleh: 'admin' });
+  if (r.error) { toast(r.error.message, true); return; }
+  toast('Pembayaran dicatat'); muatIuranKhusus();
+}
 document.addEventListener('click', (e) => {
+  const lu = e.target.closest('[data-ik-lunas]'); if (lu) { const [i, s] = lu.dataset.ikLunas.split('|'); const q = IK[+i].peserta.find((y) => y.driver_slug === s); if (q && confirm(`Catat ${q.nama} lunas ${rp(q.sisa)}?`)) catatCepat(+i, s, q.sisa); return; }
+  const ca = e.target.closest('[data-ik-catat]'); if (ca) { const k = ca.dataset.ikCatat; const inp = document.querySelector(`[data-ik-jml="${k}"]`); const [i, s] = k.split('|'); catatCepat(+i, s, Number(inp && inp.value)); return; }
   const k = e.target.closest('[data-ik-kelola]'); if (k) { kelolaIuran(IK[+k.dataset.ikKelola]); return; }
   const c = e.target.closest('[data-ik-cetak]'); if (c) { const x = IK[+c.dataset.ikCetak]; cetakKas(`Iuran: ${x.judul}`, `${x.batas ? 'Batas ' + tglPendek(x.batas) + ' · ' : ''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)}`, htmlKhusus(x)); return; }
   const h = e.target.closest('[data-tr-hapus]'); if (h) { if (!confirm('Hapus tarif ini?')) return;
