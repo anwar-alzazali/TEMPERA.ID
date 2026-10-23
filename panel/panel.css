@@ -16,6 +16,8 @@ label input,label select,label textarea{margin-top:4px;font-weight:400;color:var
 label.chk{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px}
 label.chk input{width:auto;margin:0}
 .help{font-size:11px;color:var(--muted);margin:-6px 0 10px}
+.mbtns+.help,.btn+.help{margin-top:12px}
+input[type=date],input[type=month]{min-height:42px;font-size:14px;background:#fff}
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .loginbox{background:var(--card);padding:28px;border-radius:16px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(15,23,42,.1)}
 .loginbox h1{margin:0 0 4px;font-size:22px}
