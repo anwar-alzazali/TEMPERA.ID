@@ -116,13 +116,12 @@ async function dataKhusus() {
              masuk: b.data.filter((y) => y.iuran_id === x.id).reduce((s, y) => s + y.jumlah, 0) };
   });
 }
-function htmlKhusus(x, idx) {   // idx diberikan = tombol Lunas/Catat di bawah nama; 3 kolom saja agar muat di HP
+function htmlKhusus(x, idx) {   // tabel ringkas 4 kolom (muat di HP); idx diberikan = tombol Catat per baris
   const st = (q) => (!(q.nominal > 0) ? '-' : q.terbayar >= q.nominal ? 'lunas' : q.terbayar > 0 ? 'sebagian' : 'belum');
-  const aksi = (q) => (idx != null && x.status !== 'selesai' && q.sisa > 0
-    ? `<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:6px"><button class="btn sm" type="button" data-ik-lunas="${idx}|${esc(q.driver_slug)}">Lunas</button><input type="number" min="1" step="1000" placeholder="Rp" data-ik-jml="${idx}|${esc(q.driver_slug)}" style="width:80px"><button class="btn ghost sm" type="button" data-ik-catat="${idx}|${esc(q.driver_slug)}">Catat</button></div>` : '');
-  return `<div class="tablewrap"><table style="width:100%"><thead><tr><th>Anggota</th><th class="num">Status</th><th class="num">Sisa</th></tr></thead><tbody>
-    ${x.peserta.map((q) => `<tr><td><div class="v" style="text-align:left;flex:1">${esc(q.nama)}<div class="small">Iuran ${rp(q.nominal)} · dibayar ${q.terbayar ? rp(Math.min(q.terbayar, q.nominal)) : '–'}</div>${aksi(q)}</div></td><td class="num" data-label="Status">${IKN[st(q)]}</td><td class="num" data-label="Sisa" style="${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">Belum ada peserta.</td></tr>'}
-    <tr><td><div class="v" style="text-align:left;flex:1"><b>Total</b><div class="small">Iuran ${rp(x.target)} · dibayar ${rp(x.terkumpul)}</div></div></td><td class="num" data-label="Sisa"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
+  const aksi = (q) => (idx != null && x.status !== 'selesai' && q.sisa > 0 ? `<button class="btn sm" type="button" data-ik-catat="${idx}|${esc(q.driver_slug)}">Catat</button>` : '');
+  return `<div class="tablewrap"><table data-grid style="width:100%;min-width:0;table-layout:auto;font-size:13px"><thead><tr><th>Anggota</th><th class="num" style="padding:6px 4px">Status</th><th class="num" style="padding:6px 4px">Sisa</th>${idx != null ? '<th></th>' : ''}</tr></thead><tbody>
+    ${x.peserta.map((q) => `<tr><td style="white-space:normal;word-break:break-word;padding:8px 6px 8px 0">${esc(q.nama)}</td><td class="num" style="padding:8px 4px">${IKN[st(q)]}</td><td class="num" style="padding:8px 4px;white-space:nowrap;${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td>${idx != null ? `<td style="padding:6px 0 6px 4px">${aksi(q)}</td>` : ''}</tr>`).join('') || '<tr><td colspan="4" class="empty">Belum ada peserta.</td></tr>'}
+    <tr><td><b>Total</b></td><td></td><td class="num" style="white-space:nowrap"><b>${rp(x.target - x.terkumpul)}</b></td>${idx != null ? '<td></td>' : ''}</tr></tbody></table></div>`;
 }
 let IK = [];
 async function muatIuranKhusus() {
@@ -176,8 +175,8 @@ async function catatCepat(idx, slug, jumlah) {
   toast('Pembayaran dicatat'); muatIuranKhusus();
 }
 document.addEventListener('click', (e) => {
-  const lu = e.target.closest('[data-ik-lunas]'); if (lu) { const [i, s] = lu.dataset.ikLunas.split('|'); const q = IK[+i].peserta.find((y) => y.driver_slug === s); if (q && confirm(`Catat ${q.nama} lunas ${rp(q.sisa)}?`)) catatCepat(+i, s, q.sisa); return; }
-  const ca = e.target.closest('[data-ik-catat]'); if (ca) { const k = ca.dataset.ikCatat; const inp = document.querySelector(`[data-ik-jml="${k}"]`); const [i, s] = k.split('|'); catatCepat(+i, s, Number(inp && inp.value)); return; }
+  const ca = e.target.closest('[data-ik-catat]'); if (ca) { const [i, sl] = ca.dataset.ikCatat.split('|'); const q = IK[+i].peserta.find((y) => y.driver_slug === sl); if (!q) return;
+    const v = prompt(`Catat pembayaran ${q.nama} (Rp). Biarkan angka ini = lunas:`, q.sisa); if (v === null) return; catatCepat(+i, sl, Number(String(v).replace(/\D/g, ''))); return; }
   const k = e.target.closest('[data-ik-kelola]'); if (k) { kelolaIuran(IK[+k.dataset.ikKelola]); return; }
   const c = e.target.closest('[data-ik-cetak]'); if (c) { const x = IK[+c.dataset.ikCetak]; cetakKas(`Iuran: ${x.judul}`, `${x.batas ? 'Batas ' + tglPendek(x.batas) + ' · ' : ''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)}`, htmlKhusus(x)); return; }
   const h = e.target.closest('[data-tr-hapus]'); if (h) { if (!confirm('Hapus tarif ini?')) return;
