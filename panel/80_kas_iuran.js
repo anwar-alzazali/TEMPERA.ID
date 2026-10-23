@@ -120,9 +120,9 @@ function htmlKhusus(x, idx) {   // idx diberikan = tombol Lunas/Catat di bawah n
   const st = (q) => (!(q.nominal > 0) ? '-' : q.terbayar >= q.nominal ? 'lunas' : q.terbayar > 0 ? 'sebagian' : 'belum');
   const aksi = (q) => (idx != null && x.status !== 'selesai' && q.sisa > 0
     ? `<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:6px"><button class="btn sm" type="button" data-ik-lunas="${idx}|${esc(q.driver_slug)}">Lunas</button><input type="number" min="1" step="1000" placeholder="Rp" data-ik-jml="${idx}|${esc(q.driver_slug)}" style="width:80px"><button class="btn ghost sm" type="button" data-ik-catat="${idx}|${esc(q.driver_slug)}">Catat</button></div>` : '');
-  return `<div class="tablewrap"><table data-grid style="width:100%"><thead><tr><th>Anggota</th><th class="num">Status</th><th class="num">Sisa</th></tr></thead><tbody>
-    ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}<div class="small">Iuran ${rp(q.nominal)} · dibayar ${q.terbayar ? rp(Math.min(q.terbayar, q.nominal)) : '–'}</div>${aksi(q)}</td><td class="num">${IKN[st(q)]}</td><td class="num" style="${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">Belum ada peserta.</td></tr>'}
-    <tr><td><b>Total</b><div class="small">Iuran ${rp(x.target)} · dibayar ${rp(x.terkumpul)}</div></td><td></td><td class="num"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
+  return `<div class="tablewrap"><table style="width:100%"><thead><tr><th>Anggota</th><th class="num">Status</th><th class="num">Sisa</th></tr></thead><tbody>
+    ${x.peserta.map((q) => `<tr><td><div class="v" style="text-align:left;flex:1">${esc(q.nama)}<div class="small">Iuran ${rp(q.nominal)} · dibayar ${q.terbayar ? rp(Math.min(q.terbayar, q.nominal)) : '–'}</div>${aksi(q)}</div></td><td class="num" data-label="Status">${IKN[st(q)]}</td><td class="num" data-label="Sisa" style="${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">Belum ada peserta.</td></tr>'}
+    <tr><td><div class="v" style="text-align:left;flex:1"><b>Total</b><div class="small">Iuran ${rp(x.target)} · dibayar ${rp(x.terkumpul)}</div></div></td><td class="num" data-label="Sisa"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
 }
 let IK = [];
 async function muatIuranKhusus() {
