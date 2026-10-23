@@ -139,6 +139,7 @@ function kelolaIuran(x) {
       <div><label>Batas bayar<input id="mkBatas" type="date" value="${esc(x.batas || '')}"></label></div>
       <div class="full"><label>Keterangan<input id="mkKet" value="${esc(x.keterangan || '')}"></label></div></div>
     <div class="mbtns" style="justify-content:flex-start"><button class="btn sm" type="button" id="mkSimpan">Simpan judul/keterangan</button>
+      <button class="btn ghost sm" type="button" id="mkHapusIuran" style="color:var(--danger,#b91c1c)">Hapus iuran</button>
       <button class="btn ghost sm" type="button" id="mkStatus">${x.status === 'aktif' ? 'Tutup iuran' : 'Aktifkan lagi'}</button></div>
     <h2 style="margin-top:14px">Peserta</h2>
     <div class="tablewrap"><table style="min-width:520px"><thead><tr><th>Anggota</th><th>Nominal</th><th class="num">Dibayar</th><th>Catat bayar manual</th><th></th></tr></thead><tbody>
@@ -156,6 +157,11 @@ function kelolaIuran(x) {
   $('#mkTutup').addEventListener('click', closeModal);
   $('#mkSimpan').addEventListener('click', () => { const j = $('#mkJudul').value.trim(); if (!j) { toast('Judul wajib', true); return; }
     jalan(sb.from('iuran_khusus').update({ judul: j, keterangan: $('#mkKet').value.trim() || null, batas: $('#mkBatas').value || null }).eq('id', x.id), 'Disimpan'); });
+  $('#mkHapusIuran').addEventListener('click', async () => {
+    if (!confirm(`Hapus iuran "${x.judul}" beserta semua catatan pembayarannya (${rp(x.terkumpul)} terkumpul)? Tidak bisa dibatalkan.`)) return;
+    for (const t of ['iuran_khusus_bayar', 'iuran_khusus_peserta', 'iuran_khusus']) { const r = await sb.from(t).delete().eq(t === 'iuran_khusus' ? 'id' : 'iuran_id', x.id); if (r.error) { toast(r.error.message, true); return; } }
+    toast('Iuran dihapus'); closeModal(); muatIuranKhusus();
+  });
   $('#mkStatus').addEventListener('click', () => jalan(sb.from('iuran_khusus').update({ status: x.status === 'aktif' ? 'selesai' : 'aktif' }).eq('id', x.id), x.status === 'aktif' ? 'Iuran ditutup' : 'Iuran diaktifkan'));
   if ($('#mkTambahBtn')) $('#mkTambahBtn').addEventListener('click', () => jalan(sb.from('iuran_khusus_peserta').insert({ iuran_id: x.id, driver_slug: $('#mkTambah').value, nominal: x.nominal_default }), 'Peserta ditambahkan'));
   $$('#modalBody [data-mk-nomsave]').forEach((b) => b.addEventListener('click', () => { const s = b.dataset.mkNomsave; const n = parseInt($(`#modalBody [data-mk-nom="${CSS.escape(s)}"]`).value, 10);
