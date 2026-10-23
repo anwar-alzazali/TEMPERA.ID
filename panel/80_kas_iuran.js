@@ -116,10 +116,11 @@ async function dataKhusus() {
              masuk: b.data.filter((y) => y.iuran_id === x.id).reduce((s, y) => s + y.jumlah, 0) };
   });
 }
-function htmlKhusus(x) {
-  return `<div class="tablewrap"><table style="min-width:360px"><thead><tr><th>Anggota</th><th class="num">Iuran</th><th class="num">Dibayar</th><th class="num">Sisa</th></tr></thead><tbody>
-    ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}</td><td class="num">${rp(q.nominal)}</td><td class="num">${rp(Math.min(q.terbayar, q.nominal))}</td><td class="num" style="${q.sisa > 0 ? 'color:#b91c1c;font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '✅'}</td></tr>`).join('')}
-    <tr><td><b>Total</b></td><td class="num"><b>${rp(x.target)}</b></td><td class="num"><b>${rp(x.terkumpul)}</b></td><td class="num"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
+function htmlKhusus(x) {   // gaya sama dengan Rekap iuran kas: status ✅ ◐ ❌ per anggota
+  const st = (q) => (!(q.nominal > 0) ? '-' : q.terbayar >= q.nominal ? 'lunas' : q.terbayar > 0 ? 'sebagian' : 'belum');
+  return `<div class="tablewrap"><table data-grid style="min-width:340px"><thead><tr><th>Anggota</th><th class="num">Status</th><th class="num">Iuran</th><th class="num">Dibayar</th><th class="num">Sisa</th></tr></thead><tbody>
+    ${x.peserta.map((q) => `<tr><td>${esc(q.nama)}</td><td class="num">${IKN[st(q)]}</td><td class="num">${rp(q.nominal)}</td><td class="num">${q.terbayar ? rp(Math.min(q.terbayar, q.nominal)) : '–'}</td><td class="num" style="${q.sisa > 0 ? 'color:var(--danger,#b91c1c);font-weight:700' : ''}">${q.sisa > 0 ? rp(q.sisa) : '–'}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">Belum ada peserta.</td></tr>'}
+    <tr><td><b>Total</b></td><td></td><td class="num"><b>${rp(x.target)}</b></td><td class="num"><b>${rp(x.terkumpul)}</b></td><td class="num"><b>${rp(x.target - x.terkumpul)}</b></td></tr></tbody></table></div>`;
 }
 let IK = [];
 async function muatIuranKhusus() {
@@ -127,7 +128,7 @@ async function muatIuranKhusus() {
   $('#ikList').innerHTML = IK.length ? IK.map((x, i) => `<div style="border-top:1px solid var(--line);padding:10px 0">
       <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><b>${esc(x.judul)}</b> ${x.status === 'selesai' ? '<span class="badge b-cancelled">Ditutup</span>' : '<span class="badge b-paid">Aktif</span>'}
         <div class="small">${x.batas ? `Batas ${esc(tglPendek(x.batas))} · ` : ''}Terkumpul ${rp(x.terkumpul)} dari ${rp(x.target)} · ${x.peserta.filter((q) => q.sisa > 0).length} belum lunas${x.masuk > x.terkumpul ? ` · lebih bayar ${rp(x.masuk - x.terkumpul)}` : ''}</div></div>
-        <div class="mbtns" style="margin:0"><button class="btn ghost sm" type="button" data-ik-cetak="${i}">Cetak</button><button class="btn sm" type="button" data-ik-kelola="${i}">Kelola</button></div></div></div>`).join('')
+        <div class="mbtns" style="margin:0"><button class="btn ghost sm" type="button" data-ik-cetak="${i}">Cetak</button><button class="btn sm" type="button" data-ik-kelola="${i}">Kelola</button></div></div>${htmlKhusus(x)}</div>`).join('')
     : '<div class="empty">Belum ada iuran khusus.</div>';
 }
 function kelolaIuran(x) {
