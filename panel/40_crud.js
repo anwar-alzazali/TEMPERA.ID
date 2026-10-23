@@ -101,6 +101,19 @@ document.addEventListener('click', async (e) => {
   } finally { b.disabled = false; }
 });
 
+function fotoDriver(r) {
+  const u = r.photo_url ? (/^https?:/i.test(r.photo_url) ? r.photo_url : `${S.siteUrl || ''}/${String(r.photo_url).replace(/^\/+/, '')}`) : '';
+  const ini = esc(String(r.name || '?').trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase());
+  return u ? `<img class="drvfoto" src="${esc(u)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'drvfoto drvini',textContent:'${ini}'}))">` : `<div class="drvfoto drvini">${ini}</div>`;
+}
+RES.driver.kartu = (r, i) => {
+  const c = (k) => { const x = RES.driver.cols.find((y) => y.key === k); return x && x.render ? x.render(r) : ''; };
+  return `<div class="card drvcard"><div class="drvtop">${fotoDriver(r)}<div class="drvnama"><b>${esc(r.name)}</b><div class="small">${esc(r.driver_code || '-')} · ${esc(r.plate || 'tanpa plat')}</div>
+      <div class="small">${esc(r.phone || '-')}</div></div>
+      <div class="drvstat">${r.is_active === false ? '<span class="badge b-cancelled">Nonaktif</span>' : '<span class="badge b-paid">Aktif</span>'}</div></div>
+    <div class="drvbtn">${r.phone ? `<a class="btn ghost sm" href="https://wa.me/${esc(normWA(r.phone))}" target="_blank" rel="noopener" style="text-decoration:none">WhatsApp</a>` : ''}${c('ref')}${c('card')}${c('cetak')}<button class="btn sm" type="button" data-i="${i}">Ubah</button></div>
+    <div class="drvmitra">${c('mitra')}</div></div>`;
+};
 let ROWS = {};
 async function viewCrud(key) {
   const R = RES[key];
@@ -109,10 +122,10 @@ async function viewCrud(key) {
   ROWS[key] = data || [];
   $('#view').innerHTML = `
     <div class="bar" style="justify-content:space-between;align-items:center"><h2 style="margin:0">${esc(R.title)}</h2>${R.noCreate ? '' : '<button class="btn" id="btnNew" type="button">+ Tambah</button>'}</div>
-    <div class="card"><div class="tablewrap"><table>
+    ${R.kartu ? `<div class="drvlist">${ROWS[key].map((r, i) => R.kartu(r, i)).join('') || '<div class="empty">Belum ada data.</div>'}</div>` : `<div class="card"><div class="tablewrap"><table>
       <thead><tr>${R.cols.map((c) => `<th class="${c.num ? 'num' : ''}">${esc(c.label)}</th>`).join('')}<th></th></tr></thead>
       <tbody>${ROWS[key].map((r, i) => `<tr>${R.cols.map((c) => `<td class="${c.num ? 'num' : ''}">${c.render ? c.render(r) : esc(r[c.key])}</td>`).join('')}<td class="num"><button class="btn ghost sm" type="button" data-i="${i}">Ubah</button></td></tr>`).join('') || `<tr><td colspan="${R.cols.length + 1}" class="empty">Belum ada data.</td></tr>`}</tbody>
-    </table></div></div>`;
+    </table></div></div>`}`;
   if (!R.noCreate) $('#btnNew').addEventListener('click', () => openForm(key, null));
   $$('#view button[data-i]').forEach((b) => b.addEventListener('click', () => openForm(key, ROWS[key][Number(b.dataset.i)])));
 }

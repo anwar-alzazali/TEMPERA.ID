@@ -253,3 +253,15 @@ tr.click{transition:background .15s ease}
   table:not([data-grid]) td.num{white-space:normal}
   table:not([data-grid]) tr.click:active{background:var(--side-hover)}
 }
+
+/* Daftar driver berfoto */
+.drvlist{display:grid;gap:10px}
+.drvcard{padding:12px 14px}
+.drvtop{display:flex;align-items:center;gap:12px}
+.drvfoto{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;background:var(--line)}
+.drvini{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted,#64748b)}
+.drvnama{flex:1;min-width:0}.drvnama b{display:block;overflow-wrap:anywhere}
+.drvbtn{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.drvmitra{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.drvmitra .small{margin:0}
+@media(min-width:900px){.drvlist{grid-template-columns:1fr 1fr}}
