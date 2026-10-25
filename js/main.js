@@ -1439,12 +1439,18 @@ function notify(message,okText){ return temperaDialog({message,okText:okText||t(
 function askConfirm(message,okText,cancelText){ return temperaDialog({message,okText:okText||t('dlg_continue'),cancelText:cancelText||t('dlg_back')}); }
 
 /* ---------- Bahasa berganti: gambar ulang bagian dinamis tanpa kehilangan isian pelanggan ---------- */
+/* Daftar Harga (tabel SEO di bawah) ikut data armada dari database; baris statis di HTML = cadangan */
+function renderDaftarHarga(){
+  const tb=document.getElementById('dh-body'); if(!tb||!Array.isArray(ARMADA_DATA)||!ARMADA_DATA.length) return;
+  const maks='maks {n} orang';
+  tb.innerHTML=ARMADA_DATA.map(u=>`<tr><td>${esc(u.name)}${u.capacityMax?` <small>${esc(maks.replace('{n}',u.capacityMax))}</small>`:''}</td><td>${formatPrice(u.price)}</td></tr>`).join('');
+}
 function refreshDynamic(){
   const sel=document.getElementById('calcUnit');
   const unitId=(sel&&sel.selectedIndex>0)?sel.options[sel.selectedIndex].dataset.id:null;
   const checked=new Set([...document.querySelectorAll('input[name="destinasi"]:checked')].map(cb=>cb.dataset.group+'|'+cb.value));
   const open=document.querySelector('.accordion-content.open'); const openId=open?open.id.replace('acc-',''):null;
-  renderArmada();
+  renderArmada(); renderDaftarHarga();
   if(unitId) selectUnitById(unitId);
   terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });
