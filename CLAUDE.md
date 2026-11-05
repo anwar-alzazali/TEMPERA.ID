@@ -19,7 +19,7 @@ Tempera = sewa mobil + sopir dan private trip Bandung (Lembang, Dago, Ciwidey, P
 ## Aturan data penting
 - `drivers`: kode ID `TMP-0NN` dibuat trigger; slug = lower(kode ID) otomatis. Pesanan memakai slug (`assigned_driver`, `driver_slug`). Nomor WA pelanggan di `orders.customer_wa` berformat 62..., nomor driver `drivers.phone` berformat 08....
 - Pesanan: `TRIP-<ms>` (dari situs) dan `MAN-<ms>` (Trip custom buatan admin, `source='manual'`). WA tugas otomatis ke driver (`wa-driver-tugas`) hanya menerima order_id `TRIP-`, jadi pesanan `MAN-` dikirim lewat bot atau tombol panel.
-- Pembayaran sekarang MANUAL (`app_settings.payment_gateway='manual'`): kode unik di nominal, admin menandai bayar lewat tombol Telegram (`bayar-manual`). Midtrans belum dipakai.
+- Pembayaran sekarang MIDTRANS PRODUCTION (sejak 6 Nov 2026, `payment_gateway` & `teks_pembayaran` = 'midtrans'). Jalur manual (kode unik, `bayar-manual`) masih ada sebagai cadangan darurat, dianggap tidak dipakai.
 - Invoice dan surat jalan terbit otomatis oleh trigger bila status bayar (dp_paid/paid/confirmed) dan driver terisi.
 
 ## Bot Telegram
@@ -44,4 +44,5 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - Trigger `a_kunci_slot` (BEFORE INSERT orders, source direct/driver): advisory lock per armada+tanggal + cek unit. Diuji: 2 unit -> pesanan ke-3 SLOT_PENUH; pesanan admin (source manual) lolos.
 - Semua `fleet.unit_count` masih NULL (tanpa batas unit) -> cek penuh hanya aktif lewat tanggal ditutup sampai unit diisi.
 - Workflow `cek-midtrans.yml` (tiap ~15 menit) butuh secret MIDTRANS_CEK_KEY di Supabase DAN GitHub (nilai sama).
-- Belum: go-live production (snap.js + client key production di index.html & kas-bayar.html, MIDTRANS_IS_PRODUCTION=true, URL notifikasi di dashboard Midtrans, payment_gateway & teks_pembayaran = midtrans). Pembayaran manual dianggap tidak dipakai (pemilik, 6 Nov 2026).
+- GO-LIVE 6 Nov 2026: webhook v7.1 (signature dicek dengan MIDTRANS_SIGNATURE_SECRET lalu MIDTRANS_SERVER_KEY), MIDTRANS_IS_PRODUCTION=true, server key production baru (izin: Snap Checkout Write + Core API Read), client key production `Mid-client-In1jdxtwYWLalUfq` di js/main.js (Snap dimuat lewat muatSnap() saat formulir pesan disentuh / bayar; tidak ada tag Snap di index.html) dan kas-bayar.html.
+- Uji go-live: token Snap production terbit (pesanan uji TRIP-1793902458788, sudah dibatalkan `uji_golive`); midtrans-cek mendapat jawaban status 404 dari API production (kunci diterima). Notifikasi lunas production belum teruji -> uji setoran kas Rp1.000 di mitra/kas-bayar.
