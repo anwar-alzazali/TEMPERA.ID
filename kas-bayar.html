@@ -102,7 +102,7 @@ function pilih(p){
   if(p&&p.key!=='lain') $('#kLain').value='';
   const b=INFO?INFO.biaya_layanan:0;
   $('#ringkas').innerHTML=p&&p.jumlah>0
-    ?`<div class="row"><span>${esc(p.label)}</span><span>${rp(p.jumlah)}</span></div><div class="row"><span>Biaya layanan</span><span>${rp(b)}</span></div><div class="row tot"><span>Total</span><span>${rp(p.jumlah+b)}</span></div>`
+    ?`<div class="row"><span>${esc(p.label)}</span><span>${rp(p.jumlah)}</span></div>${b>0?`<div class="row"><span>Biaya layanan</span><span>${rp(b)}</span></div>`:''}<div class="row tot"><span>Total</span><span>${rp(p.jumlah+b)}</span></div>`
     :'<div class="muted">Pilih yang ingin dibayar.</div>';
   $('#btnBayar').disabled=!(p&&p.jumlah>0); $('#btnBayar').textContent=p&&p.jumlah>0?`Bayar ${rp(p.jumlah+b)}`:'Bayar';
 }
