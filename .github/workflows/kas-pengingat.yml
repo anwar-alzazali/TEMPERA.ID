@@ -1,0 +1,34 @@
+# .github/workflows/kas-pengingat.yml
+# Pengingat kas WA ke driver yang belum lunas. Berjalan TIAP HARI sekitar 09.00 WIB; fungsi kas-pengingat sendiri
+# yang memutuskan: hanya mengirim pada tanggal 1, 8, 15, 22, 29 (WIB), hari lain langsung selesai tanpa mengirim apa pun.
+# Maksimal 1 pesan per driver per hari (tabel kas_pengingat_log). Ringkasan dikirim ke Telegram admin.
+# Rahasia GitHub: MIDTRANS_CEK_KEY (sama dengan workflow Cek Midtrans).
+name: Pengingat Kas
+
+on:
+  schedule:
+    - cron: '50 1 * * *'   # 01.50 UTC = 08.50 WIB (GitHub biasanya terlambat beberapa menit)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kas-pengingat
+  cancel-in-progress: false
+
+jobs:
+  kirim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Panggil kas-pengingat
+        env:
+          KEY: ${{ secrets.MIDTRANS_CEK_KEY }}
+        run: |
+          [ -n "$KEY" ] || { echo "::error::Rahasia MIDTRANS_CEK_KEY belum diisi"; exit 1; }
+          code=$(curl -sS -m 400 -o hasil.json -w '%{http_code}' -X POST \
+            -H "x-cek-key: $KEY" -H 'Content-Type: application/json' -d '{"mode":"jadwal"}' \
+            https://wjmotidelqgcyyujacud.supabase.co/functions/v1/kas-pengingat)
+          cat hasil.json; echo
+          [ "$code" = "200" ] || { echo "::error::kas-pengingat menjawab HTTP $code"; exit 1; }

@@ -58,7 +58,8 @@ VIEWS.kas = async function () {
   box.innerHTML = `
     <div class="card" style="margin-top:14px"><div class="bar" style="justify-content:space-between;align-items:center;margin:0 0 8px"><h2 style="margin:0">Rekap iuran kas</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><select id="rkPer" style="width:auto"><option value="6">6 bulan terakhir</option><option value="12">12 bulan</option><option value="0">Semua</option></select>
-      <button class="btn ghost sm" type="button" id="rkCetak">Cetak</button></div></div>
+      <button class="btn ghost sm" type="button" id="rkCetak">Cetak</button>
+      <button class="btn sm" type="button" id="rkIngat" title="Kirim WA pengingat ke driver yang belum lunas">Kirim pengingat WA</button></div></div>
       <div id="rkIsi"><div class="empty">Memuat…</div></div>
       <div class="help" style="margin-top:8px">Setoran driver otomatis menutup bulan tertua yang belum lunas. Anggota dihitung sejak bulan bergabung; ubah per anggota di tab Driver (Iuran mulai / Bebas iuran). Mulai hitung & biaya layanan: tab Pengaturan (<b>iuran_mulai</b>, <b>iuran_biaya_layanan</b>).</div></div>
     <div class="card" style="margin-top:14px"><h2>Tarif iuran kas</h2><div id="trIsi"><div class="empty">Memuat…</div></div>
@@ -81,6 +82,28 @@ VIEWS.kas = async function () {
   $('#rkCetak').addEventListener('click', () => { if (!REKAP) return; const n = +$('#rkPer').value; const kol = n ? REKAP.semua.slice(-n) : REKAP.semua;
     cetakKas('Rekap Iuran Kas Mitra', kol.length ? `Periode ${blnL(kol[0])} – ${blnL(kol[kol.length - 1])}` : '', htmlRekap(REKAP, n)); });
   muatTarif(); muatIuranKhusus();
+  // Pengingat kas WA (fungsi kas-pengingat, SQL 173). Otomatis tgl 1/8/15/22/29 pukul 09.00; tombol ini untuk di luar jadwal.
+  $('#rkIngat').addEventListener('click', async (e) => {
+    const btn = e.target; btn.disabled = true; const lama = btn.textContent; btn.textContent = 'Memeriksa…';
+    const panggil = async (dry) => {
+      const ses = await sb.auth.getSession(); const tok = ses.data && ses.data.session && ses.data.session.access_token;
+      const r = await fetch(`${SB_URL}/functions/v1/kas-pengingat`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: SB_KEY, Authorization: `Bearer ${tok}` }, body: JSON.stringify({ mode: 'manual', dry }) });
+      return r.json().catch(() => ({ ok: false, error: 'Balasan tidak terbaca' }));
+    };
+    try {
+      const uji = await panggil(true);
+      if (!uji.ok) { toast(uji.error || 'Gagal memeriksa', true); return; }
+      const siap = (uji.hasil || []).filter((h) => h.akan_dikirim);
+      if (!siap.length) { toast('Semua driver sudah lunas, tidak ada yang perlu diingatkan'); return; }
+      const daftar = siap.map((h) => `• ${h.nama}: ${rp(h.total)}`).join('\n');
+      if (!confirm(`Kirim WA pengingat kas ke ${siap.length} driver yang belum lunas?\n\n${daftar}\n\n(Maksimal 1 pesan per driver per hari.)`)) return;
+      btn.textContent = `Mengirim ke ${siap.length} driver…`;
+      const j = await panggil(false);
+      if (!j.ok) { toast(j.error || 'Gagal mengirim', true); return; }
+      const gagal = (j.hasil || []).filter((h) => h.ok === false);
+      toast(`Pengingat terkirim ke ${j.dikirim} driver` + (gagal.length ? `, ${gagal.length} dilewati/gagal` : ''), gagal.length > 0 && !j.dikirim);
+    } finally { btn.disabled = false; btn.textContent = lama; }
+  });
   $('#trSimpan').addEventListener('click', async (e) => {
     const b = $('#trBulan').value, n = parseInt($('#trNom').value, 10);
     if (!/^\d{4}-\d{2}$/.test(b) || !(n >= 0)) { toast('Isi bulan dan nominal', true); return; }
