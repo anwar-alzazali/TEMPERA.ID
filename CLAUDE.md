@@ -38,3 +38,10 @@ Tab "Foto" di mitra.html (redup, aktif hanya saat ada tugas dalam jam foto). Tom
 
 ## Keamanan fungsi Edge (audit 23 Okt 2026)
 Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu database/halaman publik (midtrans-webhook, bayar-notif, wa-masuk, tg-masuk, tg-asisten, wa-driver-tugas [x-tugas-key], notif-status [x-notif-rahasia], draf-admin [x-draf-key = app_settings.draf_secret, dikirim pemicu draf_admin_notif], ongkir, bayar). driver-foto: JWT menyala. Fungsi masuk/notif/tanya/pandu/asisten-admin milik SaaS lama (Kamiku) di proyek yang sama; jangan diubah dari repo ini.
+
+## Pembayaran Midtrans aman (6 Nov 2026, SQL 170)
+- Terpasang: `midtrans-webhook` v7 (tulis DB dicek -> 500 agar Midtrans kirim ulang; log di tabel `midtrans_notif`; status lunas tidak tertimpa notif terlambat; nominal dicocokkan; Telegram admin untuk uang masuk di pesanan batal/expired, refund, chargeback, challenge), `create-order` v8 (SLOT_PENUH dari trigger, order_id bentrok dicoba ulang, timeout Midtrans 20 dtk -> pesanan dibatalkan), `midtrans-cek` v1 (verify_jwt off, header x-cek-key = secret MIDTRANS_CEK_KEY; tanya status pending ke Midtrans lalu teruskan ke webhook; 404 > 40 menit -> expired).
+- Trigger `a_kunci_slot` (BEFORE INSERT orders, source direct/driver): advisory lock per armada+tanggal + cek unit. Diuji: 2 unit -> pesanan ke-3 SLOT_PENUH; pesanan admin (source manual) lolos.
+- Semua `fleet.unit_count` masih NULL (tanpa batas unit) -> cek penuh hanya aktif lewat tanggal ditutup sampai unit diisi.
+- Workflow `cek-midtrans.yml` (tiap ~15 menit) butuh secret MIDTRANS_CEK_KEY di Supabase DAN GitHub (nilai sama).
+- Belum: go-live production (snap.js + client key production di index.html & kas-bayar.html, MIDTRANS_IS_PRODUCTION=true, URL notifikasi di dashboard Midtrans, payment_gateway & teks_pembayaran = midtrans). Pembayaran manual dianggap tidak dipakai (pemilik, 6 Nov 2026).
