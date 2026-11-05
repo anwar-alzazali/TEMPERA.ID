@@ -43,8 +43,7 @@
 <link rel="apple-touch-icon" href="images/tempera-apple-180.png">
 <meta name="apple-mobile-web-app-title" content="Tempera">
 
-<!-- MIDTRANS SNAP (sandbox). Saat go-live: ganti ke https://app.midtrans.com/snap/snap.js + client key production -->
-<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-W43YJb2YDRcRFv6F"></script>
+<!-- MIDTRANS SNAP (production): tidak dimuat di sini. js/main.js memuatnya hanya saat pelanggan mulai mengisi formulir pesan (muatSnap), supaya halaman tetap ringan. -->
 
 <!-- TEMA: ikut pengaturan perangkat; pilihan manual lama dibersihkan -->
 <script>
@@ -473,6 +472,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261020b"></script>
+<script src="js/main.js?v=20261106a"></script>
 </body>
 </html>

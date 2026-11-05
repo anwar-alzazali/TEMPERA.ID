@@ -1506,6 +1506,23 @@ function terapkanLinkPesan(){
 const MIDTRANS_ENDPOINT='https://wjmotidelqgcyyujacud.supabase.co/functions/v1/create-order';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndqbW90aWRlbHFnY3l5dWphY3VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzE2ODIsImV4cCI6MjEwNDkwNzY4Mn0.kZVRZhw0ryUcT-Pb7akpaO6vR4gOGwCkpD1kvk_uRac';
 
+/* Midtrans Snap PRODUCTION dimuat hanya saat dibutuhkan (mulai mengisi formulir pesan / menekan bayar), bukan di setiap kunjungan. */
+const SNAP_SRC='https://app.midtrans.com/snap/snap.js', SNAP_CLIENT_KEY='Mid-client-In1jdxtwYWLalUfq';
+let snapJanji=null;
+function muatSnap(){
+  if(window.snap) return Promise.resolve(true);
+  if(snapJanji) return snapJanji;
+  snapJanji=new Promise(res=>{
+    const sc=document.createElement('script'); sc.src=SNAP_SRC; sc.setAttribute('data-client-key',SNAP_CLIENT_KEY); sc.async=true;
+    const batas=setTimeout(()=>res(!!window.snap),15000);
+    sc.onload=()=>{ clearTimeout(batas); res(!!window.snap); };
+    sc.onerror=()=>{ clearTimeout(batas); snapJanji=null; sc.remove(); res(false); };
+    document.head.appendChild(sc);
+  });
+  return snapJanji;
+}
+document.addEventListener('focusin',e=>{ if(PAYMODE==='midtrans'&&e.target&&e.target.closest&&e.target.closest('#pesan')) muatSnap(); },{passive:true});
+
 function bayarSnap(data){
   const dpNote=(data.payment_mode==='dp'&&data.dp_amount)?t('dp_note',{rest:formatPrice(data.total-data.dp_amount)}):'';
   window.snap.pay(data.snap_token,{
@@ -1556,13 +1573,13 @@ async function handleFormSubmitMidtrans(event){
       const buka=await askConfirm(t('mirip_text',{order:data.order_id}),t('mirip_open'),t('mirip_new'));
       if(buka){
         if(data.manual){ tampilBayarManual(data); return; }
-        if(data.snap_token&&window.snap){ bayarSnap(data); return; }
+        if(data.snap_token&&await muatSnap()){ bayarSnap(data); return; }
       }
       data=await kirim(true);
     }
     if(data.ok&&data.manual){ tampilBayarManual(data); return; }
     if(data.snap_token){
-      if(!window.snap){ await notify(t('err_snap')); return; }
+      if(!(await muatSnap())){ await notify(t('err_snap')); return; }
       bayarSnap(data);
     } else {
       if(data.penuh){ cekTgl=''; cekKetersediaan(); await notify(data.error); return; }
