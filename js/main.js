@@ -1523,10 +1523,28 @@ function muatSnap(){
 }
 document.addEventListener('focusin',e=>{ if(PAYMODE==='midtrans'&&e.target&&e.target.closest&&e.target.closest('#pesan')) muatSnap(); },{passive:true});
 
+/* ---------- Analitik (Tahap 2): GA4 sekarang, Meta Pixel menyusul (fbq dipanggil kalau sudah dipasang).
+   TIDAK PERNAH mengirim nama, nomor WA, atau data pribadi lain. ---------- */
+const FBQ_NAMA={mulai_booking:'InitiateCheckout',buat_pesanan:'AddPaymentInfo',purchase:'Purchase',klik_wa:'Contact'};
+function lacak(nama,data){
+  try{ if(typeof window.gtag==='function') window.gtag('event',nama,data||{}); }catch(_e){}
+  try{ if(typeof window.fbq==='function'&&FBQ_NAMA[nama]) window.fbq('track',FBQ_NAMA[nama],data&&data.value!=null?{value:data.value,currency:data.currency||'IDR'}:{}); }catch(_e){}
+}
+let sudahMulaiBooking=false;
+document.addEventListener('focusin',e=>{
+  if(sudahMulaiBooking||!(e.target&&e.target.closest&&e.target.closest('#pesan'))) return;
+  sudahMulaiBooking=true; lacak('mulai_booking',{lokasi:'formulir'});
+},{passive:true});
+document.addEventListener('click',e=>{
+  const a=e.target&&e.target.closest&&e.target.closest('a[href*="wa.me"],a[href*="api.whatsapp.com"]'); if(!a) return;
+  const sek=a.closest('section[id],footer,header,nav'); 
+  lacak('klik_wa',{lokasi:a.id||(sek&&(sek.id||sek.tagName.toLowerCase()))||'lain'});
+},{capture:true,passive:true});
+
 function bayarSnap(data){
   const dpNote=(data.payment_mode==='dp'&&data.dp_amount)?t('dp_note',{rest:formatPrice(data.total-data.dp_amount)}):'';
   window.snap.pay(data.snap_token,{
-    onSuccess:()=>notify(t('pay_ok',{dp:dpNote})),
+    onSuccess:(r)=>{ lacak('purchase',{transaction_id:data.order_id,value:Number(data.payment_mode==='dp'?data.dp_amount:data.total)||0,currency:'IDR',payment_mode:data.payment_mode||'lunas',metode:(r&&r.payment_type)||''}); notify(t('pay_ok',{dp:dpNote})); },
     onPending:()=>notify(t('pay_pending',{dp:dpNote})),
     onError:()=>notify(t('pay_err')),
     onClose:()=>{}
@@ -1578,6 +1596,7 @@ async function handleFormSubmitMidtrans(event){
       data=await kirim(true);
     }
     if(data.ok&&data.manual){ tampilBayarManual(data); return; }
+    if(data.ok&&data.order_id) lacak('buat_pesanan',{transaction_id:data.order_id,value:Number(data.total)||0,currency:'IDR',payment_mode:data.payment_mode||'lunas',armada:armada&&armada.id||''});
     if(data.snap_token){
       if(!(await muatSnap())){ await notify(t('err_snap')); return; }
       bayarSnap(data);

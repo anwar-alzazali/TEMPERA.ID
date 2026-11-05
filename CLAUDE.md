@@ -57,3 +57,8 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - `kas-pengingat` v1 (verify_jwt off; x-cek-key = MIDTRANS_CEK_KEY, atau token admin panel via rpc is_admin): mode jadwal hanya tgl 1/8/15/22/29 WIB (nada ramah/ingat/tegas), mode manual (tombol "Kirim pengingat WA" di panel Kas, cek dulu dengan dry), mode uji {slug, paksa}. Hanya driver aktif non-bebas iuran dengan sisa > 0; link `kas-bayar.html?t=<driver_portal.token>&bayar=tunggakan`; jeda 4 dtk; anti-dobel tabel `kas_pengingat_log` (unik driver+tanggal+jenis); ringkasan Telegram.
 - Workflow `kas-pengingat.yml` tiap hari 08.50 WIB. Kirim otomatis pertama: 8 Nov 2026 (16 driver menunggak Rp10.000 saat dibuat). Pemilik perlu umumkan iuran di grup driver sebelum itu.
 - Teruji 6 Nov: tanda terima WA terkirim sekali (panggilan kedua tidak mengirim), pengingat uji ke tmp-011 terkirim, ulangan hari yang sama dilewati.
+
+## Analitik (Tahap 2, 6 Nov 2026)
+- GA4 properti tempera.id, ID `G-M9NQ9R4HZH` (akun Gmail Tempera). Tag hanya di index.html, galeri.html, syarat.html. JANGAN pasang di halaman ber-token (invoice, kas-bayar, mitra, panel, surat-jalan, verifikasi, ulasan) supaya token di URL tidak terkirim ke Google.
+- Event di js/main.js lewat `lacak()`: `mulai_booking` (fokus pertama di #pesan), `klik_wa` (semua link wa.me, param lokasi), `buat_pesanan` (create-order ok; value=total), `purchase` (onSuccess Snap; value=DP/lunas). Tanpa data pribadi. `lacak()` juga memanggil fbq bila Meta Pixel nanti dipasang (InitiateCheckout/AddPaymentInfo/Purchase/Contact).
+- Perlu ditandai sebagai "peristiwa utama" (key event) di GA4: buat_pesanan, purchase, klik_wa. Meta Pixel belum dipasang.

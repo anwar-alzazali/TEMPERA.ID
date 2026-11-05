@@ -51,6 +51,9 @@
 </script>
 <!-- Hero: mulai unduh foto sedini mungkin (alamat terakhir diingat di perangkat; bawaan images/hero.webp). main.js yang memasangnya. -->
 <script>(function(){try{var u=localStorage.getItem('tempera_hero');if(u==='-')return;if(!u)u='images/hero.webp';var i=new Image();i.src=u;}catch(e){}})();</script>
+<!-- Google Analytics 4 (Tahap 2, 6 Nov 2026). Hanya di halaman publik: JANGAN dipasang di halaman ber-token (invoice, kas-bayar, mitra, panel, surat-jalan, verifikasi, ulasan). -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M9NQ9R4HZH"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-M9NQ9R4HZH');</script>
 </head>
 
 <body>
@@ -472,6 +475,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261106a"></script>
+<script src="js/main.js?v=20261106b"></script>
 </body>
 </html>
