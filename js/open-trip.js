@@ -30,6 +30,7 @@
     per_orang: '/ orang', sisa: 'Sisa {n} kursi', sisa_tipis: 'Tinggal {n} kursi!', habis: 'Penuh', ditutup: 'Pendaftaran ditutup',
     lihat: 'Lihat & pesan', kumpul: 'Titik kumpul: {x}', jemput: 'Dijemput ke rumah ({x})', jemput_semua: 'Dijemput ke rumah',
     berangkat: 'Berangkat {jam}', min: 'Berangkat bila minimal {n} peserta',
+    kursi_info: '💺 <b>Pembagian kursi diumumkan H-1</b> sesuai urutan pembayaran: yang lebih dulu bayar duduk lebih depan.',
     min_info: 'Berangkat bila terkumpul minimal <b>{n} peserta</b>. Mobil menyesuaikan jumlah peserta (Avanza/Calya, Innova, atau Hiace). Kalau sampai batas waktu peserta belum cukup, Anda boleh pindah jadwal atau uang kembali 100%.',
     armada: 'Mobil: {x}', armada_auto: '🚐 Jenis armada disesuaikan dengan jumlah peserta', tersedia: 'Kursi tersedia',
     st_kosong: 'Jadilah peserta pertama · berangkat bila minimal {min} orang',
@@ -63,6 +64,7 @@
     per_orang: '/ orang', sisa: 'Baki {n} tempat', sisa_tipis: 'Tinggal {n} tempat!', habis: 'Penuh', ditutup: 'Pendaftaran ditutup',
     lihat: 'Lihat & tempah', kumpul: 'Titik berkumpul: {x}', jemput: 'Diambil di rumah ({x})', jemput_semua: 'Diambil di rumah',
     berangkat: 'Bertolak {jam}', min: 'Bertolak jika minimum {n} peserta',
+    kursi_info: '💺 <b>Tempat duduk diumumkan H-1</b> mengikut urutan pembayaran: yang lebih awal bayar duduk lebih depan.',
     min_info: 'Bertolak jika terkumpul minimum <b>{n} peserta</b>. Kereta mengikut bilangan peserta (Avanza/Calya, Innova atau Hiace). Jika tidak cukup, anda boleh tukar jadual atau wang dikembalikan 100%.',
     armada: 'Kereta: {x}', armada_auto: '🚐 Jenis kenderaan mengikut bilangan peserta', tersedia: 'Tempat tersedia',
     st_kosong: 'Jadilah peserta pertama · bertolak jika minimum {min} orang',
@@ -142,6 +144,7 @@
       <p style="margin:4px 0 0;font-size:13.5px">${esc(r.armada ? t('armada', { x: r.armada }) : t('armada_auto'))}</p>
       <div style="margin-top:10px">${labelSisa(r)} <span style="font-size:12px;color:var(--text-muted)">${esc(mobil(r).teks)}</span><div class="bar" aria-hidden="true"><i style="width:${mobil(r).pct}%"></i></div></div>
       <div class="pmsg on info" style="margin-top:12px">${t('min_info', { n: mobil(r).min })}</div>
+      <div class="pmsg on info" style="margin-top:8px">${t('kursi_info')}</div>
       ${blok(t('itinerary'), r.itinerary)}${blok(t('termasuk'), r.termasuk)}${blok(t('tidak'), r.tidak_termasuk)}${blok(t('catatan'), r.catatan)}
       ${bisa ? `<form id="fOt" novalidate style="margin-top:18px;border-top:1px dashed var(--border-color);padding-top:16px">
         <div class="pf"><span>${esc(t('f_kursi'))}</span><div class="hitung"><button type="button" data-k="-1" aria-label="-">−</button><output id="oKursi">1</output><button type="button" data-k="1" aria-label="+">+</button>${r.sisa <= 4 ? `<span style="font-size:12px;color:var(--text-muted)">${esc(t('sisa', { n: r.sisa }))}</span>` : ''}</div></div>

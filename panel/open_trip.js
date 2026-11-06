@@ -32,7 +32,7 @@
     const ids = TRIP.map((x) => String(x.id));
     PESAN = [];
     if (ids.length) {
-      const o = await sb.from('orders').select('id,order_id,invoice_no,status,customer_name,customer_wa,pax,total,pickup_note,items,product_id,created_at,assigned_driver,invoice_token')
+      const o = await sb.from('orders').select('id,order_id,invoice_no,status,customer_name,customer_wa,pax,total,pickup_note,items,product_id,created_at,paid_at,assigned_driver,invoice_token')
         .eq('product_type', 'open_trip').in('product_id', ids).order('created_at').limit(2000);
       PESAN = o.data || [];
     }
@@ -45,7 +45,8 @@
   }
 
   const pesananTrip = (id) => PESAN.filter((o) => o.product_id === String(id));
-  const lunas = (id) => pesananTrip(id).filter((o) => BAYAR.includes(o.status));
+  // Urut waktu bayar = urutan kursi (yang lebih dulu bayar duduk lebih depan; diumumkan H-1)
+  const lunas = (id) => pesananTrip(id).filter((o) => BAYAR.includes(o.status)).sort((a, b) => String(a.paid_at || a.created_at).localeCompare(String(b.paid_at || b.created_at)));
   const menunggu = (id) => pesananTrip(id).filter((o) => o.status === 'pending' && Date.now() - new Date(o.created_at).getTime() < 35 * 60e3);
   const kursiDari = (arr) => arr.reduce((s, o) => s + (o.pax || 1), 0);
   // Saran mobil menurut jumlah peserta lunas (pemilik memilih mobil setelah peserta terkumpul).
@@ -77,15 +78,15 @@
     </div>`;
   }
   function pesertaHtml(r) {
-    const daf = pesananTrip(r.id).filter((o) => BAYAR.includes(o.status) || o.status === 'pending');
+    const ls = lunas(r.id), daf = ls.concat(pesananTrip(r.id).filter((o) => o.status === 'pending'));
     if (!daf.length) return '<div class="small" style="margin:6px 0">Belum ada pemesan.</div>';
     const baris = daf.map((o) => {
       const it = (o.items && o.items[0]) || {};
       const ket = [it.alamat ? 'Jemput: ' + it.alamat : '', it.peserta ? 'Peserta: ' + it.peserta : ''].filter(Boolean).join(' · ');
       const st = BAYAR.includes(o.status) ? '<b style="color:#059669">Lunas</b>' : (menunggu(r.id).includes(o) ? '<span style="color:#B45309">Sedang bayar</span>' : '<span style="color:#64748B">Kedaluwarsa</span>');
-      return `<tr><td>${esc(o.customer_name)}</td><td><a href="https://wa.me/${esc(o.customer_wa)}" target="_blank" rel="noopener">${esc(o.customer_wa)}</a></td><td>${o.pax || 1}</td><td>${st}</td><td>${esc(o.invoice_no || o.order_id)}</td><td>${esc(ket)}</td></tr>`;
+      return `<tr><td>${ls.includes(o) ? ls.indexOf(o) + 1 : '-'}</td><td>${esc(o.customer_name)}</td><td><a href="https://wa.me/${esc(o.customer_wa)}" target="_blank" rel="noopener">${esc(o.customer_wa)}</a></td><td>${o.pax || 1}</td><td>${st}</td><td>${esc(o.invoice_no || o.order_id)}</td><td>${esc(ket)}</td></tr>`;
     }).join('');
-    return `<div style="overflow-x:auto"><table><thead><tr><th>Nama</th><th>WhatsApp</th><th>Kursi</th><th>Status</th><th>Invoice</th><th>Keterangan</th></tr></thead><tbody>${baris}</tbody></table></div>`;
+    return `<div style="overflow-x:auto"><table><thead><tr><th title="Urutan bayar = urutan kursi dari depan">Urutan</th><th>Nama</th><th>WhatsApp</th><th>Kursi</th><th>Status</th><th>Invoice</th><th>Keterangan</th></tr></thead><tbody>${baris}</tbody></table></div>`;
   }
   function itemHtml(r) {
     const k = kursiDari(lunas(r.id)), w = kursiDari(menunggu(r.id)), uang = lunas(r.id).reduce((s, o) => s + (o.total || 0), 0);
@@ -165,7 +166,7 @@
         salin(`${situs()}/open-trip?id=${ds.otLink}`, 'Link jadwal disalin');
       } else if (ds.otSalin) {
         const r = TRIP.find((x) => x.id === Number(ds.otSalin)); const daf = lunas(r.id);
-        const teks = `*${r.judul}*\n${tglId(r.tanggal)} jam ${r.jam}\n${r.jemput_rumah ? 'Jemput ke rumah' : 'Titik kumpul: ' + (r.titik_kumpul || '-')}\nPeserta lunas: ${kursiDari(daf)} orang\n\n`
+        const teks = `*${r.judul}*\n${tglId(r.tanggal)} jam ${r.jam}\n${r.jemput_rumah ? 'Jemput ke rumah' : 'Titik kumpul: ' + (r.titik_kumpul || '-')}\nPeserta lunas: ${kursiDari(daf)} orang\nUrutan = urutan bayar (paling atas duduk paling depan)\n\n`
           + daf.map((o, i) => { const it = (o.items && o.items[0]) || {}; return `${i + 1}. ${o.customer_name} (${o.pax || 1} kursi) wa.me/${o.customer_wa}${it.alamat ? '\n   Jemput: ' + it.alamat : ''}${it.peserta ? '\n   Peserta: ' + it.peserta : ''}`; }).join('\n');
         salin(teks, 'Daftar peserta disalin');
       } else if (ds.otTugas) {
