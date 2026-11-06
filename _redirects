@@ -10,3 +10,7 @@
 /soetta         /bandara     301
 /airport        /bandara     301
 /opentrip       /open-trip   301
+# Berkas internal tidak untuk publik
+/CLAUDE.md      /            301
+/alat/*         /            301
+/.github/*      /            301

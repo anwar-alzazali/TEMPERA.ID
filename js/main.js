@@ -14,7 +14,7 @@ let WA_NUMBER = '6285196755972'; // nomor WA admin (ditimpa app_settings.admin_w
  * ================================================================= */
 const I18N = {
 id: {
-  page_title: 'Tempera - Private Trip & Sewa Mobil Bandung | Teman Perjalanan',
+  page_title: 'Sewa Mobil + Driver Bandung, Open Trip & Antar Jemput Bandara | Tempera',
   nav_home: 'Beranda', nav_weather: 'Cuaca Live', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Mobil',
   nav_custom: 'Bandara & Open Trip', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
   aria_theme: 'Ganti tema terang/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Geser ke kiri', aria_right: 'Geser ke kanan',
@@ -214,7 +214,7 @@ id: {
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 ms: {
-  page_title: 'Tempera - Private Trip & Sewa Kereta Bandung | Teman Perjalanan',
+  page_title: 'Sewa Kereta + Pemandu Bandung, Open Trip & Transfer Lapangan Terbang | Tempera',
   nav_home: 'Laman Utama', nav_weather: 'Cuaca Semasa', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Kereta',
   nav_custom: 'Lapangan Terbang & Open Trip', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
   aria_theme: 'Tukar tema cerah/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Anjak ke kiri', aria_right: 'Anjak ke kanan',

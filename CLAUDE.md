@@ -77,4 +77,9 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - Kursi open trip tidak bernomor: dibagikan pemilik H-1 sesuai urutan BAYAR (paid_at), paling awal duduk paling depan (tertulis di halaman, syarat, kolom Urutan di panel, daftar salin). Kursi depan berbayar - Jemput hotel/rumah (jemput_rumah=true): `jam` = paling lambat siap dijemput; area_jemput mis. "Kota Bandung"; belum siap = ditinggal tanpa refund (halaman + syarat). Titik kumpul: telat >15 menit ditinggal.
 - Jadwal uji `open_trip` id 1 denah kursi DITOLAK sementara (mobil baru ditentukan setelah peserta terkumpul).
 - Jemput hotel/rumah (jemput_rumah=true): `jam` = paling lambat siap dijemput; area_jemput mis. "Kota Bandung"; belum siap = ditinggal tanpa refund (halaman + syarat). Titik kumpul: telat >15 menit ditinggal.
-- Jadwal uji `open_trip` id 1 "UJI JANGAN DIPESAN" harus dihapus/dijadikan draf sebelum digabung ke main.
+
+## SEO Gelombang 1 (6 Nov 2026)
+- Tailwind CDN DIGANTI CSS statis `css/tailwind.css` (hanya index.html memakai Tailwind). Setelah mengubah kelas Tailwind di index.html / js/main.js WAJIB bangun ulang: `npx tailwindcss@3.4.17 -c alat/tailwind.config.js -i alat/tailwind.src.css -o css/tailwind.css --minify` lalu naikkan ?v= di index.html.
+- index.html: title/description baru (sewa + open trip + bandara), JSON-LD TravelAgency + FAQPage (`ldFaq`, dibuat dari FAQ statis; perbarui bila FAQ berubah). bandara.html: Service + FAQPage. open-trip.html: Event per jadwal (dibuat JS).
+- _redirects menutup /CLAUDE.md, /alat/*, /.github/* (301 ke beranda); robots Disallow /CLAUDE.md, /alat/.
+- Belum: halaman landing per destinasi/armada (mis. /sewa-mobil-lembang), Google Business Profile (pemilik).
