@@ -60,10 +60,10 @@
       <div><label>Tujuan singkat<input data-f="tujuan" value="${esc(r.tujuan || '')}" maxlength="80" placeholder="mis. Ciwidey"></label></div>
       <div><label>Mobil (tampilan)<input data-f="armada" value="${esc(r.armada || '')}" maxlength="60" placeholder="kosong = menyesuaikan jumlah peserta"></label></div>
       <div><label>Tanggal<input type="date" data-f="tanggal" value="${esc(r.tanggal || '')}"></label></div>
-      <div><label>Jam berangkat<input type="time" data-f="jam" value="${esc(r.jam || '07:00')}"></label></div>
-      <div class="full"><label class="chk"><input type="checkbox" data-f="jemput_rumah"${r.jemput_rumah ? ' checked' : ''}> Dijemput ke rumah (luar kota). Tanpa centang = titik kumpul</label></div>
+      <div><label>Jam berangkat (bila jemput hotel: jam paling lambat siap dijemput)<input type="time" data-f="jam" value="${esc(r.jam || '07:00')}"></label></div>
+      <div class="full"><label class="chk"><input type="checkbox" data-f="jemput_rumah"${r.jemput_rumah ? ' checked' : ''}> Dijemput di hotel/rumah peserta (pelanggan mengisi nama hotel/alamat). Tanpa centang = titik kumpul</label></div>
       <div><label>Titik kumpul<input data-f="titik_kumpul" value="${esc(r.titik_kumpul || '')}" maxlength="120" placeholder="mis. Stasiun Bandung, pintu selatan"></label></div>
-      <div><label>Area jemput (bila jemput ke rumah)<input data-f="area_jemput" value="${esc(r.area_jemput || '')}" maxlength="80" placeholder="mis. Kota Bandung & Cimahi"></label></div>
+      <div><label>Area jemput (bila jemput hotel/rumah)<input data-f="area_jemput" value="${esc(r.area_jemput || '')}" maxlength="80" placeholder="mis. Kota Bandung"></label></div>
       <div><label>Maksimal peserta (sesuaikan mobil terbesar yang siap; Hiace = 10)<input data-f="kuota" value="${esc(r.kuota ?? 10)}" inputmode="numeric" maxlength="2"></label></div>
       <div><label>Harga per kursi (Rp)<input data-f="harga" value="${esc(r.harga ?? '')}" inputmode="numeric" maxlength="9" placeholder="mis. 250000"></label></div>
       <div><label>Minimal peserta agar berangkat<input data-f="min_berangkat" value="${esc(r.min_berangkat ?? 4)}" inputmode="numeric" maxlength="2"></label></div>

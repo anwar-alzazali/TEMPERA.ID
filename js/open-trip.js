@@ -28,7 +28,8 @@
     memuat: 'Memuat jadwal…', gagal: 'Jadwal belum bisa dimuat. Muat ulang halaman, atau tanya admin lewat WhatsApp.',
     kosong: 'Jadwal open trip berikutnya sedang disiapkan.', kosong_wa: 'Kabari saya lewat WhatsApp',
     per_orang: '/ orang', sisa: 'Sisa {n} kursi', sisa_tipis: 'Tinggal {n} kursi!', habis: 'Penuh', ditutup: 'Pendaftaran ditutup',
-    lihat: 'Lihat & pesan', kumpul: 'Titik kumpul: {x}', jemput: 'Dijemput ke rumah ({x})', jemput_semua: 'Dijemput ke rumah',
+    lihat: 'Lihat & pesan', kumpul: 'Titik kumpul: {x}', jemput: 'Dijemput di hotel/rumah ({x})', jemput_semua: 'Dijemput di hotel/rumah', siap: 'Siap dijemput paling lambat {jam}',
+    jemput_info: '🏨 <b>Dijemput di hotel atau rumah masing-masing</b>{area}. Harap sudah siap di lobi/depan rumah <b>paling lambat jam {jam}</b>. Peserta yang belum siap pada jam itu ditinggal, tanpa pengembalian dana.', jemput_area: ' (area {x})',
     berangkat: 'Berangkat {jam}', min: 'Berangkat bila minimal {n} peserta',
     kursi_info: '💺 <b>Pembagian kursi diumumkan H-1</b> sesuai urutan pembayaran: yang lebih dulu bayar duduk lebih depan.',
     min_info: 'Berangkat bila terkumpul minimal <b>{n} peserta</b>. Mobil menyesuaikan jumlah peserta (Avanza/Calya, Innova, atau Hiace). Kalau sampai batas waktu peserta belum cukup, Anda boleh pindah jadwal atau uang kembali 100%.',
@@ -38,7 +39,7 @@
     st_pasti: '{x} peserta terdaftar · pasti berangkat',
     itinerary: 'Rencana perjalanan', termasuk: 'Termasuk', tidak: 'Tidak termasuk', catatan: 'Catatan',
     f_kursi: 'Jumlah kursi', f_nama: 'Nama pemesan', f_wa: 'Nomor WhatsApp', f_wa_ph: '08xx atau +60 12-345 6789',
-    f_peserta: 'Nama peserta lain', f_peserta_s: '(opsional, pisahkan dengan koma)', f_alamat: 'Alamat jemput lengkap', f_alamat_ph: 'Nama jalan, nomor rumah, patokan',
+    f_peserta: 'Nama peserta lain', f_peserta_s: '(opsional, pisahkan dengan koma)', f_alamat: 'Nama hotel / alamat jemput', f_alamat_ph: 'Nama hotel + alamat, atau alamat rumah lengkap',
     setuju: 'Saya setuju dengan <a href="syarat.html" target="_blank" rel="noopener">Syarat &amp; Ketentuan</a> dan <a href="syarat.html#privasi" target="_blank" rel="noopener">Kebijakan Privasi</a>.',
     total: 'Total ({n} kursi)', bayar: 'Bayar {x}', memproses: 'Memproses…', tutup: 'Tutup',
     aman: 'Pembayaran lunas lewat Midtrans: QRIS, GoPay, ShopeePay, transfer bank (VA), kartu kredit/debit.',
@@ -62,7 +63,8 @@
     memuat: 'Memuatkan jadual…', gagal: 'Jadual belum dapat dimuatkan. Muat semula halaman, atau tanya admin melalui WhatsApp.',
     kosong: 'Jadual open trip seterusnya sedang disediakan.', kosong_wa: 'Maklumkan saya melalui WhatsApp',
     per_orang: '/ orang', sisa: 'Baki {n} tempat', sisa_tipis: 'Tinggal {n} tempat!', habis: 'Penuh', ditutup: 'Pendaftaran ditutup',
-    lihat: 'Lihat & tempah', kumpul: 'Titik berkumpul: {x}', jemput: 'Diambil di rumah ({x})', jemput_semua: 'Diambil di rumah',
+    lihat: 'Lihat & tempah', kumpul: 'Titik berkumpul: {x}', jemput: 'Diambil di hotel/rumah ({x})', jemput_semua: 'Diambil di hotel/rumah', siap: 'Bersedia diambil selewat-lewatnya {jam}',
+    jemput_info: '🏨 <b>Diambil di hotel atau rumah masing-masing</b>{area}. Sila bersedia di lobi selewat-lewatnya <b>jam {jam}</b>. Peserta yang belum bersedia akan ditinggalkan tanpa bayaran balik.', jemput_area: ' (kawasan {x})',
     berangkat: 'Bertolak {jam}', min: 'Bertolak jika minimum {n} peserta',
     kursi_info: '💺 <b>Tempat duduk diumumkan H-1</b> mengikut urutan pembayaran: yang lebih awal bayar duduk lebih depan.',
     min_info: 'Bertolak jika terkumpul minimum <b>{n} peserta</b>. Kereta mengikut bilangan peserta (Avanza/Calya, Innova atau Hiace). Jika tidak cukup, anda boleh tukar jadual atau wang dikembalikan 100%.',
@@ -72,7 +74,7 @@
     st_pasti: '{x} peserta berdaftar · pasti bertolak',
     itinerary: 'Rancangan perjalanan', termasuk: 'Termasuk', tidak: 'Tidak termasuk', catatan: 'Catatan',
     f_kursi: 'Bilangan tempat duduk', f_nama: 'Nama penempah', f_wa: 'Nombor WhatsApp', f_wa_ph: '+60 12-345 6789',
-    f_peserta: 'Nama peserta lain', f_peserta_s: '(pilihan, pisahkan dengan koma)', f_alamat: 'Alamat ambil penuh', f_alamat_ph: 'Nama jalan, nombor rumah, mercu tanda',
+    f_peserta: 'Nama peserta lain', f_peserta_s: '(pilihan, pisahkan dengan koma)', f_alamat: 'Nama hotel / alamat ambil', f_alamat_ph: 'Nama hotel + alamat, atau alamat rumah penuh',
     setuju: 'Saya bersetuju dengan <a href="syarat.html" target="_blank" rel="noopener">Terma &amp; Syarat</a> dan <a href="syarat.html#privasi" target="_blank" rel="noopener">Dasar Privasi</a>.',
     total: 'Jumlah ({n} tempat)', bayar: 'Bayar {x}', memproses: 'Memproses…', tutup: 'Tutup',
     aman: 'Bayaran penuh melalui Midtrans: kad kredit/debit, QRIS, e-wallet, pindahan bank Indonesia.',
@@ -116,7 +118,7 @@
       <div class="foto"${f ? ` style="background-image:url('${esc(f)}')"` : ''}><div class="tgl">${esc(hari)}<b>${Number(r.tanggal.slice(8, 10))}</b>${esc(bln)}</div></div>
       <div class="isi">
         <h3>${esc(r.judul)}</h3>
-        <p class="meta">${esc(t('berangkat', { jam: jamTampil(r.jam) }))} · ${esc(lokasi(r))}</p>
+        <p class="meta">${esc(t(r.jemput_rumah ? 'siap' : 'berangkat', { jam: jamTampil(r.jam) }))} · ${esc(lokasi(r))}</p>
         <p class="meta">${esc(r.armada ? t('armada', { x: r.armada }) : t('armada_auto'))}</p>
         <div>${labelSisa(r)} <span class="meta" style="font-size:12px">${esc(mb.teks)}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div></div>
         <div class="bawah"><span class="harga">${rp(r.harga)} <small>${t('per_orang')}</small></span>
@@ -139,11 +141,12 @@
     const bisa = r.buka_pesan && r.sisa > 0;
     $('#mBox').innerHTML = `<button type="button" class="tutup" data-tutup aria-label="${esc(t('tutup'))}">×</button>
       <h3 id="mJudul">${esc(r.judul)}</h3>
-      <p class="meta" style="margin:0;font-size:13px;color:var(--text-muted)">${esc(P.tglPanjang(r.tanggal))} · ${esc(t('berangkat', { jam: jamTampil(r.jam) }))}</p>
+      <p class="meta" style="margin:0;font-size:13px;color:var(--text-muted)">${esc(P.tglPanjang(r.tanggal))} · ${esc(t(r.jemput_rumah ? 'siap' : 'berangkat', { jam: jamTampil(r.jam) }))}</p>
       <p style="margin:6px 0 0;font-size:13.5px"><b>${esc(lokasi(r))}</b></p>
       <p style="margin:4px 0 0;font-size:13.5px">${esc(r.armada ? t('armada', { x: r.armada }) : t('armada_auto'))}</p>
       <div style="margin-top:10px">${labelSisa(r)} <span style="font-size:12px;color:var(--text-muted)">${esc(mobil(r).teks)}</span><div class="bar" aria-hidden="true"><i style="width:${mobil(r).pct}%"></i></div></div>
       <div class="pmsg on info" style="margin-top:12px">${t('min_info', { n: mobil(r).min })}</div>
+      ${r.jemput_rumah ? `<div class="pmsg on info" style="margin-top:8px">${t('jemput_info', { jam: esc(jamTampil(r.jam)), area: r.area_jemput ? esc(t('jemput_area', { x: r.area_jemput })) : '' })}</div>` : ''}
       <div class="pmsg on info" style="margin-top:8px">${t('kursi_info')}</div>
       ${blok(t('itinerary'), r.itinerary)}${blok(t('termasuk'), r.termasuk)}${blok(t('tidak'), r.tidak_termasuk)}${blok(t('catatan'), r.catatan)}
       ${bisa ? `<form id="fOt" novalidate style="margin-top:18px;border-top:1px dashed var(--border-color);padding-top:16px">
