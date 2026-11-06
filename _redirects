@@ -6,3 +6,7 @@
 /ig         /?utm_source=instagram&utm_medium=bio    302
 /facebook   /?utm_source=facebook&utm_medium=page    302
 /fb         /?utm_source=facebook&utm_medium=page    302
+# Alias halaman produk (6 Nov 2026)
+/soetta         /bandara     301
+/airport        /bandara     301
+/opentrip       /open-trip   301

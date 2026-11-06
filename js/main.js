@@ -16,7 +16,7 @@ const I18N = {
 id: {
   page_title: 'Tempera - Private Trip & Sewa Mobil Bandung | Teman Perjalanan',
   nav_home: 'Beranda', nav_weather: 'Cuaca Live', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Mobil',
-  nav_custom: 'Trip Custom', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
+  nav_custom: 'Bandara & Open Trip', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
   aria_theme: 'Ganti tema terang/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Geser ke kiri', aria_right: 'Geser ke kanan',
 
   hero_title: 'Sewa Mobil & Private Trip Bandung',
@@ -45,7 +45,7 @@ id: {
   bar_text: '{n} destinasi dipilih', bar_go: 'Lanjut pilih armada', bar_form: 'Lanjut isi data', bar_hint: 'Total muncul setelah memilih armada', bar_open: 'Lihat rincian', bar_close: 'Tutup rincian',
   picked_title: 'Destinasi pilihanmu', picked_empty: 'Belum ada destinasi. Pilih dulu di bagian Pilih Destinasi.', picked_go: 'Pilih destinasi', picked_rm: 'Hapus {name}',
   lain_label: 'Destinasi lain (konsultasi dengan driver)', lain_ph: 'Contoh: nama tempat lain di empat wilayah layanan',
-  lain_note: 'Hanya untuk tempat di empat wilayah layanan. Tidak dijamin: driver atau admin mengonfirmasi lewat WhatsApp apakah waktunya cukup. Di luar area, gunakan Trip Custom.',
+  lain_note: 'Hanya untuk tempat di empat wilayah layanan. Tidak dijamin: driver atau admin mengonfirmasi lewat WhatsApp apakah waktunya cukup. Di luar area, tanya admin lewat bagian Luar Kota.',
   terms_html: 'Saya telah membaca dan menyetujui <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Syarat &amp; Ketentuan</a>, termasuk kebijakan DP, pembatalan, dan <a href="syarat.html#privasi" target="_blank" rel="noopener" style="text-decoration:underline">privasi</a>.',
   err_terms: 'Centang persetujuan Syarat & Ketentuan dulu.',
   hero_p4: 'Invoice & surat jalan digital', gate_fields: 'Lengkapi dulu kolom yang bertanda merah.',
@@ -85,7 +85,10 @@ id: {
   av_card_full: '{car} penuh di tanggal yang dipilih. Pilih armada lain atau ubah tanggal.',
   av_wa_msg: 'Halo Admin Tempera, saya mau tanya ketersediaan armada untuk tanggal {tgl}.',
 
-  tc_title: 'Trip Custom', tc_sub: 'Untuk perjalanan di luar paket 12 jam: antar kota, bandara, mudik, atau menginap',
+  tc_title: 'Bandara, Open Trip & Luar Kota', tc_sub: 'Selain sewa 12 jam: antar jemput Bandara Soetta, open trip bayar per kursi, dan perjalanan ke luar kota',
+  hb_k: 'Harga pasti', hb_t: 'Antar Jemput Bandara Soetta', hb_d: 'Bandung ⇄ Soekarno-Hatta dengan mobil pribadi + driver. Harga per mobil sudah termasuk BBM dan tol. Pesan dan bayar online.', hb_mulai: 'mulai {x} / mobil', hb_btn: 'Lihat harga & pesan',
+  ho_k: 'Bayar per kursi', ho_t: 'Open Trip', ho_d: 'Ikut jadwal wisata bareng peserta lain: Kawah Putih, Lembang, Garut, dan trip tahun baru. Cocok untuk yang datang sendiri atau berdua.', ho_btn: 'Lihat jadwal', ho_next: 'Terdekat: {judul}, {tgl} · sisa {n} kursi', ho_none: 'Jadwal berikutnya segera diumumkan',
+  hl_k: 'Lewat WhatsApp', hl_t: 'Luar Kota & Menginap', hl_d: 'Jakarta, Garut, Tasikmalaya, trip 2–3 hari, atau tujuan lain. Harga tergantung jarak dan jumlah hari, jadi dikonfirmasi admin.',
   tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Pilih tujuan untuk melihat perkiraan ongkos, lalu kirim ke admin lewat WhatsApp. Trip lebih dari sehari atau tujuan lain dihitung admin.', tc_s1: 'Pilih tujuan', tc_s2: 'Kirim lewat WhatsApp', tc_s3: 'Admin konfirmasi harga',
   tc_soetta: 'Bandara Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
   tc_multi: 'Trip 2–3 hari', tc_other: 'Tujuan lain', tc_btn: 'Tanya harga lewat WhatsApp',
@@ -94,9 +97,9 @@ id: {
   tc_rinci_antar: '{km} km satu arah × {tarif}/km', tc_rinci_min: 'tarif minimum luar kota', tc_rinci_tunggu: '{km2} km pulang-pergi × {tarif}/km + {jam} jam tunggu di tujuan × {tj}',
   tc_msg_hit: 'Halo Admin Tempera, saya mau Trip Custom Bandung - {dest}, {jenis}. Perkiraan dari situs: {harga}. Mohon dikonfirmasi.',
   tc_msg_j_antar: 'antar saja', tc_msg_j_tunggu: 'ditunggu {jam} jam di tujuan lalu pulang',
-  tc_msg_dest: 'Halo Admin Tempera, saya mau tanya Trip Custom: Bandung - {dest}.',
-  tc_msg_multi: 'Halo Admin Tempera, saya mau tanya Trip Custom 2–3 hari.',
-  tc_msg_other: 'Halo Admin Tempera, saya mau tanya Trip Custom ke tujuan lain.',
+  tc_msg_dest: 'Halo Admin Tempera, saya mau tanya harga perjalanan Bandung - {dest}.',
+  tc_msg_multi: 'Halo Admin Tempera, saya mau tanya trip 2–3 hari.',
+  tc_msg_other: 'Halo Admin Tempera, saya mau tanya perjalanan ke luar kota (tujuan lain).',
   tc_msg_days: 'Halo Admin Tempera, saya mau trip {n} hari: {regions}.',
   dest_soetta: 'Bandara Soekarno-Hatta',
 
@@ -184,10 +187,10 @@ id: {
   faq_a3: 'Kota Bandung adalah titik jemput dan antar, jadi destinasi di Kota Bandung & Dago bisa digabung dengan wilayah mana pun tanpa biaya lintas. Biaya lintas hanya berlaku kalau kamu menggabung 2 wilayah di luar kota (dua dari Lembang, Ciwidey, Pangalengan), dan lebih besar lagi kalau ketiganya. Satu wilayah saja tidak kena biaya tambahan.',
   faq_q4: 'Berapa destinasi yang disarankan dalam sehari?',
   faq_a4: 'Kami sarankan tidak lebih dari 4 destinasi supaya perjalanan tetap santai, tidak terburu-buru.',
-  faq_q5: 'Apa itu Trip Custom?',
-  faq_a5: 'Perjalanan di luar sewa 12 jam biasa: antar kota (Jakarta, Garut, Tasikmalaya, dan lainnya), antar-jemput Bandara Soekarno-Hatta, mudik Lebaran, atau trip lebih dari 1 hari. Mobil dan driver khusus untuk rombongan Anda.',
-  faq_q6: 'Bagaimana cara pesan Trip Custom?',
-  faq_a6: 'Pilih tujuannya di bagian Trip Custom, lalu tanyakan harganya lewat WhatsApp. Harga tergantung jarak, jumlah hari, dan jam berangkat.',
+  faq_q5: 'Ada antar jemput Bandara Soekarno-Hatta?',
+  faq_a5: 'Ada. Harga pasti per mobil (bukan per orang), sudah termasuk BBM dan tol, dan bisa langsung dipesan serta dibayar di halaman Antar Jemput Bandara. Driver memantau jadwal pesawat dan gratis menunggu 60 menit.',
+  faq_q6: 'Apa itu open trip, dan bagaimana dengan tujuan luar kota lain?',
+  faq_a6: 'Open trip adalah jadwal wisata yang kami buat; Anda membayar per kursi dan berangkat bersama peserta lain. Untuk luar kota lain (Jakarta, Garut, Tasikmalaya, menginap), pilih tujuannya lalu tanyakan harganya lewat WhatsApp.',
   faq_q7: 'Bisa bayar DP?',
   faq_a7: 'Bisa. Saat checkout, pilih "Bayar DP". Anda cukup membayar sebagian (transfer bank atau QRIS), sisanya dibayar tunai langsung ke driver saat perjalanan. DP tidak dapat dikembalikan jika pelanggan membatalkan; detail kebijakan ada di Syarat & Ketentuan.',
   faq_q8: 'Bayarnya lewat apa?', faq_a8: 'Transfer bank atau QRIS ke rekening resmi Tempera. Setelah Anda memesan, layar pembayaran menampilkan rekening dan nominal yang harus dibayar, lalu konfirmasi dikirim ke WhatsApp.',
@@ -213,7 +216,7 @@ id: {
 ms: {
   page_title: 'Tempera - Private Trip & Sewa Kereta Bandung | Teman Perjalanan',
   nav_home: 'Laman Utama', nav_weather: 'Cuaca Semasa', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Kereta',
-  nav_custom: 'Trip Tersuai', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
+  nav_custom: 'Lapangan Terbang & Open Trip', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
   aria_theme: 'Tukar tema cerah/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Anjak ke kiri', aria_right: 'Anjak ke kanan',
 
   hero_title: 'Sewa Kereta & Private Trip Bandung',
@@ -242,7 +245,7 @@ ms: {
   bar_text: '{n} destinasi dipilih', bar_go: 'Teruskan pilih kereta', bar_form: 'Teruskan isi maklumat', bar_hint: 'Jumlah dipaparkan selepas memilih kereta', bar_open: 'Lihat butiran', bar_close: 'Tutup butiran',
   picked_title: 'Destinasi pilihan anda', picked_empty: 'Belum ada destinasi. Pilih dahulu di bahagian Pilih Destinasi.', picked_go: 'Pilih destinasi', picked_rm: 'Buang {name}',
   lain_label: 'Destinasi lain (berunding dengan pemandu)', lain_ph: 'Contoh: nama tempat lain di empat kawasan perkhidmatan',
-  lain_note: 'Hanya untuk tempat di empat kawasan perkhidmatan. Tidak dijamin: pemandu atau admin mengesahkan melalui WhatsApp sama ada masanya mencukupi. Di luar kawasan, gunakan Trip Tersuai.',
+  lain_note: 'Hanya untuk tempat di empat kawasan perkhidmatan. Tidak dijamin: pemandu atau admin mengesahkan melalui WhatsApp sama ada masanya mencukupi. Di luar kawasan, tanya admin melalui bahagian Luar Bandar.',
   terms_html: 'Saya telah membaca dan bersetuju dengan <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Terma &amp; Syarat</a>, termasuk dasar deposit, pembatalan, dan <a href="syarat.html#privasi" target="_blank" rel="noopener" style="text-decoration:underline">privasi</a>.',
   err_terms: 'Tandakan persetujuan Terma & Syarat dahulu.',
   hero_p4: 'Invois & surat jalan digital', gate_fields: 'Lengkapkan dahulu ruangan yang bertanda merah.',
@@ -282,7 +285,10 @@ ms: {
   av_card_full: '{car} penuh pada tarikh yang dipilih. Pilih kereta lain atau tukar tarikh.',
   av_wa_msg: 'Hai Admin Tempera, saya ingin bertanya tentang kekosongan kereta untuk tarikh {tgl}.',
 
-  tc_title: 'Trip Tersuai', tc_sub: 'Untuk perjalanan di luar pakej 12 jam: antara bandar, lapangan terbang, balik raya atau bermalam',
+  tc_title: 'Lapangan Terbang, Open Trip & Luar Bandar', tc_sub: 'Selain sewa 12 jam: transfer Lapangan Terbang Soetta, open trip bayar per tempat duduk, dan perjalanan luar bandar',
+  hb_k: 'Harga tetap', hb_t: 'Transfer Lapangan Terbang Soetta', hb_d: 'Bandung ⇄ Soekarno-Hatta dengan kereta peribadi + pemandu. Harga per kereta termasuk minyak dan tol. Tempah dan bayar dalam talian.', hb_mulai: 'dari {x} / kereta', hb_btn: 'Lihat harga & tempah',
+  ho_k: 'Bayar per tempat', ho_t: 'Open Trip', ho_d: 'Sertai jadual melancong bersama peserta lain: Kawah Putih, Lembang, Garut, dan trip tahun baru. Sesuai untuk yang datang seorang atau berdua.', ho_btn: 'Lihat jadual', ho_next: 'Terdekat: {judul}, {tgl} · baki {n} tempat', ho_none: 'Jadual seterusnya akan diumumkan',
+  hl_k: 'Melalui WhatsApp', hl_t: 'Luar Bandar & Bermalam', hl_d: 'Jakarta, Garut, Tasikmalaya, trip 2–3 hari, atau destinasi lain. Harga bergantung pada jarak dan bilangan hari, jadi disahkan admin.',
   tc_desc: 'Kereta dan pemandu khas untuk rombongan anda, bukan pengangkutan awam. Harga bergantung pada jarak, bilangan hari dan masa bertolak, jadi dikira oleh admin selepas anda memilih destinasi.', tc_s1: 'Pilih destinasi', tc_s2: 'Hantar melalui WhatsApp', tc_s3: 'Admin balas dengan harga',
   tc_soetta: 'Lapangan Terbang Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
   tc_multi: 'Trip 2–3 hari', tc_other: 'Destinasi lain', tc_btn: 'Tanya harga melalui WhatsApp',
@@ -291,9 +297,9 @@ ms: {
   tc_rinci_antar: '{km} km sehala × {tarif}/km', tc_rinci_min: 'kadar minimum luar bandar', tc_rinci_tunggu: '{km2} km pergi-balik × {tarif}/km + {jam} jam menunggu × {tj}',
   tc_msg_hit: 'Halo Admin Tempera, saya mahu Trip Custom Bandung - {dest}, {jenis}. Anggaran dari laman: {harga}. Mohon disahkan.',
   tc_msg_j_antar: 'hantar sahaja', tc_msg_j_tunggu: 'ditunggu {jam} jam di destinasi kemudian pulang',
-  tc_msg_dest: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai: Bandung - {dest}.',
-  tc_msg_multi: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai 2–3 hari.',
-  tc_msg_other: 'Hai Admin Tempera, saya ingin bertanya tentang Trip Tersuai ke destinasi lain.',
+  tc_msg_dest: 'Hai Admin Tempera, saya ingin bertanya harga perjalanan Bandung - {dest}.',
+  tc_msg_multi: 'Hai Admin Tempera, saya ingin bertanya tentang trip 2–3 hari.',
+  tc_msg_other: 'Hai Admin Tempera, saya ingin bertanya tentang perjalanan luar bandar (destinasi lain).',
   tc_msg_days: 'Hai Admin Tempera, saya ingin trip {n} hari: {regions}.',
   dest_soetta: 'Lapangan Terbang Soekarno-Hatta',
 
@@ -381,10 +387,10 @@ ms: {
   faq_a3: 'Bandar Bandung ialah titik jemputan dan hantaran, jadi destinasi di Bandar Bandung & Dago boleh digabung dengan kawasan mana-mana tanpa caj rentas. Caj rentas hanya dikenakan jika anda menggabungkan 2 kawasan di luar bandar (dua daripada Lembang, Ciwidey, Pangalengan), dan lebih tinggi jika ketiga-tiganya. Satu kawasan sahaja tidak dikenakan caj tambahan.',
   faq_q4: 'Berapa destinasi yang disyorkan dalam sehari?',
   faq_a4: 'Kami syorkan tidak lebih dari 4 destinasi supaya perjalanan kekal santai dan tidak tergesa-gesa.',
-  faq_q5: 'Apa itu Trip Tersuai?',
-  faq_a5: 'Perjalanan di luar sewa 12 jam biasa: antara bandar (Jakarta, Garut, Tasikmalaya dan lain-lain), jemputan dan hantaran ke Lapangan Terbang Soekarno-Hatta, balik raya, atau trip lebih dari 1 hari. Kereta dan pemandu khas untuk rombongan anda.',
-  faq_q6: 'Bagaimana cara menempah Trip Tersuai?',
-  faq_a6: 'Pilih destinasi di bahagian Trip Tersuai, kemudian tanya harga melalui WhatsApp. Harga bergantung pada jarak, bilangan hari dan masa bertolak.',
+  faq_q5: 'Ada transfer Lapangan Terbang Soekarno-Hatta?',
+  faq_a5: 'Ada. Harga tetap per kereta (bukan per orang), termasuk minyak dan tol, dan boleh terus ditempah serta dibayar di halaman Transfer Lapangan Terbang. Pemandu memantau jadual penerbangan dan percuma menunggu 60 minit.',
+  faq_q6: 'Apa itu open trip, dan bagaimana dengan destinasi luar bandar lain?',
+  faq_a6: 'Open trip ialah jadual melancong yang kami sediakan; anda bayar per tempat duduk dan bertolak bersama peserta lain. Untuk luar bandar lain (Jakarta, Garut, Tasikmalaya, bermalam), pilih destinasi dan tanya harga melalui WhatsApp.',
   faq_q7: 'Boleh bayar deposit?',
   faq_a7: 'Boleh. Semasa pembayaran, pilih "Bayar Deposit". Anda hanya perlu membayar sebahagian (pindahan bank atau QRIS), bakinya dibayar tunai terus kepada pemandu semasa perjalanan. Deposit tidak boleh dikembalikan jika pelanggan membatalkan; butiran dasar ada dalam Terma & Syarat.',
   faq_q8: 'Bayaran melalui apa?', faq_a8: 'Pindahan bank atau QRIS ke akaun rasmi Tempera. Selepas anda menempah, skrin pembayaran memaparkan akaun dan jumlah yang perlu dibayar, kemudian pengesahan dihantar ke WhatsApp.',
@@ -430,7 +436,7 @@ function applyStaticText(root){
   r.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML=t(el.dataset.i18nHtml); });   // hanya teks kamus (tepercaya)
   r.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.setAttribute('placeholder',t(el.dataset.i18nPh)); });
   r.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label',t(el.dataset.i18nAria)); el.setAttribute('title',t(el.dataset.i18nAria)); });
-  if(!root){ document.title=t('page_title'); document.documentElement.lang=currentLang; }
+  if(!root){ document.title=t('page_title'); document.documentElement.lang=currentLang; layananLain(); }
 }
 function updateLangButton(){
   const flag=document.getElementById('currentLangFlag'), lbl=document.getElementById('currentLang');
@@ -652,6 +658,7 @@ async function initRemoteData(){
     CROSS_2=n(s.cross_cost_2,CROSS_2); CROSS_3=n(s.cross_cost_3,CROSS_3); DP_PERCENT=n(s.dp_percent,DP_PERCENT);
     { const mh=parseFloat(s.booking_min_hours); if(Number.isFinite(mh)) BOOKING_MIN_HOURS=Math.min(Math.max(0,mh),1440); }
     { const w=normalizeWA(String(s.admin_wa||'')); if(w.length>=10&&w.length<=15) WA_NUMBER=w; }
+    { const h=parseInt(String(s.bandara_harga_mpv||'').replace(/[^0-9]/g,'')); if(h>0){ LL.harga=h; layananLain(); } }
     applyHero(); applyContacts(); calculateLive(); updateBatasWaktu();
   }catch(e){ console.warn('settings:',e); }
   try{ renderBanners(await sbGet('banners?select=*&order=sort_order.asc')); }catch(e){ console.warn('banners:',e); }
@@ -1226,12 +1233,31 @@ function renderCrossWarning(crossType,base,cost){
     <p style="margin:10px 0 0;font-size:12px;line-height:1.55;font-weight:600;color:${W.fg2}">${esc(t(crossType==='tiga_penjuru'?'xp_tip3':'xp_tip'))}</p>`;
 }
 
-/* ---------- Trip Custom: pilihan tujuan mengisi link WhatsApp ---------- */
-const TRIP_CUSTOM={ soetta:'dest_soetta', garut:'Garut', tasik:'Tasikmalaya', jakarta:'Jakarta' };
-let tcSelected='soetta', tcCustomMsg='';
+/* ---------- Bagian 'Bandara, Open Trip & Luar Kota' (pengganti Trip Custom, 6 Nov 2026) ----------
+   Harga bandara terendah dari app_settings.bandara_harga_mpv; jadwal open trip terdekat dari rpc open_trip_publik. */
+var LL={harga:1000000, trip:undefined};
+function layananLain(){
+  const h=document.getElementById('hbMulai'); if(h) h.textContent=t('hb_mulai',{x:formatPrice(LL.harga)});
+  const o=document.getElementById('hoNext'); if(!o) return;
+  if(LL.trip===undefined){ o.textContent=''; return; }
+  if(!LL.trip){ o.textContent=t('ho_none'); return; }
+  const tgl=new Date(LL.trip.tanggal+'T00:00:00+07:00').toLocaleDateString(currentLang==='ms'?'ms-MY':'id-ID',{weekday:'short',day:'numeric',month:'short',timeZone:'Asia/Jakarta'});
+  o.textContent=t('ho_next',{judul:LL.trip.judul,tgl,n:LL.trip.sisa});
+}
+(function muatOpenTripTerdekat(){
+  const jalan=()=>fetch('https://wjmotidelqgcyyujacud.supabase.co/rest/v1/rpc/open_trip_publik',{method:'POST',headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'},body:'{}'})
+    .then(r=>r.json()).then(j=>{ if(!Array.isArray(j)) return; LL.trip=j.find(x=>x.buka_pesan&&x.sisa>0)||null; layananLain(); }).catch(()=>{});
+  const el=document.getElementById('tripcustom'); if(!el) return;
+  if(!('IntersectionObserver' in window)) return void setTimeout(jalan,3000);
+  const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ io.disconnect(); jalan(); } },{rootMargin:'600px 0px'}); io.observe(el);
+})();
+
+/* ---------- Luar kota: pilihan tujuan mengisi link WhatsApp ---------- */
+const TRIP_CUSTOM={ garut:'Garut', tasik:'Tasikmalaya', jakarta:'Jakarta' };
+let tcSelected='jakarta', tcCustomMsg='';
 /* Kalkulator Trip Custom (antar saja / ditunggu). Ubah angka di sini bila tarif berubah. Jarak = km satu arah dari Kota Bandung (perkiraan). */
 const TC_TARIF={km:6000, minLuar:500000, tunggu:70000};
-const TC_JARAK={ soetta:160, garut:68, tasik:108, jakarta:150 };
+const TC_JARAK={};   // kalkulator per-km DIHENTIKAN 6 Nov 2026 (bandara kini harga pasti di bandara.html; luar kota lewat WA)
 function tcHitung(){
   const km=TC_JARAK[tcSelected]; if(!km) return null;
   const tunggu=(document.querySelector('input[name="tcJenis"]:checked')||{}).value==='tunggu';
