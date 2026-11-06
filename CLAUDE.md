@@ -77,6 +77,13 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - Kursi open trip tidak bernomor: dibagikan pemilik H-1 sesuai urutan BAYAR (paid_at), paling awal duduk paling depan (tertulis di halaman, syarat, kolom Urutan di panel, daftar salin). Kursi depan berbayar & denah kursi DITOLAK sementara (mobil baru ditentukan setelah peserta terkumpul).
 - Titik kumpul (pilihan pemilik: satu titik, mis. Stasiun Bandung): telat >15 menit ditinggal. Opsi jemput hotel/rumah (jemput_rumah=true) tetap ada untuk luar kota: `jam` = paling lambat siap dijemput, belum siap = ditinggal tanpa refund.
 
+## Alur pesan ringkas (6 Nov 2026)
+- SATU pesanan sewa 12 jam = SATU wilayah luar kota (Lembang / Ciwidey / Pangalengan); Kota Bandung & Dago (grup `dago`) bebas digabung. togglePick() di main.js MENGGANTI wilayah luar kota lama + notify (popup biaya lintas tidak muncul lagi). create-order tetap menghitung biaya lintas bila payload berisi >1 wilayah (tidak diubah). Syarat: pindah wilayah di hari H boleh ditolak driver / biaya lintas tunai ke driver.
+- Pilihan "🧭 Belum tahu tempatnya? Atur bersama driver" (`RUTE_BEBAS[g]`, mis. 'Lembang (rute diatur bersama driver)') di tiap kartu & jendela pilih destinasi; tersimpan sebagai destinasi biasa.
+- `/?wilayah=<lembang|ciwidey|pangalengan|dago>` memilih rute bebas wilayah itu (dipakai tombol di halaman destinasi).
+- Teks "Armada" -> "Mobil" di beranda (ID). Urutan beranda: hero, keunggulan, cara pesan, destinasi, mobil, foto, bandara/open trip, formulir, daftar harga, ulasan, galeri (keduanya disisipkan sebelum #cuaca), cuaca, FAQ.
+- Sewa per jam / corporate DITUNDA (pemilik: rawan bentrok & dipakai ke bandara); usulan bila dibuka: lewat formulir permintaan ke admin, tanpa BBM, 3j/6j/12j.
+
 ## SEO Gelombang 1 (6 Nov 2026)
 - Tailwind CDN DIGANTI CSS statis `css/tailwind.css` (hanya index.html memakai Tailwind). Setelah mengubah kelas Tailwind di index.html / js/main.js WAJIB bangun ulang: `npx tailwindcss@3.4.17 -c alat/tailwind.config.js -i alat/tailwind.src.css -o css/tailwind.css --minify` lalu naikkan ?v= di index.html.
 - index.html: title/description baru (sewa + open trip + bandara), JSON-LD TravelAgency + FAQPage (`ldFaq`, dibuat dari FAQ statis; perbarui bila FAQ berubah). bandara.html: Service + FAQPage. open-trip.html: Event per jadwal (dibuat JS).

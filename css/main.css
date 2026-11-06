@@ -404,3 +404,6 @@ body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
 .tc-hasil b{font-size:28px;line-height:1.2;color:var(--accent)}
 .tc-hasil small{font-size:12px;color:var(--text-secondary)}
 .tc-cat{font-size:12px;color:var(--text-muted);margin:0}
+
+/* 6 Nov 2026: pilihan "rute diatur bersama driver" di kartu destinasi */
+.dchip.dchip-bebas{border-style:dashed;font-weight:700;grid-column:1/-1;width:100%;flex:1 1 100%}

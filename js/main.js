@@ -22,7 +22,7 @@ id: {
   hero_title: 'Sewa Mobil & Private Trip Bandung',
   hero_sub: 'Mobil + driver 12 jam ke Lembang, Ciwidey, Pangalengan, dan Kota Bandung. Bayar online, bisa DP.',
   hero_p1: 'BBM termasuk', hero_p2: 'Sewa 12 jam', hero_p3: 'Bisa bayar DP',
-  hero_cta1: 'Pilih Destinasi', hero_cta2: 'Pilih Armada',
+  hero_cta1: 'Pilih Destinasi', hero_cta2: 'Pilih Mobil',
 
   wx_title: 'Cuaca Live Bandung & Sekitarnya', wx_src: 'Data Open-Meteo, diperbarui tiap 10 menit',
   wx_hum: 'Kelembapan', wx_wind: 'Angin', wx_time: 'Waktu', wx_forecast: 'Prakiraan 12 Jam', wx_now: 'Sekarang',
@@ -38,11 +38,12 @@ id: {
   pk_info: 'Sewa 12 jam, tanpa biaya lintas',
   cp_title: 'Cara Pesan',
   cp_1t: 'Pilih destinasi', cp_1d: 'Ketuk tempat yang ingin dikunjungi, boleh dari beberapa wilayah.',
-  cp_2t: 'Pilih armada', cp_2d: 'Sesuai jumlah penumpang.',
+  cp_2t: 'Pilih mobil', cp_2d: 'Sesuai jumlah penumpang.',
   cp_3t: 'Isi data', cp_3d: 'Nama, WhatsApp, tanggal, jam jemput.',
   cp_4t: 'Bayar', cp_4d: 'Pilih lunas atau DP; konfirmasi dan invoice dikirim ke WhatsApp.',
-  cp_note: 'Sewa 12 jam. Biaya lintas hanya berlaku kalau menggabung wilayah di luar kota (Lembang, Ciwidey, Pangalengan). Kota Bandung dan Dago adalah titik 0, bebas digabung.',
-  bar_text: '{n} destinasi dipilih', bar_go: 'Lanjut pilih armada', bar_form: 'Lanjut isi data', bar_hint: 'Total muncul setelah memilih armada', bar_open: 'Lihat rincian', bar_close: 'Tutup rincian',
+  cp_note: 'Sewa 12 jam untuk satu wilayah: Lembang, Ciwidey, atau Pangalengan. Kota Bandung dan Dago bebas digabung. Belum tahu tempatnya? Pilih "atur bersama driver".',
+  rute_bebas: '🧭 Belum tahu tempatnya? Atur bersama driver', satu_wilayah: 'Satu pesanan untuk satu wilayah. Pilihan di {lama} diganti ke {baru}. Untuk dua wilayah, pesan di hari berbeda.',
+  bar_text: '{n} destinasi dipilih', bar_go: 'Lanjut pilih mobil', bar_form: 'Lanjut isi data', bar_hint: 'Total muncul setelah memilih mobil', bar_open: 'Lihat rincian', bar_close: 'Tutup rincian',
   picked_title: 'Destinasi pilihanmu', picked_empty: 'Belum ada destinasi. Pilih dulu di bagian Pilih Destinasi.', picked_go: 'Pilih destinasi', picked_rm: 'Hapus {name}',
   lain_label: 'Destinasi lain (konsultasi dengan driver)', lain_ph: 'Contoh: nama tempat lain di empat wilayah layanan',
   lain_note: 'Hanya untuk tempat di empat wilayah layanan. Tidak dijamin: driver atau admin mengonfirmasi lewat WhatsApp apakah waktunya cukup. Di luar area, tanya admin lewat bagian Luar Kota.',
@@ -51,8 +52,8 @@ id: {
   hero_p4: 'Invoice & surat jalan digital', gate_fields: 'Lengkapi dulu kolom yang bertanda merah.',
   lain_toggle: '+ Ada tempat lain? (opsional)', add_dest: '+ Tambah destinasi',
   sh_dest_title: 'Pilih destinasi', sh_dest_sub: 'Ketuk tempat yang ingin dikunjungi. Boleh dari beberapa wilayah.', sh_done: 'Selesai', sh_done_n: 'Selesai · {n} dipilih', sh_close: 'Tutup',
-  sh_fleet_title: 'Pilih armada', sh_fleet_sub: 'Harga untuk sewa 12 jam, sesuai jumlah penumpang.',
-  mirip_text: 'Kamu masih punya pesanan {order} yang menunggu pembayaran untuk armada dan tanggal yang sama. Buka petunjuk bayarnya, atau buat pesanan baru kalau ini untuk rombongan lain.', mirip_open: 'Buka petunjuk bayar', mirip_new: 'Ini pesanan lain',
+  sh_fleet_title: 'Pilih mobil', sh_fleet_sub: 'Harga untuk sewa 12 jam, sesuai jumlah penumpang.',
+  mirip_text: 'Kamu masih punya pesanan {order} yang menunggu pembayaran untuk mobil dan tanggal yang sama. Buka petunjuk bayarnya, atau buat pesanan baru kalau ini untuk rombongan lain.', mirip_open: 'Buka petunjuk bayar', mirip_new: 'Ini pesanan lain',
   trust1: 'Bayar hanya ke rekening resmi Tempera, atas nama Anwar Alzazali Mufti.', trust2: 'Setelah bayar, konfirmasi dan invoice dikirim ke WhatsApp Anda.',
   trust3: 'DP, pembatalan, dan ganti jadwal: lihat <a href="syarat.html#pembatalan" target="_blank" rel="noopener">Syarat &amp; Ketentuan</a>.',
   trust1_mt: 'Pembayaran diproses aman lewat Midtrans (QRIS, transfer bank, e-wallet).', trust2_mt: 'Konfirmasi dan invoice dikirim ke WhatsApp setelah pembayaran diterima.',
@@ -67,23 +68,23 @@ id: {
   lt_why: 'Biaya lintas menutup BBM tambahan dan waktu tempuh driver, karena jam di jalan ikut memakan jam sewa 12 jam.', lt_cost: 'Biaya lintas', lt_total: 'Total',
   xp_yes: 'Tetap gabung (+{cost})', xp_no: 'Batalkan pilihan ini',
 
-  fleet_title: 'Armada Sewa Mobil Bandung',
+  fleet_title: 'Pilihan Mobil + Driver',
   tr1_t: 'BBM dan air mineral termasuk', tr1_s: 'Tanpa biaya bensin tambahan', tr2_t: 'Bisa bayar DP', tr2_s: 'Sisanya tunai ke driver',
   tr3_t: 'Invoice dan surat jalan digital', tr3_s: 'Bisa dicek keasliannya lewat QR', tr4_t: 'Usaha terdaftar', tr4_s: 'NIB 1710260026226 (OSS)',
   pb_text: 'Nikmati Bandungnya. Urusan jalan, serahkan ke driver kami.',
   dest_all: 'Lihat semua ({n})', dest_less: 'Tutup', dest_sel: '{n} dipilih',
   fleet_bag: 'Jumlah penumpang di kartu untuk bagasi secukupnya. Kalau bawa koper banyak, kursi dikurangi (van seperti Hiace dan Elf sekitar 4 kursi). Tulis jumlah koper saat pesan, admin akan mengonfirmasi.',
   fleet_note: '<span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.',
-  th_fleet: 'Armada', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
+  th_fleet: 'Mobil', th_cap: 'Nyaman / Maks', th_bag: 'Bagasi', th_price: 'Harga 12 Jam', th_act: 'Aksi',
   cap_comfort: '{n} Nyaman', card_cap: '{cap} • Maks {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + driver • Maks {max}',
-  card_btn: 'Pilih Unit - {price} / 12 Jam', card_12: '12 jam', card_max: 'Maks {max} penumpang', card_nobag: '(tanpa bagasi besar)', card_bag: 'Bawa bagasi: {n} penumpang + {bag}', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Armada Dulu —', opt_label: '{name} - {price} / 12 Jam',
+  card_btn: 'Pilih Unit - {price} / 12 Jam', card_12: '12 jam', card_max: 'Maks {max} penumpang', card_nobag: '(tanpa bagasi besar)', card_bag: 'Bawa bagasi: {n} penumpang + {bag}', tbl_pick: 'Pilih', opt_placeholder: '— Pilih Mobil Dulu —', opt_label: '{name} - {price} / 12 Jam',
   opt_full: ' — penuh di tanggal ini', opt_left: ' — tinggal {n} unit!',
   av_low: '⏳ Tinggal sedikit di tanggal ini: {list}.',
   rv_title: 'Kata Pelanggan', rv_sub: '⭐ {rata} dari 5 · {n} ulasan asli pelanggan Tempera', rv_left: 'Geser ke kiri', rv_right: 'Geser ke kanan',
-  av_some: '🚫 Penuh di tanggal ini: {list}. Pilih armada lain atau tanggal lain.',
-  av_all: '🚫 <b>Semua armada penuh di tanggal ini.</b> Pilih tanggal lain, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">tanya admin lewat WhatsApp</a>.',
-  av_card_full: '{car} penuh di tanggal yang dipilih. Pilih armada lain atau ubah tanggal.',
-  av_wa_msg: 'Halo Admin Tempera, saya mau tanya ketersediaan armada untuk tanggal {tgl}.',
+  av_some: '🚫 Penuh di tanggal ini: {list}. Pilih mobil lain atau tanggal lain.',
+  av_all: '🚫 <b>Semua mobil penuh di tanggal ini.</b> Pilih tanggal lain, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">tanya admin lewat WhatsApp</a>.',
+  av_card_full: '{car} penuh di tanggal yang dipilih. Pilih mobil lain atau ubah tanggal.',
+  av_wa_msg: 'Halo Admin Tempera, saya mau tanya ketersediaan mobil untuk tanggal {tgl}.',
 
   tc_title: 'Bandara, Open Trip & Luar Kota', tc_sub: 'Selain sewa 12 jam: antar jemput Bandara Soetta, open trip bayar per kursi, dan perjalanan ke luar kota',
   hb_k: 'Harga pasti', hb_t: 'Antar Jemput Bandara Soetta', hb_d: 'Bandung ⇄ Soekarno-Hatta dengan mobil pribadi + driver. Harga per mobil sudah termasuk BBM dan tol. Pesan dan bayar online.', hb_mulai: 'mulai {x} / mobil', hb_btn: 'Lihat harga & pesan',
@@ -105,9 +106,9 @@ id: {
 
   book_title: 'Booking Sewa Mobil & Paket Wisata Bandung',
   form_name: 'Nama Lengkap *', ph_name: 'Nama Anda', form_wa: 'WhatsApp *', ph_wa: '0812xxxx atau +60 12xxxx',
-  form_armada: 'Pilih Armada (Sewa 12 Jam) *',
+  form_armada: 'Pilih Mobil (Sewa 12 Jam) *',
   step1: 'Langkah 1: Pilih Wilayah Biar Hemat',
-  titik0: '<b style="color:var(--accent)">🏙 Kota Bandung = titik 0.</b> Jemput dan antar di Bandung, jadi destinasi Kota Bandung &amp; Dago boleh digabung dengan wilayah mana pun <b>tanpa biaya lintas</b>. Biaya lintas hanya berlaku kalau menggabung 2 atau 3 wilayah di luar kota (Lembang, Ciwidey, Pangalengan).',
+  titik0: '<b style="color:var(--accent)">🏙 Kota Bandung = titik 0.</b> Jemput dan antar di Bandung, jadi Kota Bandung &amp; Dago boleh digabung dengan wilayah mana pun. Satu pesanan hanya untuk <b>satu wilayah luar kota</b> (Lembang, Ciwidey, atau Pangalengan) karena jaraknya berjauhan.',
   rg_north: '🌲 UTARA', rg_ok1: '✓ 1 Arah Efisien', rg_south: '⛰️ SELATAN', rg_ok2: '✓ 1 Arah Selatan',
   step2: 'Langkah 2: Pilih Destinasi (Centang yang Mau Dikunjungi)',
   form_date: 'Tanggal *', form_time: 'Jam Jemput', form_pax: 'Jumlah Peserta *',
@@ -124,7 +125,7 @@ id: {
   dur_none: '<b>Untuk tanggal ini semua jam jemput sudah terlalu dekat.</b> Pilih tanggal berikutnya atau hubungi admin.',
   res_dur: '12 jam', res_dur_val: '12 jam ({start} - {end})',
 
-  summary: 'Rincian Biaya', sum_armada: 'Armada', not_chosen: 'Belum dipilih', choose_above: 'Pilih armada di atas',
+  summary: 'Rincian Biaya', sum_armada: 'Mobil', not_chosen: 'Belum dipilih', choose_above: 'Pilih mobil di atas',
   sum_dur: 'Durasi sewa:', sum_cross: 'Biaya lintas:', sum_dest: 'Destinasi:', none_yet: 'Belum ada', sum_cap: 'Kapasitas:',
   sum_total: 'Total Tarif', inc_title: '<span class="ic ic-check"></span>Termasuk', inc_list: 'Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam',
   exc_title: '<span class="ic ic-x"></span>Tidak termasuk', exc_list: 'Tol, parkir, makan driver',
@@ -134,7 +135,7 @@ id: {
 
   cap_ok: '✅ {n} orang muat nyaman di {car}', cap_warn: '⚠ {n} orang melebihi nyaman ({cap}) tapi masih maks {max}',
   cap_over: '🚫 {n} orang melebihi MAKS {max}',
-  cm_title: 'Melebihi Kapasitas Maksimal', cm_text: '{n} orang melebihi kapasitas maksimal {car} ({max}). Pilih armada yang lebih besar.',
+  cm_title: 'Melebihi Kapasitas Maksimal', cm_text: '{n} orang melebihi kapasitas maksimal {car} ({max}). Pilih mobil yang lebih besar.',
   cm_change: 'Ubah Jumlah', cm_upgrade: 'Upgrade',
   up_msg: 'Halo Admin Tempera, saya butuh armada untuk {n} orang (melebihi kapasitas 1 unit terbesar). Mohon info unit gabungan / armada tambahan.',
 
@@ -143,7 +144,7 @@ id: {
 
   dlg_ok: 'OK', dlg_continue: 'Lanjutkan', dlg_back: 'Kembali', dlg_chat: 'Chat admin', dlg_no: 'Tidak',
   err_name: 'Isi nama lengkap dulu.', err_wa: 'Nomor WhatsApp tidak valid. Contoh: 0812xxxxxxx atau +60 12-345 6789.',
-  err_fleet: 'Pilih armada dulu.', err_dest: 'Pilih minimal satu destinasi.', err_pax: 'Isi jumlah peserta dulu.',
+  err_fleet: 'Pilih mobil dulu.', err_dest: 'Pilih minimal satu destinasi.', err_pax: 'Isi jumlah peserta dulu.',
   err_datetime: 'Isi tanggal dan jam jemput dulu.',
   err_min: 'Pemesanan minimal {n} jam sebelum jam jemput. Pilih tanggal atau jam yang lebih lambat, atau hubungi admin lewat WhatsApp untuk pesanan mendadak.',
   err_past: 'Jam jemput sudah lewat. Pilih tanggal atau jam yang lebih lambat.',
@@ -183,8 +184,8 @@ id: {
   faq_a1: 'Sewa dibatasi 12 jam, dihitung dari jam jemput. Contoh: dijemput pukul 07.00, selesai paling lambat pukul 19.00. Di formulir pemesanan, jam selesainya otomatis ditampilkan.',
   faq_q2: 'Apa saja yang termasuk dan tidak termasuk?',
   faq_a2: 'Termasuk: mobil, driver, BBM, air mineral, dan pemakaian sampai 12 jam. Tidak termasuk: tol, parkir, dan makan driver.',
-  faq_q3: 'Kenapa ada biaya tambahan kalau destinasi lebih dari satu wilayah?',
-  faq_a3: 'Kota Bandung adalah titik jemput dan antar, jadi destinasi di Kota Bandung & Dago bisa digabung dengan wilayah mana pun tanpa biaya lintas. Biaya lintas hanya berlaku kalau kamu menggabung 2 wilayah di luar kota (dua dari Lembang, Ciwidey, Pangalengan), dan lebih besar lagi kalau ketiganya. Satu wilayah saja tidak kena biaya tambahan.',
+  faq_q3: 'Bisa ke Lembang dan Ciwidey dalam satu hari?',
+  faq_a3: 'Satu pesanan sewa 12 jam untuk satu wilayah luar kota: Lembang, Ciwidey, atau Pangalengan. Jaraknya berjauhan, jadi kalau digabung waktu habis di jalan. Kota Bandung & Dago boleh digabung dengan wilayah mana pun tanpa biaya tambahan. Untuk dua wilayah, pesan untuk dua hari berbeda.',
   faq_q4: 'Berapa destinasi yang disarankan dalam sehari?',
   faq_a4: 'Kami sarankan tidak lebih dari 4 destinasi supaya perjalanan tetap santai, tidak terburu-buru.',
   faq_q5: 'Ada antar jemput Bandara Soekarno-Hatta?',
@@ -241,7 +242,8 @@ ms: {
   cp_2t: 'Pilih kereta', cp_2d: 'Mengikut bilangan penumpang.',
   cp_3t: 'Isi maklumat', cp_3d: 'Nama, WhatsApp, tarikh, masa jemputan.',
   cp_4t: 'Bayar', cp_4d: 'Pilih bayar penuh atau deposit; pengesahan dan invois dihantar ke WhatsApp.',
-  cp_note: 'Sewa 12 jam. Caj rentas hanya dikenakan jika menggabungkan kawasan di luar bandar (Lembang, Ciwidey, Pangalengan). Bandar Bandung dan Dago ialah titik 0, bebas digabungkan.',
+  cp_note: 'Sewa 12 jam untuk satu kawasan: Lembang, Ciwidey atau Pangalengan. Bandar Bandung dan Dago bebas digabungkan. Belum tahu tempatnya? Pilih "atur bersama pemandu".',
+  rute_bebas: '🧭 Belum tahu tempatnya? Atur bersama pemandu', satu_wilayah: 'Satu tempahan untuk satu kawasan. Pilihan di {lama} ditukar ke {baru}. Untuk dua kawasan, tempah pada hari berbeza.',
   bar_text: '{n} destinasi dipilih', bar_go: 'Teruskan pilih kereta', bar_form: 'Teruskan isi maklumat', bar_hint: 'Jumlah dipaparkan selepas memilih kereta', bar_open: 'Lihat butiran', bar_close: 'Tutup butiran',
   picked_title: 'Destinasi pilihan anda', picked_empty: 'Belum ada destinasi. Pilih dahulu di bahagian Pilih Destinasi.', picked_go: 'Pilih destinasi', picked_rm: 'Buang {name}',
   lain_label: 'Destinasi lain (berunding dengan pemandu)', lain_ph: 'Contoh: nama tempat lain di empat kawasan perkhidmatan',
@@ -307,7 +309,7 @@ ms: {
   form_name: 'Nama Penuh *', ph_name: 'Nama anda', form_wa: 'WhatsApp *', ph_wa: '+60 12-345 6789',
   form_armada: 'Pilih Kereta (Sewa 12 Jam) *',
   step1: 'Langkah 1: Pilih Kawasan Supaya Jimat',
-  titik0: '<b style="color:var(--accent)">🏙 Bandar Bandung = titik 0.</b> Jemputan dan hantaran di Bandung, jadi destinasi Bandar Bandung &amp; Dago boleh digabung dengan kawasan mana-mana <b>tanpa caj rentas</b>. Caj rentas hanya dikenakan jika menggabungkan 2 atau 3 kawasan di luar bandar (Lembang, Ciwidey, Pangalengan).',
+  titik0: '<b style="color:var(--accent)">🏙 Bandar Bandung = titik 0.</b> Jemputan dan hantaran di Bandung, jadi Bandar Bandung &amp; Dago boleh digabungkan dengan mana-mana kawasan. Satu tempahan hanya untuk <b>satu kawasan luar bandar</b> (Lembang, Ciwidey atau Pangalengan) kerana jaraknya berjauhan.',
   rg_north: '🌲 UTARA', rg_ok1: '✓ Sehala, Jimat Masa', rg_south: '⛰️ SELATAN', rg_ok2: '✓ Sehala ke Selatan',
   step2: 'Langkah 2: Pilih Destinasi (Tandakan yang Ingin Dilawati)',
   form_date: 'Tarikh *', form_time: 'Masa Jemputan', form_pax: 'Bilangan Peserta *',
@@ -383,8 +385,8 @@ ms: {
   faq_a1: 'Sewa terhad 12 jam, dikira dari masa jemputan. Contoh: dijemput 7.00 pagi, tamat selewat-lewatnya 7.00 malam. Dalam borang tempahan, masa tamat dipaparkan secara automatik.',
   faq_q2: 'Apa yang termasuk dan tidak termasuk?',
   faq_a2: 'Termasuk: kereta, pemandu, petrol, air mineral dan penggunaan sehingga 12 jam. Tidak termasuk: tol, parkir dan makan pemandu.',
-  faq_q3: 'Kenapa ada caj tambahan jika destinasi lebih dari satu kawasan?',
-  faq_a3: 'Bandar Bandung ialah titik jemputan dan hantaran, jadi destinasi di Bandar Bandung & Dago boleh digabung dengan kawasan mana-mana tanpa caj rentas. Caj rentas hanya dikenakan jika anda menggabungkan 2 kawasan di luar bandar (dua daripada Lembang, Ciwidey, Pangalengan), dan lebih tinggi jika ketiga-tiganya. Satu kawasan sahaja tidak dikenakan caj tambahan.',
+  faq_q3: 'Boleh ke Lembang dan Ciwidey dalam satu hari?',
+  faq_a3: 'Satu tempahan sewa 12 jam untuk satu kawasan luar bandar: Lembang, Ciwidey atau Pangalengan. Jaraknya berjauhan, jadi masa habis di jalan jika digabungkan. Bandar Bandung & Dago boleh digabungkan dengan mana-mana kawasan tanpa caj tambahan. Untuk dua kawasan, tempah untuk dua hari berbeza.',
   faq_q4: 'Berapa destinasi yang disyorkan dalam sehari?',
   faq_a4: 'Kami syorkan tidak lebih dari 4 destinasi supaya perjalanan kekal santai dan tidak tergesa-gesa.',
   faq_q5: 'Ada transfer Lapangan Terbang Soekarno-Hatta?',
@@ -727,7 +729,7 @@ async function muatUlasan(){
 function renderUlasan(){
   let sec=document.getElementById('ulasan');
   if(!ULASAN.list.length){ if(sec) sec.remove(); return; }
-  if(!sec){ const faq=document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='ulasan'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
+  if(!sec){ const faq=document.getElementById('cuaca')||document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='ulasan'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
   const loc=currentLang==='ms'?'ms-MY':'id-ID';
   const bulan=(ym)=>{ const m=/^(\d{4})-(\d{2})$/.exec(ym||''); return m?new Date(Date.UTC(+m[1],+m[2]-1,15)).toLocaleDateString(loc,{month:'long',year:'numeric',timeZone:'UTC'}):''; };
   const rata=ULASAN.rata!=null?ULASAN.rata.toLocaleString(loc,{minimumFractionDigits:1,maximumFractionDigits:1}):'-';
@@ -754,6 +756,8 @@ const dn=n=>{ n=String(n||'').trim(); return DEST_RENAME[n]||n; };
 const DESTINASI_DATA={lembang:["Tangkuban Perahu","Floating Market","Farmhouse Susu Lembang","Orchid Forest Cikole","Dusun Bambu","The Great Asia Africa","Lembang Park & Zoo","De Ranch Lembang","Grafika Cikole","Maribaya & The Lodge","Fairy Garden","Kebun Strawberry Lembang"],dago:["Tebing Keraton","Dago Dreampark","Tahura Djuanda","Punclut & Cakrawala","Lawangwangi & Dago Tea House","Bukit Bintang","Gedung Sate, Braga & Alun-alun","Trans Studio Bandung","Masjid Raya Al Jabbar","Paskal 23","Bubur DPR","Batagor Kingsley","Batagor Serayu","Kupat Tahu Gempol","Kartikasari","Pasar Baru"],ciwidey:["Kawah Putih","Ranca Upas & Rusa","Situ Patenggang","Glamping Lakeside Rancabali","Kawah Rengganis","Barusen Hills","Ciwidey Valley","Kebun Teh Rancabali","Pinisi Resto & Danau"],pangalengan:["Nimo Highland","Situ Cileunca & Rafting","Wayang Windu Panenjoan","Pineus Tilu","Sunrise Point Cukul","Kebun Teh Malabar","Riung Gunung","Situ Cipanunjang"]};
 Object.keys(DESTINASI_DATA).forEach(g=>{ DESTINASI_DATA[g]=DESTINASI_DATA[g].map(dn); });
 const OUTER=['lembang','ciwidey','pangalengan'];
+// 6 Nov 2026: pilihan 'rute diatur bersama driver' per wilayah (destinasi boleh tidak dipilih satu per satu)
+const RUTE_BEBAS={lembang:'Lembang (rute diatur bersama driver)',dago:'Kota Bandung (rute diatur bersama driver)',ciwidey:'Ciwidey (rute diatur bersama driver)',pangalengan:'Pangalengan (rute diatur bersama driver)'};
 const REGION_NAME={lembang:'Lembang',ciwidey:'Ciwidey',pangalengan:'Pangalengan'};
 
 /* ---------- v14: PILIH DESTINASI. Kotak centang lama (#destinasi-wrapper) tetap dibuat tapi TERSEMBUNYI: ia penyimpan data
@@ -837,20 +841,22 @@ function renderDestinasi(){
     const judul=c.judul?((ms&&c.judul_ms)||c.judul):t(c.title);
     const tag=c.judul?((ms&&c.tag_ms)||c.tag||''):t(c.tag);
     const foto=c.img?kartuFotoUrl(c.img):'';
-    return `<article class="dcard theme-card"><div class="paket-img"${foto?` style="background-image:url('${esc(foto)}')"`:''} role="img" aria-label="${esc(judul)}">${tag?`<span class="paket-tag">${esc(tag)}</span>`:''}</div><div class="dcard-body"><h3 class="paket-title">${esc(judul)}</h3>${secs}<p class="paket-info">${esc(t('pk_info'))}</p></div></article>`;
+    const g0=c.secs[0]&&c.secs[0].g, bebas=g0&&RUTE_BEBAS[g0]?`<div class="dchips"><button type="button" class="dchip dchip-bebas" data-g="${esc(g0)}" data-n="${esc(RUTE_BEBAS[g0])}" aria-pressed="false">${esc(t('rute_bebas'))}</button></div>`:'';
+    return `<article class="dcard theme-card"><div class="paket-img"${foto?` style="background-image:url('${esc(foto)}')"`:''} role="img" aria-label="${esc(judul)}">${tag?`<span class="paket-tag">${esc(tag)}</span>`:''}</div><div class="dcard-body"><h3 class="paket-title">${esc(judul)}</h3>${bebas}${secs}<p class="paket-info">${esc(t('pk_info'))}</p></div></article>`;
   }).join('');
   syncPicker();
+  // Dari halaman destinasi (/lembang dst.): ?wilayah=lembang memilih 'rute diatur bersama driver' di wilayah itu (sekali saja)
+  if(!window.__wilayahDipakai){ window.__wilayahDipakai=true; setTimeout(()=>{ try{ const w=new URLSearchParams(location.search).get('wilayah'); const cb=w&&RUTE_BEBAS[w]?findCb(w,RUTE_BEBAS[w]):null; if(cb&&!document.querySelector('input[name="destinasi"]:checked')){ cb.checked=true; calculateLive(); } }catch(e){} },0); }
 }
 
 async function togglePick(g,n){
   const cb=findCb(g,n); if(!cb||document.getElementById('crossPopup')) return;
   if(cb.checked){ cb.checked=false; calculateLive(); return; }
+  // 6 Nov 2026 (keputusan pemilik): satu pesanan = satu wilayah luar kota. Memilih wilayah lain MENGGANTI pilihan sebelumnya.
   const before=getRegionInfo().list;
-  const after=OUTER.filter(r=>before.includes(r)||r===g);
-  if(after.length>=2&&after.length>before.length&&!APPROVED.has(regionKey(after))){
-    const ok=await showCrossPopup(n,after,after.length===3?CROSS_3:CROSS_2);
-    if(!ok) return;
-    APPROVED.add(regionKey(after));
+  if(OUTER.includes(g)&&before.length&&!before.includes(g)){
+    document.querySelectorAll('input[name="destinasi"]:checked').forEach(c=>{ if(OUTER.includes(c.dataset.group)) c.checked=false; });
+    notify(t('satu_wilayah',{lama:before.map(r=>REGION_NAME[r]).join(', '),baru:REGION_NAME[g]}));
   }
   cb.checked=true; calculateLive();
 }
@@ -1031,6 +1037,8 @@ function bukaSheetDest(){
       const ms=currentLang==='ms';
       DEST_CARDS.forEach(c=>{
         const h=document.createElement('p'); h.className='ts-h'; h.textContent=c.judul?((ms&&c.judul_ms)||c.judul):t(c.title); body.appendChild(h);
+        const g0=c.secs[0]&&c.secs[0].g;
+        if(g0&&RUTE_BEBAS[g0]){ const w0=document.createElement('div'); w0.className='dchips'; const b0=document.createElement('button'); b0.type='button'; b0.className='dchip dchip-bebas'; b0.dataset.g=g0; b0.dataset.n=RUTE_BEBAS[g0]; b0.setAttribute('aria-pressed','false'); b0.textContent=t('rute_bebas'); w0.appendChild(b0); body.appendChild(w0); }
         c.secs.forEach(sc=>{
           if(sc.h){ const sp=document.createElement('p'); sp.className='dsec'; sp.textContent=t(sc.h); body.appendChild(sp); }
           const w=document.createElement('div'); w.className='dchips';
@@ -1128,7 +1136,7 @@ function renderArmada(){
     const w=document.createElement('div'); w.className='rounded-xl border overflow-hidden shadow-sm'; w.style.background='var(--bg-section-alt)'; w.style.borderColor='var(--border-soft)';
     w.innerHTML=`<button type="button" onclick="toggleAccordion('${g}')" class="w-full flex items-center justify-between p-4 text-sm font-semibold" style="color:var(--text-primary)"><span>${esc(t('grp_'+g,{n:DESTINASI_DATA[g].length}))}</span><div class="flex items-center gap-2"><span id="count-${g}" class="text-[10px] px-2 py-1 rounded-full font-bold" style="background:var(--accent-glow);color:var(--accent)">${esc(t('picked',{n:0}))}</span>▾</div></button><div id="acc-${g}" class="accordion-content"><div class="p-4 pt-0"><div class="flex justify-between items-center mb-3 pb-2 border-b" style="border-color:var(--border-soft)"><span class="text-[11px]" style="color:var(--text-muted)">${esc(t('pick_hint'))}</span><button type="button" onclick="selectAllInGroup('${g}',true)" class="text-[11px] font-bold" style="color:var(--accent)">${esc(t('pick_all'))}</button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs" id="dest-${g}"></div><div class="mt-3 flex justify-end"><button type="button" onclick="selectAllInGroup('${g}',false)" class="text-[10px]" style="color:var(--text-muted)">${esc(t('clear_all'))}</button></div></div></div>`;
     destWrapper.appendChild(w);
-    w.querySelector(`#dest-${g}`).innerHTML=DESTINASI_DATA[g].map(v=>`<label class="dest-item flex gap-2 items-center cursor-pointer"><input type="checkbox" name="destinasi" data-group="${g}" value="${esc(v)}" class="dest-checkbox w-4 h-4 rounded"><span style="color:var(--text-secondary)">${esc(v)}</span></label>`).join('');
+    w.querySelector(`#dest-${g}`).innerHTML=[RUTE_BEBAS[g],...DESTINASI_DATA[g].filter(v=>v!==RUTE_BEBAS[g])].map(v=>`<label class="dest-item flex gap-2 items-center cursor-pointer"><input type="checkbox" name="destinasi" data-group="${g}" value="${esc(v)}" class="dest-checkbox w-4 h-4 rounded"><span style="color:var(--text-secondary)">${esc(v)}</span></label>`).join('');
   });
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>cb.addEventListener('change',calculateLive));
   const ph=document.createElement('option'); ph.value=''; ph.textContent=t('opt_placeholder'); ph.disabled=true; ph.selected=true; sel.appendChild(ph);
@@ -1714,7 +1722,7 @@ async function muatGaleri(){
 function renderGaleri(){
   let sec=document.getElementById('galeri');
   if(!GALERI.length){ if(sec) sec.remove(); return; }
-  if(!sec){ const faq=document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='galeri'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
+  if(!sec){ const faq=document.getElementById('cuaca')||document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='galeri'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
   const foto=GALERI.map(g=>`<a href="galeri.html" class="gl-item"><img src="${esc(g.url)}" alt="${esc(g.keterangan||'Perjalanan bersama Tempera')}" loading="lazy" decoding="async"></a>`).join('');
   sec.innerHTML=`<div class="max-w-7xl mx-auto px-4">
     <div class="text-center max-w-2xl mx-auto mb-10"><h2 class="text-3xl md:text-[38px] font-serif sec-judul" style="color:var(--accent)">${esc(t('gl_title'))}</h2>

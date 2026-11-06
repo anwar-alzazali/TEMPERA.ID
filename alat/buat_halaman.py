@@ -90,7 +90,7 @@ def halaman_destinasi(d, semua):
   <p class="sub">{e(d['sub'])}</p>
   <ul class="pchips">{''.join(f'<li>{e(c)}</li>' for c in d['chips'])}</ul>
   <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
-    <a class="pbtn putih" href="/#destinasi" data-cta="1">Pesan trip {e(d['nama_pendek'])}</a>
+    <a class="pbtn putih" href="/?wilayah={d.get('wilayah', d['slug'])}#pesan" data-cta="1">Pesan trip {e(d['nama_pendek'])}</a>
     <a class="pbtn wa" href="https://wa.me/{WA}?text={e(_url(d['wa']))}" target="_blank" rel="noopener">Tanya lewat WhatsApp</a>
   </div>
 </div></section>
@@ -114,7 +114,7 @@ def halaman_destinasi(d, semua):
     <h3>Harga sewa mobil + driver</h3>
     <p class="harga" style="font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--accent);margin:8px 0 4px">mulai Rp550.000 <small style="font-family:Inter,sans-serif;font-size:12px;color:var(--text-muted)">/ 12 jam</small></p>
     <p class="muat" style="font-size:13.5px">Sudah termasuk mobil, driver, BBM, dan air mineral. Tol, parkir, tiket masuk, dan makan driver tidak termasuk. {e(d['catatan_harga'])}</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><a class="pbtn" href="/#destinasi" data-cta="1">Pilih destinasi &amp; pesan</a><a class="pbtn ghost" href="/#daftar-harga">Lihat semua harga</a></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><a class="pbtn" href="/?wilayah={d.get('wilayah', d['slug'])}#pesan" data-cta="1">Pesan sekarang</a><a class="pbtn ghost" href="/#daftar-harga">Lihat semua harga</a></div>
   </div>
   <p style="font-size:14px;color:var(--text-secondary);margin-top:16px">Datang sendiri atau berdua? Cek jadwal <a href="/open-trip" style="text-decoration:underline">open trip</a> dengan harga per kursi.</p>
 </div></section>
