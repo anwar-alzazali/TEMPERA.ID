@@ -68,6 +68,8 @@
       <div><label>Harga per kursi (Rp)<input data-f="harga" value="${esc(r.harga ?? '')}" inputmode="numeric" maxlength="9" placeholder="mis. 250000"></label></div>
       <div><label>Minimal peserta agar berangkat<input data-f="min_berangkat" value="${esc(r.min_berangkat ?? 4)}" inputmode="numeric" maxlength="2"></label></div>
       <div><label>Pemesanan ditutup ... jam sebelum berangkat<input data-f="batas_jam" value="${esc(r.batas_jam ?? 12)}" inputmode="numeric" maxlength="3"></label></div>
+      <div><label>Tujuan utama (pasti dikunjungi, satu baris satu tempat)<textarea data-f="tujuan_utama" rows="3" maxlength="400" placeholder="Kawah Putih&#10;Ranca Upas">${esc(r.tujuan_utama || '')}</textarea></label></div>
+      <div><label>Bonus bila waktu memungkinkan (taruh di akhir rute)<textarea data-f="tujuan_bonus" rows="3" maxlength="400" placeholder="Situ Patenggang">${esc(r.tujuan_bonus || '')}</textarea></label></div>
       <div class="full"><label>Rencana perjalanan (satu baris satu kegiatan)<textarea data-f="itinerary" rows="4" maxlength="1500" placeholder="06.00 Kumpul di Stasiun Bandung&#10;08.30 Kawah Putih&#10;11.00 Situ Patenggang&#10;17.00 Kembali ke Stasiun Bandung">${esc(r.itinerary || '')}</textarea></label></div>
       <div><label>Termasuk<textarea data-f="termasuk" rows="3" maxlength="800" placeholder="Mobil + driver, BBM, tol, parkir, air mineral">${esc(r.termasuk || '')}</textarea></label></div>
       <div><label>Tidak termasuk<textarea data-f="tidak_termasuk" rows="3" maxlength="800" placeholder="Tiket masuk wisata, makan, pengeluaran pribadi">${esc(r.tidak_termasuk || '')}</textarea></label></div>
@@ -122,7 +124,7 @@
       judul: v.judul, tujuan: v.tujuan || v.judul, tanggal: v.tanggal, jam: v.jam || '07:00', jemput_rumah: !!v.jemput_rumah,
       titik_kumpul: v.titik_kumpul || null, area_jemput: v.area_jemput || null, harga: int(v.harga, 0),
       min_berangkat: Math.max(0, int(v.min_berangkat, 0)), batas_jam: Math.max(0, int(v.batas_jam, 12)), armada: v.armada || null,
-      itinerary: v.itinerary || null, termasuk: v.termasuk || null, tidak_termasuk: v.tidak_termasuk || null, catatan: v.catatan || null,
+      tujuan_utama: v.tujuan_utama || null, tujuan_bonus: v.tujuan_bonus || null, itinerary: v.itinerary || null, termasuk: v.termasuk || null, tidak_termasuk: v.tidak_termasuk || null, catatan: v.catatan || null,
       foto_url: v.foto_url ? (/^https:\/\//i.test(v.foto_url) ? v.foto_url : 'images/' + v.foto_url.replace(/^\/*(images\/)?/, '')) : null,
       status: v.status || 'draft', driver_slug: v.driver_slug || null,
     };

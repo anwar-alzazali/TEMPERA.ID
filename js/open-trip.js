@@ -37,6 +37,7 @@
     st_kosong: 'Jadilah peserta pertama · berangkat bila minimal {min} orang',
     st_butuh: '{x} peserta terdaftar · {y} orang lagi agar berangkat',
     st_pasti: '{x} peserta terdaftar · pasti berangkat',
+    utama: '📍 Tujuan utama', bonus: '✨ Bonus bila waktu memungkinkan', ubah_info: 'Urutan dan jumlah tujuan dapat berubah karena cuaca, kemacetan, atau keadaan di lapangan. Tujuan utama selalu didahulukan; tujuan bonus dikunjungi bila waktunya cukup. Tiket masuk tujuan yang termasuk paket tetapi tidak sempat dikunjungi dikembalikan.',
     itinerary: 'Rencana perjalanan', termasuk: 'Termasuk', tidak: 'Tidak termasuk', catatan: 'Catatan',
     f_kursi: 'Jumlah kursi', f_nama: 'Nama pemesan', f_wa: 'Nomor WhatsApp', f_wa_ph: '08xx atau +60 12-345 6789',
     f_peserta: 'Nama peserta lain', f_peserta_s: '(opsional, pisahkan dengan koma)', f_alamat: 'Nama hotel / alamat jemput', f_alamat_ph: 'Nama hotel + alamat, atau alamat rumah lengkap',
@@ -72,6 +73,7 @@
     st_kosong: 'Jadilah peserta pertama · bertolak jika minimum {min} orang',
     st_butuh: '{x} peserta berdaftar · {y} orang lagi untuk bertolak',
     st_pasti: '{x} peserta berdaftar · pasti bertolak',
+    utama: '📍 Destinasi utama', bonus: '✨ Bonus jika masa mencukupi', ubah_info: 'Urutan dan bilangan destinasi boleh berubah kerana cuaca, kesesakan atau keadaan di lapangan. Destinasi utama sentiasa didahulukan; destinasi bonus dikunjungi jika masa mencukupi. Tiket masuk destinasi dalam pakej yang tidak sempat dikunjungi akan dikembalikan.',
     itinerary: 'Rancangan perjalanan', termasuk: 'Termasuk', tidak: 'Tidak termasuk', catatan: 'Catatan',
     f_kursi: 'Bilangan tempat duduk', f_nama: 'Nama penempah', f_wa: 'Nombor WhatsApp', f_wa_ph: '+60 12-345 6789',
     f_peserta: 'Nama peserta lain', f_peserta_s: '(pilihan, pisahkan dengan koma)', f_alamat: 'Nama hotel / alamat ambil', f_alamat_ph: 'Nama hotel + alamat, atau alamat rumah penuh',
@@ -148,7 +150,7 @@
       <div class="pmsg on info" style="margin-top:12px">${t('min_info', { n: mobil(r).min })}</div>
       ${r.jemput_rumah ? `<div class="pmsg on info" style="margin-top:8px">${t('jemput_info', { jam: esc(jamTampil(r.jam)), area: r.area_jemput ? esc(t('jemput_area', { x: r.area_jemput })) : '' })}</div>` : ''}
       <div class="pmsg on info" style="margin-top:8px">${t('kursi_info')}</div>
-      ${blok(t('itinerary'), r.itinerary)}${blok(t('termasuk'), r.termasuk)}${blok(t('tidak'), r.tidak_termasuk)}${blok(t('catatan'), r.catatan)}
+      ${blok(t('utama'), r.tujuan_utama)}${blok(t('bonus'), r.tujuan_bonus)}${(r.tujuan_utama || r.tujuan_bonus) ? `<p style="font-size:12px;color:var(--text-muted);margin:8px 0 0">${esc(t('ubah_info'))}</p>` : ''}${blok(t('itinerary'), r.itinerary)}${blok(t('termasuk'), r.termasuk)}${blok(t('tidak'), r.tidak_termasuk)}${blok(t('catatan'), r.catatan)}
       ${bisa ? `<form id="fOt" novalidate style="margin-top:18px;border-top:1px dashed var(--border-color);padding-top:16px">
         <div class="pf"><span>${esc(t('f_kursi'))}</span><div class="hitung"><button type="button" data-k="-1" aria-label="-">−</button><output id="oKursi">1</output><button type="button" data-k="1" aria-label="+">+</button>${r.sisa <= 4 ? `<span style="font-size:12px;color:var(--text-muted)">${esc(t('sisa', { n: r.sisa }))}</span>` : ''}</div></div>
         <div class="prow dua">
