@@ -30,12 +30,11 @@
     per_orang: '/ orang', sisa: 'Sisa {n} kursi', sisa_tipis: 'Tinggal {n} kursi!', habis: 'Penuh', ditutup: 'Pendaftaran ditutup',
     lihat: 'Lihat & pesan', kumpul: 'Titik kumpul: {x}', jemput: 'Dijemput ke rumah ({x})', jemput_semua: 'Dijemput ke rumah',
     berangkat: 'Berangkat {jam}', min: 'Berangkat bila minimal {n} peserta',
-    min_info: 'Satu mobil berisi <b>{k} peserta</b>. Mobil berangkat bila terisi minimal <b>{n} orang</b>; mobil berikutnya dibuka setelah mobil sebelumnya penuh. Kalau sampai batas waktu mobil Anda belum cukup, Anda boleh pindah jadwal atau uang kembali 100%.',
+    min_info: 'Berangkat bila terkumpul minimal <b>{n} peserta</b>. Mobil menyesuaikan jumlah peserta (Avanza/Calya, Innova, atau Hiace). Kalau sampai batas waktu peserta belum cukup, Anda boleh pindah jadwal atau uang kembali 100%.',
     armada: 'Mobil: {x}', tersedia: 'Kursi tersedia',
     st_kosong: 'Jadilah peserta pertama · berangkat bila minimal {min} orang',
-    st_butuh: 'Mobil ke-{n}: {x}/{k} terisi · {y} orang lagi agar berangkat',
-    st_pasti: 'Mobil ke-{n}: {x}/{k} terisi · pasti berangkat',
-    st_baru: '{p} mobil pasti berangkat · mobil ke-{n} dibuka',
+    st_butuh: '{x} peserta terdaftar · {y} orang lagi agar berangkat',
+    st_pasti: '{x} peserta terdaftar · pasti berangkat',
     itinerary: 'Rencana perjalanan', termasuk: 'Termasuk', tidak: 'Tidak termasuk', catatan: 'Catatan',
     f_kursi: 'Jumlah kursi', f_nama: 'Nama pemesan', f_wa: 'Nomor WhatsApp', f_wa_ph: '08xx atau +60 12-345 6789',
     f_peserta: 'Nama peserta lain', f_peserta_s: '(opsional, pisahkan dengan koma)', f_alamat: 'Alamat jemput lengkap', f_alamat_ph: 'Nama jalan, nomor rumah, patokan',
@@ -64,12 +63,11 @@
     per_orang: '/ orang', sisa: 'Baki {n} tempat', sisa_tipis: 'Tinggal {n} tempat!', habis: 'Penuh', ditutup: 'Pendaftaran ditutup',
     lihat: 'Lihat & tempah', kumpul: 'Titik berkumpul: {x}', jemput: 'Diambil di rumah ({x})', jemput_semua: 'Diambil di rumah',
     berangkat: 'Bertolak {jam}', min: 'Bertolak jika minimum {n} peserta',
-    min_info: 'Satu kereta memuatkan <b>{k} peserta</b>. Kereta bertolak jika terisi minimum <b>{n} orang</b>; kereta seterusnya dibuka selepas kereta sebelumnya penuh. Jika tidak cukup, anda boleh tukar jadual atau wang dikembalikan 100%.',
+    min_info: 'Bertolak jika terkumpul minimum <b>{n} peserta</b>. Kereta mengikut bilangan peserta (Avanza/Calya, Innova atau Hiace). Jika tidak cukup, anda boleh tukar jadual atau wang dikembalikan 100%.',
     armada: 'Kereta: {x}', tersedia: 'Tempat tersedia',
     st_kosong: 'Jadilah peserta pertama · bertolak jika minimum {min} orang',
-    st_butuh: 'Kereta ke-{n}: {x}/{k} terisi · {y} orang lagi untuk bertolak',
-    st_pasti: 'Kereta ke-{n}: {x}/{k} terisi · pasti bertolak',
-    st_baru: '{p} kereta pasti bertolak · kereta ke-{n} dibuka',
+    st_butuh: '{x} peserta berdaftar · {y} orang lagi untuk bertolak',
+    st_pasti: '{x} peserta berdaftar · pasti bertolak',
     itinerary: 'Rancangan perjalanan', termasuk: 'Termasuk', tidak: 'Tidak termasuk', catatan: 'Catatan',
     f_kursi: 'Bilangan tempat duduk', f_nama: 'Nama penempah', f_wa: 'Nombor WhatsApp', f_wa_ph: '+60 12-345 6789',
     f_peserta: 'Nama peserta lain', f_peserta_s: '(pilihan, pisahkan dengan koma)', f_alamat: 'Alamat ambil penuh', f_alamat_ph: 'Nama jalan, nombor rumah, mercu tanda',
@@ -90,21 +88,16 @@
 
   let DATA = [], aktif = null, kursi = 1;
   const jamTampil = (j) => String(j || '').replace(':', '.');
-  // Kursi dijual per mobil (kursi_per_mobil, mis. 4). Mobil berikutnya dibuka setelah yang sebelumnya penuh.
+  // Peserta dihitung total per jadwal; mobil dipilih admin sesuai jumlah peserta (4 Avanza/Calya, 5-6 Innova, 7-10 Hiace).
   function mobil(r) {
-    const k = Math.max(1, r.kursi_per_mobil || r.kuota), tr = Math.max(0, r.terisi != null ? r.terisi : r.kuota - r.sisa);
-    const min = Math.min(k, Math.max(1, r.min_berangkat || k));
-    const p = Math.floor(tr / k), x = tr % k, n = p + 1;
-    let teks;
-    if (tr === 0) teks = t('st_kosong', { min });
-    else if (x === 0) teks = t('st_baru', { p, n });
-    else teks = x >= min ? t('st_pasti', { n, x, k }) : t('st_butuh', { n, x, k, y: min - x });
-    return { k, min, pct: Math.round(x / k * 100), teks };
+    const tr = Math.max(0, r.terisi != null ? r.terisi : r.kuota - r.sisa), min = Math.max(1, r.min_berangkat || 1);
+    const teks = tr === 0 ? t('st_kosong', { min }) : tr >= min ? t('st_pasti', { x: tr }) : t('st_butuh', { x: tr, y: min - tr });
+    return { min, pct: Math.min(100, Math.round(tr / Math.max(1, tr < min ? min : r.kuota) * 100)), teks };
   }
   function labelSisa(r) {
     if (!r.buka_pesan) return `<span class="sisa habis">${t('ditutup')}</span>`;
     if (r.sisa <= 0) return `<span class="sisa habis">${t('habis')}</span>`;
-    if (!r.maks_mobil) return `<span class="sisa">${t('tersedia')}</span>`;
+    if (r.sisa > 4) return `<span class="sisa">${t('tersedia')}</span>`;
     if (r.sisa <= 2) return `<span class="sisa tipis">${t('sisa_tipis', { n: r.sisa })}</span>`;
     return `<span class="sisa">${t('sisa', { n: r.sisa })}</span>`;
   }
@@ -146,10 +139,10 @@
       <p class="meta" style="margin:0;font-size:13px;color:var(--text-muted)">${esc(P.tglPanjang(r.tanggal))} · ${esc(t('berangkat', { jam: jamTampil(r.jam) }))}</p>
       <p style="margin:6px 0 0;font-size:13.5px"><b>${esc(lokasi(r))}</b>${r.armada ? ' · ' + esc(t('armada', { x: r.armada })) : ''}</p>
       <div style="margin-top:10px">${labelSisa(r)} <span style="font-size:12px;color:var(--text-muted)">${esc(mobil(r).teks)}</span><div class="bar" aria-hidden="true"><i style="width:${mobil(r).pct}%"></i></div></div>
-      <div class="pmsg on info" style="margin-top:12px">${t('min_info', { k: mobil(r).k, n: mobil(r).min })}</div>
+      <div class="pmsg on info" style="margin-top:12px">${t('min_info', { n: mobil(r).min })}</div>
       ${blok(t('itinerary'), r.itinerary)}${blok(t('termasuk'), r.termasuk)}${blok(t('tidak'), r.tidak_termasuk)}${blok(t('catatan'), r.catatan)}
       ${bisa ? `<form id="fOt" novalidate style="margin-top:18px;border-top:1px dashed var(--border-color);padding-top:16px">
-        <div class="pf"><span>${esc(t('f_kursi'))}</span><div class="hitung"><button type="button" data-k="-1" aria-label="-">−</button><output id="oKursi">1</output><button type="button" data-k="1" aria-label="+">+</button>${r.maks_mobil ? `<span style="font-size:12px;color:var(--text-muted)">${esc(t('sisa', { n: r.sisa }))}</span>` : ''}</div></div>
+        <div class="pf"><span>${esc(t('f_kursi'))}</span><div class="hitung"><button type="button" data-k="-1" aria-label="-">−</button><output id="oKursi">1</output><button type="button" data-k="1" aria-label="+">+</button>${r.sisa <= 4 ? `<span style="font-size:12px;color:var(--text-muted)">${esc(t('sisa', { n: r.sisa }))}</span>` : ''}</div></div>
         <div class="prow dua">
           <label class="pf"><span>${esc(t('f_nama'))}</span><input id="oNama" maxlength="80" autocomplete="name"></label>
           <label class="pf"><span>${esc(t('f_wa'))}</span><input id="oWa" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="${esc(t('f_wa_ph'))}"></label>
