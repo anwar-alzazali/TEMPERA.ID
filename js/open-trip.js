@@ -31,7 +31,7 @@
     lihat: 'Lihat & pesan', kumpul: 'Titik kumpul: {x}', jemput: 'Dijemput ke rumah ({x})', jemput_semua: 'Dijemput ke rumah',
     berangkat: 'Berangkat {jam}', min: 'Berangkat bila minimal {n} peserta',
     min_info: 'Berangkat bila terkumpul minimal <b>{n} peserta</b>. Mobil menyesuaikan jumlah peserta (Avanza/Calya, Innova, atau Hiace). Kalau sampai batas waktu peserta belum cukup, Anda boleh pindah jadwal atau uang kembali 100%.',
-    armada: 'Mobil: {x}', tersedia: 'Kursi tersedia',
+    armada: 'Mobil: {x}', armada_auto: '🚐 Jenis armada disesuaikan dengan jumlah peserta', tersedia: 'Kursi tersedia',
     st_kosong: 'Jadilah peserta pertama · berangkat bila minimal {min} orang',
     st_butuh: '{x} peserta terdaftar · {y} orang lagi agar berangkat',
     st_pasti: '{x} peserta terdaftar · pasti berangkat',
@@ -64,7 +64,7 @@
     lihat: 'Lihat & tempah', kumpul: 'Titik berkumpul: {x}', jemput: 'Diambil di rumah ({x})', jemput_semua: 'Diambil di rumah',
     berangkat: 'Bertolak {jam}', min: 'Bertolak jika minimum {n} peserta',
     min_info: 'Bertolak jika terkumpul minimum <b>{n} peserta</b>. Kereta mengikut bilangan peserta (Avanza/Calya, Innova atau Hiace). Jika tidak cukup, anda boleh tukar jadual atau wang dikembalikan 100%.',
-    armada: 'Kereta: {x}', tersedia: 'Tempat tersedia',
+    armada: 'Kereta: {x}', armada_auto: '🚐 Jenis kenderaan mengikut bilangan peserta', tersedia: 'Tempat tersedia',
     st_kosong: 'Jadilah peserta pertama · bertolak jika minimum {min} orang',
     st_butuh: '{x} peserta berdaftar · {y} orang lagi untuk bertolak',
     st_pasti: '{x} peserta berdaftar · pasti bertolak',
@@ -115,6 +115,7 @@
       <div class="isi">
         <h3>${esc(r.judul)}</h3>
         <p class="meta">${esc(t('berangkat', { jam: jamTampil(r.jam) }))} · ${esc(lokasi(r))}</p>
+        <p class="meta">${esc(r.armada ? t('armada', { x: r.armada }) : t('armada_auto'))}</p>
         <div>${labelSisa(r)} <span class="meta" style="font-size:12px">${esc(mb.teks)}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div></div>
         <div class="bawah"><span class="harga">${rp(r.harga)} <small>${t('per_orang')}</small></span>
           <button type="button" class="pbtn" style="padding:10px 16px;font-size:12px" data-buka="${r.id}">${t('lihat')}</button></div>
@@ -137,7 +138,8 @@
     $('#mBox').innerHTML = `<button type="button" class="tutup" data-tutup aria-label="${esc(t('tutup'))}">×</button>
       <h3 id="mJudul">${esc(r.judul)}</h3>
       <p class="meta" style="margin:0;font-size:13px;color:var(--text-muted)">${esc(P.tglPanjang(r.tanggal))} · ${esc(t('berangkat', { jam: jamTampil(r.jam) }))}</p>
-      <p style="margin:6px 0 0;font-size:13.5px"><b>${esc(lokasi(r))}</b>${r.armada ? ' · ' + esc(t('armada', { x: r.armada })) : ''}</p>
+      <p style="margin:6px 0 0;font-size:13.5px"><b>${esc(lokasi(r))}</b></p>
+      <p style="margin:4px 0 0;font-size:13.5px">${esc(r.armada ? t('armada', { x: r.armada }) : t('armada_auto'))}</p>
       <div style="margin-top:10px">${labelSisa(r)} <span style="font-size:12px;color:var(--text-muted)">${esc(mobil(r).teks)}</span><div class="bar" aria-hidden="true"><i style="width:${mobil(r).pct}%"></i></div></div>
       <div class="pmsg on info" style="margin-top:12px">${t('min_info', { n: mobil(r).min })}</div>
       ${blok(t('itinerary'), r.itinerary)}${blok(t('termasuk'), r.termasuk)}${blok(t('tidak'), r.tidak_termasuk)}${blok(t('catatan'), r.catatan)}
