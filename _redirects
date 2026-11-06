@@ -1,0 +1,8 @@
+# Link pendek untuk bio media sosial (Cloudflare Pages). Menambahkan tanda UTM supaya GA4 tahu asal pengunjung,
+# tanpa link panjang yang terlihat di bio. 302 = sementara, tujuan bisa diubah kapan saja.
+/tiktok     /?utm_source=tiktok&utm_medium=bio       302
+/tt         /?utm_source=tiktok&utm_medium=bio       302
+/instagram  /?utm_source=instagram&utm_medium=bio    302
+/ig         /?utm_source=instagram&utm_medium=bio    302
+/facebook   /?utm_source=facebook&utm_medium=page    302
+/fb         /?utm_source=facebook&utm_medium=page    302
