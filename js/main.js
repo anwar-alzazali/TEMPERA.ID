@@ -87,7 +87,7 @@ id: {
 
   tc_title: 'Bandara, Open Trip & Luar Kota', tc_sub: 'Selain sewa 12 jam: antar jemput Bandara Soetta, open trip bayar per kursi, dan perjalanan ke luar kota',
   hb_k: 'Harga pasti', hb_t: 'Antar Jemput Bandara Soetta', hb_d: 'Bandung ⇄ Soekarno-Hatta dengan mobil pribadi + driver. Harga per mobil sudah termasuk BBM dan tol. Pesan dan bayar online.', hb_mulai: 'mulai {x} / mobil', hb_btn: 'Lihat harga & pesan',
-  ho_k: 'Bayar per kursi', ho_t: 'Open Trip', ho_d: 'Ikut jadwal wisata bareng peserta lain: Kawah Putih, Lembang, Garut, dan trip tahun baru. Cocok untuk yang datang sendiri atau berdua.', ho_btn: 'Lihat jadwal', ho_next: 'Terdekat: {judul}, {tgl} · sisa {n} kursi', ho_none: 'Jadwal berikutnya segera diumumkan',
+  ho_k: 'Bayar per kursi', ho_t: 'Open Trip', ho_d: 'Ikut jadwal wisata bareng peserta lain: Kawah Putih, Lembang, Garut, dan trip tahun baru. Cocok untuk yang datang sendiri atau berdua.', ho_btn: 'Lihat jadwal', ho_next: 'Terdekat: {judul}, {tgl}', ho_none: 'Jadwal berikutnya segera diumumkan',
   hl_k: 'Lewat WhatsApp', hl_t: 'Luar Kota & Menginap', hl_d: 'Jakarta, Garut, Tasikmalaya, trip 2–3 hari, atau tujuan lain. Harga tergantung jarak dan jumlah hari, jadi dikonfirmasi admin.',
   tc_desc: 'Mobil dan driver khusus untuk rombongan Anda, bukan angkutan umum. Pilih tujuan untuk melihat perkiraan ongkos, lalu kirim ke admin lewat WhatsApp. Trip lebih dari sehari atau tujuan lain dihitung admin.', tc_s1: 'Pilih tujuan', tc_s2: 'Kirim lewat WhatsApp', tc_s3: 'Admin konfirmasi harga',
   tc_soetta: 'Bandara Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
@@ -287,7 +287,7 @@ ms: {
 
   tc_title: 'Lapangan Terbang, Open Trip & Luar Bandar', tc_sub: 'Selain sewa 12 jam: transfer Lapangan Terbang Soetta, open trip bayar per tempat duduk, dan perjalanan luar bandar',
   hb_k: 'Harga tetap', hb_t: 'Transfer Lapangan Terbang Soetta', hb_d: 'Bandung ⇄ Soekarno-Hatta dengan kereta peribadi + pemandu. Harga per kereta termasuk minyak dan tol. Tempah dan bayar dalam talian.', hb_mulai: 'dari {x} / kereta', hb_btn: 'Lihat harga & tempah',
-  ho_k: 'Bayar per tempat', ho_t: 'Open Trip', ho_d: 'Sertai jadual melancong bersama peserta lain: Kawah Putih, Lembang, Garut, dan trip tahun baru. Sesuai untuk yang datang seorang atau berdua.', ho_btn: 'Lihat jadual', ho_next: 'Terdekat: {judul}, {tgl} · baki {n} tempat', ho_none: 'Jadual seterusnya akan diumumkan',
+  ho_k: 'Bayar per tempat', ho_t: 'Open Trip', ho_d: 'Sertai jadual melancong bersama peserta lain: Kawah Putih, Lembang, Garut, dan trip tahun baru. Sesuai untuk yang datang seorang atau berdua.', ho_btn: 'Lihat jadual', ho_next: 'Terdekat: {judul}, {tgl}', ho_none: 'Jadual seterusnya akan diumumkan',
   hl_k: 'Melalui WhatsApp', hl_t: 'Luar Bandar & Bermalam', hl_d: 'Jakarta, Garut, Tasikmalaya, trip 2–3 hari, atau destinasi lain. Harga bergantung pada jarak dan bilangan hari, jadi disahkan admin.',
   tc_desc: 'Kereta dan pemandu khas untuk rombongan anda, bukan pengangkutan awam. Harga bergantung pada jarak, bilangan hari dan masa bertolak, jadi dikira oleh admin selepas anda memilih destinasi.', tc_s1: 'Pilih destinasi', tc_s2: 'Hantar melalui WhatsApp', tc_s3: 'Admin balas dengan harga',
   tc_soetta: 'Lapangan Terbang Soetta', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',

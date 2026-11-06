@@ -48,6 +48,12 @@
   const lunas = (id) => pesananTrip(id).filter((o) => BAYAR.includes(o.status));
   const menunggu = (id) => pesananTrip(id).filter((o) => o.status === 'pending' && Date.now() - new Date(o.created_at).getTime() < 35 * 60e3);
   const kursiDari = (arr) => arr.reduce((s, o) => s + (o.pax || 1), 0);
+  // Bagi pesanan lunas ke mobil: urut waktu pesan, satu pesanan tidak dipisah (first-fit). Hasil: [[order...], ...]
+  function bagiMobil(r) {
+    const k = Math.max(1, r.kursi_per_mobil || 4), mobil = [];
+    lunas(r.id).forEach((o) => { const n = o.pax || 1; let m = mobil.find((x) => x.isi + n <= k); if (!m) { m = { isi: 0, daf: [] }; mobil.push(m); } m.isi += n; m.daf.push(o); });
+    return mobil;
+  }
 
   function fields(r) {
     const opsiStatus = Object.keys(STATUS_OT).map((k) => `<option value="${k}"${(r.status || 'draft') === k ? ' selected' : ''}>${esc(STATUS_OT[k][0])}</option>`).join('');
@@ -61,9 +67,10 @@
       <div class="full"><label class="chk"><input type="checkbox" data-f="jemput_rumah"${r.jemput_rumah ? ' checked' : ''}> Dijemput ke rumah (luar kota). Tanpa centang = titik kumpul</label></div>
       <div><label>Titik kumpul<input data-f="titik_kumpul" value="${esc(r.titik_kumpul || '')}" maxlength="120" placeholder="mis. Stasiun Bandung, pintu selatan"></label></div>
       <div><label>Area jemput (bila jemput ke rumah)<input data-f="area_jemput" value="${esc(r.area_jemput || '')}" maxlength="80" placeholder="mis. Kota Bandung & Cimahi"></label></div>
-      <div><label>Jumlah kursi<input data-f="kuota" value="${esc(r.kuota ?? 6)}" inputmode="numeric" maxlength="2"></label></div>
+      <div><label>Kursi per mobil<input data-f="kursi_per_mobil" value="${esc(r.kursi_per_mobil ?? 4)}" inputmode="numeric" maxlength="2"></label></div>
+      <div><label>Maksimal mobil (kosong = sebanyak peminat, sampai 15 mobil)<input data-f="maks_mobil" value="${esc(r.maks_mobil ?? '')}" inputmode="numeric" maxlength="2" placeholder="kosong = bebas"></label></div>
       <div><label>Harga per kursi (Rp)<input data-f="harga" value="${esc(r.harga ?? '')}" inputmode="numeric" maxlength="9" placeholder="mis. 250000"></label></div>
-      <div><label>Minimal peserta agar berangkat (0 = tanpa minimal)<input data-f="min_berangkat" value="${esc(r.min_berangkat ?? 0)}" inputmode="numeric" maxlength="2"></label></div>
+      <div><label>Minimal peserta per mobil agar berangkat<input data-f="min_berangkat" value="${esc(r.min_berangkat ?? 4)}" inputmode="numeric" maxlength="2"></label></div>
       <div><label>Pemesanan ditutup ... jam sebelum berangkat<input data-f="batas_jam" value="${esc(r.batas_jam ?? 12)}" inputmode="numeric" maxlength="3"></label></div>
       <div class="full"><label>Rencana perjalanan (satu baris satu kegiatan)<textarea data-f="itinerary" rows="4" maxlength="1500" placeholder="06.00 Kumpul di Stasiun Bandung&#10;08.30 Kawah Putih&#10;11.00 Situ Patenggang&#10;17.00 Kembali ke Stasiun Bandung">${esc(r.itinerary || '')}</textarea></label></div>
       <div><label>Termasuk<textarea data-f="termasuk" rows="3" maxlength="800" placeholder="Mobil + driver, BBM, tol, parkir, air mineral">${esc(r.termasuk || '')}</textarea></label></div>
@@ -87,9 +94,10 @@
   }
   function itemHtml(r) {
     const k = kursiDari(lunas(r.id)), w = kursiDari(menunggu(r.id)), uang = lunas(r.id).reduce((s, o) => s + (o.total || 0), 0);
-    const kurang = r.min_berangkat > 0 && k < r.min_berangkat;
+    const mb = bagiMobil(r), kp = r.kursi_per_mobil || 4, minM = r.min_berangkat || kp;
+    const ringkasMobil = mb.map((m, i) => `Mobil ${i + 1}: ${m.isi}/${kp}${m.isi < minM ? ` <span style="color:#DC2626">(kurang ${minM - m.isi})</span>` : ' ✓'}`).join(' · ');
     return `<details class="card" data-oid="${r.id}" style="margin-bottom:10px"${terbuka.has(String(r.id)) ? ' open' : ''}>
-      <summary style="cursor:pointer"><b>${esc(r.judul)}</b> ${lencana(r.status)}<br><span class="small">${esc(tglId(r.tanggal))} ${esc(r.jam)} · <b>${k}/${r.kuota}</b> kursi lunas${w ? ` (+${w} sedang bayar)` : ''} · ${rp(uang)}${kurang ? ` · <span style="color:#DC2626">kurang ${r.min_berangkat - k} dari minimal</span>` : ''}</span></summary>
+      <summary style="cursor:pointer"><b>${esc(r.judul)}</b> ${lencana(r.status)}<br><span class="small">${esc(tglId(r.tanggal))} ${esc(r.jam)} · <b>${k}</b> kursi lunas${w ? ` (+${w} sedang bayar)` : ''} · ${rp(uang)}${r.maks_mobil ? ` · maks ${r.maks_mobil} mobil` : ''}${mb.length ? '<br>' + ringkasMobil : ''}</span></summary>
       <div style="margin-top:12px">
         <h3 style="margin:0 0 6px;font-size:14px">Pemesan</h3>${pesertaHtml(r)}
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 16px">
@@ -107,14 +115,16 @@
   }
   function tambahHtml() {
     return `<details class="card" data-baru style="margin-bottom:10px"><summary style="cursor:pointer"><b>+ Buat jadwal open trip</b></summary>
-      <div style="margin-top:10px">${fields({ status: 'buka', kuota: 6, min_berangkat: 3, batas_jam: 12, jam: '06:00', termasuk: 'Mobil + driver, BBM, tol, parkir, air mineral', tidak_termasuk: 'Tiket masuk wisata, makan, pengeluaran pribadi' })}
+      <div style="margin-top:10px">${fields({ status: 'buka', kursi_per_mobil: 4, min_berangkat: 4, batas_jam: 12, jam: '06:00', termasuk: 'Mobil + driver, BBM, tol, parkir, air mineral', tidak_termasuk: 'Tiket masuk wisata, makan, pengeluaran pribadi' })}
       <button class="btn sm" type="button" data-ot-tambah>Buat jadwal</button></div></details>`;
   }
   const baca = (root) => { const o = {}; root.querySelectorAll('[data-f]').forEach((el) => { o[el.dataset.f] = el.type === 'checkbox' ? el.checked : el.value.trim(); }); return o; };
   function muatan(v) {
+    const k = Math.max(1, int(v.kursi_per_mobil, 4)), mm = v.maks_mobil ? Math.max(1, int(v.maks_mobil, 1)) : null;
     return {
+      kursi_per_mobil: k, maks_mobil: mm, kuota: Math.min(k * (mm || 15), 60),
       judul: v.judul, tujuan: v.tujuan || v.judul, tanggal: v.tanggal, jam: v.jam || '07:00', jemput_rumah: !!v.jemput_rumah,
-      titik_kumpul: v.titik_kumpul || null, area_jemput: v.area_jemput || null, kuota: int(v.kuota, 6), harga: int(v.harga, 0),
+      titik_kumpul: v.titik_kumpul || null, area_jemput: v.area_jemput || null, harga: int(v.harga, 0),
       min_berangkat: Math.max(0, int(v.min_berangkat, 0)), batas_jam: Math.max(0, int(v.batas_jam, 12)), armada: v.armada || null,
       itinerary: v.itinerary || null, termasuk: v.termasuk || null, tidak_termasuk: v.tidak_termasuk || null, catatan: v.catatan || null,
       foto_url: v.foto_url ? (/^https:\/\//i.test(v.foto_url) ? v.foto_url : 'images/' + v.foto_url.replace(/^\/*(images\/)?/, '')) : null,
@@ -125,10 +135,11 @@
     if (v.judul.length < 3) return 'Judul minimal 3 huruf';
     if (!/^\d{4}-\d{2}-\d{2}$/.test(v.tanggal)) return 'Isi tanggal';
     if (!/^\d{2}:\d{2}$/.test(v.jam)) return 'Isi jam berangkat';
-    const k = int(v.kuota, 0); if (k < 1 || k > 60) return 'Jumlah kursi 1 sampai 60';
+    const k = int(v.kursi_per_mobil, 0); if (k < 1 || k > 20) return 'Kursi per mobil 1 sampai 20';
+    if (v.maks_mobil && (int(v.maks_mobil, 0) < 1 || int(v.maks_mobil, 0) * k > 60)) return 'Maksimal mobil terlalu banyak (total kursi paling banyak 60)';
     if (int(v.harga, 0) < 1000) return 'Isi harga per kursi';
     if (!v.jemput_rumah && !v.titik_kumpul) return 'Isi titik kumpul, atau centang dijemput ke rumah';
-    if (int(v.min_berangkat, 0) > k) return 'Minimal peserta tidak boleh lebih dari jumlah kursi';
+    if (int(v.min_berangkat, 0) < 1 || int(v.min_berangkat, 0) > k) return 'Minimal peserta per mobil antara 1 dan kursi per mobil';
     return '';
   }
   async function salin(teks, pesan) { try { await navigator.clipboard.writeText(teks); toast(pesan || 'Disalin'); } catch (e) { prompt('Salin teks ini:', teks); } }
@@ -160,8 +171,8 @@
         salin(`${situs()}/open-trip?id=${ds.otLink}`, 'Link jadwal disalin');
       } else if (ds.otSalin) {
         const r = TRIP.find((x) => x.id === Number(ds.otSalin)); const daf = lunas(r.id);
-        const teks = `*${r.judul}*\n${tglId(r.tanggal)} jam ${r.jam}\n${r.jemput_rumah ? 'Jemput ke rumah' : 'Titik kumpul: ' + (r.titik_kumpul || '-')}\nPeserta lunas: ${kursiDari(daf)}/${r.kuota} kursi\n\n`
-          + daf.map((o, i) => { const it = (o.items && o.items[0]) || {}; return `${i + 1}. ${o.customer_name} (${o.pax || 1} kursi) wa.me/${o.customer_wa}${it.alamat ? '\n   Jemput: ' + it.alamat : ''}${it.peserta ? '\n   Peserta: ' + it.peserta : ''}`; }).join('\n');
+        const teks = `*${r.judul}*\n${tglId(r.tanggal)} jam ${r.jam}\n${r.jemput_rumah ? 'Jemput ke rumah' : 'Titik kumpul: ' + (r.titik_kumpul || '-')}\nPeserta lunas: ${kursiDari(daf)} kursi\n`
+          + bagiMobil(r).map((m, j) => `\n*Mobil ${j + 1}* (${m.isi}/${r.kursi_per_mobil || 4})\n` + m.daf.map((o, i) => { const it = (o.items && o.items[0]) || {}; return `${i + 1}. ${o.customer_name} (${o.pax || 1} kursi) wa.me/${o.customer_wa}${it.alamat ? '\n   Jemput: ' + it.alamat : ''}${it.peserta ? '\n   Peserta: ' + it.peserta : ''}`; }).join('\n')).join('\n');
         salin(teks, 'Daftar peserta disalin');
       } else if (ds.otTugas) {
         const r = TRIP.find((x) => x.id === Number(ds.otTugas));
