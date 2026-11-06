@@ -4,7 +4,7 @@ deskripsi: Rencana perjalanan 2 hari di Bandung untuk keluarga: hari pertama Lem
 tanggal: 2026-11-06
 gambar: kawah_putih_lebar.webp
 ---
-Punya waktu dua hari di Bandung dan ingin melihat yang paling terkenal? Kuncinya adalah **membagi wilayah per hari**. Lembang ada di utara, Kawah Putih di selatan, dan jarak keduanya bisa 3 jam lebih. Menggabungkan keduanya dalam satu hari membuat Anda lebih lama di jalan daripada di tempat wisata.
+Punya waktu dua hari di Bandung dan ingin melihat yang paling terkenal? Kuncinya adalah **membagi wilayah per hari**. Lembang ada di utara, Kawah Putih di selatan, dan jarak keduanya bisa 3 jam lebih. Karena itu satu pesanan sewa 12 jam di Tempera hanya untuk satu wilayah luar kota: lebih lama di tempat wisata, bukan di jalan.
 
 Berikut rencana yang biasa kami sarankan ke tamu Tempera.
 
@@ -19,7 +19,7 @@ Lembang dekat dari kota, jadi hari pertama bisa dimulai sedikit lebih santai.
 5. 15.00 turun ke Dago, mampir Punclut atau Lawangwangi.
 6. 17.30 makan malam di kota, lalu kembali ke hotel.
 
-Karena Kota Bandung dan Dago adalah titik 0, menggabungkan Lembang dengan tempat di kota tidak dikenai biaya lintas. Lihat daftar lengkap tempat wisata di halaman [Lembang](/lembang).
+Karena Kota Bandung dan Dago adalah titik 0, menggabungkan Lembang dengan tempat di kota tidak dikenai biaya tambahan. Lihat daftar lengkap tempat wisata di halaman [Lembang](/lembang).
 
 ## Hari 2: Kawah Putih dan Ciwidey
 

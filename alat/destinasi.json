@@ -1,166 +1,539 @@
 [
-{
- "slug": "lembang",
- "nama": "Lembang",
- "nama_pendek": "Lembang",
- "gambar": "floating_market.jpg",
- "judul": "Sewa Mobil + Driver ke Lembang: Rute & Tempat Wisata | Tempera",
- "desk": "Private trip ke Lembang dengan mobil + driver lokal, mulai Rp550rb/12 jam termasuk BBM. Tangkuban Perahu, Floating Market, Farmhouse, Orchid Forest, Dusun Bambu. Pesan online.",
- "kicker": "Bandung Utara · sekitar 1 jam dari kota",
- "h1": "Sewa Mobil + Driver ke Lembang",
- "sub": "Udara sejuk, kebun, dan wisata keluarga di utara Bandung. Dijemput di hotel atau rumah, driver lokal yang hafal jalan pintas saat Lembang macet.",
- "chips": ["Mulai Rp550rb / 12 jam", "BBM termasuk", "Driver tahu jalur alternatif", "Bisa bayar DP"],
- "wa": "Halo Tempera, saya mau tanya private trip ke Lembang.",
- "intro_judul": "Kenapa ke Lembang pakai mobil + driver?",
- "intro": [
-  "Lembang adalah tujuan wisata paling populer di Bandung: dekat dari kota, sejuk, dan tempat wisatanya cocok untuk anak-anak sampai orang tua. Masalahnya satu, <b>jalan utama Setiabudi–Lembang sering padat</b>, terutama akhir pekan dan musim libur.",
-  "Dengan driver lokal, Anda tidak perlu memikirkan rute, parkir, atau mencari jalur lain saat macet. Tempat wisata Lembang juga cukup tersebar (Cikole, Cikidang, Maribaya), jadi mobil pribadi jauh lebih praktis daripada berganti-ganti ojek online.",
-  "Tips: <b>berangkat pagi</b> (sekitar jam 7) supaya sampai sebelum ramai, dan kunjungi tempat paling jauh (misalnya Tangkuban Perahu) lebih dulu, lalu turun bertahap ke arah kota."
- ],
- "fakta": [["Jarak dari pusat kota", "± 15–20 km"], ["Waktu tempuh", "± 1 jam (lebih lama saat akhir pekan)"], ["Waktu terbaik", "Pagi hari kerja"], ["Cocok untuk", "Keluarga & rombongan"]],
- "tempat": [
-  ["Tangkuban Perahu", "Kawah gunung api yang bisa dilihat dari tepi; paling ramai siang hari, lebih nyaman datang pagi."],
-  ["Floating Market Lembang", "Danau dengan kuliner di atas perahu, taman, dan wahana kecil untuk anak."],
-  ["Farmhouse Susu Lembang", "Taman bergaya Eropa, rumah hobbit, dan susu segar; favorit untuk foto keluarga."],
-  ["Orchid Forest Cikole", "Hutan pinus dengan koleksi anggrek dan jembatan gantung."],
-  ["Dusun Bambu", "Taman luas dengan danau dan restoran saung, cocok untuk makan siang santai."],
-  ["The Great Asia Africa", "Tujuh zona bertema negara Asia dan Afrika dalam satu kawasan."],
-  ["Lembang Park & Zoo", "Kebun binatang modern yang ramah anak."],
-  ["De Ranch Lembang", "Berkuda dan bermain ala koboi untuk anak."],
-  ["Grafika Cikole", "Wisata alam dan outbound di kawasan hutan pinus."],
-  ["Maribaya & The Lodge", "Air terjun, jembatan, dan spot foto di atas lembah."],
-  ["Fairy Garden", "Taman bunga dan spot foto bertema peri."],
-  ["Kebun Stroberi", "Petik stroberi sendiri, banyak pilihan di sepanjang jalan Lembang."]
- ],
- "rute_lead": "Contoh rute santai dari pusat kota. Urutan bisa diubah sesuai keinginan; sampaikan saja ke driver.",
- "rute": [["07.00", "Dijemput di hotel / rumah"], ["08.15", "Tangkuban Perahu"], ["10.30", "Orchid Forest Cikole atau Grafika Cikole"], ["12.30", "Makan siang di Dusun Bambu"], ["14.30", "Farmhouse atau Floating Market"], ["16.30", "Oleh-oleh susu & tahu, kembali ke kota"], ["19.00", "Tiba di hotel (batas 12 jam)"]],
- "catatan_harga": "Hanya ke Lembang (satu wilayah) tidak kena biaya lintas; Kota Bandung & Dago boleh digabung gratis.",
- "faq": [
-  ["Berapa harga sewa mobil + driver ke Lembang?", "Mulai Rp550.000 untuk 12 jam (Calya/Sigra) sampai Hiace untuk rombongan. Sudah termasuk BBM, driver, dan air mineral. Tiket masuk, parkir, tol, dan makan driver dibayar terpisah."],
-  ["Berapa tempat wisata Lembang yang bisa dikunjungi dalam sehari?", "Rata-rata 3 sampai 5 tempat dalam 12 jam, tergantung lama di tiap lokasi dan kepadatan jalan. Akhir pekan sebaiknya pilih 3–4 tempat saja."],
-  ["Mobil kecil kuat naik ke Tangkuban Perahu?", "Kuat. Semua armada Tempera rutin melayani rute Lembang dan Tangkuban Perahu, dan driver terbiasa dengan tanjakan di kawasan itu."],
-  ["Bisa digabung dengan Kota Bandung di hari yang sama?", "Bisa, tanpa biaya tambahan. Kota Bandung dan Dago adalah titik 0, jadi boleh digabung dengan Lembang. Biaya lintas hanya berlaku bila menggabung Lembang dengan Ciwidey atau Pangalengan."]
- ]
-},
-{
- "slug": "ciwidey",
- "nama": "Ciwidey & Kawah Putih",
- "nama_pendek": "Ciwidey",
- "gambar": "kawah_putih_lebar.webp",
- "judul": "Sewa Mobil ke Kawah Putih & Ciwidey + Driver | Tempera",
- "desk": "Private trip Kawah Putih, Ranca Upas, Situ Patenggang, Kawah Rengganis dengan mobil + driver lokal. Mulai Rp550rb/12 jam termasuk BBM. Pesan dan bayar online.",
- "kicker": "Bandung Selatan · sekitar 2 jam dari kota",
- "h1": "Sewa Mobil + Driver ke Kawah Putih & Ciwidey",
- "sub": "Kawah hijau toska, kebun teh, dan danau di dataran tinggi selatan Bandung. Perjalanan cukup jauh dan berkelok, jadi lebih nyaman dengan driver yang sudah hafal jalannya.",
- "chips": ["Mulai Rp550rb / 12 jam", "BBM termasuk", "Driver hafal jalur selatan", "Bisa bayar DP"],
- "wa": "Halo Tempera, saya mau tanya private trip ke Kawah Putih / Ciwidey.",
- "intro_judul": "Kenapa ke Ciwidey pakai mobil + driver?",
- "intro": [
-  "Kawasan Ciwidey–Rancabali berada sekitar 45–50 km di selatan Bandung, dengan jalan menanjak dan berkelok setelah Soreang. Tempat wisatanya berjauhan satu sama lain, dan transportasi umum ke sana terbatas.",
-  "Dengan mobil + driver, Anda bisa mengunjungi Kawah Putih, Ranca Upas, Situ Patenggang, dan kebun teh dalam satu hari tanpa memikirkan jalan, bensin, atau parkir. Driver juga tahu kapan sebaiknya berangkat supaya tidak terjebak antrean di jalur Soreang.",
-  "Tips: <b>berangkat paling lambat jam 6 pagi</b>. Kawah Putih paling indah di pagi hari sebelum kabut tebal, dan udara di atas bisa sangat dingin, jadi bawa jaket."
- ],
- "fakta": [["Jarak dari pusat kota", "± 45–50 km"], ["Waktu tempuh", "± 2–2,5 jam sekali jalan"], ["Waktu terbaik", "Berangkat jam 6 pagi"], ["Bawa", "Jaket & masker (bau belerang)"]],
- "tempat": [
-  ["Kawah Putih", "Danau kawah berwarna putih kehijauan, ikon wisata Bandung Selatan."],
-  ["Ranca Upas", "Penangkaran rusa yang bisa diberi makan, plus area kemah dan kolam air panas."],
-  ["Situ Patenggang", "Danau di tengah kebun teh, bisa naik perahu ke Batu Cinta."],
-  ["Glamping Lakeside Rancabali", "Resort tepi danau dengan restoran dan spot foto, cocok untuk makan siang."],
-  ["Kawah Rengganis", "Pemandian air panas alami di sungai berbatu (Cibuni)."],
-  ["Barusen Hills", "Bukit kebun teh dengan spot foto dan kafe."],
-  ["Ciwidey Valley", "Resort dengan kolam air panas dan wahana keluarga."],
-  ["Kebun Teh Rancabali", "Hamparan kebun teh sepanjang jalan; enak untuk berhenti foto."],
-  ["Pinisi Resto & Danau", "Restoran berbentuk kapal pinisi di tepi danau."]
- ],
- "rute_lead": "Rute klasik Bandung Selatan dalam 12 jam. Bila ingin lebih santai, pilih 3 tempat saja.",
- "rute": [["06.00", "Dijemput di hotel / rumah"], ["08.15", "Kawah Putih"], ["10.30", "Ranca Upas (rusa & kebun stroberi)"], ["12.00", "Makan siang di Glamping Lakeside atau Situ Patenggang"], ["14.00", "Kawah Rengganis atau kebun teh Rancabali"], ["15.30", "Perjalanan kembali, mampir oleh-oleh di Ciwidey"], ["18.00", "Tiba di Bandung (batas 12 jam)"]],
- "catatan_harga": "Hanya ke Ciwidey (satu wilayah) tidak kena biaya lintas; digabung dengan Pangalengan atau Lembang di hari yang sama ada biaya lintas.",
- "faq": [
-  ["Berapa harga sewa mobil ke Kawah Putih?", "Mulai Rp550.000 untuk 12 jam termasuk BBM dan driver. Tiket masuk Kawah Putih dan tempat lain, parkir, tol, serta makan driver dibayar terpisah. Wisatawan asing biasanya dikenai tarif tiket berbeda di lokasi."],
-  ["Berapa lama perjalanan Bandung ke Kawah Putih?", "Sekitar 2 sampai 2,5 jam sekali jalan dari pusat kota, lebih lama saat akhir pekan atau musim libur."],
-  ["Bisa ke Kawah Putih dan Pangalengan dalam sehari?", "Bisa, tetapi melelahkan dan dikenai biaya lintas karena keduanya berbeda wilayah. Kami sarankan dipisah menjadi dua hari supaya lebih santai."],
-  ["Apakah aman membawa anak kecil ke Kawah Putih?", "Aman selama tidak terlalu lama di dekat kawah. Bau belerang cukup kuat, jadi bawa masker, dan bawa jaket karena suhunya dingin."]
- ]
-},
-{
- "slug": "pangalengan",
- "nama": "Pangalengan",
- "nama_pendek": "Pangalengan",
- "gambar": "nimo_pangalengan.webp",
- "judul": "Sewa Mobil + Driver ke Pangalengan: Nimo Highland, Situ Cileunca | Tempera",
- "desk": "Private trip ke Pangalengan dengan mobil + driver: Nimo Highland, Situ Cileunca, rafting, Wayang Windu, kebun teh Malabar. Mulai Rp550rb/12 jam termasuk BBM.",
- "kicker": "Bandung Selatan · sekitar 1,5–2 jam dari kota",
- "h1": "Sewa Mobil + Driver ke Pangalengan",
- "sub": "Kebun teh luas, danau, rafting, dan jembatan kaca Nimo Highland. Lebih sepi dari Lembang, cocok untuk yang ingin suasana pegunungan yang tenang.",
- "chips": ["Mulai Rp550rb / 12 jam", "BBM termasuk", "Driver lokal", "Bisa bayar DP"],
- "wa": "Halo Tempera, saya mau tanya private trip ke Pangalengan.",
- "intro_judul": "Kenapa ke Pangalengan pakai mobil + driver?",
- "intro": [
-  "Pangalengan berada di selatan Bandung, melewati Banjaran dengan jalan menanjak di bagian akhir. Kawasannya luas: Situ Cileunca, kebun teh Malabar, dan Nimo Highland berjarak cukup jauh satu sama lain.",
-  "Karena belum seramai Lembang, Pangalengan pas untuk keluarga yang ingin udara segar tanpa antre panjang. Mobil + driver membuat Anda bebas berhenti di kebun teh atau warung susu sapi di sepanjang jalan.",
-  "Tips: untuk rafting di Situ Cileunca, <b>datang pagi</b> dan bawa baju ganti. Sore hari kabut sering turun, jadi rencanakan perjalanan pulang sebelum gelap."
- ],
- "fakta": [["Jarak dari pusat kota", "± 40–45 km"], ["Waktu tempuh", "± 1,5–2 jam sekali jalan"], ["Waktu terbaik", "Pagi sampai siang"], ["Cocok untuk", "Keluarga, rombongan, rafting"]],
- "tempat": [
-  ["Nimo Highland", "Jembatan kaca dan spot foto di atas kebun teh."],
-  ["Situ Cileunca & Rafting", "Danau luas dengan perahu dan arung jeram di Sungai Palayangan."],
-  ["Wayang Windu Panenjoan", "Bukit pandang dengan panorama kebun teh dan pegunungan."],
-  ["Pineus Tilu", "Kemah dan wisata alam di hutan pinus tepi sungai."],
-  ["Sunrise Point Cukul", "Bukit kebun teh untuk melihat matahari terbit dan lautan awan."],
-  ["Kebun Teh Malabar", "Kebun teh bersejarah dengan makam K.A.R. Bosscha."],
-  ["Riung Gunung", "Bukit dengan pemandangan pegunungan di sekeliling."],
-  ["Situ Cipanunjang", "Danau tenang yang dikelilingi bukit, enak untuk berhenti foto."]
- ],
- "rute_lead": "Contoh rute Pangalengan dalam 12 jam dari pusat kota.",
- "rute": [["06.30", "Dijemput di hotel / rumah"], ["08.30", "Nimo Highland"], ["10.30", "Situ Cileunca (perahu atau rafting)"], ["13.00", "Makan siang di sekitar Situ Cileunca"], ["14.30", "Kebun Teh Malabar / Wayang Windu Panenjoan"], ["16.00", "Oleh-oleh susu & dodol susu, kembali ke kota"], ["18.30", "Tiba di Bandung (batas 12 jam)"]],
- "catatan_harga": "Hanya ke Pangalengan (satu wilayah) tidak kena biaya lintas; Kota Bandung & Dago boleh digabung gratis.",
- "faq": [
-  ["Berapa harga sewa mobil + driver ke Pangalengan?", "Mulai Rp550.000 untuk 12 jam termasuk BBM dan driver. Tiket masuk, rafting, parkir, tol, dan makan driver dibayar terpisah."],
-  ["Lebih bagus Pangalengan atau Ciwidey?", "Ciwidey terkenal dengan Kawah Putih dan lebih ramai. Pangalengan lebih tenang, kebun tehnya lebih luas, dan ada rafting. Untuk liburan 2 hari, kunjungi keduanya di hari berbeda."],
-  ["Bisa rafting di Pangalengan untuk pemula?", "Bisa. Operator rafting di Situ Cileunca menyediakan pemandu dan perlengkapan; tanyakan batas usia anak ke operator saat tiba."],
-  ["Jalan ke Pangalengan aman untuk mobil keluarga?", "Aman. Jalannya beraspal dengan beberapa tanjakan, dan driver Tempera sudah terbiasa dengan rute ini."]
- ]
-},
-{
- "slug": "kota-bandung",
- "nama": "Kota Bandung & Dago",
- "nama_pendek": "Kota Bandung",
- "gambar": "gedung-sate.webp",
- "judul": "Sewa Mobil + Driver Dalam Kota Bandung & Dago | Tempera",
- "desk": "Sewa mobil + driver dalam Kota Bandung dan Dago: Gedung Sate, Braga, Tebing Keraton, Punclut, Trans Studio, kuliner dan oleh-oleh. Mulai Rp550rb/12 jam termasuk BBM.",
- "kicker": "Titik 0 · bebas digabung dengan wilayah lain",
- "h1": "Sewa Mobil + Driver Dalam Kota Bandung & Dago",
- "sub": "Wisata kota, kuliner legendaris, belanja, dan bukit Dago. Driver lokal tahu jam ramai, tempat parkir, dan tempat makan yang benar-benar enak.",
- "chips": ["Mulai Rp550rb / 12 jam", "BBM termasuk", "Bebas biaya lintas", "Bisa bayar DP"],
- "wa": "Halo Tempera, saya mau tanya sewa mobil + driver dalam Kota Bandung.",
- "intro_judul": "Keliling Bandung tanpa repot parkir",
- "intro": [
-  "Di dalam kota, tantangannya bukan jarak tetapi <b>macet dan parkir</b>, terutama di Braga, Dago, dan pusat oleh-oleh saat akhir pekan. Dengan driver, Anda cukup turun di depan lokasi sementara driver mencari parkir.",
-  "Kota Bandung dan Dago adalah <b>titik 0</b> Tempera: boleh digabung dengan Lembang, Ciwidey, atau Pangalengan tanpa biaya lintas. Misalnya pagi ke Lembang, sore ke Dago dan makan malam di kota.",
-  "Tips: Tebing Keraton dan Bukit Bintang paling bagus saat matahari terbit atau menjelang malam, sedangkan wisata kuliner sebaiknya dijadwalkan di luar jam makan siang supaya tidak antre."
- ],
- "fakta": [["Jarak", "Dalam kota & Dago atas"], ["Biaya lintas", "Tidak ada (titik 0)"], ["Waktu terbaik", "Hari kerja, di luar jam pulang kantor"], ["Cocok untuk", "Kuliner, belanja, wisata kota"]],
- "tempat": [
-  ["Gedung Sate & Braga", "Ikon kota, museum, dan jalan bersejarah dengan kafe dan galeri."],
-  ["Tebing Keraton", "Tebing dengan pemandangan hutan Tahura dari ketinggian, terkenal saat matahari terbit."],
-  ["Tahura Djuanda", "Hutan kota dengan Goa Jepang dan Goa Belanda."],
-  ["Punclut", "Deretan tempat makan dengan pemandangan Bandung dari atas."],
-  ["Lawangwangi & Dago Tea House", "Galeri seni dan tempat santai di Dago atas."],
-  ["Bukit Bintang", "Spot melihat lampu kota di malam hari."],
-  ["Trans Studio Bandung", "Taman bermain dalam ruangan, cocok saat hujan."],
-  ["Masjid Raya Al Jabbar", "Masjid terapung dengan arsitektur modern di Gedebage."],
-  ["Dago Dreampark", "Taman rekreasi keluarga di kawasan Dago."],
-  ["Kuliner legendaris", "Batagor Kingsley, Batagor Serayu, Kupat Tahu Gempol, Bubur DPR."],
-  ["Oleh-oleh", "Kartika Sari, Pasar Baru, dan Paskal Hyper Square."]
- ],
- "rute_lead": "Contoh rute satu hari keliling kota dan Dago.",
- "rute": [["05.00", "Dijemput untuk melihat matahari terbit di Tebing Keraton (opsional)"], ["08.00", "Sarapan Bubur DPR atau Kupat Tahu Gempol"], ["09.30", "Gedung Sate & Museum Geologi"], ["11.30", "Jalan-jalan di Braga"], ["13.00", "Makan siang batagor / kuliner kota"], ["15.00", "Masjid Raya Al Jabbar atau Trans Studio"], ["17.00", "Oleh-oleh Kartika Sari / Paskal, lalu kembali ke hotel"]],
- "catatan_harga": "Kota Bandung dan Dago tidak pernah kena biaya lintas, walau digabung dengan wilayah lain.",
- "faq": [
-  ["Berapa harga sewa mobil + driver dalam Kota Bandung?", "Mulai Rp550.000 untuk 12 jam termasuk BBM dan driver. Parkir, tol, tiket masuk, dan makan driver dibayar terpisah."],
-  ["Bisa sewa kurang dari 12 jam untuk keliling kota?", "Paket kami 12 jam. Untuk perjalanan singkat (misalnya antar ke stasiun atau satu tempat saja), tanyakan admin lewat WhatsApp."],
-  ["Bisa digabung dengan Lembang di hari yang sama?", "Bisa, tanpa biaya tambahan. Kota Bandung dan Dago adalah titik 0, bebas digabung dengan satu wilayah luar kota."],
-  ["Driver bisa menyarankan tempat makan?", "Bisa. Driver Tempera adalah warga lokal, jadi silakan minta rekomendasi kuliner sesuai selera dan budget."]
- ]
-}
+ {
+  "slug": "lembang",
+  "nama": "Lembang",
+  "nama_pendek": "Lembang",
+  "gambar": "floating_market.jpg",
+  "judul": "Sewa Mobil + Driver ke Lembang: Rute & Tempat Wisata | Tempera",
+  "desk": "Private trip ke Lembang dengan mobil + driver lokal, mulai Rp550rb/12 jam termasuk BBM. Tangkuban Perahu, Floating Market, Farmhouse, Orchid Forest, Dusun Bambu. Pesan online.",
+  "kicker": "Bandung Utara · sekitar 1 jam dari kota",
+  "h1": "Sewa Mobil + Driver ke Lembang",
+  "sub": "Udara sejuk, kebun, dan wisata keluarga di utara Bandung. Dijemput di hotel atau rumah, driver lokal yang hafal jalan pintas saat Lembang macet.",
+  "chips": [
+   "Mulai Rp550rb / 12 jam",
+   "BBM termasuk",
+   "Driver tahu jalur alternatif",
+   "Bisa bayar DP"
+  ],
+  "wa": "Halo Tempera, saya mau tanya private trip ke Lembang.",
+  "intro_judul": "Kenapa ke Lembang pakai mobil + driver?",
+  "intro": [
+   "Lembang adalah tujuan wisata paling populer di Bandung: dekat dari kota, sejuk, dan tempat wisatanya cocok untuk anak-anak sampai orang tua. Masalahnya satu, <b>jalan utama Setiabudi–Lembang sering padat</b>, terutama akhir pekan dan musim libur.",
+   "Dengan driver lokal, Anda tidak perlu memikirkan rute, parkir, atau mencari jalur lain saat macet. Tempat wisata Lembang juga cukup tersebar (Cikole, Cikidang, Maribaya), jadi mobil pribadi jauh lebih praktis daripada berganti-ganti ojek online.",
+   "Tips: <b>berangkat pagi</b> (sekitar jam 7) supaya sampai sebelum ramai, dan kunjungi tempat paling jauh (misalnya Tangkuban Perahu) lebih dulu, lalu turun bertahap ke arah kota."
+  ],
+  "fakta": [
+   [
+    "Jarak dari pusat kota",
+    "± 15–20 km"
+   ],
+   [
+    "Waktu tempuh",
+    "± 1 jam (lebih lama saat akhir pekan)"
+   ],
+   [
+    "Waktu terbaik",
+    "Pagi hari kerja"
+   ],
+   [
+    "Cocok untuk",
+    "Keluarga & rombongan"
+   ]
+  ],
+  "tempat": [
+   [
+    "Tangkuban Perahu",
+    "Kawah gunung api yang bisa dilihat dari tepi; paling ramai siang hari, lebih nyaman datang pagi."
+   ],
+   [
+    "Floating Market Lembang",
+    "Danau dengan kuliner di atas perahu, taman, dan wahana kecil untuk anak."
+   ],
+   [
+    "Farmhouse Susu Lembang",
+    "Taman bergaya Eropa, rumah hobbit, dan susu segar; favorit untuk foto keluarga."
+   ],
+   [
+    "Orchid Forest Cikole",
+    "Hutan pinus dengan koleksi anggrek dan jembatan gantung."
+   ],
+   [
+    "Dusun Bambu",
+    "Taman luas dengan danau dan restoran saung, cocok untuk makan siang santai."
+   ],
+   [
+    "The Great Asia Africa",
+    "Tujuh zona bertema negara Asia dan Afrika dalam satu kawasan."
+   ],
+   [
+    "Lembang Park & Zoo",
+    "Kebun binatang modern yang ramah anak."
+   ],
+   [
+    "De Ranch Lembang",
+    "Berkuda dan bermain ala koboi untuk anak."
+   ],
+   [
+    "Grafika Cikole",
+    "Wisata alam dan outbound di kawasan hutan pinus."
+   ],
+   [
+    "Maribaya & The Lodge",
+    "Air terjun, jembatan, dan spot foto di atas lembah."
+   ],
+   [
+    "Fairy Garden",
+    "Taman bunga dan spot foto bertema peri."
+   ],
+   [
+    "Kebun Stroberi",
+    "Petik stroberi sendiri, banyak pilihan di sepanjang jalan Lembang."
+   ]
+  ],
+  "rute_lead": "Contoh rute santai dari pusat kota. Urutan bisa diubah sesuai keinginan; sampaikan saja ke driver.",
+  "rute": [
+   [
+    "07.00",
+    "Dijemput di hotel / rumah"
+   ],
+   [
+    "08.15",
+    "Tangkuban Perahu"
+   ],
+   [
+    "10.30",
+    "Orchid Forest Cikole atau Grafika Cikole"
+   ],
+   [
+    "12.30",
+    "Makan siang di Dusun Bambu"
+   ],
+   [
+    "14.30",
+    "Farmhouse atau Floating Market"
+   ],
+   [
+    "16.30",
+    "Oleh-oleh susu & tahu, kembali ke kota"
+   ],
+   [
+    "19.00",
+    "Tiba di hotel (batas 12 jam)"
+   ]
+  ],
+  "catatan_harga": "Satu pesanan untuk satu wilayah luar kota; Kota Bandung & Dago boleh digabung tanpa biaya tambahan. Belum tahu tempatnya? Pilih \"atur bersama driver\" saat memesan.",
+  "faq": [
+   [
+    "Berapa harga sewa mobil + driver ke Lembang?",
+    "Mulai Rp550.000 untuk 12 jam (Calya/Sigra) sampai Hiace untuk rombongan. Sudah termasuk BBM, driver, dan air mineral. Tiket masuk, parkir, tol, dan makan driver dibayar terpisah."
+   ],
+   [
+    "Berapa tempat wisata Lembang yang bisa dikunjungi dalam sehari?",
+    "Rata-rata 3 sampai 5 tempat dalam 12 jam, tergantung lama di tiap lokasi dan kepadatan jalan. Akhir pekan sebaiknya pilih 3–4 tempat saja."
+   ],
+   [
+    "Mobil kecil kuat naik ke Tangkuban Perahu?",
+    "Kuat. Semua armada Tempera rutin melayani rute Lembang dan Tangkuban Perahu, dan driver terbiasa dengan tanjakan di kawasan itu."
+   ],
+   [
+    "Bisa digabung dengan Kota Bandung di hari yang sama?",
+    "Bisa, tanpa biaya tambahan. Kota Bandung dan Dago adalah titik 0. Yang tidak bisa adalah menggabung Lembang dengan Ciwidey atau Pangalengan dalam satu hari, karena jaraknya berjauhan."
+   ]
+  ]
+ },
+ {
+  "slug": "ciwidey",
+  "nama": "Ciwidey & Kawah Putih",
+  "nama_pendek": "Ciwidey",
+  "gambar": "kawah_putih_lebar.webp",
+  "judul": "Sewa Mobil ke Kawah Putih & Ciwidey + Driver | Tempera",
+  "desk": "Private trip Kawah Putih, Ranca Upas, Situ Patenggang, Kawah Rengganis dengan mobil + driver lokal. Mulai Rp550rb/12 jam termasuk BBM. Pesan dan bayar online.",
+  "kicker": "Bandung Selatan · sekitar 2 jam dari kota",
+  "h1": "Sewa Mobil + Driver ke Kawah Putih & Ciwidey",
+  "sub": "Kawah hijau toska, kebun teh, dan danau di dataran tinggi selatan Bandung. Perjalanan cukup jauh dan berkelok, jadi lebih nyaman dengan driver yang sudah hafal jalannya.",
+  "chips": [
+   "Mulai Rp550rb / 12 jam",
+   "BBM termasuk",
+   "Driver hafal jalur selatan",
+   "Bisa bayar DP"
+  ],
+  "wa": "Halo Tempera, saya mau tanya private trip ke Kawah Putih / Ciwidey.",
+  "intro_judul": "Kenapa ke Ciwidey pakai mobil + driver?",
+  "intro": [
+   "Kawasan Ciwidey–Rancabali berada sekitar 45–50 km di selatan Bandung, dengan jalan menanjak dan berkelok setelah Soreang. Tempat wisatanya berjauhan satu sama lain, dan transportasi umum ke sana terbatas.",
+   "Dengan mobil + driver, Anda bisa mengunjungi Kawah Putih, Ranca Upas, Situ Patenggang, dan kebun teh dalam satu hari tanpa memikirkan jalan, bensin, atau parkir. Driver juga tahu kapan sebaiknya berangkat supaya tidak terjebak antrean di jalur Soreang.",
+   "Tips: <b>berangkat paling lambat jam 6 pagi</b>. Kawah Putih paling indah di pagi hari sebelum kabut tebal, dan udara di atas bisa sangat dingin, jadi bawa jaket."
+  ],
+  "fakta": [
+   [
+    "Jarak dari pusat kota",
+    "± 45–50 km"
+   ],
+   [
+    "Waktu tempuh",
+    "± 2–2,5 jam sekali jalan"
+   ],
+   [
+    "Waktu terbaik",
+    "Berangkat jam 6 pagi"
+   ],
+   [
+    "Bawa",
+    "Jaket & masker (bau belerang)"
+   ]
+  ],
+  "tempat": [
+   [
+    "Kawah Putih",
+    "Danau kawah berwarna putih kehijauan, ikon wisata Bandung Selatan."
+   ],
+   [
+    "Ranca Upas",
+    "Penangkaran rusa yang bisa diberi makan, plus area kemah dan kolam air panas."
+   ],
+   [
+    "Situ Patenggang",
+    "Danau di tengah kebun teh, bisa naik perahu ke Batu Cinta."
+   ],
+   [
+    "Glamping Lakeside Rancabali",
+    "Resort tepi danau dengan restoran dan spot foto, cocok untuk makan siang."
+   ],
+   [
+    "Kawah Rengganis",
+    "Pemandian air panas alami di sungai berbatu (Cibuni)."
+   ],
+   [
+    "Barusen Hills",
+    "Bukit kebun teh dengan spot foto dan kafe."
+   ],
+   [
+    "Ciwidey Valley",
+    "Resort dengan kolam air panas dan wahana keluarga."
+   ],
+   [
+    "Kebun Teh Rancabali",
+    "Hamparan kebun teh sepanjang jalan; enak untuk berhenti foto."
+   ],
+   [
+    "Pinisi Resto & Danau",
+    "Restoran berbentuk kapal pinisi di tepi danau."
+   ]
+  ],
+  "rute_lead": "Rute klasik Bandung Selatan dalam 12 jam. Bila ingin lebih santai, pilih 3 tempat saja.",
+  "rute": [
+   [
+    "06.00",
+    "Dijemput di hotel / rumah"
+   ],
+   [
+    "08.15",
+    "Kawah Putih"
+   ],
+   [
+    "10.30",
+    "Ranca Upas (rusa & kebun stroberi)"
+   ],
+   [
+    "12.00",
+    "Makan siang di Glamping Lakeside atau Situ Patenggang"
+   ],
+   [
+    "14.00",
+    "Kawah Rengganis atau kebun teh Rancabali"
+   ],
+   [
+    "15.30",
+    "Perjalanan kembali, mampir oleh-oleh di Ciwidey"
+   ],
+   [
+    "18.00",
+    "Tiba di Bandung (batas 12 jam)"
+   ]
+  ],
+  "catatan_harga": "Satu pesanan untuk satu wilayah luar kota; Kota Bandung & Dago boleh digabung tanpa biaya tambahan. Belum tahu tempatnya? Pilih \"atur bersama driver\" saat memesan.",
+  "faq": [
+   [
+    "Berapa harga sewa mobil ke Kawah Putih?",
+    "Mulai Rp550.000 untuk 12 jam termasuk BBM dan driver. Tiket masuk Kawah Putih dan tempat lain, parkir, tol, serta makan driver dibayar terpisah. Wisatawan asing biasanya dikenai tarif tiket berbeda di lokasi."
+   ],
+   [
+    "Berapa lama perjalanan Bandung ke Kawah Putih?",
+    "Sekitar 2 sampai 2,5 jam sekali jalan dari pusat kota, lebih lama saat akhir pekan atau musim libur."
+   ],
+   [
+    "Bisa ke Kawah Putih dan Pangalengan dalam sehari?",
+    "Tidak dalam satu pesanan. Ciwidey dan Pangalengan berjauhan, jadi waktu habis di jalan. Pesan untuk dua hari berbeda supaya lebih santai."
+   ],
+   [
+    "Apakah aman membawa anak kecil ke Kawah Putih?",
+    "Aman selama tidak terlalu lama di dekat kawah. Bau belerang cukup kuat, jadi bawa masker, dan bawa jaket karena suhunya dingin."
+   ]
+  ]
+ },
+ {
+  "slug": "pangalengan",
+  "nama": "Pangalengan",
+  "nama_pendek": "Pangalengan",
+  "gambar": "nimo_pangalengan.webp",
+  "judul": "Sewa Mobil + Driver ke Pangalengan: Nimo Highland, Situ Cileunca | Tempera",
+  "desk": "Private trip ke Pangalengan dengan mobil + driver: Nimo Highland, Situ Cileunca, rafting, Wayang Windu, kebun teh Malabar. Mulai Rp550rb/12 jam termasuk BBM.",
+  "kicker": "Bandung Selatan · sekitar 1,5–2 jam dari kota",
+  "h1": "Sewa Mobil + Driver ke Pangalengan",
+  "sub": "Kebun teh luas, danau, rafting, dan jembatan kaca Nimo Highland. Lebih sepi dari Lembang, cocok untuk yang ingin suasana pegunungan yang tenang.",
+  "chips": [
+   "Mulai Rp550rb / 12 jam",
+   "BBM termasuk",
+   "Driver lokal",
+   "Bisa bayar DP"
+  ],
+  "wa": "Halo Tempera, saya mau tanya private trip ke Pangalengan.",
+  "intro_judul": "Kenapa ke Pangalengan pakai mobil + driver?",
+  "intro": [
+   "Pangalengan berada di selatan Bandung, melewati Banjaran dengan jalan menanjak di bagian akhir. Kawasannya luas: Situ Cileunca, kebun teh Malabar, dan Nimo Highland berjarak cukup jauh satu sama lain.",
+   "Karena belum seramai Lembang, Pangalengan pas untuk keluarga yang ingin udara segar tanpa antre panjang. Mobil + driver membuat Anda bebas berhenti di kebun teh atau warung susu sapi di sepanjang jalan.",
+   "Tips: untuk rafting di Situ Cileunca, <b>datang pagi</b> dan bawa baju ganti. Sore hari kabut sering turun, jadi rencanakan perjalanan pulang sebelum gelap."
+  ],
+  "fakta": [
+   [
+    "Jarak dari pusat kota",
+    "± 40–45 km"
+   ],
+   [
+    "Waktu tempuh",
+    "± 1,5–2 jam sekali jalan"
+   ],
+   [
+    "Waktu terbaik",
+    "Pagi sampai siang"
+   ],
+   [
+    "Cocok untuk",
+    "Keluarga, rombongan, rafting"
+   ]
+  ],
+  "tempat": [
+   [
+    "Nimo Highland",
+    "Jembatan kaca dan spot foto di atas kebun teh."
+   ],
+   [
+    "Situ Cileunca & Rafting",
+    "Danau luas dengan perahu dan arung jeram di Sungai Palayangan."
+   ],
+   [
+    "Wayang Windu Panenjoan",
+    "Bukit pandang dengan panorama kebun teh dan pegunungan."
+   ],
+   [
+    "Pineus Tilu",
+    "Kemah dan wisata alam di hutan pinus tepi sungai."
+   ],
+   [
+    "Sunrise Point Cukul",
+    "Bukit kebun teh untuk melihat matahari terbit dan lautan awan."
+   ],
+   [
+    "Kebun Teh Malabar",
+    "Kebun teh bersejarah dengan makam K.A.R. Bosscha."
+   ],
+   [
+    "Riung Gunung",
+    "Bukit dengan pemandangan pegunungan di sekeliling."
+   ],
+   [
+    "Situ Cipanunjang",
+    "Danau tenang yang dikelilingi bukit, enak untuk berhenti foto."
+   ]
+  ],
+  "rute_lead": "Contoh rute Pangalengan dalam 12 jam dari pusat kota.",
+  "rute": [
+   [
+    "06.30",
+    "Dijemput di hotel / rumah"
+   ],
+   [
+    "08.30",
+    "Nimo Highland"
+   ],
+   [
+    "10.30",
+    "Situ Cileunca (perahu atau rafting)"
+   ],
+   [
+    "13.00",
+    "Makan siang di sekitar Situ Cileunca"
+   ],
+   [
+    "14.30",
+    "Kebun Teh Malabar / Wayang Windu Panenjoan"
+   ],
+   [
+    "16.00",
+    "Oleh-oleh susu & dodol susu, kembali ke kota"
+   ],
+   [
+    "18.30",
+    "Tiba di Bandung (batas 12 jam)"
+   ]
+  ],
+  "catatan_harga": "Satu pesanan untuk satu wilayah luar kota; Kota Bandung & Dago boleh digabung tanpa biaya tambahan. Belum tahu tempatnya? Pilih \"atur bersama driver\" saat memesan.",
+  "faq": [
+   [
+    "Berapa harga sewa mobil + driver ke Pangalengan?",
+    "Mulai Rp550.000 untuk 12 jam termasuk BBM dan driver. Tiket masuk, rafting, parkir, tol, dan makan driver dibayar terpisah."
+   ],
+   [
+    "Lebih bagus Pangalengan atau Ciwidey?",
+    "Ciwidey terkenal dengan Kawah Putih dan lebih ramai. Pangalengan lebih tenang, kebun tehnya lebih luas, dan ada rafting. Untuk liburan 2 hari, kunjungi keduanya di hari berbeda."
+   ],
+   [
+    "Bisa rafting di Pangalengan untuk pemula?",
+    "Bisa. Operator rafting di Situ Cileunca menyediakan pemandu dan perlengkapan; tanyakan batas usia anak ke operator saat tiba."
+   ],
+   [
+    "Jalan ke Pangalengan aman untuk mobil keluarga?",
+    "Aman. Jalannya beraspal dengan beberapa tanjakan, dan driver Tempera sudah terbiasa dengan rute ini."
+   ]
+  ]
+ },
+ {
+  "slug": "kota-bandung",
+  "nama": "Kota Bandung & Dago",
+  "nama_pendek": "Kota Bandung",
+  "gambar": "gedung-sate.webp",
+  "judul": "Sewa Mobil + Driver Dalam Kota Bandung & Dago | Tempera",
+  "desk": "Sewa mobil + driver dalam Kota Bandung dan Dago: Gedung Sate, Braga, Tebing Keraton, Punclut, Trans Studio, kuliner dan oleh-oleh. Mulai Rp550rb/12 jam termasuk BBM.",
+  "kicker": "Titik 0 · bebas digabung dengan wilayah lain",
+  "h1": "Sewa Mobil + Driver Dalam Kota Bandung & Dago",
+  "sub": "Wisata kota, kuliner legendaris, belanja, dan bukit Dago. Driver lokal tahu jam ramai, tempat parkir, dan tempat makan yang benar-benar enak.",
+  "chips": [
+   "Mulai Rp550rb / 12 jam",
+   "BBM termasuk",
+   "Bebas digabung",
+   "Bisa bayar DP"
+  ],
+  "wa": "Halo Tempera, saya mau tanya sewa mobil + driver dalam Kota Bandung.",
+  "intro_judul": "Keliling Bandung tanpa repot parkir",
+  "intro": [
+   "Di dalam kota, tantangannya bukan jarak tetapi <b>macet dan parkir</b>, terutama di Braga, Dago, dan pusat oleh-oleh saat akhir pekan. Dengan driver, Anda cukup turun di depan lokasi sementara driver mencari parkir.",
+   "Kota Bandung dan Dago adalah <b>titik 0</b> Tempera: boleh digabung dengan Lembang, Ciwidey, atau Pangalengan tanpa biaya tambahan. Misalnya pagi ke Lembang, sore ke Dago dan makan malam di kota.",
+   "Tips: Tebing Keraton dan Bukit Bintang paling bagus saat matahari terbit atau menjelang malam, sedangkan wisata kuliner sebaiknya dijadwalkan di luar jam makan siang supaya tidak antre."
+  ],
+  "fakta": [
+   [
+    "Jarak",
+    "Dalam kota & Dago atas"
+   ],
+   [
+    "Digabung",
+    "Bebas dengan satu wilayah luar kota"
+   ],
+   [
+    "Waktu terbaik",
+    "Hari kerja, di luar jam pulang kantor"
+   ],
+   [
+    "Cocok untuk",
+    "Kuliner, belanja, wisata kota"
+   ]
+  ],
+  "tempat": [
+   [
+    "Gedung Sate & Braga",
+    "Ikon kota, museum, dan jalan bersejarah dengan kafe dan galeri."
+   ],
+   [
+    "Tebing Keraton",
+    "Tebing dengan pemandangan hutan Tahura dari ketinggian, terkenal saat matahari terbit."
+   ],
+   [
+    "Tahura Djuanda",
+    "Hutan kota dengan Goa Jepang dan Goa Belanda."
+   ],
+   [
+    "Punclut",
+    "Deretan tempat makan dengan pemandangan Bandung dari atas."
+   ],
+   [
+    "Lawangwangi & Dago Tea House",
+    "Galeri seni dan tempat santai di Dago atas."
+   ],
+   [
+    "Bukit Bintang",
+    "Spot melihat lampu kota di malam hari."
+   ],
+   [
+    "Trans Studio Bandung",
+    "Taman bermain dalam ruangan, cocok saat hujan."
+   ],
+   [
+    "Masjid Raya Al Jabbar",
+    "Masjid terapung dengan arsitektur modern di Gedebage."
+   ],
+   [
+    "Dago Dreampark",
+    "Taman rekreasi keluarga di kawasan Dago."
+   ],
+   [
+    "Kuliner legendaris",
+    "Batagor Kingsley, Batagor Serayu, Kupat Tahu Gempol, Bubur DPR."
+   ],
+   [
+    "Oleh-oleh",
+    "Kartika Sari, Pasar Baru, dan Paskal Hyper Square."
+   ]
+  ],
+  "rute_lead": "Contoh rute satu hari keliling kota dan Dago.",
+  "rute": [
+   [
+    "05.00",
+    "Dijemput untuk melihat matahari terbit di Tebing Keraton (opsional)"
+   ],
+   [
+    "08.00",
+    "Sarapan Bubur DPR atau Kupat Tahu Gempol"
+   ],
+   [
+    "09.30",
+    "Gedung Sate & Museum Geologi"
+   ],
+   [
+    "11.30",
+    "Jalan-jalan di Braga"
+   ],
+   [
+    "13.00",
+    "Makan siang batagor / kuliner kota"
+   ],
+   [
+    "15.00",
+    "Masjid Raya Al Jabbar atau Trans Studio"
+   ],
+   [
+    "17.00",
+    "Oleh-oleh Kartika Sari / Paskal, lalu kembali ke hotel"
+   ]
+  ],
+  "catatan_harga": "Kota Bandung dan Dago boleh digabung dengan satu wilayah luar kota (Lembang, Ciwidey, atau Pangalengan) tanpa biaya tambahan.",
+  "faq": [
+   [
+    "Berapa harga sewa mobil + driver dalam Kota Bandung?",
+    "Mulai Rp550.000 untuk 12 jam termasuk BBM dan driver. Parkir, tol, tiket masuk, dan makan driver dibayar terpisah."
+   ],
+   [
+    "Bisa sewa kurang dari 12 jam untuk keliling kota?",
+    "Paket kami 12 jam. Untuk perjalanan singkat (misalnya antar ke stasiun atau satu tempat saja), tanyakan admin lewat WhatsApp."
+   ],
+   [
+    "Bisa digabung dengan Lembang di hari yang sama?",
+    "Bisa, tanpa biaya tambahan. Kota Bandung dan Dago adalah titik 0, bebas digabung dengan satu wilayah luar kota."
+   ],
+   [
+    "Driver bisa menyarankan tempat makan?",
+    "Bisa. Driver Tempera adalah warga lokal, jadi silakan minta rekomendasi kuliner sesuai selera dan budget."
+   ]
+  ],
+  "wilayah": "dago"
+ }
 ]
