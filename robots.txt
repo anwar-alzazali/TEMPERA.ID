@@ -15,4 +15,7 @@ Disallow: /surat-jalan.html
 Disallow: /alat-dokumen.html
 Disallow: /ulasan.html
 
+Disallow: /CLAUDE.md
+Disallow: /alat/
+
 Sitemap: https://tempera.id/sitemap.xml

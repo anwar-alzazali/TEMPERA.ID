@@ -154,12 +154,37 @@ function buildInvoice(d) {
   const logo = co.logo_url ? `<img src="${esc(imgSrc(co.logo_url))}" alt="${esc(co.name)}" crossorigin="anonymous">` : '';
   const alamat = [co.address, co.contact].filter(Boolean).map(esc).join('<br>');
 
+  // Bandara & open trip (get-invoice v5: product_type + rincian)
+  const jenis = inv.product_type || 'rental', ri = inv.rincian || null;
+  const isOT = jenis === 'open_trip', isBdr = jenis === 'bandara';
+  const labelDest = (k) => (k === 'custom' && isOT ? 'Tujuan' : WILAYAH[k]);
   const destItems = Object.keys(WILAYAH)
     .filter((k) => Array.isArray(inv.destinations[k]) && inv.destinations[k].length)
-    .map((k) => `<li><b>${WILAYAH[k]}:</b> ${inv.destinations[k].map(esc).join(sepDest(k))}</li>`)
+    .map((k) => `<li><b>${labelDest(k)}:</b> ${inv.destinations[k].map(esc).join(sepDest(k))}</li>`)
     .join('');
+  // Catatan jemput: buang penanda internal "[OPEN TRIP #n] ..." / "[BANDARA] "
+  const jemputBersih = String(inv.pickup_note || '').replace(/^\[BANDARA\]\s*/, '').replace(/^\[OPEN TRIP #\d+\][^·]*·\s*/, '');
+  let infoTrip = `<p>${esc(inv.pax != null ? inv.pax : '-')} peserta</p><p>Titik jemput: ${esc(jemputBersih || '-')}</p>`;
+  if (isOT && ri) {
+    infoTrip = `<p>${esc(ri.kursi || inv.pax || '-')} kursi open trip</p>`
+      + `<p>${ri.jemput_rumah ? 'Dijemput di: ' + esc(ri.alamat || '-') : 'Titik kumpul: ' + esc(ri.titik_kumpul || '-')}</p>`
+      + (ri.peserta ? `<p>Peserta: ${esc(ri.peserta)}</p>` : '');
+  } else if (isBdr && ri) {
+    infoTrip = `<p>${esc(inv.pax != null ? inv.pax : '-')} penumpang${ri.koper != null ? ', ' + esc(ri.koper) + ' koper besar' : ''}</p>`
+      + `<p>Bandara Soekarno-Hatta Terminal ${esc(ri.terminal || '-')}${ri.penerbangan ? ' · Penerbangan ' + esc(ri.penerbangan) : ''}</p>`
+      + `<p>${ri.arah === 'jemput' ? 'Diantar ke' : 'Dijemput di'}: ${esc(jemputBersih.split(' · ').pop() || '-')}</p>`;
+  }
 
-  const rows = [`<tr><td>${esc(inv.fleet_name || 'Sewa mobil')}</td><td class="num">${rp(inv.base_price)}</td></tr>`];
+  const rows = [];
+  if (isOT && ri && ri.harga && ri.kursi) {
+    rows.push(`<tr><td>${esc(inv.fleet_name || 'Open trip')}<br><span style="font-size:12px;color:#64748B">${esc(ri.kursi)} kursi × ${rp(ri.harga)}</span></td><td class="num">${rp(inv.base_price)}</td></tr>`);
+  } else if (isBdr && ri && ri.harga) {
+    rows.push(`<tr><td>${esc(inv.fleet_name || 'Antar jemput bandara')}</td><td class="num">${rp(ri.harga)}</td></tr>`);
+    if (Number(ri.tambah_luar) > 0) rows.push(`<tr><td>Tambahan luar Kota Bandung</td><td class="num">${rp(ri.tambah_luar)}</td></tr>`);
+    if (Number(ri.tambah_dini) > 0) rows.push(`<tr><td>Tambahan jemput dini hari</td><td class="num">${rp(ri.tambah_dini)}</td></tr>`);
+  } else {
+    rows.push(`<tr><td>${esc(inv.fleet_name || 'Sewa mobil')}</td><td class="num">${rp(inv.base_price)}</td></tr>`);
+  }
   if (Number(inv.cross_cost) > 0) rows.push(`<tr><td>Biaya lintas wilayah</td><td class="num">${rp(inv.cross_cost)}</td></tr>`);
   if (Number(inv.discount) > 0) rows.push(`<tr><td class="disc">Diskon</td><td class="num disc">- ${rp(inv.discount)}</td></tr>`);
   rows.push(`<tr class="total"><td>${dpMenunggu ? 'Total tagihan' : 'Total dibayar'}</td><td class="num">${rp(inv.total)}</td></tr>`);
@@ -204,11 +229,10 @@ function buildInvoice(d) {
       <div class="box">
         <h3>Perjalanan</h3>
         <p><span class="strong">${esc(tglPanjang(inv.trip_date))}</span>${inv.trip_time ? ', jam ' + esc(inv.trip_time) : ''}</p>
-        <p>${esc(inv.pax != null ? inv.pax : '-')} peserta</p>
-        <p>Titik jemput: ${esc(inv.pickup_note || '-')}</p>
+        ${infoTrip}
       </div>
       <div class="box">
-        <h3>Destinasi</h3>
+        <h3>${isOT ? 'Tujuan' : isBdr ? 'Rute' : 'Destinasi'}</h3>
         <ul class="dest">${destItems || '<li>-</li>'}</ul>
       </div>
     </div>

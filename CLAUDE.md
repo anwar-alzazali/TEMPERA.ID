@@ -11,7 +11,7 @@ Tempera = sewa mobil + sopir dan private trip Bandung (Lembang, Dago, Ciwidey, P
 - Push ke `main` = deploy ke Cloudflare Pages (situs langsung berubah). Uji dulu; perubahan besar lewat cabang.
 
 ## Struktur
-- Situs publik statis: `index.html`, `js/main.js` (destinasi, armada, Trip Custom `TC_JARAK` berisi jarak perkiraan), `css/`.
+- Situs publik statis: `index.html`, `js/main.js` (destinasi, armada, bagian "Bandara, Open Trip & Luar Kota" id `tripcustom`), `css/`. Halaman produk: `bandara.html` (+`js/bandara.js`), `open-trip.html` (+`js/open-trip.js`), bersama `js/produk.js` + `css/produk.css` (tanpa Tailwind).
 - Panel admin: `panel.html` + `panel/*.js` (urut nomor: 00_dasar, 10_login_nav, 20_pesanan, 30_laporan_kas, 40_crud, 50_persetujuan_pengaturan, 60_wa_mitra, 70_qr_ulasan, 80_kas_iuran, 90_blok125, 99_mulai; plus analitik, destinasi, kode_unik, pengumuman, rapi).
 - Halaman lain: `mitra.html` (portal driver/mitra, stiker QR dibuat di browser), `invoice.html`, `surat-jalan.html`, `kartu*.html`, `kas-bayar.html`, `verifikasi.html`, `ulasan.html`, `galeri.html`, `driver/`, `r/`.
 - Backend: Supabase proyek `wjmotidelqgcyyujacud` (jangan tertukar dengan proyek kamiku/Akadia). Fungsi Edge (nama = URL): create-order, midtrans-webhook, bayar-manual, wa-masuk, tg-masuk (bot Telegram pertama: balas pelanggan, tombol AI, tombol bayar), tg-asisten + bot-admin (bot Telegram kedua "Tempera Asisten"), wa-driver-tugas, kirim-invoice, kirim-pengingat, get-invoice, get-surat-jalan, get-driver-card, verifikasi, ulasan, driver-auth, driver-dashboard, ongkir, ongkir-diag, bayar, bayar-notif, notif-status, draf-admin, create/confirm-kas-payment, health.
@@ -28,7 +28,7 @@ Tempera = sewa mobil + sopir dan private trip Bandung (Lembang, Dago, Ciwidey, P
 - Rencana bot: modul Akadia (RPC admin sudah ada), notifikasi gabungan, ingatan percakapan, perintah suara (butuh layanan speech-to-text), QR berlogo/stiker, ubah status pesanan, alihkan driver.
 
 ## Status dan tertunda
-- Google Maps/Cloud billing ditolak (kasus #76675818): kalkulator rute Trip Custom belum memakai peta; alternatif OSM/OpenRouteService belum dikerjakan. `TC_JARAK` masih perkiraan.
+- Google Maps/Cloud billing ditolak (kasus #76675818). Kalkulator per-km Trip Custom DIHAPUS 6 Nov 2026 (`TC_JARAK={}`): bandara harga pasti, luar kota lewat WA.
 - Verifikasi iPaymu menunggu.
 - Pemantau Tempera: dianggap beres oleh pemilik (23 Okt 2026). Laporan 07.00 dari Worker datang tepat waktu; cron `*/10` belum terbukti terpisah. Workflow GitHub "Pantau Tempera" masih menyala dan mengirim laporan kembar telat (~10.2x); matikan bila pemilik minta atau bila ada laporan ganda yang mengganggu.
 - Panel "tambah driver" tidak lagi meminta slug (commit d1b0362); uji tambah driver di panel belum dikonfirmasi pemilik.
@@ -59,9 +59,27 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - Teruji 6 Nov: tanda terima WA terkirim sekali (panggilan kedua tidak mengirim), pengingat uji ke tmp-011 terkirim, ulangan hari yang sama dilewati.
 
 ## Analitik (Tahap 2, 6 Nov 2026)
-- GA4 properti tempera.id, ID `G-M9NQ9R4HZH` (akun Gmail Tempera). Tag hanya di index.html, galeri.html, syarat.html. JANGAN pasang di halaman ber-token (invoice, kas-bayar, mitra, panel, surat-jalan, verifikasi, ulasan) supaya token di URL tidak terkirim ke Google.
+- GA4 properti tempera.id, ID `G-M9NQ9R4HZH` (akun Gmail Tempera). Tag hanya di index.html, galeri.html, syarat.html, bandara.html, open-trip.html (event lewat js/produk.js lacak(), param produk). JANGAN pasang di halaman ber-token (invoice, kas-bayar, mitra, panel, surat-jalan, verifikasi, ulasan) supaya token di URL tidak terkirim ke Google.
 - Event di js/main.js lewat `lacak()`: `mulai_booking` (fokus pertama di #pesan), `klik_wa` (semua link wa.me, param lokasi), `buat_pesanan` (create-order ok; value=total), `purchase` (onSuccess Snap; value=DP/lunas). Tanpa data pribadi. `lacak()` juga memanggil fbq bila Meta Pixel nanti dipasang (InitiateCheckout/AddPaymentInfo/Purchase/Contact).
 - Perlu ditandai sebagai "peristiwa utama" (key event) di GA4: buat_pesanan, purchase, klik_wa. Meta Pixel ID `1831256764539710` (portofolio bisnis Tempera, dibuat 6 Nov 2026) terpasang di halaman yang sama (PageView + event dari lacak()).
 - Privasi diperbarui 6 Nov 2026 (syarat.html#privasi): GA4 + Meta Pixel, iklan ulang, hash nama/WA untuk pencocokan lanjutan Meta; centang persetujuan formulir pesan kini menyebut privasi. Setelah ini pemilik boleh menyalakan 'pencocokan lanjutan otomatis' di Pixel.
 - TikTok Pixel DITUNDA (6 Nov 2026, pemilik: halaman TikTok Ads ribet). Akun TikTok TEMPERA.ID sudah terhubung ke TikTok Business Center (tanpa izin DM). Lalu lintas TikTok organik diukur lewat link UTM di bio: ?utm_source=tiktok&utm_medium=bio (juga instagram/bio, facebook/page).
 - Link pendek bio (file _redirects, Cloudflare Pages, 302): tempera.id/tiktok (/tt), /instagram (/ig), /facebook (/fb) -> beranda + UTM.
+
+## Bandara & Open Trip (6 Nov 2026, SQL 174 + 175)
+- Trip Custom di beranda diganti bagian "Bandara, Open Trip & Luar Kota" (3 kartu: /bandara, /open-trip, chip luar kota -> WA). Nav "Bandara & Open Trip". FAQ q5/q6 & syarat.html ikut diubah. Alias _redirects: /soetta /airport -> /bandara, /opentrip -> /open-trip. sitemap diperbarui.
+- Bandara: harga per mobil sekali jalan (antar = jemput), app_settings `bandara_*` (publik, diubah di panel → Pengaturan): harga/orang/koper per kelas mpv/innova/hiace, tambah_luar_kota, tambah_dini_hari (<05.00), tunggu_gratis_menit, aktif. Fungsi `pesan-bandara` (verify_jwt on): orders product_type='bandara', product_id=kelas, fleet_id armada wakil (avanza/innova/hiace-commuter) sehingga kunci slot berlaku, destinations {custom:[rute]}, DP/lunas. Halaman menolak bila orang/koper > kapasitas dan menyarankan mobil lebih besar.
+- Open trip: tabel `open_trip` (admin RLS is_admin; publik lewat rpc `open_trip_publik()` berisi sisa kursi & buka_pesan). Kursi terpakai = lunas + pending <= 35 menit (`open_trip_terisi`). Trigger `a_kunci_kursi` (BEFORE INSERT orders, advisory lock per trip) -> 'KURSI_PENUH:<sisa>' / 'TRIP_TUTUP'. Fungsi `pesan-open-trip` (verify_jwt on): lunas saja, orders product_type='open_trip', product_id=id jadwal, pax=kursi, fleet_id NULL, destinations {custom:[tujuan]}, items[0] berisi alamat/peserta. Diuji 2 pemesanan bersamaan di kuota 3 -> satu ditolak.
+- Panel tab "Open Trip" (panel/open_trip.js): buat/ubah/duplikat jadwal, daftar pemesan, salin daftar peserta, salin link (?id=), tugaskan driver (isi assigned_driver pada pesanan lunas -> surat jalan; TIDAK lewat driver_slug supaya trigger WA tugas tidak terkirim per pesanan).
+- midtrans-webhook v7.3: label "Rute"/"Tujuan" untuk destinations.custom dan rincian tarif bandara / open trip di WA lunas.
+- Model open trip (keputusan pemilik 6 Nov 2026): peserta dihitung TOTAL per jadwal; berangkat bila >= `min_berangkat` (bawaan 4); `kuota` = maksimal peserta (bawaan 10 = Hiace). Mobil dipilih pemilik setelah peserta terkumpul; panel menampilkan saran (<=4 Avanza/Calya, 5-6 Innova, 7-10 Hiace, >10 gabungan). Kolom SQL 176 `kursi_per_mobil` (= kuota, maks 20) dan `maks_mobil` (NULL) tidak dipakai di tampilan. Halaman: 'x peserta terdaftar · y orang lagi agar berangkat / pasti berangkat'.
+- Invoice: get-invoice v5 mengirim `product_type` + `rincian` (aman, dari items[0]); invoice.html menampilkan open trip ('n kursi × harga', titik kumpul/alamat, peserta, judul kotak 'Tujuan') dan bandara (terminal, penerbangan, koper, tarif + tambahan luar kota/dini hari). Penanda internal [BANDARA]/[OPEN TRIP #n] dibuang dari 'Titik jemput'. Surat jalan belum diubah (pickup_note mentah, cukup untuk driver).
+- Kursi open trip tidak bernomor: dibagikan pemilik H-1 sesuai urutan BAYAR (paid_at), paling awal duduk paling depan (tertulis di halaman, syarat, kolom Urutan di panel, daftar salin). Kursi depan berbayar - Jemput hotel/rumah (jemput_rumah=true): `jam` = paling lambat siap dijemput; area_jemput mis. "Kota Bandung"; belum siap = ditinggal tanpa refund (halaman + syarat). Titik kumpul: telat >15 menit ditinggal.
+- Jadwal uji `open_trip` id 1 denah kursi DITOLAK sementara (mobil baru ditentukan setelah peserta terkumpul).
+- Jemput hotel/rumah (jemput_rumah=true): `jam` = paling lambat siap dijemput; area_jemput mis. "Kota Bandung"; belum siap = ditinggal tanpa refund (halaman + syarat). Titik kumpul: telat >15 menit ditinggal.
+
+## SEO Gelombang 1 (6 Nov 2026)
+- Tailwind CDN DIGANTI CSS statis `css/tailwind.css` (hanya index.html memakai Tailwind). Setelah mengubah kelas Tailwind di index.html / js/main.js WAJIB bangun ulang: `npx tailwindcss@3.4.17 -c alat/tailwind.config.js -i alat/tailwind.src.css -o css/tailwind.css --minify` lalu naikkan ?v= di index.html.
+- index.html: title/description baru (sewa + open trip + bandara), JSON-LD TravelAgency + FAQPage (`ldFaq`, dibuat dari FAQ statis; perbarui bila FAQ berubah). bandara.html: Service + FAQPage. open-trip.html: Event per jadwal (dibuat JS).
+- _redirects menutup /CLAUDE.md, /alat/*, /.github/* (301 ke beranda); robots Disallow /CLAUDE.md, /alat/.
+- Belum: halaman landing per destinasi/armada (mis. /sewa-mobil-lembang), Google Business Profile (pemilik).
