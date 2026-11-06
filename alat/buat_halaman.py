@@ -43,6 +43,7 @@ KEPALA = '''<!DOCTYPE html>
   <a class="pbrand" href="/"><span class="logo" style="--w:32px" role="img" aria-label="Logo Tempera"></span><span><b>TEMPERA</b><small>Teman Perjalanan</small></span></a>
   <nav class="pnav">
     <a class="pl hp-sembunyi" href="/">Beranda</a>
+    <a class="pl hp-sembunyi" href="/bandara">Bandara</a>
     <a class="pl hp-sembunyi" href="/open-trip">Open Trip</a>
     <a class="pl hp-sembunyi" href="/blog/">Blog</a>
     <a class="pbtn" href="/#destinasi" style="padding:9px 16px;font-size:12px">Pesan</a>

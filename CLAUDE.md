@@ -82,6 +82,7 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - SATU pesanan sewa 12 jam = SATU wilayah luar kota (Lembang / Ciwidey / Pangalengan); Kota Bandung & Dago (grup `dago`) bebas digabung. togglePick() di main.js MENGGANTI wilayah luar kota lama + notify (popup biaya lintas tidak muncul lagi). create-order tetap menghitung biaya lintas bila payload berisi >1 wilayah (tidak diubah). Syarat: pindah wilayah di hari H boleh ditolak driver / biaya lintas tunai ke driver.
 - Pilihan "🧭 Belum tahu tempatnya? Atur bersama driver" (`RUTE_BEBAS[g]`, mis. 'Lembang (rute diatur bersama driver)') di tiap kartu & jendela pilih destinasi; tersimpan sebagai destinasi biasa.
 - `/?wilayah=<lembang|ciwidey|pangalengan|dago>` memilih rute bebas wilayah itu (dipakai tombol di halaman destinasi).
+- Menu beranda (6 Nov 2026): Beranda · Pilih Destinasi · Sewa Mobil · Bandara (/bandara) · Open Trip (/open-trip) · Panduan Wisata (/blog/) · FAQ; menu HP + tautan Lembang/Ciwidey/Pangalengan/Kota Bandung/Blog; Cuaca Live hanya di menu HP. Halaman produk - Teks "Armada" -> "Mobil" di beranda (ID). destinasi juga menautkan Bandara/Open Trip/Panduan.
 - Teks "Armada" -> "Mobil" di beranda (ID). Urutan beranda: hero, keunggulan, cara pesan, destinasi, mobil, foto, bandara/open trip, formulir, daftar harga, ulasan, galeri (keduanya disisipkan sebelum #cuaca), cuaca, FAQ.
 - Sewa per jam / corporate DITUNDA (pemilik: rawan bentrok & dipakai ke bandara); usulan bila dibuka: lewat formulir permintaan ke admin, tanpa BBM, 3j/6j/12j.
 

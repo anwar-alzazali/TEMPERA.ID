@@ -37,7 +37,7 @@
 <link rel="stylesheet" href="css/main.css?v=20261106">
 <link rel="stylesheet" href="css/driver.css">
 <!-- Tailwind: CSS statis (dibangun dari alat/tailwind.config.js), bukan CDN -->
-<link rel="stylesheet" href="css/tailwind.css?v=20261106">
+<link rel="stylesheet" href="css/tailwind.css?v=20261106b">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0891b2">
 <link rel="icon" type="image/png" sizes="48x48" href="images/tempera-48.png">
@@ -74,10 +74,11 @@
       </a>
       <div class="hidden lg:flex items-center gap-6 font-medium text-[12px] uppercase tracking-wider" style="color:var(--text-secondary)">
         <a href="#home" class="nav-link" data-i18n="nav_home">Beranda</a>
-        <a href="#cuaca" class="nav-link" data-i18n="nav_weather">Cuaca Live</a>
         <a href="#destinasi" class="nav-link" data-i18n="nav_dest">Pilih Destinasi</a>
         <a href="#armada" class="nav-link" data-i18n="nav_fleet">Sewa Mobil</a>
-        <a href="#tripcustom" class="nav-link" data-i18n="nav_custom">Bandara &amp; Open Trip</a>
+        <a href="bandara" class="nav-link" data-i18n="nav_bandara">Bandara</a>
+        <a href="open-trip" class="nav-link" data-i18n="nav_ot">Open Trip</a>
+        <a href="blog/" class="nav-link" data-i18n="nav_blog">Panduan Wisata</a>
         <a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a>
       </div>
       <div class="flex items-center gap-2.5">
@@ -99,12 +100,15 @@
   </div>
   <div id="mobileMenu" class="lg:hidden hidden border-t backdrop-blur-2xl px-6 py-6 space-y-3 absolute top-[72px] left-0 right-0 z-[60]" style="background:color-mix(in srgb, var(--bg-main) 96%, transparent);border-color:var(--border-color)">
     <a href="#home" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_home">Beranda</a>
-    <a href="#cuaca" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_weather">Cuaca Live</a>
     <a href="#destinasi" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_dest">Pilih Destinasi</a>
     <a href="#armada" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_fleet">Sewa Mobil</a>
-    <a href="#tripcustom" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_custom">Bandara &amp; Open Trip</a>
+    <a href="bandara" class="block py-1 text-sm font-medium" data-i18n="nav_bandara_m">Antar Jemput Bandara Soetta</a>
+    <a href="open-trip" class="block py-1 text-sm font-medium" data-i18n="nav_ot">Open Trip</a>
     <a href="#pesan" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_book_short">Pesan</a>
     <a href="#faq" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_faq">FAQ</a>
+    <a href="#cuaca" onclick="closeMobileMenu()" class="block py-1 text-sm font-medium" data-i18n="nav_weather">Cuaca Live</a>
+    <p class="text-[10px] font-bold uppercase tracking-[0.18em] mt-2" style="color:var(--text-muted)" data-i18n="nav_blog">Panduan Wisata</p>
+    <p class="flex flex-wrap gap-x-3 gap-y-1 text-[13px]"><a href="lembang" class="underline underline-offset-4">Lembang</a><a href="ciwidey" class="underline underline-offset-4">Ciwidey</a><a href="pangalengan" class="underline underline-offset-4">Pangalengan</a><a href="kota-bandung" class="underline underline-offset-4">Kota Bandung</a><a href="blog/" class="underline underline-offset-4">Blog</a></p>
   </div>
 </nav>
 
@@ -481,6 +485,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261106f"></script>
+<script src="js/main.js?v=20261106g"></script>
 </body>
 </html>

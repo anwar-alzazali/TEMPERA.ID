@@ -16,7 +16,7 @@ const I18N = {
 id: {
   page_title: 'Sewa Mobil + Driver Bandung, Open Trip & Antar Jemput Bandara | Tempera',
   nav_home: 'Beranda', nav_weather: 'Cuaca Live', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Mobil',
-  nav_custom: 'Bandara & Open Trip', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
+  nav_custom: 'Bandara & Open Trip', nav_bandara: 'Bandara', nav_bandara_m: 'Antar Jemput Bandara Soetta', nav_ot: 'Open Trip', nav_blog: 'Panduan Wisata', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
   aria_theme: 'Ganti tema terang/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Geser ke kiri', aria_right: 'Geser ke kanan',
 
   hero_title: 'Sewa Mobil & Private Trip Bandung',
@@ -217,7 +217,7 @@ id: {
 ms: {
   page_title: 'Sewa Kereta + Pemandu Bandung, Open Trip & Transfer Lapangan Terbang | Tempera',
   nav_home: 'Laman Utama', nav_weather: 'Cuaca Semasa', nav_dest: 'Pilih Destinasi', nav_fleet: 'Sewa Kereta',
-  nav_custom: 'Lapangan Terbang & Open Trip', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
+  nav_custom: 'Lapangan Terbang & Open Trip', nav_bandara: 'Lapangan Terbang', nav_bandara_m: 'Transfer Lapangan Terbang Soetta', nav_ot: 'Open Trip', nav_blog: 'Panduan Melancong', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
   aria_theme: 'Tukar tema cerah/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Anjak ke kiri', aria_right: 'Anjak ke kanan',
 
   hero_title: 'Sewa Kereta & Private Trip Bandung',
