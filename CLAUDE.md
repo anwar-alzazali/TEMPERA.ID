@@ -61,4 +61,4 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 ## Analitik (Tahap 2, 6 Nov 2026)
 - GA4 properti tempera.id, ID `G-M9NQ9R4HZH` (akun Gmail Tempera). Tag hanya di index.html, galeri.html, syarat.html. JANGAN pasang di halaman ber-token (invoice, kas-bayar, mitra, panel, surat-jalan, verifikasi, ulasan) supaya token di URL tidak terkirim ke Google.
 - Event di js/main.js lewat `lacak()`: `mulai_booking` (fokus pertama di #pesan), `klik_wa` (semua link wa.me, param lokasi), `buat_pesanan` (create-order ok; value=total), `purchase` (onSuccess Snap; value=DP/lunas). Tanpa data pribadi. `lacak()` juga memanggil fbq bila Meta Pixel nanti dipasang (InitiateCheckout/AddPaymentInfo/Purchase/Contact).
-- Perlu ditandai sebagai "peristiwa utama" (key event) di GA4: buat_pesanan, purchase, klik_wa. Meta Pixel belum dipasang.
+- Perlu ditandai sebagai "peristiwa utama" (key event) di GA4: buat_pesanan, purchase, klik_wa. Meta Pixel ID `1831256764539710` (portofolio bisnis Tempera, dibuat 6 Nov 2026) terpasang di halaman yang sama (PageView + event dari lacak()).
