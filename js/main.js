@@ -213,9 +213,7 @@ id: {
   bm_kode: 'Sudah termasuk kode unik {kode} (nominal dasar {base}). Bayar PERSIS sesuai angka di atas supaya pembayaranmu mudah kami cocokkan.', bm_transfer: 'Transfer ke salah satu rekening ini', bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
   bm_msg: 'Bukti bayar pesanan {order} sebesar {nominal}. Nama pengirim: ',
   gd_label: 'Panduan rute & tempat wisata:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Kota Bandung & Dago',
-  dh_title: 'Daftar Harga Sewa Mobil + Driver', dh_lead: 'Harga dalam Rupiah (IDR) per hari, pemakaian 12 jam, sudah termasuk mobil, driver, BBM, dan air mineral.', dh_th1: 'Mobil', dh_th2: 'Harga per hari', dh_maks: 'maks {n} orang',
-  dh_exc: 'Tidak termasuk: tol, parkir, dan makan driver.', dh_pay: 'Pembayaran: DP atau lunas, lewat transfer bank atau QRIS. Biaya tambahan untuk perjalanan lintas wilayah dihitung otomatis di formulir pemesanan.',
-  ft_nib: 'Usaha terdaftar di OSS · NIB 1710260026226', ft_mitra: 'Masuk Mitra', fl_harga: 'Daftar Harga', fl_bandara: 'Antar Jemput Bandara', fl_syarat: 'Syarat & Ketentuan', fl_privasi: 'Kebijakan Privasi', fl_kontak: 'Kontak',
+  ft_nib: 'Usaha terdaftar di OSS · NIB 1710260026226', ft_mitra: 'Masuk Mitra', fl_bandara: 'Antar Jemput Bandara', fl_syarat: 'Syarat & Ketentuan', fl_privasi: 'Kebijakan Privasi', fl_kontak: 'Kontak',
   mu_ganti: 'Ketuk untuk ganti mata uang', mu_bayar_idr: '· perkiraan, dibayar dalam Rupiah',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
@@ -419,9 +417,7 @@ ms: {
   bm_kode: 'Sudah termasuk kod unik {kode} (jumlah asas {base}). Bayar TEPAT mengikut angka di atas supaya pembayaran anda mudah kami padankan.', bm_transfer: 'Pindahan ke salah satu akaun ini', bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
   bm_msg: 'Bukti bayaran tempahan {order} sebanyak {nominal}. Nama pengirim: ',
   gd_label: 'Panduan laluan & tempat menarik:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Bandar Bandung & Dago',
-  dh_title: 'Senarai Harga Sewa Kereta + Pemandu', dh_lead: 'Harga dalam Rupiah (IDR) sehari, penggunaan 12 jam, termasuk kereta, pemandu, petrol dan air mineral.', dh_th1: 'Kereta', dh_th2: 'Harga sehari', dh_maks: 'maks {n} orang',
-  dh_exc: 'Tidak termasuk: tol, parkir dan makan pemandu.', dh_pay: 'Pembayaran: deposit atau penuh, melalui pindahan bank atau QRIS. Caj tambahan untuk perjalanan merentas kawasan dikira secara automatik dalam borang tempahan.',
-  ft_nib: 'Perniagaan berdaftar di OSS · NIB 1710260026226', ft_mitra: 'Log masuk Rakan Kongsi', fl_harga: 'Senarai Harga', fl_bandara: 'Transfer Lapangan Terbang', fl_syarat: 'Terma & Syarat', fl_privasi: 'Dasar Privasi', fl_kontak: 'Hubungi',
+  ft_nib: 'Perniagaan berdaftar di OSS · NIB 1710260026226', ft_mitra: 'Log masuk Rakan Kongsi', fl_bandara: 'Transfer Lapangan Terbang', fl_syarat: 'Terma & Syarat', fl_privasi: 'Dasar Privasi', fl_kontak: 'Hubungi',
   mu_ganti: 'Ketik untuk tukar mata wang', mu_bayar_idr: '· anggaran, dibayar dalam Rupiah',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
@@ -624,9 +620,7 @@ en: {
   bm_kode: 'Includes the unique code {kode} (base amount {base}). Pay EXACTLY the amount above so we can match your payment easily.', bm_transfer: 'Transfer to one of these accounts', bm_copy: 'Copy', bm_copied: 'Copied', bm_proof: 'Send proof of payment via WhatsApp', bm_close: 'Close', bm_wa_sent: 'These instructions were also sent to your WhatsApp.',
   bm_msg: 'Proof of payment for booking {order}, amount {nominal}. Sender\'s name: ',
   gd_label: 'Route & attraction guides:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Bandung City & Dago',
-  dh_title: 'Car & Driver Rental Prices', dh_lead: 'Prices in Indonesian Rupiah (IDR) per day, 12 hours of use, including car, driver, fuel, and drinking water.', dh_th1: 'Car', dh_th2: 'Price per day', dh_maks: 'max {n} people',
-  dh_exc: 'Not included: tolls, parking, and the driver\'s meals.', dh_pay: 'Payment: deposit or in full, by bank transfer, QRIS, e-wallet, or card. Extra fees for cross-area trips are calculated automatically in the booking form.',
-  ft_nib: 'Registered business (OSS) · NIB 1710260026226', ft_mitra: 'Partner Login', fl_harga: 'Price List', fl_bandara: 'Airport Transfer', fl_syarat: 'Terms & Conditions', fl_privasi: 'Privacy Policy', fl_kontak: 'Contact',
+  ft_nib: 'Registered business (OSS) · NIB 1710260026226', ft_mitra: 'Partner Login', fl_bandara: 'Airport Transfer', fl_syarat: 'Terms & Conditions', fl_privasi: 'Privacy Policy', fl_kontak: 'Contact',
   mu_ganti: 'Tap to change currency', mu_bayar_idr: '· estimate, charged in Indonesian Rupiah',
   gl_title: 'Trip Gallery', gl_sub: 'Real moments from trips with Tempera', gl_all: 'See all photos'
 }
@@ -1728,18 +1722,12 @@ function notify(message,okText){ return temperaDialog({message,okText:okText||t(
 function askConfirm(message,okText,cancelText){ return temperaDialog({message,okText:okText||t('dlg_continue'),cancelText:cancelText||t('dlg_back')}); }
 
 /* ---------- Bahasa berganti: gambar ulang bagian dinamis tanpa kehilangan isian pelanggan ---------- */
-/* Daftar Harga (tabel SEO di bawah) ikut data armada dari database; baris statis di HTML = cadangan */
-function renderDaftarHarga(){
-  const tb=document.getElementById('dh-body'); if(!tb||!Array.isArray(ARMADA_DATA)||!ARMADA_DATA.length) return;
-  const maks=t('dh_maks');
-  tb.innerHTML=ARMADA_DATA.map(u=>`<tr><td>${esc(u.name)}${u.capacityMax?` <small>${esc(maks.replace('{n}',u.capacityMax))}</small>`:''}</td><td>${formatPrice(u.price)}${kursTeks(u.price)?`<small>${esc(kursTeks(u.price))}</small>`:''}</td></tr>`).join('');
-}
 function refreshDynamic(){
   const sel=document.getElementById('calcUnit');
   const unitId=(sel&&sel.selectedIndex>0)?sel.options[sel.selectedIndex].dataset.id:null;
   const checked=new Set([...document.querySelectorAll('input[name="destinasi"]:checked')].map(cb=>cb.dataset.group+'|'+cb.value));
   const open=document.querySelector('.accordion-content.open'); const openId=open?open.id.replace('acc-',''):null;
-  renderArmada(); renderDaftarHarga();
+  renderArmada();
   if(unitId) selectUnitById(unitId);
   terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });

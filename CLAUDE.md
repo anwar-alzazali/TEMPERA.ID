@@ -83,7 +83,7 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - Pilihan "🧭 Belum tahu tempatnya? Atur bersama driver" (`RUTE_BEBAS[g]`, mis. 'Lembang (rute diatur bersama driver)') di tiap kartu & jendela pilih destinasi; tersimpan sebagai destinasi biasa.
 - `/?wilayah=<lembang|ciwidey|pangalengan|dago>` memilih rute bebas wilayah itu (dipakai tombol di halaman destinasi).
 - Menu beranda (6 Nov 2026): Beranda · Pilih Destinasi · Sewa Mobil · Bandara (/bandara) · Open Trip (/open-trip) · Panduan Wisata (/blog/) · FAQ; menu HP + tautan Lembang/Ciwidey/Pangalengan/Kota Bandung/Blog; Cuaca Live hanya di menu HP. Halaman produk & destinasi juga menautkan Bandara/Open Trip/Panduan.
-- Teks "Armada" -> "Mobil" di beranda (ID). Urutan beranda: hero, keunggulan, cara pesan, destinasi, mobil, foto, bandara/open trip, formulir, daftar harga, ulasan, galeri (keduanya disisipkan sebelum #cuaca), cuaca, FAQ.
+- Teks "Armada" -> "Mobil" di beranda (ID). Urutan beranda: hero, keunggulan, cara pesan, destinasi, mobil, foto, bandara/open trip, formulir, ulasan, galeri (keduanya disisipkan sebelum #cuaca), cuaca, FAQ.
 - Sewa per jam / corporate DITUNDA (pemilik: rawan bentrok & dipakai ke bandara); usulan bila dibuka: lewat formulir permintaan ke admin, tanpa BBM, 3j/6j/12j.
 
 ## SEO Gelombang 1 (6 Nov 2026)
@@ -102,3 +102,4 @@ Verify JWT mati dengan sengaja pada fungsi yang dipanggil webhook/pemicu databas
 - Keamanan (migrasi `tutup_baca_publik_drivers_dan_funnel`): policy "public read" di `drivers` DIHAPUS (data driver hanya admin; verifikasi/kartu/portal lewat fungsi Edge service role). `v_funnel` security_invoker=true + revoke anon (hanya admin). Pemilik perlu menyalakan Leaked Password Protection di dasbor Auth.
 - Perkiraan mata uang (20 Nov 2026): hanya bahasa ms/en, tampil "≈ RM/S$/US$" di bawah harga (kartu mobil, daftar harga, total ringkasan beranda; harga & ringkasan bandara; harga & total open trip). Mata uang ditebak dari zona waktu/wilayah HP (MY→RM, SG→S$, lain: ms→RM, en→US$), diketuk untuk ganti (localStorage `tempera_mu`). Kurs: app_settings publik `kurs_myr/kurs_sgd/kurs_usd` (Rupiah per unit) + `kurs_tanggal`, diisi fungsi Edge `kurs-harian` (verify_jwt off, Frankfurter/ECB, menolak ambil ulang < 6 jam) lewat workflow `kurs-harian.yml` tiap 06.17 WIB. Pembayaran tetap Rupiah.
 - Label kartu mobil dari kolom `fleet.badge` diterjemahkan di kode (`BADGE_TR` di main.js); badge baru di panel perlu ditambahkan ke peta itu.
+- Tabel statis 'Daftar Harga' (#daftar-harga) DIHAPUS dari beranda (20 Nov 2026, permintaan pemilik; mengulang kartu mobil). Tombol 'Lihat semua harga' di halaman destinasi kini ke /#armada.

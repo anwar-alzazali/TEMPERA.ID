@@ -342,41 +342,6 @@
 </div>
 </form></div></section>
 
-<!-- DAFTAR HARGA (statis, terbaca tanpa JavaScript; ubah manual bila harga di panel berubah) -->
-<section id="daftar-harga" class="py-16 theme-section border-t" style="border-color:var(--border-soft)">
-  <style>
-    .dh-wrap{max-width:900px;margin:0 auto;padding:0 16px}
-    .dh-wrap h2{margin:0 0 8px;font-size:1.5rem;color:var(--accent);text-align:center}
-    .dh-wrap p{margin:6px 0;color:var(--text-secondary);line-height:1.5;text-align:center;font-size:13px}
-    .dh-scroll{overflow-x:auto;margin:20px 0}
-    .dh-wrap table{width:100%;border-collapse:collapse;min-width:300px;color:var(--text-primary)}
-    .dh-wrap th,.dh-wrap td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--border-soft)}
-    .dh-wrap th:last-child,.dh-wrap td:last-child{text-align:right;white-space:nowrap;font-weight:700}
-    .dh-wrap td small{display:block;font-size:12px;color:var(--text-secondary);font-weight:400;margin-top:2px}
-  </style>
-  <div class="dh-wrap">
-    <h2 data-i18n="dh_title">Daftar Harga Sewa Mobil + Driver</h2>
-    <p data-i18n="dh_lead">Harga dalam Rupiah (IDR) per hari, pemakaian 12 jam, sudah termasuk mobil, driver, BBM, dan air mineral.</p>
-    <div class="dh-scroll">
-      <table>
-        <thead><tr><th data-i18n="dh_th1">Mobil</th><th data-i18n="dh_th2">Harga per hari</th></tr></thead>
-        <tbody id="dh-body">
-          <tr><td>Toyota Calya / Sigra <small>maks 6 orang</small></td><td>Rp 550.000</td></tr>
-          <tr><td>Toyota Avanza / Xenia New <small>maks 6 orang</small></td><td>Rp 700.000</td></tr>
-          <tr><td>Hyundai Stargazer <small>maks 6 orang</small></td><td>Rp 700.000</td></tr>
-          <tr><td>Mitsubishi Xpander <small>maks 6 orang</small></td><td>Rp 800.000</td></tr>
-          <tr><td>Toyota Innova Reborn / Zenix <small>maks 7 orang</small></td><td>Rp 950.000</td></tr>
-          <tr><td>Toyota HiAce Commuter <small>maks 14 orang</small></td><td>Rp 1.400.000</td></tr>
-          <tr><td>Toyota Hiace Premio <small>maks 12 orang</small></td><td>Rp 1.600.000</td></tr>
-          <tr><td>Isuzu Elf Long <small>maks 19 orang</small></td><td>Rp 1.800.000</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p data-i18n="dh_exc">Tidak termasuk: tol, parkir, dan makan driver.</p>
-    <p data-i18n="dh_pay">Pembayaran: DP atau lunas, lewat transfer bank atau QRIS. Biaya tambahan untuk perjalanan lintas wilayah dihitung otomatis di formulir pemesanan.</p>
-  </div>
-</section>
-
 <!-- CUACA: latar mengikuti waktu (pagi/siang/sore/malam) -->
 <section id="cuaca" class="py-24 theme-section-alt border-t relative" style="border-color:var(--border-soft)">
 <div class="max-w-6xl mx-auto px-4 relative">
@@ -464,7 +429,7 @@
   <p class="text-[12px] font-semibold mt-3" style="color:var(--text-secondary)" id="footerWaText">WhatsApp 0851-9675-5972</p>
   <p class="text-[11px] mt-1" style="color:var(--text-muted)" data-i18n="ft_area">Melayani Bandung dan sekitarnya</p>
   <a href="mitra.html" class="text-[11px] font-semibold mt-3 underline underline-offset-4" style="color:var(--accent)" data-i18n="ft_mitra">Masuk Mitra</a>
-  <p class="text-[11px] mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-muted)"><a href="#daftar-harga" class="underline underline-offset-4" data-i18n="fl_harga">Daftar Harga</a><a href="bandara" class="underline underline-offset-4" data-i18n="fl_bandara">Antar Jemput Bandara</a><a href="open-trip" class="underline underline-offset-4">Open Trip</a><a href="blog/" class="underline underline-offset-4">Blog</a><a href="syarat.html" class="underline underline-offset-4" data-i18n="fl_syarat">Syarat &amp; Ketentuan</a><a href="syarat.html#privasi" class="underline underline-offset-4" data-i18n="fl_privasi">Kebijakan Privasi</a><a href="syarat.html#kontak" class="underline underline-offset-4" data-i18n="fl_kontak">Kontak</a></p>
+  <p class="text-[11px] mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-muted)"><a href="bandara" class="underline underline-offset-4" data-i18n="fl_bandara">Antar Jemput Bandara</a><a href="open-trip" class="underline underline-offset-4">Open Trip</a><a href="blog/" class="underline underline-offset-4">Blog</a><a href="syarat.html" class="underline underline-offset-4" data-i18n="fl_syarat">Syarat &amp; Ketentuan</a><a href="syarat.html#privasi" class="underline underline-offset-4" data-i18n="fl_privasi">Kebijakan Privasi</a><a href="syarat.html#kontak" class="underline underline-offset-4" data-i18n="fl_kontak">Kontak</a></p>
 
   <div class="mt-5 pt-4 border-t w-full max-w-lg flex flex-row items-center justify-center gap-2 text-[10px]" style="border-color:var(--border-soft)">
     <p style="color:var(--text-muted)">© <span id="footerYear">2026</span> <span class="font-semibold" style="color:var(--text-secondary)">Tempera</span></p>
@@ -492,6 +457,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261120mu"></script>
+<script src="js/main.js?v=20261120dh"></script>
 </body>
 </html>
