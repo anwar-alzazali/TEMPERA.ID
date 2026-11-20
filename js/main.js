@@ -1850,14 +1850,19 @@ document.addEventListener('click',e=>{
   lacak('klik_wa',{lokasi:a.id||(sek&&(sek.id||sek.tagName.toLowerCase()))||'lain'});
 },{capture:true,passive:true});
 
+/* Snap memanggil onSuccess/onPending SAAT halamannya masih mengunci gulir (body overflow:hidden). Dialog yang dibuka
+   saat itu menyimpan 'hidden' lalu memulihkannya setelah ditutup -> halaman tidak bisa digulir. Jadi: tunggu Snap
+   menutup dulu, tampilkan pesan, lalu buka kunci gulir. */
+function lepasGulir(){ document.body.style.overflow=''; document.documentElement.style.overflow=''; }
+function snapSelesai(pesan){ setTimeout(async()=>{ if(pesan) await notify(pesan); if(!document.getElementById('temperaDialog')) lepasGulir(); },350); }
 function bayarSnap(data){
   const dpNote=(data.payment_mode==='dp'&&data.dp_amount)?t('dp_note',{rest:formatPrice(data.total-data.dp_amount)}):'';
   window.snap.pay(data.snap_token,{
     language: currentLang==='en'?'en':'id',   // halaman pembayaran Midtrans ikut bahasa Inggris
-    onSuccess:(r)=>{ lacak('purchase',{transaction_id:data.order_id,value:Number(data.payment_mode==='dp'?data.dp_amount:data.total)||0,currency:'IDR',payment_mode:data.payment_mode||'lunas',metode:(r&&r.payment_type)||''}); notify(t('pay_ok',{dp:dpNote})); },
-    onPending:()=>notify(t('pay_pending',{dp:dpNote})),
-    onError:()=>notify(t('pay_err')),
-    onClose:()=>{}
+    onSuccess:(r)=>{ lacak('purchase',{transaction_id:data.order_id,value:Number(data.payment_mode==='dp'?data.dp_amount:data.total)||0,currency:'IDR',payment_mode:data.payment_mode||'lunas',metode:(r&&r.payment_type)||''}); snapSelesai(t('pay_ok',{dp:dpNote})); },
+    onPending:()=>snapSelesai(t('pay_pending',{dp:dpNote})),
+    onError:()=>snapSelesai(t('pay_err')),
+    onClose:()=>snapSelesai()
   });
 }
 async function handleFormSubmitMidtrans(event){
