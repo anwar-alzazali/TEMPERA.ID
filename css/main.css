@@ -444,3 +444,20 @@ body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
 @media(min-width:768px){.ch-tombol{display:inline-flex;padding:0 32px}}
 :root[data-theme="dark"] .ch-kicker{color:#e0a85a}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ch-kicker{color:#e0a85a}}
+
+/* ===== Formulir 4 langkah (desain v2 tahap 2, 20 Nov 2026) ===== */
+.lk-progres{list-style:none;margin:0 0 22px;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;counter-reset:lk}
+.lk-progres li{counter-increment:lk;padding-top:10px;border-top:4px solid var(--border-color);font-size:11px;font-weight:600;color:var(--text-muted);line-height:1.3}
+.lk-progres li.lewat{border-top-color:var(--accent);color:var(--accent);cursor:pointer}
+.lk-progres li.on{border-top-color:var(--accent);color:var(--text-primary)}
+.lk[hidden]{display:none!important}
+.lk-judul{margin:0;font-size:20px;font-weight:700;color:var(--text-primary)}
+.lk-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:6px}
+.lk-next,.lk-back{min-height:48px;padding:0 24px;border-radius:24px;font-weight:700;font-size:14px;cursor:pointer}
+.lk-next{background:var(--accent);color:var(--on-accent);border:0;flex:1;max-width:260px;margin-left:auto}
+.lk-back{background:transparent;color:var(--accent);border:1px solid var(--border-color)}
+@media(max-width:1023px){
+  #travelForm:not([data-lk-aktif="4"]) .ringkas-kolom{display:none}
+}
+
+body.di-form #destBar{display:none}

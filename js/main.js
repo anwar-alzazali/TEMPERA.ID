@@ -222,6 +222,8 @@ id: {
   ch_4a: 'Makan siang', ch_4b: 'Pilih sendiri, atau minta saran tempat ke driver.', ch_5b: 'Susu segar dan foto-foto.', ch_6b: 'Lihat Bandung dari atas sambil jalan pulang.',
   ch_7a: 'Kembali ke hotel', ch_7b: 'Pas 12 jam dari penjemputan.',
   ch_harga: '{mobil} untuk {n} orang: <b>{x}</b>, sudah dengan driver dan bensin. Tiket masuk, tol, dan parkir dibayar di jalan sesuai karcis.', ch_btn: 'Susun hari versimu',
+  lk_1: 'Tempat', lk_2: 'Mobil', lk_3: 'Jadwal', lk_4: 'Data & bayar', lk_next: 'Lanjut', lk_back: 'Kembali',
+  lk_t1: 'Mau ke mana saja?', lk_t2: 'Berapa orang, mobil apa?', lk_t3: 'Kapan dijemput, di mana?', lk_t4: 'Data pemesan & pembayaran',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 ms: {
@@ -433,6 +435,8 @@ ms: {
   ch_4a: 'Makan tengah hari', ch_4b: 'Pilih sendiri, atau minta cadangan tempat daripada pemandu.', ch_5b: 'Susu segar dan bergambar.', ch_6b: 'Lihat Bandung dari atas sambil pulang.',
   ch_7a: 'Kembali ke hotel', ch_7b: 'Tepat 12 jam dari masa dijemput.',
   ch_harga: '{mobil} untuk {n} orang: <b>{x}</b>, termasuk pemandu dan petrol. Tiket masuk, tol dan parkir dibayar dalam perjalanan mengikut resit.', ch_btn: 'Susun hari anda',
+  lk_1: 'Tempat', lk_2: 'Kereta', lk_3: 'Jadual', lk_4: 'Maklumat & bayar', lk_next: 'Seterusnya', lk_back: 'Kembali',
+  lk_t1: 'Mahu ke mana sahaja?', lk_t2: 'Berapa orang, kereta apa?', lk_t3: 'Bila dan di mana dijemput?', lk_t4: 'Maklumat penempah & pembayaran',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 en: {
@@ -643,6 +647,8 @@ en: {
   ch_4a: 'Lunch', ch_4b: 'Your choice, or ask the driver for a recommendation.', ch_5b: 'Fresh milk and photos.', ch_6b: 'See Bandung from above on the way back.',
   ch_7a: 'Back at your hotel', ch_7b: 'Exactly 12 hours after pick-up.',
   ch_harga: '{mobil} for {n} people: <b>{x}</b>, including driver and fuel. Entrance tickets, tolls, and parking are paid along the way as charged.', ch_btn: 'Plan your own day',
+  lk_1: 'Places', lk_2: 'Car', lk_3: 'Schedule', lk_4: 'Details & pay', lk_next: 'Next', lk_back: 'Back',
+  lk_t1: 'Where do you want to go?', lk_t2: 'How many people, which car?', lk_t3: 'When and where should we pick you up?', lk_t4: 'Your details & payment',
   gl_title: 'Trip Gallery', gl_sub: 'Real moments from trips with Tempera', gl_all: 'See all photos'
 }
 };
@@ -706,7 +712,7 @@ function toggleDropdown(e){ e.stopPropagation(); document.getElementById('langMe
 window.addEventListener('click',()=>{ document.getElementById('langMenu')?.classList.add('hidden'); document.getElementById('mobileMenu')?.classList.add('hidden'); });
 function toggleMobileMenu(e){ if(e) e.stopPropagation(); const m=document.getElementById('mobileMenu'); const btn=document.getElementById('hamburgerBtn'); const nowOpen=m.classList.toggle('hidden')===false; if(btn) btn.setAttribute('aria-expanded',String(nowOpen)); }
 function closeMobileMenu(){ document.getElementById('mobileMenu')?.classList.add('hidden'); }
-function handlePesanSekarang(e){ if(e) e.preventDefault(); document.getElementById('pesan').scrollIntoView({behavior:'smooth'}); }
+function handlePesanSekarang(e){ if(e) e.preventDefault(); keLangkah(langkahOtomatis()); }
 
 /* ---------- Data armada bawaan (dipakai kalau database tidak terjangkau) ---------- */
 let ARMADA_DATA=[
@@ -1212,10 +1218,15 @@ function renderDestBar(cbs){
     bar=document.createElement('div'); bar.id='destBar'; bar.hidden=true;
     bar.innerHTML='<div id="destBarPanel" hidden></div><div class="db-row"><button type="button" id="destBarToggle" aria-expanded="false"><span id="destBarT1"></span><span id="destBarT2"></span></button><button type="button" id="destBarGo"></button></div>';
     document.body.appendChild(bar);
+    // Saat formulir langkah terlihat, bar ini disembunyikan (tombolnya sudah ada di formulir & tidak menutupi Kembali)
+    const fm=document.getElementById('travelForm');
+    if(fm && 'IntersectionObserver' in window){
+      new IntersectionObserver(es=>{ es.forEach(e=>document.body.classList.toggle('di-form',e.isIntersecting)); },{rootMargin:'-30% 0px -30% 0px'}).observe(fm);
+    }
     bar.querySelector('#destBarToggle').addEventListener('click',()=>{ destBarOpen=!destBarOpen; syncPicker(); });
     bar.querySelector('#destBarGo').addEventListener('click',()=>{
       destBarOpen=false; syncPicker();
-      document.getElementById(getSelectedArmada()?'pesan':'armada')?.scrollIntoView({behavior:'smooth'});
+      keLangkah(langkahOtomatis());
     });
   }
   const n=cbs.length, a=getSelectedArmada();
@@ -1335,7 +1346,52 @@ function bukaSheetArmada(){
 
 /* ---------- v17: cek kelengkapan sebelum bayar. Kolom teks yang kurang diberi tanda merah; destinasi/armada yang kosong
    langsung membuka jendela pilihannya (tanpa menggulir). Setelah memilih, pelanggan menekan bayar sendiri sekali lagi. ---------- */
-function tandaiErr(id){ const el=document.getElementById(id); if(el){ el.classList.add('fld-err'); el.setAttribute('aria-invalid','true'); } return el; }
+
+/* ---------- Formulir 4 langkah (desain v2 tahap 2, 20 Nov 2026): Tempat → Mobil → Jadwal → Data & bayar.
+   Hanya tampilan: kolom isian, hitungan harga, dan handleFormSubmitMidtrans tetap sama. ---------- */
+let LANGKAH=1;
+function keLangkah(n,gulir){
+  n=Math.max(1,Math.min(4,n|0)); LANGKAH=n;
+  document.querySelectorAll('#travelForm .lk').forEach(el=>{ el.hidden=Number(el.dataset.lk)!==n; });
+  document.querySelectorAll('#travelForm .lk-progres li').forEach(li=>{ const p=Number(li.dataset.p); li.classList.toggle('on',p===n); li.classList.toggle('lewat',p<n); });
+  const f=document.getElementById('travelForm'); if(f) f.dataset.lkAktif=String(n);
+  if(gulir!==false) document.getElementById('pesan')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function langkahDariElemen(el){ const lk=el&&el.closest&&el.closest('#travelForm .lk'); return lk?Number(lk.dataset.lk):0; }
+function langkahOtomatis(){
+  if(!document.querySelectorAll('input[name="destinasi"]:checked').length) return 1;
+  if(!getSelectedArmada()||(parseInt(document.getElementById('formJumlah')?.value)||0)<=0) return 2;
+  return 3;
+}
+async function cekLangkah(n){
+  if(n===1){
+    if(!document.querySelectorAll('input[name="destinasi"]:checked').length){ await bukaSheetDest(); return document.querySelectorAll('input[name="destinasi"]:checked').length>0; }
+    return true;
+  }
+  if(n===2){
+    let ok=true;
+    if((parseInt(document.getElementById('formJumlah')?.value)||0)<=0){ tandaiErr('formJumlah'); ok=false; }
+    if(!getSelectedArmada()){ tandaiErr('calcUnit'); if(ok) { await bukaSheetArmada(); ok=!!getSelectedArmada(); } else ok=false; }
+    if(!ok){ const h=document.getElementById('formHint'); if(h) h.hidden=false; document.querySelector('#travelForm .lk[data-lk="2"] .fld-err')?.focus(); }
+    return ok;
+  }
+  if(n===3){
+    const jm=pickupMs(document.getElementById('formTanggal')?.value||'',document.getElementById('formJam')?.value||'');
+    if(!Number.isFinite(jm)){ tandaiErr('formTanggal'); document.getElementById('formTanggal')?.focus(); return false; }
+    if(jm<batasMs()){ await notify(BOOKING_MIN_HOURS>0?t('err_min',{n:BOOKING_MIN_HOURS}):t('err_past')); return false; }
+    return true;
+  }
+  return true;
+}
+document.addEventListener('click',async(e)=>{
+  const nx=e.target.closest&&e.target.closest('#travelForm .lk-next');
+  if(nx){ e.preventDefault(); const dari=Number(nx.dataset.dari); if(await cekLangkah(dari)) keLangkah(dari+1); return; }
+  const bk=e.target.closest&&e.target.closest('#travelForm .lk-back');
+  if(bk){ e.preventDefault(); keLangkah(Number(bk.dataset.ke)); return; }
+  const pr=e.target.closest&&e.target.closest('#travelForm .lk-progres li');
+  if(pr){ const p=Number(pr.dataset.p); if(p<LANGKAH) keLangkah(p); }
+});
+function tandaiErr(id){ const el=document.getElementById(id); if(el){ el.classList.add('fld-err'); el.setAttribute('aria-invalid','true'); const lk=langkahDariElemen(el); if(lk&&lk<LANGKAH) keLangkah(lk,false); } return el; }
 function bersihErr(el){ el.classList.remove('fld-err'); el.removeAttribute('aria-invalid'); const hint=document.getElementById('formHint'); if(hint&&!document.querySelector('.fld-err')) hint.hidden=true; }
 document.addEventListener('input',(e)=>{ if(e.target.classList&&e.target.classList.contains('fld-err')) bersihErr(e.target); });
 document.addEventListener('change',(e)=>{ if(e.target.classList&&e.target.classList.contains('fld-err')) bersihErr(e.target); });
@@ -1352,11 +1408,11 @@ async function cekKelengkapan(){
   const adaDest=document.querySelectorAll('input[name="destinasi"]:checked').length>0, adaArmada=!!getSelectedArmada();
   if(miss.length&&hint) hint.hidden=false;
   if(!adaDest){
-    document.getElementById('pickedBox')?.scrollIntoView({behavior:'smooth',block:'center'});
+    keLangkah(1,false); document.getElementById('pickedBox')?.scrollIntoView({behavior:'smooth',block:'center'});
     await bukaSheetDest();
     if(document.querySelectorAll('input[name="destinasi"]:checked').length&&!getSelectedArmada()) await bukaSheetArmada();   // armada juga kosong: langsung menyusul
   } else if(!adaArmada){
-    document.getElementById('calcUnit')?.scrollIntoView({behavior:'smooth',block:'center'});
+    keLangkah(2,false); document.getElementById('calcUnit')?.scrollIntoView({behavior:'smooth',block:'center'});
     await bukaSheetArmada();
   } else if(miss.length){
     const f=miss.filter(Boolean)[0]; if(f){ f.scrollIntoView({behavior:'smooth',block:'center'}); try{ f.focus({preventScroll:true}); }catch(e){} }
@@ -1380,7 +1436,7 @@ function getSelectedArmada(){const s=document.getElementById('calcUnit');if(!s||
 function selectUnitById(id){ const s=document.getElementById('calcUnit'); for(let i=0;i<s.options.length;i++){ if(s.options[i].dataset.id===id){ s.selectedIndex=i; return true; } } return false; }
 function selectUnitFromCard(id){
   if(PENUH.has(id)){ const u=ARMADA_DATA.find(x=>x.id===id); notify(t('av_card_full',{car:u?u.name:id})); document.getElementById('pesan').scrollIntoView({behavior:'smooth'}); return; }
-  selectUnitById(id); calculateLive(); checkCapacityLive(); document.getElementById('pesan').scrollIntoView({behavior:'smooth'});
+  selectUnitById(id); calculateLive(); checkCapacityLive(); keLangkah(langkahOtomatis());
 }
 function cheapestUnit(){ return ARMADA_DATA.reduce((a,u)=>(!a||u.price<a.price)?u:a,null); }
 
@@ -1807,7 +1863,7 @@ function terapkanLinkPesan(){
       approveCurrent();   // dari link chat: popup biaya lintas tidak muncul (cukup baris biaya)
       updateBatasWaktu(); calculateLive(); checkCapacityLive();
     }
-    if(location.hash==='#pesan') setTimeout(()=>document.getElementById('pesan')?.scrollIntoView(),700);
+    keLangkah(1,false); if(location.hash==='#pesan') setTimeout(()=>keLangkah(langkahOtomatis()),700);
   }catch(e){ console.warn('link pesan:',e); }
 }
 
