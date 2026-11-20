@@ -1,4 +1,4 @@
-/* ===== Halaman produk (bandara.html, open-trip.html): ringan, tanpa Tailwind. Warna dari css/main.css (tema terang teal / gelap emas). ===== */
+/* ===== Halaman produk (bandara.html, open-trip.html): ringan, tanpa Tailwind. Warna dari css/main.css (tema terang teal / gelap teal terang). ===== */
 *{box-sizing:border-box}
 body{margin:0;font-family:'Inter',system-ui,sans-serif;background:var(--bg-main);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased}
 a{color:inherit}

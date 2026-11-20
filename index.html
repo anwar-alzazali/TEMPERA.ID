@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <!-- ===================== [02] CSS & LIBRARY ===================== -->
-<link rel="stylesheet" href="css/main.css?v=20261106">
+<link rel="stylesheet" href="css/main.css?v=20261120v2">
 <link rel="stylesheet" href="css/driver.css">
 <!-- Tailwind: CSS statis (dibangun dari alat/tailwind.config.js), bukan CDN -->
 <link rel="stylesheet" href="css/tailwind.css?v=20261106b">
@@ -123,24 +123,17 @@
 <header id="home" class="hero">
   <div id="heroBg" class="hero-bg" aria-hidden="true"></div>
   <div class="hero-inner">
-    <h1 id="heroTitle" class="hero-title" data-i18n="hero_title">Sewa Mobil &amp; Private Trip Bandung</h1>
-    <p id="heroSub" class="hero-sub" data-i18n="hero_sub">Mobil + driver 12 jam ke Lembang, Ciwidey, Pangalengan, dan Kota Bandung. Bayar online, bisa DP.</p>
-    <div class="hero-cta">
-      <a href="#destinasi" class="hero-btn hero-btn-main" data-i18n="hero_cta1">Pilih Destinasi</a>
-      <a href="#armada" class="hero-btn hero-btn-ghost" data-i18n="hero_cta2">Pilih Mobil</a>
-    </div>
+    <h1 id="heroTitle" class="hero-title" data-i18n="hero_title">Liburan di Bandung, tanpa repot nyetir.</h1>
+    <p id="heroSub" class="hero-sub" data-i18n="hero_sub">Mobil pribadi + driver lokal.</p>
   </div>
 </header>
 
-<!-- BARIS KEPERCAYAAN: hanya hal yang benar adanya (tanpa klaim "unit baru") -->
-<section class="trust-strip theme-section border-t" style="border-color:var(--border-soft)" aria-label="Keunggulan layanan">
-  <ul class="trust-list max-w-5xl mx-auto">
-    <li><span class="ic ic-fuel"></span><div><b data-i18n="tr1_t">BBM dan air mineral termasuk</b><small data-i18n="tr1_s">Tanpa biaya bensin tambahan</small></div></li>
-    <li><span class="ic ic-wallet"></span><div><b data-i18n="tr2_t">Bisa bayar DP</b><small data-i18n="tr2_s">Sisanya tunai ke driver</small></div></li>
-    <li><span class="ic ic-file"></span><div><b data-i18n="tr3_t">Invoice dan surat jalan digital</b><small data-i18n="tr3_s">Bisa dicek keasliannya lewat QR</small></div></li>
-    <li><span class="ic ic-shield"></span><div><b data-i18n="tr4_t">Usaha terdaftar</b><small data-i18n="tr4_s">NIB 1710260026226 (OSS)</small></div></li>
-  </ul>
-</section>
+<!-- DUA PINTU (desain v2, 20 Nov 2026): wisata 12 jam & bandara. Harga "mulai" diisi main.js (renderPintu) dari data mobil & pengaturan bandara. -->
+<nav class="pintu" aria-label="Pilih layanan">
+  <a class="pintu-kartu" href="#destinasi"><b data-i18n="door_w_t">Wisata seharian</b><small data-i18n="door_w_s">12 jam · 1 wilayah</small><span class="pintu-harga" id="pintuWisata"></span></a>
+  <a class="pintu-kartu" href="bandara"><b data-i18n="door_b_t">Bandara Soetta</b><small data-i18n="door_b_s">Antar / jemput, tol sudah dihitung</small><span class="pintu-harga" id="pintuBandara"></span></a>
+</nav>
+<p class="pintu-luar"><span data-i18n="door_luar">Mau ke Garut, Jakarta, atau menginap?</span> <a href="#tripcustom" data-i18n="door_luar_a">Lihat pilihan lain</a></p>
 
 <!-- CARA PESAN + PILIH DESTINASI (kartu dibuat main.js: renderDestinasi). Kotak centang destinasi di formulir tetap ada tetapi tersembunyi (#oldPicker): itu penyimpan data. -->
 <style>
@@ -174,18 +167,21 @@
   #destBarGo{flex:none;padding:12px 16px;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:12px;cursor:pointer}
   @media(min-width:1024px){#destBar{left:50%;right:auto;transform:translateX(-50%);width:420px}}
 </style>
-<section id="carapesan" class="py-16 theme-section-alt border-t" style="border-color:var(--border-soft)"><div class="max-w-5xl mx-auto px-4">
-  <div class="text-center mb-10">
-    <h2 class="text-3xl font-serif sec-judul" style="color:var(--accent)" data-i18n="cp_title">Cara Pesan</h2>
-    <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
-  </div>
-  <ol class="cp-grid">
-    <li class="cp-step theme-card"><span class="cp-num">1</span><b data-i18n="cp_1t">Pilih destinasi</b><p data-i18n="cp_1d">Ketuk tempat yang ingin dikunjungi, boleh dari beberapa wilayah.</p></li>
-    <li class="cp-step theme-card"><span class="cp-num">2</span><b data-i18n="cp_2t">Pilih mobil</b><p data-i18n="cp_2d">Sesuai jumlah penumpang.</p></li>
-    <li class="cp-step theme-card"><span class="cp-num">3</span><b data-i18n="cp_3t">Isi data</b><p data-i18n="cp_3d">Nama, WhatsApp, tanggal, jam jemput.</p></li>
-    <li class="cp-step theme-card"><span class="cp-num">4</span><b data-i18n="cp_4t">Bayar</b><p data-i18n="cp_4d">Pilih lunas atau DP; konfirmasi dan invoice dikirim ke WhatsApp.</p></li>
+<section id="carapesan" class="contoh-hari"><div class="max-w-3xl mx-auto px-5">
+  <p class="ch-kicker" data-i18n="ch_k">Contoh satu hari</p>
+  <h2 class="ch-judul" data-i18n="ch_t">Sabtu di Lembang, dijemput dari hotel</h2>
+  <p class="ch-lead" data-i18n="ch_p">Lembang padat tiap akhir pekan, jadi enaknya berangkat pagi. Urutannya kamu atur sendiri bareng driver lewat WhatsApp.</p>
+  <ol class="ch-garis">
+    <li><time>07.00</time><div><b data-i18n="ch_1a">Dijemput di hotel</b><small data-i18n="ch_1b">Driver kabari lewat WA begitu sampai di lobi.</small></div></li>
+    <li><time>08.15</time><div><b>Tangkuban Perahu</b><small data-i18n="ch_2b">Datang pagi biar belum terlalu ramai.</small></div></li>
+    <li><time>10.30</time><div><b>Orchid Forest Cikole</b><small data-i18n="ch_3b">Hutan pinus dan jembatan kayu, enak buat jalan santai.</small></div></li>
+    <li><time>12.30</time><div><b data-i18n="ch_4a">Makan siang</b><small data-i18n="ch_4b">Pilih sendiri, atau minta saran tempat ke driver.</small></div></li>
+    <li><time>14.00</time><div><b>Farmhouse Susu Lembang</b><small data-i18n="ch_5b">Susu segar dan foto-foto.</small></div></li>
+    <li><time>16.30</time><div><b>Punclut</b><small data-i18n="ch_6b">Lihat Bandung dari atas sambil jalan pulang.</small></div></li>
+    <li><time>19.00</time><div><b data-i18n="ch_7a">Kembali ke hotel</b><small data-i18n="ch_7b">Pas 12 jam dari penjemputan.</small></div></li>
   </ol>
-  <p class="cp-note" data-i18n="cp_note">Sewa 12 jam untuk satu wilayah: Lembang, Ciwidey, atau Pangalengan. Kota Bandung dan Dago bebas digabung. Belum tahu tempatnya? Pilih "atur bersama driver".</p>
+  <p class="ch-harga" id="chHarga"></p>
+  <a class="ch-tombol" href="#destinasi" data-i18n="ch_btn">Susun hari versimu</a>
 </div></section>
 
 <section id="destinasi" class="py-24 theme-section border-t" style="border-color:var(--border-soft)"><div class="max-w-7xl mx-auto px-4">
@@ -457,6 +453,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261120dh"></script>
+<script src="js/main.js?v=20261120v2"></script>
 </body>
 </html>

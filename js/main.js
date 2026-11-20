@@ -19,8 +19,8 @@ id: {
   nav_custom: 'Bandara & Open Trip', nav_bandara: 'Bandara', nav_bandara_m: 'Antar Jemput Bandara Soetta', nav_ot: 'Open Trip', nav_blog: 'Panduan Wisata', nav_faq: 'FAQ', nav_book: 'Pesan Sekarang', nav_book_short: 'Pesan',
   aria_theme: 'Ganti tema terang/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Geser ke kiri', aria_right: 'Geser ke kanan',
 
-  hero_title: 'Sewa Mobil & Private Trip Bandung',
-  hero_sub: 'Mobil + driver 12 jam ke Lembang, Ciwidey, Pangalengan, dan Kota Bandung. Bayar online, bisa DP.',
+  hero_title: 'Liburan di Bandung, tanpa repot nyetir.',
+  hero_sub: 'Mobil pribadi + driver lokal.',
   hero_p1: 'BBM termasuk', hero_p2: 'Sewa 12 jam', hero_p3: 'Bisa bayar DP',
   hero_cta1: 'Pilih Destinasi', hero_cta2: 'Pilih Mobil',
 
@@ -29,7 +29,7 @@ id: {
   wx_loading: 'Memuat...', wx_live: 'Live', wx_feels: 'Terasa {n}°', wx_alt: '{n} mdpl', wx_refresh: 'Muat ulang cuaca',
   wx_pagi: 'Pagi', wx_siang: 'Siang', wx_sore: 'Sore', wx_malam: 'Malam',
 
-  dest_title: 'Pilih Destinasi', dest_sub: 'Ketuk tempat yang ingin dikunjungi, boleh dari beberapa wilayah',
+  dest_title: 'Satu hari, satu wilayah', dest_sub: 'Lembang ke Ciwidey itu lewat tengah kota, bisa 3–4 jam sendiri. Daripada habis di jalan, pilih satu. Kota Bandung & Dago boleh ditambah, gratis.',
   dest_order: 'Urutan kunjungan diatur driver bersamamu lewat WhatsApp setelah pesanan dikonfirmasi.',
   dest_tip: 'Untuk sewa 12 jam, kami sarankan maksimal 4 destinasi supaya perjalanan tetap santai.',
   tag_utara: 'Bandung Utara', tag_selatan: 'Bandung Selatan', tag_titik0: 'Titik 0',
@@ -215,6 +215,13 @@ id: {
   gd_label: 'Panduan rute & tempat wisata:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Kota Bandung & Dago',
   ft_nib: 'Usaha terdaftar di OSS · NIB 1710260026226', ft_mitra: 'Masuk Mitra', fl_bandara: 'Antar Jemput Bandara', fl_syarat: 'Syarat & Ketentuan', fl_privasi: 'Kebijakan Privasi', fl_kontak: 'Kontak',
   mu_ganti: 'Ketuk untuk ganti mata uang', mu_bayar_idr: '· perkiraan, dibayar dalam Rupiah',
+  door_w_t: 'Wisata seharian', door_w_s: '12 jam · 1 wilayah', door_b_t: 'Bandara Soetta', door_b_s: 'Antar / jemput, tol sudah dihitung', door_mulai: 'mulai {x}',
+  door_luar: 'Mau ke Garut, Jakarta, atau menginap?', door_luar_a: 'Lihat pilihan lain',
+  ch_k: 'Contoh satu hari', ch_t: 'Sabtu di Lembang, dijemput dari hotel', ch_p: 'Lembang padat tiap akhir pekan, jadi enaknya berangkat pagi. Urutannya kamu atur sendiri bareng driver lewat WhatsApp.',
+  ch_1a: 'Dijemput di hotel', ch_1b: 'Driver kabari lewat WA begitu sampai di lobi.', ch_2b: 'Datang pagi biar belum terlalu ramai.', ch_3b: 'Hutan pinus dan jembatan kayu, enak buat jalan santai.',
+  ch_4a: 'Makan siang', ch_4b: 'Pilih sendiri, atau minta saran tempat ke driver.', ch_5b: 'Susu segar dan foto-foto.', ch_6b: 'Lihat Bandung dari atas sambil jalan pulang.',
+  ch_7a: 'Kembali ke hotel', ch_7b: 'Pas 12 jam dari penjemputan.',
+  ch_harga: '{mobil} untuk {n} orang: <b>{x}</b>, sudah dengan driver dan bensin. Tiket masuk, tol, dan parkir dibayar di jalan sesuai karcis.', ch_btn: 'Susun hari versimu',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 ms: {
@@ -223,8 +230,8 @@ ms: {
   nav_custom: 'Lapangan Terbang & Open Trip', nav_bandara: 'Lapangan Terbang', nav_bandara_m: 'Transfer Lapangan Terbang Soetta', nav_ot: 'Open Trip', nav_blog: 'Panduan Melancong', nav_faq: 'Soalan Lazim', nav_book: 'Tempah Sekarang', nav_book_short: 'Tempah',
   aria_theme: 'Tukar tema cerah/gelap', aria_menu: 'Buka menu navigasi', aria_left: 'Anjak ke kiri', aria_right: 'Anjak ke kanan',
 
-  hero_title: 'Sewa Kereta & Private Trip Bandung',
-  hero_sub: 'Kereta + pemandu 12 jam ke Lembang, Ciwidey, Pangalengan dan Bandar Bandung. Bayar dalam talian, boleh bayar deposit.',
+  hero_title: 'Bercuti di Bandung, tanpa perlu memandu.',
+  hero_sub: 'Kereta peribadi + pemandu tempatan.',
   hero_p1: 'Petrol termasuk', hero_p2: 'Sewa 12 jam', hero_p3: 'Boleh bayar deposit',
   hero_cta1: 'Pilih Destinasi', hero_cta2: 'Pilih Kereta',
 
@@ -233,7 +240,7 @@ ms: {
   wx_loading: 'Memuatkan...', wx_live: 'Langsung', wx_feels: 'Terasa {n}°', wx_alt: '{n} m', wx_refresh: 'Muat semula cuaca',
   wx_pagi: 'Pagi', wx_siang: 'Tengah hari', wx_sore: 'Petang', wx_malam: 'Malam',
 
-  dest_title: 'Pilih Destinasi', dest_sub: 'Ketik tempat yang ingin dilawati, boleh daripada beberapa kawasan',
+  dest_title: 'Satu hari, satu kawasan', dest_sub: 'Lembang ke Ciwidey perlu melalui tengah bandar, boleh makan masa 3–4 jam. Daripada habis di jalan, pilih satu. Bandar Bandung & Dago boleh ditambah, percuma.',
   dest_order: 'Urutan lawatan diatur oleh pemandu bersama anda melalui WhatsApp selepas tempahan disahkan.',
   dest_tip: 'Untuk sewa 12 jam, kami syorkan maksimum 4 destinasi supaya perjalanan kekal santai.',
   tag_utara: 'Bandung Utara', tag_selatan: 'Bandung Selatan', tag_titik0: 'Titik 0',
@@ -419,6 +426,13 @@ ms: {
   gd_label: 'Panduan laluan & tempat menarik:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Bandar Bandung & Dago',
   ft_nib: 'Perniagaan berdaftar di OSS · NIB 1710260026226', ft_mitra: 'Log masuk Rakan Kongsi', fl_bandara: 'Transfer Lapangan Terbang', fl_syarat: 'Terma & Syarat', fl_privasi: 'Dasar Privasi', fl_kontak: 'Hubungi',
   mu_ganti: 'Ketik untuk tukar mata wang', mu_bayar_idr: '· anggaran, dibayar dalam Rupiah',
+  door_w_t: 'Lawatan sehari', door_w_s: '12 jam · 1 kawasan', door_b_t: 'Lapangan Terbang Soetta', door_b_s: 'Hantar / jemput, tol sudah dikira', door_mulai: 'dari {x}',
+  door_luar: 'Mahu ke Garut, Jakarta, atau bermalam?', door_luar_a: 'Lihat pilihan lain',
+  ch_k: 'Contoh satu hari', ch_t: 'Sabtu di Lembang, dijemput dari hotel', ch_p: 'Lembang sesak setiap hujung minggu, jadi lebih baik bertolak awal pagi. Susunan tempat anda atur sendiri bersama pemandu melalui WhatsApp.',
+  ch_1a: 'Dijemput di hotel', ch_1b: 'Pemandu maklumkan melalui WA sebaik tiba di lobi.', ch_2b: 'Datang awal pagi supaya belum terlalu ramai.', ch_3b: 'Hutan pain dan jambatan kayu, seronok untuk berjalan santai.',
+  ch_4a: 'Makan tengah hari', ch_4b: 'Pilih sendiri, atau minta cadangan tempat daripada pemandu.', ch_5b: 'Susu segar dan bergambar.', ch_6b: 'Lihat Bandung dari atas sambil pulang.',
+  ch_7a: 'Kembali ke hotel', ch_7b: 'Tepat 12 jam dari masa dijemput.',
+  ch_harga: '{mobil} untuk {n} orang: <b>{x}</b>, termasuk pemandu dan petrol. Tiket masuk, tol dan parkir dibayar dalam perjalanan mengikut resit.', ch_btn: 'Susun hari anda',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 en: {
@@ -427,8 +441,8 @@ en: {
   nav_custom: 'Airport & Open Trips', nav_bandara: 'Airport', nav_bandara_m: 'Soekarno-Hatta Airport Transfer', nav_ot: 'Open Trip', nav_blog: 'Travel Guide', nav_faq: 'FAQ', nav_book: 'Book Now', nav_book_short: 'Book',
   aria_theme: 'Switch light/dark theme', aria_menu: 'Open navigation menu', aria_left: 'Scroll left', aria_right: 'Scroll right',
 
-  hero_title: 'Private Car & Driver in Bandung',
-  hero_sub: '12-hour car with driver to Lembang, Ciwidey, Pangalengan, and Bandung city. Pay online, deposit accepted.',
+  hero_title: 'Your Bandung holiday, without the driving.',
+  hero_sub: 'Private car + local driver.',
   hero_p1: 'Fuel included', hero_p2: '12-hour rental', hero_p3: 'Pay a deposit',
   hero_cta1: 'Choose Destinations', hero_cta2: 'Choose a Car',
 
@@ -437,7 +451,7 @@ en: {
   wx_loading: 'Loading...', wx_live: 'Live', wx_feels: 'Feels like {n}°', wx_alt: '{n} m above sea level', wx_refresh: 'Refresh weather',
   wx_pagi: 'Morning', wx_siang: 'Midday', wx_sore: 'Afternoon', wx_malam: 'Night',
 
-  dest_title: 'Choose Destinations', dest_sub: 'Tap the places you want to visit, from one or more areas',
+  dest_title: 'One day, one area', dest_sub: 'Lembang to Ciwidey goes through the city centre and can take 3–4 hours on its own. Rather than spend the day on the road, pick one. Bandung city & Dago can be added for free.',
   dest_order: 'Your driver will plan the visiting order with you on WhatsApp once the booking is confirmed.',
   dest_tip: 'For a 12-hour rental, we suggest up to 4 destinations so the day stays relaxed.',
   tag_utara: 'North Bandung', tag_selatan: 'South Bandung', tag_titik0: 'City centre',
@@ -622,6 +636,13 @@ en: {
   gd_label: 'Route & attraction guides:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Bandung City & Dago',
   ft_nib: 'Registered business (OSS) · NIB 1710260026226', ft_mitra: 'Partner Login', fl_bandara: 'Airport Transfer', fl_syarat: 'Terms & Conditions', fl_privasi: 'Privacy Policy', fl_kontak: 'Contact',
   mu_ganti: 'Tap to change currency', mu_bayar_idr: '· estimate, charged in Indonesian Rupiah',
+  door_w_t: 'Day trip', door_w_s: '12 hours · 1 area', door_b_t: 'Soekarno-Hatta Airport', door_b_s: 'Drop-off / pick-up, tolls included', door_mulai: 'from {x}',
+  door_luar: 'Going to Garut, Jakarta, or staying overnight?', door_luar_a: 'See other options',
+  ch_k: 'A sample day', ch_t: 'Saturday in Lembang, picked up from your hotel', ch_p: 'Lembang gets busy at weekends, so it\'s best to leave early. You plan the order of stops yourself with the driver on WhatsApp.',
+  ch_1a: 'Pick-up at your hotel', ch_1b: 'The driver messages you on WhatsApp on arrival at the lobby.', ch_2b: 'Arrive early before the crowds.', ch_3b: 'Pine forest and wooden bridges, great for a relaxed walk.',
+  ch_4a: 'Lunch', ch_4b: 'Your choice, or ask the driver for a recommendation.', ch_5b: 'Fresh milk and photos.', ch_6b: 'See Bandung from above on the way back.',
+  ch_7a: 'Back at your hotel', ch_7b: 'Exactly 12 hours after pick-up.',
+  ch_harga: '{mobil} for {n} people: <b>{x}</b>, including driver and fuel. Entrance tickets, tolls, and parking are paid along the way as charged.', ch_btn: 'Plan your own day',
   gl_title: 'Trip Gallery', gl_sub: 'Real moments from trips with Tempera', gl_all: 'See all photos'
 }
 };
@@ -906,7 +927,7 @@ async function initRemoteData(){
     { const mh=parseFloat(s.booking_min_hours); if(Number.isFinite(mh)) BOOKING_MIN_HOURS=Math.min(Math.max(0,mh),1440); }
     { const w=normalizeWA(String(s.admin_wa||'')); if(w.length>=10&&w.length<=15) WA_NUMBER=w; }
     { const h=parseInt(String(s.bandara_harga_mpv||'').replace(/[^0-9]/g,'')); if(h>0){ LL.harga=h; layananLain(); } }
-    applyHero(); applyContacts(); calculateLive(); updateBatasWaktu();
+    applyHero(); applyContacts(); calculateLive(); updateBatasWaktu(); renderPintu();
   }catch(e){ console.warn('settings:',e); }
   try{ renderBanners(await sbGet('banners?select=*&order=sort_order.asc')); }catch(e){ console.warn('banners:',e); }
 }
@@ -1722,6 +1743,17 @@ function notify(message,okText){ return temperaDialog({message,okText:okText||t(
 function askConfirm(message,okText,cancelText){ return temperaDialog({message,okText:okText||t('dlg_continue'),cancelText:cancelText||t('dlg_back')}); }
 
 /* ---------- Bahasa berganti: gambar ulang bagian dinamis tanpa kehilangan isian pelanggan ---------- */
+
+/* Desain v2: harga 'mulai' di dua pintu + baris harga contoh hari (dari data mobil & pengaturan bandara) */
+function renderPintu(){
+  const w=document.getElementById('pintuWisata'), b=document.getElementById('pintuBandara'), ch=document.getElementById('chHarga');
+  const ada=Array.isArray(ARMADA_DATA)&&ARMADA_DATA.length;
+  const murah=ada?ARMADA_DATA.reduce((m,u)=>(Number(u.price)>0&&(!m||Number(u.price)<Number(m.price))?u:m),null):null;
+  const hb=Number(String(SETTINGS.bandara_harga_mpv||'').replace(/[^0-9]/g,''))||0;
+  const isi=(el,v)=>{ if(!el) return; el.innerHTML=v>0?t('door_mulai',{x:`<strong>${esc(formatPrice(v))}</strong>`})+kursHtml(v):''; };
+  isi(w,murah?Number(murah.price):0); isi(b,hb);
+  if(ch) ch.innerHTML=murah?t('ch_harga',{mobil:esc(murah.shortName||murah.name),n:esc(murah.capacityNum||4),x:esc(formatPrice(murah.price))}):'';
+}
 function refreshDynamic(){
   const sel=document.getElementById('calcUnit');
   const unitId=(sel&&sel.selectedIndex>0)?sel.options[sel.selectedIndex].dataset.id:null;
@@ -1732,7 +1764,7 @@ function refreshDynamic(){
   terapkanKetersediaan();
   document.querySelectorAll('input[name="destinasi"]').forEach(cb=>{ cb.checked=checked.has(cb.dataset.group+'|'+cb.value); });
   if(openId) openAccordion(openId);
-  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan(); renderGaleri(); renderDestinasi();
+  calculateLive(); checkCapacityLive(); updateDurasi(); renderWeather(); applyHero(); applyContacts(); renderUlasan(); renderGaleri(); renderDestinasi(); renderPintu();
 }
 
 function normalizeWA(input){
@@ -2027,7 +2059,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   applyStaticText(); updateLangButton();
   initPaymentModeUI();
-  renderArmada(); renderDestinasi(); calculateLive(); applyHero(); applyContacts();
+  renderArmada(); renderDestinasi(); calculateLive(); applyHero(); applyContacts(); renderPintu();
   const yr=document.getElementById('footerYear'); if(yr) yr.textContent=new Date().getFullYear();
   document.getElementById('formJam')?.addEventListener('change',updateDurasi);
   document.getElementById('formTanggal')?.addEventListener('change',()=>{ tglDiubahPelanggan=true; updateBatasWaktu(); });

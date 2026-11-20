@@ -5,32 +5,32 @@ html{scroll-behavior:smooth}
 .accordion-content.open{max-height:2000px}
 
 /* =====================================================================
-   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (emas-hitam, tetap dipakai atas keputusan pemilik 19 Okt 2026).
+   TEMA: terang (teal, senada invoice/panel/kas/ID card) dan gelap (teal terang di atas hijau-hitam, 20 Nov 2026: pemilik ingin identitas teal tetap terlihat di mode gelap; sebelumnya emas-hitam).
    Ikut pengaturan perangkat (tombol ganti tema dihapus 19 Okt 2026).
    --on-accent = warna teks di atas tombol berwarna aksen.
    ===================================================================== */
 :root{
   --accent:#0E7490;--accent-light:#22b8d0;--accent-glow:rgba(8,145,178,0.18);--on-accent:#FFFFFF;
-  --bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#F0F9FF;--bg-card:#FFFFFF;--bg-card-hover:#E0F2FE;--bg-input:#FFFFFF;
-  --text-primary:#0F172A;--text-secondary:#0E7490;--text-muted:#526071;
-  --border-color:rgba(8,145,178,0.30);--border-soft:#E0F2FE;
+  --bg-main:#FFFFFF;--bg-section:#FFFFFF;--bg-section-alt:#EDF6F8;--bg-card:#FFFFFF;--bg-card-hover:#E3F0F2;--bg-input:#FFFFFF;
+  --text-primary:#0F2A33;--text-secondary:#0E7490;--text-muted:#4B5A63;
+  --border-color:rgba(14,116,144,0.28);--border-soft:#E2E8EB;
   --hero-grad:linear-gradient(160deg,#0C4A6E 0%,#0891B2 58%,#22B8D0 100%);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0A0A0A;
-    --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
-    --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
-    --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
-    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.22) 0%,transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1C1917 100%);
+    --accent:#3CC0D4;--accent-light:#7FD6E3;--accent-glow:rgba(60,192,212,0.22);--on-accent:#0D1B20;
+    --bg-main:#0D1B20;--bg-section:#0D1B20;--bg-section-alt:#11232A;--bg-card:#15262C;--bg-card-hover:#1B3038;--bg-input:#15262C;
+    --text-primary:#E9EEF0;--text-secondary:#A9B8BD;--text-muted:#8FA0A6;
+    --border-color:rgba(60,192,212,0.32);--border-soft:rgba(255,255,255,0.08);
+    --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(60,192,212,0.20) 0%,transparent 55%),linear-gradient(160deg,#0D1B20 0%,#0B2A33 100%);
   }
 }
 :root[data-theme="dark"]{
-  --accent:#E5B80B;--accent-light:#FFD700;--accent-glow:rgba(229,184,11,0.25);--on-accent:#0A0A0A;
-  --bg-main:#0A0A0A;--bg-section:#0A0A0A;--bg-section-alt:#0F0F0F;--bg-card:#111111;--bg-card-hover:#1A1A1A;--bg-input:#1A1A1A;
-  --text-primary:#FFFFFF;--text-secondary:#A1A1AA;--text-muted:#8B8B93;
-  --border-color:rgba(229,184,11,0.35);--border-soft:rgba(255,255,255,0.07);
-  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(229,184,11,0.22) 0%,transparent 55%),linear-gradient(160deg,#0A0A0A 0%,#1C1917 100%);
+  --accent:#3CC0D4;--accent-light:#7FD6E3;--accent-glow:rgba(60,192,212,0.22);--on-accent:#0D1B20;
+  --bg-main:#0D1B20;--bg-section:#0D1B20;--bg-section-alt:#11232A;--bg-card:#15262C;--bg-card-hover:#1B3038;--bg-input:#15262C;
+  --text-primary:#E9EEF0;--text-secondary:#A9B8BD;--text-muted:#8FA0A6;
+  --border-color:rgba(60,192,212,0.32);--border-soft:rgba(255,255,255,0.08);
+  --hero-grad:radial-gradient(ellipse at 75% 15%,rgba(60,192,212,0.20) 0%,transparent 55%),linear-gradient(160deg,#0D1B20 0%,#0B2A33 100%);
 }
 body{background:var(--bg-main);color:var(--text-primary);transition:background .4s ease,color .4s ease}
 .theme-section{background:var(--bg-section);transition:all 0.4s ease}
@@ -325,8 +325,7 @@ h2.sec-judul + div.w-16{display:none}
 .photo-break p{position:absolute;z-index:1;left:0;right:0;bottom:0;margin:0;padding:0 20px 26px;max-width:640px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(24px,5.6vw,38px);line-height:1.15;color:#fff;text-wrap:balance;text-shadow:0 2px 14px rgba(0,0,0,.35)}
 @media (min-width:768px){.photo-break p{left:max(24px,calc(50% - 640px));padding-bottom:36px}}
 
-/* Hero 19 Okt 2026: kalimat penjelas disembunyikan (info sudah ada di baris keunggulan); teks tetap di HTML dan panel. Hapus aturan ini untuk menampilkannya lagi. */
-.hero-sub{display:none}
+/* Hero 19 Okt 2026 menyembunyikan .hero-sub; desain v2 (20 Nov 2026) menampilkannya lagi sebagai subjudul pendek. */
 .hero-btn-ghost{border-width:1.5px;border-color:rgba(255,255,255,.88)}
 .hero-cta{margin-top:34px}
 
@@ -407,3 +406,41 @@ body #armada-cards ul li small{color:var(--text-muted);font-size:9.5px}
 
 /* 6 Nov 2026: pilihan "rute diatur bersama driver" di kartu destinasi */
 .dchip.dchip-bebas{border-style:dashed;font-weight:700;grid-column:1/-1;width:100%;flex:1 1 100%}
+
+/* ===== Desain v2 (20 Nov 2026): hero rata kiri di bawah, dua pintu layanan, contoh satu hari ===== */
+.hero{align-items:flex-end;justify-content:flex-start}
+.hero.has-img::before{background:linear-gradient(180deg,rgba(11,58,70,.15) 0%,rgba(11,58,70,.45) 55%,rgba(11,58,70,.9) 100%)}
+.hero::after{display:none}
+.hero-inner{width:100%;max-width:1100px;text-align:left;padding:120px 20px 110px}
+.hero-title{font-size:clamp(38px,7vw,64px);max-width:720px;text-wrap:balance}
+.hero-sub{display:block;margin:12px 0 0;font-size:clamp(15px,2vw,18px)}
+.pintu{position:relative;z-index:5;max-width:1100px;margin:-80px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pintu-kartu{display:flex;flex-direction:column;gap:6px;min-height:132px;padding:16px 14px;border-radius:18px;background:var(--bg-card);color:var(--text-primary);text-decoration:none;box-shadow:0 14px 30px rgba(11,58,70,.18);border:1px solid var(--border-soft)}
+.pintu-kartu b{font-size:17px;line-height:1.25}
+.pintu-kartu small{font-size:12px;color:var(--text-muted);line-height:1.4}
+.pintu-harga{margin-top:auto;font-size:13px;color:var(--text-muted)}
+.pintu-harga strong{font-size:16px;color:var(--accent)}
+.pintu-harga .kurs-perk{font-size:11px}
+.pintu-kartu:hover{border-color:var(--accent)}
+.pintu-luar{margin:12px auto 0;padding:0 16px;max-width:1100px;text-align:center;font-size:13px;color:var(--text-muted)}
+.pintu-luar a{color:var(--accent);font-weight:600}
+@media(min-width:768px){.pintu{gap:16px}.pintu-kartu{padding:22px 20px}.pintu-kartu b{font-size:20px}}
+.contoh-hari{margin-top:36px;padding:36px 0;background:var(--bg-section-alt)}
+.ch-kicker{margin:0;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#b45309}
+.ch-judul{margin:6px 0 0;font-family:'Inter',sans-serif;font-size:24px;line-height:1.2;font-weight:700;color:var(--text-primary)}
+.ch-lead{margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--text-muted)}
+.ch-garis{list-style:none;margin:20px 0 0;padding:0}
+.ch-garis li{position:relative;display:grid;grid-template-columns:52px 1fr;gap:0 22px;padding-bottom:16px}
+.ch-garis li::before{content:'';position:absolute;left:61px;top:5px;width:10px;height:10px;border-radius:5px;background:var(--accent)}
+.ch-garis li::after{content:'';position:absolute;left:65px;top:17px;bottom:0;width:2px;background:var(--border-color)}
+.ch-garis li:last-child::after{display:none}
+.ch-garis time{font-size:13px;font-weight:700;color:var(--accent)}
+.ch-garis b{display:block;font-size:15px;color:var(--text-primary)}
+.ch-garis small{display:block;margin-top:2px;font-size:13px;line-height:1.45;color:var(--text-muted)}
+.ch-harga{margin:4px 0 0;padding-top:14px;border-top:1px solid var(--border-color);font-size:13px;line-height:1.55;color:var(--text-muted)}
+.ch-harga b{color:var(--text-primary)}
+.ch-harga:empty{display:none}
+.ch-tombol{margin-top:14px;display:flex;align-items:center;justify-content:center;height:48px;border-radius:24px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:14px;text-decoration:none}
+@media(min-width:768px){.ch-tombol{display:inline-flex;padding:0 32px}}
+:root[data-theme="dark"] .ch-kicker{color:#e0a85a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .ch-kicker{color:#e0a85a}}
