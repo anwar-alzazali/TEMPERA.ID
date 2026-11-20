@@ -222,14 +222,15 @@ id: {
   ch_4a: 'Makan siang', ch_4b: 'Pilih sendiri, atau minta saran tempat ke driver.', ch_5b: 'Susu segar dan foto-foto.', ch_6b: 'Lihat Bandung dari atas sambil jalan pulang.',
   ch_7a: 'Kembali ke hotel', ch_7b: 'Pas 12 jam dari penjemputan.',
   ch_harga: '{mobil} untuk {n} orang: <b>{x}</b>, sudah dengan driver dan bensin. Tiket masuk, tol, dan parkir dibayar di jalan sesuai karcis.', ch_btn: 'Susun hari versimu',
-  al_judul: 'Pesan wisata seharian', al_langkah: 'Langkah {n} dari 4', al_tutup: 'Tutup', al_t1: 'Mau ke mana?', al_s1: 'Pilih satu wilayah untuk seharian (12 jam).',
+  al_kicker: 'Wisata 12 jam · mobil + driver', al_pesan: 'Pesan', al_bar_kosong: 'Belum pilih tempat', al_terpilih: '✓ Terpilih', al_wajib: 'Wajib diisi', al_err_tempat: 'Pilih wilayah, lalu tempat atau “atur bareng driver”.', al_err_pax: 'Isi jumlah peserta dulu.', al_err_mobil: 'Pilih mobil dulu.', al_err_jadwal: 'Pilih tanggal dan jam jemput.', al_mobil_pilih: 'Pilih mobil…', al_geser: 'Geser atau ketuk untuk memilih', al_t1b: 'Rencana perjalanan',
+  al_judul: 'Pesan wisata seharian', al_langkah: 'Langkah {n} dari 3', al_tutup: 'Tutup', al_t1: 'Mau ke mana?', al_s1: 'Pilih satu wilayah untuk seharian (12 jam).',
   al_w_dago: 'Kota Bandung & Dago', al_a_lembang: 'Utara · sejuk, ramah anak', al_a_ciwidey: 'Selatan · kawah & danau', al_a_pangalengan: 'Selatan · kebun teh, rafting', al_a_dago: 'Dalam kota · kuliner, belanja',
   al_tempat: 'Tempat di {w}', al_tempat_s: 'Jadi rute untuk driver di surat jalan. Ideal 3–4 tempat.', al_bebas: '🧭 Belum tahu? Atur bareng driver', al_mampir: '+ Mampir Kota Bandung / Dago', al_mampir_s: 'Searah pulang, tanpa biaya tambahan.', al_dipilih: '{n} dipilih',
   al_bar_belum: 'Pilih wilayah dulu', al_bar_tempat: 'Pilih tempat, atau atur bareng driver', al_bar_bebas: 'Rute diatur bersama driver', al_bar_n: '{n} tempat dipilih',
   al_t2: 'Berapa orang?', al_pax: 'Penumpang', al_pax_s: 'termasuk anak-anak', al_mobil: 'Pilih mobil', al_mobil_s: 'Harga per mobil, 12 jam + sopir. Tidak berubah walau tempatnya banyak.', al_pas: 'PALING PAS', al_muat: 'Nyaman {n} orang · maks {m}', al_tak_muat: 'Tidak muat untuk {n} orang', al_orang: '{n} orang',
   al_t3: 'Kapan dijemput?', al_tgl_lain: 'Tanggal lain', al_jam: 'Jam jemput', al_selesai: 'Selesai paling lambat {j} (12 jam).', al_jemput: 'Dijemput di mana?', al_jemput_ph: 'Nama hotel, stasiun, atau alamat', al_penuh: '{car} sudah penuh di tanggal ini. Pilih tanggal lain atau ganti mobil.', al_ganti_mobil: 'Ganti mobil',
   al_t4: 'Hampir selesai', al_nama: 'Nama', al_nama_ph: 'Nama lengkap', al_wa: 'WhatsApp', al_wa_s: 'konfirmasi & data driver dikirim ke sini', al_lunas: 'Lunas', al_lunas_s: 'sekali bayar', al_dp: 'DP {p}%', al_dp_s: 'sisa tunai ke driver', al_rute: 'Rute', al_total: 'Total',
-  al_bayar: 'Bayar {rp}', al_aman: 'Aman lewat Midtrans · QRIS, e-wallet, transfer', al_err_data: 'Isi nama dan nomor WhatsApp yang benar.', al_cta_t: 'Siap berangkat?', al_cta_s: 'Empat langkah singkat: tempat, mobil, jadwal, lalu bayar.', al_cta_b: 'Mulai pesan',
+  al_bayar: 'Bayar {rp}', al_aman: 'Aman lewat Midtrans · QRIS, e-wallet, transfer', al_err_data: 'Isi nama dan nomor WhatsApp yang benar.', al_cta_t: 'Siap berangkat?', al_cta_s: 'Tiga langkah singkat: rencana & mobil, jadwal, lalu bayar.', al_cta_b: 'Mulai pesan',
   lk_1: 'Tempat', lk_2: 'Mobil', lk_3: 'Jadwal', lk_4: 'Data & bayar', lk_next: 'Lanjut', lk_back: 'Kembali',
   lk_t1: 'Mau ke mana saja?', lk_t2: 'Berapa orang, mobil apa?', lk_t3: 'Kapan dijemput, di mana?', lk_t4: 'Data pemesan & pembayaran',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
@@ -443,14 +444,15 @@ ms: {
   ch_4a: 'Makan tengah hari', ch_4b: 'Pilih sendiri, atau minta cadangan tempat daripada pemandu.', ch_5b: 'Susu segar dan bergambar.', ch_6b: 'Lihat Bandung dari atas sambil pulang.',
   ch_7a: 'Kembali ke hotel', ch_7b: 'Tepat 12 jam dari masa dijemput.',
   ch_harga: '{mobil} untuk {n} orang: <b>{x}</b>, termasuk pemandu dan petrol. Tiket masuk, tol dan parkir dibayar dalam perjalanan mengikut resit.', ch_btn: 'Susun hari anda',
-  al_judul: 'Tempah lawatan sehari', al_langkah: 'Langkah {n} daripada 4', al_tutup: 'Tutup', al_t1: 'Nak ke mana?', al_s1: 'Pilih satu kawasan untuk sehari (12 jam).',
+  al_kicker: 'Lawatan 12 jam · kereta + pemandu', al_pesan: 'Tempah', al_bar_kosong: 'Belum pilih tempat', al_terpilih: '✓ Dipilih', al_wajib: 'Wajib diisi', al_err_tempat: 'Pilih kawasan, kemudian tempat atau “atur bersama pemandu”.', al_err_pax: 'Isi bilangan peserta dahulu.', al_err_mobil: 'Pilih kereta dahulu.', al_err_jadwal: 'Pilih tarikh dan masa jemput.', al_mobil_pilih: 'Pilih kereta…', al_geser: 'Leret atau ketik untuk memilih', al_t1b: 'Rancangan perjalanan',
+  al_judul: 'Tempah lawatan sehari', al_langkah: 'Langkah {n} daripada 3', al_tutup: 'Tutup', al_t1: 'Nak ke mana?', al_s1: 'Pilih satu kawasan untuk sehari (12 jam).',
   al_w_dago: 'Bandar Bandung & Dago', al_a_lembang: 'Utara · sejuk, mesra kanak-kanak', al_a_ciwidey: 'Selatan · kawah & tasik', al_a_pangalengan: 'Selatan · ladang teh, rafting', al_a_dago: 'Dalam bandar · makanan, membeli-belah',
   al_tempat: 'Tempat di {w}', al_tempat_s: 'Menjadi laluan pemandu dalam surat jalan. Ideal 3–4 tempat.', al_bebas: '🧭 Belum pasti? Atur bersama pemandu', al_mampir: '+ Singgah Bandar Bandung / Dago', al_mampir_s: 'Sehala dengan jalan pulang, tanpa caj tambahan.', al_dipilih: '{n} dipilih',
   al_bar_belum: 'Pilih kawasan dahulu', al_bar_tempat: 'Pilih tempat, atau atur bersama pemandu', al_bar_bebas: 'Laluan diatur bersama pemandu', al_bar_n: '{n} tempat dipilih',
   al_t2: 'Berapa orang?', al_pax: 'Penumpang', al_pax_s: 'termasuk kanak-kanak', al_mobil: 'Pilih kereta', al_mobil_s: 'Harga sekereta, 12 jam + pemandu. Sama walaupun banyak tempat.', al_pas: 'PALING SESUAI', al_muat: 'Selesa {n} orang · maks {m}', al_tak_muat: 'Tidak muat untuk {n} orang', al_orang: '{n} orang',
   al_t3: 'Bila dijemput?', al_tgl_lain: 'Tarikh lain', al_jam: 'Masa jemput', al_selesai: 'Tamat selewat-lewatnya {j} (12 jam).', al_jemput: 'Dijemput di mana?', al_jemput_ph: 'Nama hotel, stesen atau alamat', al_penuh: '{car} sudah penuh pada tarikh ini. Pilih tarikh lain atau tukar kereta.', al_ganti_mobil: 'Tukar kereta',
   al_t4: 'Hampir siap', al_nama: 'Nama', al_nama_ph: 'Nama penuh', al_wa: 'WhatsApp', al_wa_s: 'pengesahan & maklumat pemandu dihantar ke sini', al_lunas: 'Bayar penuh', al_lunas_s: 'sekali bayar', al_dp: 'Deposit {p}%', al_dp_s: 'baki tunai kepada pemandu', al_rute: 'Laluan', al_total: 'Jumlah',
-  al_bayar: 'Bayar {rp}', al_aman: 'Selamat melalui Midtrans · QRIS, e-dompet, pindahan', al_err_data: 'Isi nama dan nombor WhatsApp yang betul.', al_cta_t: 'Sedia untuk bertolak?', al_cta_s: 'Empat langkah ringkas: tempat, kereta, jadual, kemudian bayar.', al_cta_b: 'Mula tempah',
+  al_bayar: 'Bayar {rp}', al_aman: 'Selamat melalui Midtrans · QRIS, e-dompet, pindahan', al_err_data: 'Isi nama dan nombor WhatsApp yang betul.', al_cta_t: 'Sedia untuk bertolak?', al_cta_s: 'Tiga langkah ringkas: rancangan & kereta, jadual, kemudian bayar.', al_cta_b: 'Mula tempah',
   lk_1: 'Tempat', lk_2: 'Kereta', lk_3: 'Jadual', lk_4: 'Maklumat & bayar', lk_next: 'Seterusnya', lk_back: 'Kembali',
   lk_t1: 'Mahu ke mana sahaja?', lk_t2: 'Berapa orang, kereta apa?', lk_t3: 'Bila dan di mana dijemput?', lk_t4: 'Maklumat penempah & pembayaran',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
@@ -663,14 +665,15 @@ en: {
   ch_4a: 'Lunch', ch_4b: 'Your choice, or ask the driver for a recommendation.', ch_5b: 'Fresh milk and photos.', ch_6b: 'See Bandung from above on the way back.',
   ch_7a: 'Back at your hotel', ch_7b: 'Exactly 12 hours after pick-up.',
   ch_harga: '{mobil} for {n} people: <b>{x}</b>, including driver and fuel. Entrance tickets, tolls, and parking are paid along the way as charged.', ch_btn: 'Plan your own day',
-  al_judul: 'Book a day trip', al_langkah: 'Step {n} of 4', al_tutup: 'Close', al_t1: 'Where to?', al_s1: 'Pick one area for the day (12 hours).',
+  al_kicker: '12-hour day trip · car + driver', al_pesan: 'Book', al_bar_kosong: 'No places yet', al_terpilih: '✓ Selected', al_wajib: 'Required', al_err_tempat: 'Choose an area, then places or “plan with the driver”.', al_err_pax: 'Enter the number of passengers first.', al_err_mobil: 'Choose a car first.', al_err_jadwal: 'Choose a pickup date and time.', al_mobil_pilih: 'Choose a car…', al_geser: 'Swipe or tap to choose', al_t1b: 'Trip plan',
+  al_judul: 'Book a day trip', al_langkah: 'Step {n} of 3', al_tutup: 'Close', al_t1: 'Where to?', al_s1: 'Pick one area for the day (12 hours).',
   al_w_dago: 'Bandung City & Dago', al_a_lembang: 'North · cool air, family-friendly', al_a_ciwidey: 'South · crater & lakes', al_a_pangalengan: 'South · tea estates, rafting', al_a_dago: 'In town · food, shopping',
   al_tempat: 'Places in {w}', al_tempat_s: "This becomes the driver's route. 3–4 places is ideal.", al_bebas: '🧭 Not sure yet? Plan it with the driver', al_mampir: '+ Stop by Bandung City / Dago', al_mampir_s: 'On the way back, no extra charge.', al_dipilih: '{n} selected',
   al_bar_belum: 'Choose an area first', al_bar_tempat: 'Pick places, or plan with the driver', al_bar_bebas: 'Route planned with the driver', al_bar_n: '{n} places selected',
   al_t2: 'How many people?', al_pax: 'Passengers', al_pax_s: 'including children', al_mobil: 'Choose a car', al_mobil_s: 'Price per car, 12 hours with driver. Same price however many places.', al_pas: 'BEST FIT', al_muat: 'Comfy for {n} · max {m}', al_tak_muat: "Doesn't fit {n} people", al_orang: '{n} people',
   al_t3: 'When should we pick you up?', al_tgl_lain: 'Other date', al_jam: 'Pickup time', al_selesai: 'Ends by {j} at the latest (12 hours).', al_jemput: 'Pickup location', al_jemput_ph: 'Hotel, station or address', al_penuh: '{car} is fully booked on this date. Pick another date or change the car.', al_ganti_mobil: 'Change car',
   al_t4: 'Almost done', al_nama: 'Name', al_nama_ph: 'Full name', al_wa: 'WhatsApp', al_wa_s: 'confirmation & driver details are sent here', al_lunas: 'Pay in full', al_lunas_s: 'one payment', al_dp: 'Deposit {p}%', al_dp_s: 'rest in cash to the driver', al_rute: 'Route', al_total: 'Total',
-  al_bayar: 'Pay {rp}', al_aman: 'Secure via Midtrans · QRIS, e-wallet, bank transfer', al_err_data: 'Please enter your name and a valid WhatsApp number.', al_cta_t: 'Ready to go?', al_cta_s: 'Four quick steps: places, car, schedule, then pay.', al_cta_b: 'Start booking',
+  al_bayar: 'Pay {rp}', al_aman: 'Secure via Midtrans · QRIS, e-wallet, bank transfer', al_err_data: 'Please enter your name and a valid WhatsApp number.', al_cta_t: 'Ready to go?', al_cta_s: 'Three quick steps: plan & car, schedule, then pay.', al_cta_b: 'Start booking',
   lk_1: 'Places', lk_2: 'Car', lk_3: 'Schedule', lk_4: 'Details & pay', lk_next: 'Next', lk_back: 'Back',
   lk_t1: 'Where do you want to go?', lk_t2: 'How many people, which car?', lk_t3: 'When and where should we pick you up?', lk_t4: 'Your details & payment',
   gl_title: 'Trip Gallery', gl_sub: 'Real moments from trips with Tempera', gl_all: 'See all photos'
@@ -1250,13 +1253,13 @@ function renderDestBar(cbs){
   }
   const n=cbs.length, a=getSelectedArmada();
   const ml=document.getElementById('mobileStickyBar'), wa=document.getElementById('floatingWaBtn');
-  if(!n){ destBarOpen=false; bar.hidden=true; if(wa) wa.style.visibility=''; return; }
+  if(!n&&!a){ destBarOpen=false; bar.hidden=true; if(wa) wa.style.visibility=''; return; }
   bar.hidden=false;
   if(ml) ml.classList.add('hidden');   // satu bar saja yang tampil: bar ini sudah memuat armada + total
   const region=getRegionInfo(), cost=region.cost, base=a?a.price:0, total=base+cost;
-  bar.querySelector('#destBarT1').textContent=t('bar_text',{n})+(destBarOpen?' ▾':' ▴');
+  bar.querySelector('#destBarT1').textContent=(n?t('bar_text',{n}):t('al_bar_kosong'))+(destBarOpen?' ▾':' ▴');
   bar.querySelector('#destBarT2').textContent=a?(a.name+' · '+formatPrice(total)):(cost>0?t('sum_cross')+' '+formatPrice(cost):t('bar_hint'));
-  bar.querySelector('#destBarGo').textContent=a?t('bar_form'):t('bar_go');
+  bar.querySelector('#destBarGo').textContent=t('al_pesan');
   bar.querySelector('#destBarToggle').setAttribute('aria-expanded',String(destBarOpen));
   const panel=bar.querySelector('#destBarPanel');
   panel.hidden=!destBarOpen;
@@ -1455,7 +1458,11 @@ function getSelectedArmada(){const s=document.getElementById('calcUnit');if(!s||
 function selectUnitById(id){ const s=document.getElementById('calcUnit'); for(let i=0;i<s.options.length;i++){ if(s.options[i].dataset.id===id){ s.selectedIndex=i; return true; } } return false; }
 function selectUnitFromCard(id){
   if(PENUH.has(id)){ const u=ARMADA_DATA.find(x=>x.id===id); notify(t('av_card_full',{car:u?u.name:id})); document.getElementById('pesan').scrollIntoView({behavior:'smooth'}); return; }
-  selectUnitById(id); calculateLive(); checkCapacityLive(); bukaAlur();
+  selectUnitById(id); calculateLive(); checkCapacityLive(); tandaiMobilBeranda();   // masuk ke bar bawah; halaman pesan dibuka dari tombol Pesan
+}
+function tandaiMobilBeranda(){
+  const a=getSelectedArmada();
+  document.querySelectorAll('#armada-cards [data-unit]').forEach(b=>{ const on=!!a&&b.dataset.unit===a.id; b.textContent=on?t('al_terpilih'):t('tbl_pick'); b.classList.toggle('unit-on',on); });
 }
 function cheapestUnit(){ return ARMADA_DATA.reduce((a,u)=>(!a||u.price<a.price)?u:a,null); }
 
@@ -1494,6 +1501,7 @@ function renderArmada(){
     opt.textContent=t('opt_label',{name:unit.name,price:formatPrice(unit.price)}); sel.appendChild(opt);
   });
   setTimeout(initInnerArmadaSliders,200);
+  tandaiMobilBeranda();
 }
 document.addEventListener('click',(e)=>{ const b=e.target.closest('[data-unit]'); if(b) selectUnitFromCard(b.dataset.unit); });
 

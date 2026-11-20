@@ -34,7 +34,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <!-- ===================== [02] CSS & LIBRARY ===================== -->
-<link rel="stylesheet" href="css/main.css?v=20261120a1">
+<link rel="stylesheet" href="css/main.css?v=20261120b1">
 <link rel="stylesheet" href="css/driver.css">
 <!-- Tailwind: CSS statis (dibangun dari alat/tailwind.config.js), bukan CDN -->
 <link rel="stylesheet" href="css/tailwind.css?v=20261106b">
@@ -128,12 +128,6 @@
   </div>
 </header>
 
-<!-- DUA PINTU (desain v2, 20 Nov 2026): wisata 12 jam & bandara. Harga "mulai" diisi main.js (renderPintu) dari data mobil & pengaturan bandara. -->
-<nav class="pintu" aria-label="Pilih layanan">
-  <a class="pintu-kartu" href="#destinasi"><b data-i18n="door_w_t">Wisata seharian</b><small data-i18n="door_w_s">12 jam · 1 wilayah</small><span class="pintu-harga" id="pintuWisata"></span></a>
-  <a class="pintu-kartu" href="bandara"><b data-i18n="door_b_t">Bandara Soetta</b><small data-i18n="door_b_s">Antar / jemput, tol sudah dihitung</small><span class="pintu-harga" id="pintuBandara"></span></a>
-</nav>
-<p class="pintu-luar"><span data-i18n="door_luar">Mau ke Garut, Jakarta, atau menginap?</span> <a href="#tripcustom" data-i18n="door_luar_a">Lihat pilihan lain</a></p>
 
 <!-- CARA PESAN + PILIH DESTINASI (kartu dibuat main.js: renderDestinasi). Kotak centang destinasi di formulir tetap ada tetapi tersembunyi (#oldPicker): itu penyimpan data. -->
 <style>
@@ -167,25 +161,10 @@
   #destBarGo{flex:none;padding:12px 16px;border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:12px;cursor:pointer}
   @media(min-width:1024px){#destBar{left:50%;right:auto;transform:translateX(-50%);width:420px}}
 </style>
-<section id="carapesan" class="contoh-hari"><div class="max-w-3xl mx-auto px-5">
-  <p class="ch-kicker" data-i18n="ch_k">Contoh satu hari</p>
-  <h2 class="ch-judul" data-i18n="ch_t">Sabtu di Lembang, dijemput dari hotel</h2>
-  <p class="ch-lead" data-i18n="ch_p">Lembang padat tiap akhir pekan, jadi enaknya berangkat pagi. Urutannya kamu atur sendiri bareng driver lewat WhatsApp.</p>
-  <ol class="ch-garis">
-    <li><time>07.00</time><div><b data-i18n="ch_1a">Dijemput di hotel</b><small data-i18n="ch_1b">Driver kabari lewat WA begitu sampai di lobi.</small></div></li>
-    <li><time>08.15</time><div><b>Tangkuban Perahu</b><small data-i18n="ch_2b">Datang pagi biar belum terlalu ramai.</small></div></li>
-    <li><time>10.30</time><div><b>Orchid Forest Cikole</b><small data-i18n="ch_3b">Hutan pinus dan jembatan kayu, enak buat jalan santai.</small></div></li>
-    <li><time>12.30</time><div><b data-i18n="ch_4a">Makan siang</b><small data-i18n="ch_4b">Pilih sendiri, atau minta saran tempat ke driver.</small></div></li>
-    <li><time>14.00</time><div><b>Farmhouse Susu Lembang</b><small data-i18n="ch_5b">Susu segar dan foto-foto.</small></div></li>
-    <li><time>16.30</time><div><b>Punclut</b><small data-i18n="ch_6b">Lihat Bandung dari atas sambil jalan pulang.</small></div></li>
-    <li><time>19.00</time><div><b data-i18n="ch_7a">Kembali ke hotel</b><small data-i18n="ch_7b">Pas 12 jam dari penjemputan.</small></div></li>
-  </ol>
-  <p class="ch-harga" id="chHarga"></p>
-  <a class="ch-tombol" href="#destinasi" data-i18n="ch_btn">Susun hari versimu</a>
-</div></section>
-
-<section id="destinasi" class="py-24 theme-section border-t" style="border-color:var(--border-soft)"><div class="max-w-7xl mx-auto px-4">
+<!-- PALING ATAS (20 Nov 2026, permintaan pemilik): Wisata 12 jam (kartu wilayah) lalu Bandara / Open Trip / Luar Kota -->
+<section id="destinasi" class="theme-section" style="padding:56px 0 40px"><div class="max-w-7xl mx-auto px-4">
 <div class="text-center max-w-2xl mx-auto mb-12">
+  <p class="wis-kicker"><span data-i18n="al_kicker">Wisata 12 jam · mobil + driver</span> <span class="pintu-harga" id="pintuWisata"></span></p>
   <h2 class="text-3xl font-serif sm:text-4xl mb-4 sec-judul" style="color:var(--accent)" data-i18n="dest_title">Pilih Destinasi</h2>
   <div class="w-16 h-[2px] mx-auto mt-6" style="background:var(--accent)"></div>
   <p class="text-[12px] mt-3 font-semibold" style="color:var(--text-muted)" data-i18n="dest_sub">Ketuk tempat yang ingin dikunjungi, boleh dari beberapa wilayah</p>
@@ -200,35 +179,8 @@
 <p class="text-[12px] mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-secondary)"><span data-i18n="gd_label">Panduan rute &amp; tempat wisata:</span> <a href="lembang" class="underline underline-offset-4">Lembang</a><a href="ciwidey" class="underline underline-offset-4" data-i18n="gd_ciw">Ciwidey &amp; Kawah Putih</a><a href="pangalengan" class="underline underline-offset-4">Pangalengan</a><a href="kota-bandung" class="underline underline-offset-4" data-i18n="gd_kota">Kota Bandung &amp; Dago</a><a href="blog/" class="underline underline-offset-4">Blog</a></p>
 </div></section>
 
-<!-- ARMADA -->
-<section id="armada" class="py-24 theme-section-alt border-t relative overflow-hidden" style="border-color:var(--border-soft)">
-<div class="max-w-7xl mx-auto px-4 relative">
-  <div class="text-center mb-10">
-    <h2 class="text-3xl md:text-[42px] font-serif sec-judul" style="color:var(--accent)" data-i18n="fleet_title">Pilihan Mobil + Driver</h2>
-    <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
-    <p class="inline-block mt-6 border rounded-full px-4 py-2 text-[12px] font-semibold" style="background:var(--bg-card);border-color:var(--border-color);color:var(--text-primary)" data-i18n-html="fleet_note"><span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.</p>
-  </div>
-  <p class="fleet-bag" data-i18n="fleet_bag">Jumlah penumpang di kartu untuk bagasi secukupnya. Kalau bawa koper banyak, kursi dikurangi (van seperti Hiace dan Elf sekitar 4 kursi). Tulis jumlah koper saat pesan, admin akan mengonfirmasi.</p>
-  <div class="flex items-center gap-3">
-    <button type="button" class="slider-arrow hidden sm:flex" data-slide="armada-cards" data-dir="-1" data-i18n-aria="aria_left" aria-label="Geser ke kiri">‹</button>
-    <div id="armada-cards" style="flex:1"></div>
-    <button type="button" class="slider-arrow hidden sm:flex" data-slide="armada-cards" data-dir="1" data-i18n-aria="aria_right" aria-label="Geser ke kanan">›</button>
-  </div>
-  <div id="armadaTabel" class="mt-16"><div class="overflow-hidden rounded-[20px] border" style="border-color:var(--border-color);background:var(--bg-card)"><div class="overflow-x-auto"><table class="w-full text-left min-w-[760px]">
-    <thead><tr style="background:var(--bg-section-alt)"><th class="py-4 px-6 text-[10px] uppercase" data-i18n="th_fleet">Mobil</th><th class="py-4 px-6 text-[10px] uppercase text-center" data-i18n="th_cap">Nyaman / Maks</th><th class="py-4 px-6 text-[10px] uppercase" data-i18n="th_bag">Bagasi</th><th class="py-4 px-6 text-[10px] uppercase text-right" data-i18n="th_price">Harga 12 Jam</th><th class="py-4 px-6 text-[10px] uppercase text-center" data-i18n="th_act">Aksi</th></tr></thead>
-    <tbody id="armada-harga-body" class="divide-y text-sm"></tbody>
-  </table></div></div></div>
-</div>
-</section>
-
-<!-- JEDA FOTO: satu foto lebar + satu kalimat -->
-<section class="photo-break" aria-label="Kawah Putih">
-  <img src="images/kawah_putih_lebar.webp" alt="Kawah Putih Ciwidey, salah satu tujuan sewa mobil Bandung" loading="lazy" decoding="async">
-  <p data-i18n="pb_text">Nikmati Bandungnya. Urusan jalan, serahkan ke driver kami.</p>
-</section>
-
 <!-- BANDARA, OPEN TRIP & LUAR KOTA (pengganti Trip Custom, 6 Nov 2026). id "tripcustom" dipertahankan untuk tautan lama & goTripCustom(). -->
-<section id="tripcustom" class="py-24 theme-section border-t" style="border-color:var(--border-soft)">
+<section id="tripcustom" class="theme-section" style="padding:16px 0 80px">
 <div class="max-w-6xl mx-auto px-4">
   <div class="text-center max-w-2xl mx-auto mb-12">
     <h2 class="text-3xl md:text-[38px] font-serif sec-judul" style="color:var(--accent)" data-i18n="tc_title">Bandara, Open Trip &amp; Luar Kota</h2>
@@ -267,9 +219,55 @@
 </div>
 </section>
 
+<section id="carapesan" class="contoh-hari"><div class="max-w-3xl mx-auto px-5">
+  <p class="ch-kicker" data-i18n="ch_k">Contoh satu hari</p>
+  <h2 class="ch-judul" data-i18n="ch_t">Sabtu di Lembang, dijemput dari hotel</h2>
+  <p class="ch-lead" data-i18n="ch_p">Lembang padat tiap akhir pekan, jadi enaknya berangkat pagi. Urutannya kamu atur sendiri bareng driver lewat WhatsApp.</p>
+  <ol class="ch-garis">
+    <li><time>07.00</time><div><b data-i18n="ch_1a">Dijemput di hotel</b><small data-i18n="ch_1b">Driver kabari lewat WA begitu sampai di lobi.</small></div></li>
+    <li><time>08.15</time><div><b>Tangkuban Perahu</b><small data-i18n="ch_2b">Datang pagi biar belum terlalu ramai.</small></div></li>
+    <li><time>10.30</time><div><b>Orchid Forest Cikole</b><small data-i18n="ch_3b">Hutan pinus dan jembatan kayu, enak buat jalan santai.</small></div></li>
+    <li><time>12.30</time><div><b data-i18n="ch_4a">Makan siang</b><small data-i18n="ch_4b">Pilih sendiri, atau minta saran tempat ke driver.</small></div></li>
+    <li><time>14.00</time><div><b>Farmhouse Susu Lembang</b><small data-i18n="ch_5b">Susu segar dan foto-foto.</small></div></li>
+    <li><time>16.30</time><div><b>Punclut</b><small data-i18n="ch_6b">Lihat Bandung dari atas sambil jalan pulang.</small></div></li>
+    <li><time>19.00</time><div><b data-i18n="ch_7a">Kembali ke hotel</b><small data-i18n="ch_7b">Pas 12 jam dari penjemputan.</small></div></li>
+  </ol>
+  <p class="ch-harga" id="chHarga"></p>
+  <a class="ch-tombol" href="#destinasi" data-i18n="ch_btn">Susun hari versimu</a>
+</div></section>
+
+
+<!-- ARMADA -->
+<section id="armada" class="py-24 theme-section-alt border-t relative overflow-hidden" style="border-color:var(--border-soft)">
+<div class="max-w-7xl mx-auto px-4 relative">
+  <div class="text-center mb-10">
+    <h2 class="text-3xl md:text-[42px] font-serif sec-judul" style="color:var(--accent)" data-i18n="fleet_title">Pilihan Mobil + Driver</h2>
+    <div class="w-16 h-[2px] mx-auto mt-5" style="background:var(--accent)"></div>
+    <p class="inline-block mt-6 border rounded-full px-4 py-2 text-[12px] font-semibold" style="background:var(--bg-card);border-color:var(--border-color);color:var(--text-primary)" data-i18n-html="fleet_note"><span class="ic ic-clock"></span>Semua harga di bawah untuk <b>sewa 12 jam</b> (mobil + driver + BBM). Contoh: jemput 07.00, selesai paling lambat 19.00.</p>
+  </div>
+  <p class="fleet-bag" data-i18n="fleet_bag">Jumlah penumpang di kartu untuk bagasi secukupnya. Kalau bawa koper banyak, kursi dikurangi (van seperti Hiace dan Elf sekitar 4 kursi). Tulis jumlah koper saat pesan, admin akan mengonfirmasi.</p>
+  <div class="flex items-center gap-3">
+    <button type="button" class="slider-arrow hidden sm:flex" data-slide="armada-cards" data-dir="-1" data-i18n-aria="aria_left" aria-label="Geser ke kiri">‹</button>
+    <div id="armada-cards" style="flex:1"></div>
+    <button type="button" class="slider-arrow hidden sm:flex" data-slide="armada-cards" data-dir="1" data-i18n-aria="aria_right" aria-label="Geser ke kanan">›</button>
+  </div>
+  <div id="armadaTabel" class="mt-16"><div class="overflow-hidden rounded-[20px] border" style="border-color:var(--border-color);background:var(--bg-card)"><div class="overflow-x-auto"><table class="w-full text-left min-w-[760px]">
+    <thead><tr style="background:var(--bg-section-alt)"><th class="py-4 px-6 text-[10px] uppercase" data-i18n="th_fleet">Mobil</th><th class="py-4 px-6 text-[10px] uppercase text-center" data-i18n="th_cap">Nyaman / Maks</th><th class="py-4 px-6 text-[10px] uppercase" data-i18n="th_bag">Bagasi</th><th class="py-4 px-6 text-[10px] uppercase text-right" data-i18n="th_price">Harga 12 Jam</th><th class="py-4 px-6 text-[10px] uppercase text-center" data-i18n="th_act">Aksi</th></tr></thead>
+    <tbody id="armada-harga-body" class="divide-y text-sm"></tbody>
+  </table></div></div></div>
+</div>
+</section>
+
+<!-- JEDA FOTO: satu foto lebar + satu kalimat -->
+<section class="photo-break" aria-label="Kawah Putih">
+  <img src="images/kawah_putih_lebar.webp" alt="Kawah Putih Ciwidey, salah satu tujuan sewa mobil Bandung" loading="lazy" decoding="async">
+  <p data-i18n="pb_text">Nikmati Bandungnya. Urusan jalan, serahkan ke driver kami.</p>
+</section>
+
+
 <!-- FORM BOOKING -->
 <section id="pesan" class="py-24 theme-section border-t" style="border-color:var(--border-soft)"><div class="max-w-6xl mx-auto px-4">
-<div class="al-cta"><h2 class="sec-judul" data-i18n="al_cta_t">Siap berangkat?</h2><p data-i18n="al_cta_s">Empat langkah singkat: tempat, mobil, jadwal, lalu bayar.</p><button type="button" data-buka-alur data-i18n="al_cta_b">Mulai pesan</button><small data-i18n="al_aman">Aman lewat Midtrans · QRIS, e-wallet, transfer</small></div>
+<div class="al-cta"><h2 class="sec-judul" data-i18n="al_cta_t">Siap berangkat?</h2><p data-i18n="al_cta_s">Tiga langkah singkat: rencana &amp; mobil, jadwal, lalu bayar.</p><button type="button" data-buka-alur data-i18n="al_cta_b">Mulai pesan</button><small data-i18n="al_aman">Aman lewat Midtrans · QRIS, e-wallet, transfer</small></div>
 <!-- Formulir lama tetap ada TERSEMBUNYI: penyimpan data untuk alur pesan (js/alur.js) -->
 <div id="formLama" style="display:none">
 <form id="travelForm" novalidate onsubmit="handleFormSubmitMidtrans(event)" class="border p-6 md:p-10 rounded-3xl grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-10 shadow-lg" style="background:var(--bg-card);border-color:var(--border-color)">
@@ -472,7 +470,7 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261120a1"></script>
-<script src="js/alur.js?v=20261120a1"></script>
+<script src="js/main.js?v=20261120b1"></script>
+<script src="js/alur.js?v=20261120b1"></script>
 </body>
 </html>
