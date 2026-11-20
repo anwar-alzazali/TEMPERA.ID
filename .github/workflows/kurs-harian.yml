@@ -1,0 +1,23 @@
+# .github/workflows/kurs-harian.yml
+# Perbarui kurs perkiraan (RM / S$ / US$) sekali sehari lewat fungsi Supabase kurs-harian (Frankfurter/ECB, gratis).
+# Tanpa rahasia: fungsi hanya menulis app_settings kurs_* dan menolak mengambil ulang bila data < 6 jam.
+name: Kurs Harian
+
+on:
+  schedule:
+    - cron: '17 23 * * *'   # 23.17 UTC = 06.17 WIB (setelah kurs ECB hari sebelumnya terbit)
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  kurs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Panggil kurs-harian
+        run: |
+          hasil=$(curl -sS -m 60 -X POST https://wjmotidelqgcyyujacud.supabase.co/functions/v1/kurs-harian)
+          echo "$hasil"
+          echo "$hasil" | grep -q '"ok":true'

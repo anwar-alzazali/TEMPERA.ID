@@ -216,6 +216,7 @@ id: {
   dh_title: 'Daftar Harga Sewa Mobil + Driver', dh_lead: 'Harga dalam Rupiah (IDR) per hari, pemakaian 12 jam, sudah termasuk mobil, driver, BBM, dan air mineral.', dh_th1: 'Mobil', dh_th2: 'Harga per hari', dh_maks: 'maks {n} orang',
   dh_exc: 'Tidak termasuk: tol, parkir, dan makan driver.', dh_pay: 'Pembayaran: DP atau lunas, lewat transfer bank atau QRIS. Biaya tambahan untuk perjalanan lintas wilayah dihitung otomatis di formulir pemesanan.',
   ft_nib: 'Usaha terdaftar di OSS · NIB 1710260026226', ft_mitra: 'Masuk Mitra', fl_harga: 'Daftar Harga', fl_bandara: 'Antar Jemput Bandara', fl_syarat: 'Syarat & Ketentuan', fl_privasi: 'Kebijakan Privasi', fl_kontak: 'Kontak',
+  mu_ganti: 'Ketuk untuk ganti mata uang', mu_bayar_idr: '· perkiraan, dibayar dalam Rupiah',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 ms: {
@@ -421,6 +422,7 @@ ms: {
   dh_title: 'Senarai Harga Sewa Kereta + Pemandu', dh_lead: 'Harga dalam Rupiah (IDR) sehari, penggunaan 12 jam, termasuk kereta, pemandu, petrol dan air mineral.', dh_th1: 'Kereta', dh_th2: 'Harga sehari', dh_maks: 'maks {n} orang',
   dh_exc: 'Tidak termasuk: tol, parkir dan makan pemandu.', dh_pay: 'Pembayaran: deposit atau penuh, melalui pindahan bank atau QRIS. Caj tambahan untuk perjalanan merentas kawasan dikira secara automatik dalam borang tempahan.',
   ft_nib: 'Perniagaan berdaftar di OSS · NIB 1710260026226', ft_mitra: 'Log masuk Rakan Kongsi', fl_harga: 'Senarai Harga', fl_bandara: 'Transfer Lapangan Terbang', fl_syarat: 'Terma & Syarat', fl_privasi: 'Dasar Privasi', fl_kontak: 'Hubungi',
+  mu_ganti: 'Ketik untuk tukar mata wang', mu_bayar_idr: '· anggaran, dibayar dalam Rupiah',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 en: {
@@ -625,6 +627,7 @@ en: {
   dh_title: 'Car & Driver Rental Prices', dh_lead: 'Prices in Indonesian Rupiah (IDR) per day, 12 hours of use, including car, driver, fuel, and drinking water.', dh_th1: 'Car', dh_th2: 'Price per day', dh_maks: 'max {n} people',
   dh_exc: 'Not included: tolls, parking, and the driver\'s meals.', dh_pay: 'Payment: deposit or in full, by bank transfer, QRIS, e-wallet, or card. Extra fees for cross-area trips are calculated automatically in the booking form.',
   ft_nib: 'Registered business (OSS) · NIB 1710260026226', ft_mitra: 'Partner Login', fl_harga: 'Price List', fl_bandara: 'Airport Transfer', fl_syarat: 'Terms & Conditions', fl_privasi: 'Privacy Policy', fl_kontak: 'Contact',
+  mu_ganti: 'Tap to change currency', mu_bayar_idr: '· estimate, charged in Indonesian Rupiah',
   gl_title: 'Trip Gallery', gl_sub: 'Real moments from trips with Tempera', gl_all: 'See all photos'
 }
 };
@@ -708,6 +711,40 @@ function imgSrc(img){ return /^https?:\/\//i.test(img) ? img : 'images/'+img; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function safeUrl(u){ u=String(u||'').trim(); return (/^(https?:\/\/|\/|#)/i.test(u) || /^[a-z0-9_.\-\/?=&#%]+$/i.test(u)) ? u : ''; }
 function formatPrice(p){ return 'Rp '+Number(p||0).toLocaleString('id-ID'); }
+
+/* ---------- Perkiraan mata uang asing (≈ RM / S$ / US$) — hanya bahasa ms/en; pembayaran tetap Rupiah.
+   Kurs dari app_settings kurs_* (fungsi kurs-harian, Frankfurter/ECB). Mata uang ditebak dari zona waktu/wilayah HP,
+   bisa diganti pelanggan dengan mengetuk angkanya (tersimpan di tempera_mu). ---------- */
+const BADGE_TR={en:{'Ekonomis':'Economy','Paling Laris':'Most Popular','MPV Nyaman':'Comfortable MPV','Best Seller':'Best Seller','Premium':'Premium','Rombongan':'Groups','Bus Mini':'Mini Bus'},
+  ms:{'Ekonomis':'Ekonomi','MPV Nyaman':'MPV Selesa','Bus Mini':'Bas Mini'}};
+function badgeTampil(b){ const x=String(b||'').replace(/\s*[•·-]\s*\d+\s*(Nyaman|Selesa)\s*$/i,'').trim(); const m=BADGE_TR[currentLang]; return (m&&m[x])||x; }
+const MU={MYR:{s:'RM',k:'kurs_myr'},SGD:{s:'S$',k:'kurs_sgd'},USD:{s:'US$',k:'kurs_usd'}};
+function muPilihan(){
+  try{ const s=localStorage.getItem('tempera_mu'); if(MU[s]) return s; }catch(e){}
+  let tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
+  const nl=(navigator.languages||[navigator.language||'']).join(',');
+  if(/Kuala_Lumpur|Kuching/.test(tz)||/-MY\b/i.test(nl)) return 'MYR';
+  if(/Singapore/.test(tz)||/-SG\b/i.test(nl)) return 'SGD';
+  return currentLang==='ms'?'MYR':'USD';
+}
+function kursTeks(rp){
+  if(currentLang==='id'||!(rp>0)) return '';
+  const c=muPilihan(), k=Number(SETTINGS[MU[c].k])||0; if(!k) return '';
+  return '≈ '+MU[c].s+' '+Math.round(rp/k).toLocaleString('en-US');
+}
+function kursHtml(rp){ const s=kursTeks(rp); return s?`<button type="button" class="kurs-perk" onclick="gantiMU(event)" title="${esc(t('mu_ganti'))}">${esc(s)}</button>`:''; }
+function gantiMU(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  const urut=['MYR','SGD','USD'], n=urut[(urut.indexOf(muPilihan())+1)%urut.length];
+  try{ localStorage.setItem('tempera_mu',n); }catch(x){}
+  refreshDynamic();
+}
+function isiKursTotal(total){
+  const el=document.getElementById('resKurs'); if(!el) return;
+  const s=kursTeks(total); el.hidden=!s;
+  el.innerHTML=s?`<button type="button" class="kurs-perk" onclick="gantiMU(event)" title="${esc(t('mu_ganti'))}">${esc(s)}</button> <span>${esc(t('mu_bayar_idr'))}</span>`:'';
+}
+
 
 async function sbGet(path){
   const r=await fetch(`${SB_URL}/rest/v1/${path}`,{headers:{apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`}});
@@ -1358,7 +1395,7 @@ function renderArmada(){
     const imgs=(unit.images&&unit.images.length)?unit.images:[''];
     const cap=t('cap_comfort',{n:unit.capacityNum});
     const card=document.createElement('div'); card.className='armada-card-uniform rounded-[24px] overflow-hidden flex flex-col h-full theme-card border';
-    card.innerHTML=`<div class="h-48 bg-white relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${imgs.map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}">${img?`<img src="${esc(imgSrc(img))}" loading="lazy" alt="Sewa ${esc(unit.name)} Bandung" class="w-full h-full object-contain p-2">`:''}</div>`).join('')}</div>${unit.badge?`<div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:var(--on-accent)"><span class="text-[9px] font-bold uppercase">${esc(String(unit.badge).replace(/\s*[•·-]\s*\d+\s*(Nyaman|Selesa)\s*$/i,''))}</span></div>`:''}<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${imgs.length>1?imgs.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join(''):''}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(unit.name)}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${esc(t('card_cap',{cap,max:unit.capacityMax}))}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li><span class="ic ic-people"></span><b>${esc(t('card_max',{max:unit.capacityMax}))}</b></li></ul><p class="armada-harga"><b>${esc(formatPrice(unit.price))}</b><small> / ${esc(t('card_12'))}</small></p><button type="button" data-unit="${esc(unit.id)}" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:var(--on-accent)">${esc(t('tbl_pick'))}</button></div>`;
+    card.innerHTML=`<div class="h-48 bg-white relative overflow-hidden armada-img-container"><div class="armada-img-track relative w-full h-full">${imgs.map((img,i)=>`<div class="armada-img-slide ${i===0?'active':''}">${img?`<img src="${esc(imgSrc(img))}" loading="lazy" alt="Sewa ${esc(unit.name)} Bandung" class="w-full h-full object-contain p-2">`:''}</div>`).join('')}</div>${unit.badge?`<div class="absolute top-3 left-3 px-3 py-1 rounded-full z-10" style="background:var(--accent);color:var(--on-accent)"><span class="text-[9px] font-bold uppercase">${esc(badgeTampil(unit.badge))}</span></div>`:''}<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">${imgs.length>1?imgs.map((_,i)=>`<div class="w-1.5 h-1.5 rounded-full armada-img-dot" style="background:${i===0?'var(--accent)':'var(--border-soft)'}"></div>`).join(''):''}</div></div><div class="p-6 flex flex-col flex-grow" style="background:var(--bg-card)"><h3 class="text-[15px] font-bold" style="color:var(--text-primary)">${esc(unit.name)}</h3><p class="text-[10px] uppercase mb-3 font-bold" style="color:var(--accent)">${esc(t('card_cap',{cap,max:unit.capacityMax}))}</p><ul class="text-[11px] space-y-2.5 mb-6 border-y py-4 flex-grow" style="color:var(--text-secondary);border-color:var(--border-soft)"><li><span class="ic ic-people"></span><b>${esc(t('card_max',{max:unit.capacityMax}))}</b></li></ul><p class="armada-harga"><b>${esc(formatPrice(unit.price))}</b><small> / ${esc(t('card_12'))}</small>${kursHtml(unit.price)}</p><button type="button" data-unit="${esc(unit.id)}" class="block text-center w-full font-bold py-3 rounded-full text-[10px] mt-auto" style="background:var(--accent);color:var(--on-accent)">${esc(t('tbl_pick'))}</button></div>`;
     cards.appendChild(card);
     const tr=document.createElement('tr');
     tr.innerHTML=`<td class="py-5 px-6 font-bold text-[13px]">${esc(unit.name)}</td><td class="py-5 px-6 text-center"><b>${esc(unit.capacityNum)}</b> / ${esc(unit.capacityMax)}</td><td class="py-5 px-6 text-xs">${esc(unit.baggage)}</td><td class="py-5 px-6 font-bold text-right" style="color:var(--accent)">${formatPrice(unit.price)}</td><td class="py-5 px-6 text-center"><button type="button" data-unit="${esc(unit.id)}" class="border text-[10px] px-4 py-1.5 rounded-full" style="background:var(--bg-card);border-color:var(--border-color)">${esc(t('tbl_pick'))}</button></td>`;
@@ -1419,12 +1456,12 @@ function calculateLive(){
   if(!hasArmada){
     setTxt('resArmadaName',t('not_chosen')); setTxt('resArmadaCap',t('choose_above')); setTxt('resBasePrice','Rp 0');
     setTxt('resRegionCost','Rp 0'); setTxt('resRegionLabel',''); tweenRp('resTotalPrice',0);
-    setTxt('mobileArmadaName',t('not_chosen')); tweenRp('mobileTotalPrice',0);
+    setTxt('mobileArmadaName',t('not_chosen')); tweenRp('mobileTotalPrice',0); isiKursTotal(0);
     document.getElementById('mobileStickyBar')?.classList.add('hidden');
   } else {
     setTxt('resArmadaName',a.name); setTxt('resArmadaCap',t('cap_line',{cap:a.cap,max:a.capmax}));
     setTxt('resBasePrice',formatPrice(base)); setTxt('resRegionCost',formatPrice(cost)); setTxt('resRegionLabel',labelCost);
-    tweenRp('resTotalPrice',base+cost); setTxt('mobileArmadaName',a.name); tweenRp('mobileTotalPrice',base+cost);
+    tweenRp('resTotalPrice',base+cost); setTxt('mobileArmadaName',a.name); tweenRp('mobileTotalPrice',base+cost); isiKursTotal(base+cost);
     document.getElementById('mobileStickyBar')?.classList.remove('hidden');
   }
   updatePaymentPreview(hasArmada?(base+cost):0);
@@ -1695,7 +1732,7 @@ function askConfirm(message,okText,cancelText){ return temperaDialog({message,ok
 function renderDaftarHarga(){
   const tb=document.getElementById('dh-body'); if(!tb||!Array.isArray(ARMADA_DATA)||!ARMADA_DATA.length) return;
   const maks=t('dh_maks');
-  tb.innerHTML=ARMADA_DATA.map(u=>`<tr><td>${esc(u.name)}${u.capacityMax?` <small>${esc(maks.replace('{n}',u.capacityMax))}</small>`:''}</td><td>${formatPrice(u.price)}</td></tr>`).join('');
+  tb.innerHTML=ARMADA_DATA.map(u=>`<tr><td>${esc(u.name)}${u.capacityMax?` <small>${esc(maks.replace('{n}',u.capacityMax))}</small>`:''}</td><td>${formatPrice(u.price)}${kursTeks(u.price)?`<small>${esc(kursTeks(u.price))}</small>`:''}</td></tr>`).join('');
 }
 function refreshDynamic(){
   const sel=document.getElementById('calcUnit');

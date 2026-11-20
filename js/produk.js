@@ -94,5 +94,33 @@ const P = (() => {
   function hariIni() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
   function tglPanjang(iso) { const d = new Date(iso + 'T00:00:00+07:00'); return d.toLocaleDateString(({ ms: 'ms-MY', en: 'en-GB' })[lang] || 'id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' }); }
 
-  return { $, $$, esc, rp, normWA, t, kamus, get lang() { return lang; }, waLink, getRef, setelan, rpc, fungsi, muatSnap, lacak, pesan, bersih, bayar, hariIni, tglPanjang, terapkan };
+
+  /* ---- perkiraan mata uang asing (≈ RM / S$ / US$), hanya bahasa ms/en; bayar tetap Rupiah. Sama dengan beranda (tempera_mu). ---- */
+  const MU = { MYR: { s: 'RM', k: 'kurs_myr' }, SGD: { s: 'S$', k: 'kurs_sgd' }, USD: { s: 'US$', k: 'kurs_usd' } };
+  const MU_TEKS = { id: ['Ketuk untuk ganti mata uang', 'perkiraan, dibayar dalam Rupiah'], ms: ['Ketik untuk tukar mata wang', 'anggaran, dibayar dalam Rupiah'], en: ['Tap to change currency', 'estimate, charged in Indonesian Rupiah'] };
+  let KURS = {};
+  function muPilihan() {
+    try { const s = localStorage.getItem('tempera_mu'); if (MU[s]) return s; } catch (e) {}
+    let tz = ''; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    const nl = (navigator.languages || [navigator.language || '']).join(',');
+    if (/Kuala_Lumpur|Kuching/.test(tz) || /-MY\b/i.test(nl)) return 'MYR';
+    if (/Singapore/.test(tz) || /-SG\b/i.test(nl)) return 'SGD';
+    return lang === 'ms' ? 'MYR' : 'USD';
+  }
+  function kursTeks(v) {
+    if (lang === 'id' || !(v > 0)) return '';
+    const c = muPilihan(), k = Number(KURS[MU[c].k]) || 0; if (!k) return '';
+    return '≈ ' + MU[c].s + ' ' + Math.round(v / k).toLocaleString('en-US');
+  }
+  const kursHtml = (v, catatan) => { const x = kursTeks(v); if (!x) return ''; const m = MU_TEKS[lang] || MU_TEKS.en; return `<button type="button" class="kurs-perk" title="${esc(m[0])}">${esc(x)}</button>` + (catatan ? ` <span class="kurs-cat">· ${esc(m[1])}</span>` : ''); };
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest && e.target.closest('.kurs-perk'); if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    const urut = ['MYR', 'SGD', 'USD']; const n = urut[(urut.indexOf(muPilihan()) + 1) % urut.length];
+    try { localStorage.setItem('tempera_mu', n); } catch (x) {}
+    document.dispatchEvent(new Event('p-lang'));
+  }, true);
+  setTimeout(() => { setelan(['kurs_myr', 'kurs_sgd', 'kurs_usd']).then((o) => { KURS = o; document.dispatchEvent(new Event('p-lang')); }).catch(() => {}); }, 0);
+
+  return { $, $$, esc, rp, normWA, t, kamus, kursTeks, kursHtml, get lang() { return lang; }, waLink, getRef, setelan, rpc, fungsi, muatSnap, lacak, pesan, bersih, bayar, hariIni, tglPanjang, terapkan };
 })();

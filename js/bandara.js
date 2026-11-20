@@ -125,7 +125,7 @@
   }
   function tampilHarga() {
     URUT.forEach((k) => {
-      $$(`[data-k="harga_${k}"]`).forEach((el) => { el.textContent = rp(S.harga[k]); });
+      $$(`[data-k="harga_${k}"]`).forEach((el) => { el.innerHTML = P.esc(rp(S.harga[k])) + P.kursHtml(S.harga[k]); });
       $$(`[data-k="seg_${k}"]`).forEach((el) => { el.textContent = rp(S.harga[k]); });
       $$(`[data-k="muat_${k}"]`).forEach((el) => { el.textContent = t('muat', { o: S.orang[k], k: S.koper[k] }); });
     });
@@ -164,6 +164,7 @@
     if (h.luar) s += `<div class="br"><span>${t('r_tambah_luar')}</span><span>${rp(h.luar)}</span></div>`;
     if (h.dini) s += `<div class="br"><span>${t('r_tambah_dini')}</span><span>${rp(h.dini)}</span></div>`;
     s += `<div class="br total"><span>${t('r_total')}</span><b>${rp(h.total)}</b></div>`;
+    if (P.kursTeks(h.total)) s += `<div class="br kurs"><span></span><span>${P.kursHtml(h.total, true)}</span></div>`;
     if (h.dp != null) s += `<div class="br"><span>${t('r_bayar_dp')}</span><span><b>${rp(h.dp)}</b></span></div><div class="br"><span>${t('r_sisa')}</span><span>${rp(h.total - h.dp)}</span></div>`;
     $('#ringkas').innerHTML = s;
     $$('#kartuKelas .pcard').forEach((c) => c.classList.toggle('on', c.dataset.kelas === h.k));

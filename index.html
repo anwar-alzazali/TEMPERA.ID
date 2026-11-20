@@ -57,6 +57,11 @@
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-M9NQ9R4HZH');</script>
 <!-- Meta Pixel (Tahap 2, 6 Nov 2026). Hanya di halaman publik, sama seperti GA4. Event lain dikirim lewat lacak() di js/main.js. -->
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1831256764539710');fbq('track','PageView');</script>
+<style>
+.kurs-perk{display:block;background:none;border:0;padding:0;margin-top:2px;font:inherit;font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:600;color:var(--text-secondary);text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer}
+.kurs-total{margin:4px 0 16px;font-size:12px;color:var(--text-muted)}.kurs-total .kurs-perk{display:inline;font-size:13px}
+#resTotalPrice{margin-bottom:16px}#resTotalPrice:has(+#resKurs:not([hidden])){margin-bottom:0}
+</style>
 </head>
 
 <body>
@@ -324,7 +329,8 @@
   </div>
   <div class="pt-8 mt-8 border-t" style="border-color:var(--border-soft)">
     <span class="text-[10px] uppercase block mb-1" style="color:var(--text-muted)" data-i18n="sum_total">Total Tarif</span>
-    <div id="resTotalPrice" class="text-3xl font-bold font-serif mb-4" style="color:var(--accent)">Rp 0</div>
+    <div id="resTotalPrice" class="text-3xl font-bold font-serif" style="color:var(--accent)">Rp 0</div>
+    <p id="resKurs" class="kurs-total" hidden></p>
     <div class="incl-box">
       <p><b data-i18n-html="inc_title"><span class="ic ic-check"></span>Termasuk</b><br><span data-i18n="inc_list">Mobil, driver, BBM, air mineral, pemakaian sampai 12 jam</span></p>
       <p><b data-i18n-html="exc_title"><span class="ic ic-x"></span>Tidak termasuk</b><br><span data-i18n="exc_list">Tol, parkir, makan driver</span></p>
@@ -486,6 +492,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261120en"></script>
+<script src="js/main.js?v=20261120mu"></script>
 </body>
 </html>

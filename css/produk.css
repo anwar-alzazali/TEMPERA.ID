@@ -131,3 +131,7 @@ img{max-width:100%}
   .pcard.pilih .tanda{top:-9px;right:10px}
   .phero{padding:40px 0 48px}
 }
+
+/* perkiraan mata uang asing (bahasa ms/en) */
+.kurs-perk{display:block;background:none;border:0;padding:0;margin-top:2px;font:inherit;font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:600;color:inherit;opacity:.75;text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer}
+.br.kurs{font-size:12px;opacity:.85}.br.kurs .kurs-perk{display:inline}.kurs-cat{font-size:11px}

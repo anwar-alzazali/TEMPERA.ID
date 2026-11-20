@@ -131,7 +131,7 @@
         <p class="meta">${esc(t(r.jemput_rumah ? 'siap' : 'berangkat', { jam: jamTampil(r.jam) }))} · ${esc(lokasi(r))}</p>
         <p class="meta">${esc(r.armada ? t('armada', { x: r.armada }) : t('armada_auto'))}</p>
         <div>${labelSisa(r)} <span class="meta" style="font-size:12px">${esc(mb.teks)}</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div></div>
-        <div class="bawah"><span class="harga">${rp(r.harga)} <small>${t('per_orang')}</small></span>
+        <div class="bawah"><span class="harga">${rp(r.harga)} <small>${t('per_orang')}</small>${P.kursHtml(r.harga)}</span>
           <button type="button" class="pbtn" style="padding:10px 16px;font-size:12px" data-buka="${r.id}">${t('lihat')}</button></div>
       </div></article>`;
   }
@@ -167,7 +167,7 @@
         </div>
         ${r.jemput_rumah ? `<label class="pf"><span>${esc(t('f_alamat'))}</span><textarea id="oAlamat" rows="2" maxlength="300" placeholder="${esc(t('f_alamat_ph'))}"></textarea></label>` : ''}
         <label class="pf" id="oPesertaBox" hidden><span>${esc(t('f_peserta'))} <i>${esc(t('f_peserta_s'))}</i></span><input id="oPeserta" maxlength="300"></label>
-        <div class="pringkas"><div class="br total"><span id="oTotalL">${esc(t('total', { n: 1 }))}</span><b id="oTotal">${rp(r.harga)}</b></div></div>
+        <div class="pringkas"><div class="br total"><span id="oTotalL">${esc(t('total', { n: 1 }))}</span><b id="oTotal">${rp(r.harga)}</b></div><div class="br kurs" id="oKurs">${P.kursTeks(r.harga) ? '<span></span><span>' + P.kursHtml(r.harga, true) + '</span>' : ''}</div></div>
         <label class="pchk"><input type="checkbox" id="oSetuju"><span>${t('setuju')}</span></label>
         <div class="pmsg" id="oMsg"></div>
         <button class="pbtn blok" type="submit" id="oKirim">${esc(t('bayar', { x: rp(r.harga) }))}</button>
@@ -183,7 +183,7 @@
   function setKursi(n) {
     if (!aktif) return; kursi = Math.max(1, Math.min(n, aktif.sisa, 20));
     $('#oKursi').textContent = kursi; $('#oTotalL').textContent = t('total', { n: kursi });
-    $('#oTotal').textContent = rp(aktif.harga * kursi); $('#oKirim').textContent = t('bayar', { x: rp(aktif.harga * kursi) });
+    $('#oTotal').textContent = rp(aktif.harga * kursi); { const kx = $('#oKurs'); if (kx) kx.innerHTML = P.kursTeks(aktif.harga * kursi) ? '<span></span><span>' + P.kursHtml(aktif.harga * kursi, true) + '</span>' : ''; } $('#oKirim').textContent = t('bayar', { x: rp(aktif.harga * kursi) });
     $('#oPesertaBox').hidden = kursi < 2;
   }
 
