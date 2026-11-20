@@ -13,19 +13,19 @@ const P = (() => {
 
   /* ---- bahasa: sama dengan beranda (localStorage tempera_lang) ---- */
   let lang = 'id';
-  try { const s = localStorage.getItem('tempera_lang'); if (s === 'id' || s === 'ms') lang = s; } catch (e) {}
-  try { const q = new URL(location.href).searchParams.get('lang'); if (q === 'ms' || q === 'id') lang = q; } catch (e) {}
+  try { const s = localStorage.getItem('tempera_lang'); if (s === 'id' || s === 'ms' || s === 'en') lang = s; } catch (e) {}
+  try { const q = new URL(location.href).searchParams.get('lang'); if (q === 'ms' || q === 'id' || q === 'en') { lang = q; try { localStorage.setItem('tempera_lang', q); } catch (e) {} } } catch (e) {}
   let KAMUS = { id: {}, ms: {} };
   const t = (k, v) => { let s = (KAMUS[lang] && KAMUS[lang][k]) ?? KAMUS.id[k] ?? k; if (v) for (const x in v) s = s.split('{' + x + '}').join(v[x]); return s; };
   function terapkan() {
-    document.documentElement.lang = lang === 'ms' ? 'ms' : 'id';
+    document.documentElement.lang = lang;
     $$('[data-t]').forEach((el) => { el.textContent = t(el.dataset.t); });
     $$('[data-th]').forEach((el) => { el.innerHTML = t(el.dataset.th); });
     $$('[data-tp]').forEach((el) => { el.placeholder = t(el.dataset.tp); });
-    const b = $('#pLang'); if (b) b.textContent = lang === 'ms' ? '🇲🇾 MY' : '🇮🇩 ID';
+    const b = $('#pLang'); if (b) b.textContent = ({ ms: '🇲🇾 MY', en: '🇬🇧 EN' })[lang] || '🇮🇩 ID';
     document.dispatchEvent(new Event('p-lang'));
   }
-  function kamus(k) { KAMUS = k; terapkan(); const b = $('#pLang'); if (b) b.addEventListener('click', () => { lang = lang === 'ms' ? 'id' : 'ms'; try { localStorage.setItem('tempera_lang', lang); } catch (e) {} terapkan(); }); }
+  function kamus(k) { KAMUS = k; terapkan(); const b = $('#pLang'); if (b) b.addEventListener('click', () => { lang = ({ id: 'ms', ms: 'en', en: 'id' })[lang] || 'id'; try { localStorage.setItem('tempera_lang', lang); } catch (e) {} terapkan(); }); }
 
   /* ---- ref driver (link/QR driver), sama dengan beranda ---- */
   try {
@@ -83,6 +83,7 @@ const P = (() => {
 
   function bayar(data, nilai, kotak, halaman) {
     window.snap.pay(data.snap_token, {
+      language: lang === 'en' ? 'en' : 'id',   // halaman pembayaran Midtrans ikut bahasa Inggris
       onSuccess: (r) => { lacak('purchase', { transaction_id: data.order_id, value: nilai, currency: 'IDR', produk: halaman, metode: (r && r.payment_type) || '' }); pesan(kotak, t('bayar_ok'), 'ok'); kotak.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
       onPending: () => { pesan(kotak, t('bayar_pending'), 'info'); },
       onError: () => { pesan(kotak, t('bayar_gagal')); },
@@ -91,7 +92,7 @@ const P = (() => {
   }
 
   function hariIni() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
-  function tglPanjang(iso) { const d = new Date(iso + 'T00:00:00+07:00'); return d.toLocaleDateString(lang === 'ms' ? 'ms-MY' : 'id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' }); }
+  function tglPanjang(iso) { const d = new Date(iso + 'T00:00:00+07:00'); return d.toLocaleDateString(({ ms: 'ms-MY', en: 'en-GB' })[lang] || 'id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' }); }
 
   return { $, $$, esc, rp, normWA, t, kamus, get lang() { return lang; }, waLink, getRef, setelan, rpc, fungsi, muatSnap, lacak, pesan, bersih, bayar, hariIni, tglPanjang, terapkan };
 })();

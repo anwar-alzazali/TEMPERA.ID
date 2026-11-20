@@ -147,7 +147,7 @@
     if (o <= S.orang[k] && kp <= S.koper[k]) { P.bersih(m); return true; }
     const cocok = URUT.find((x) => o <= S.orang[x] && kp <= S.koper[x]);
     const saran = cocok ? t('kap_saran', { nama: KELAS[cocok].nama, harga: rp(S.harga[cocok]) }) + ` <button type="button" class="pbtn ghost" style="padding:6px 12px;font-size:12px;margin-top:6px" data-pindah="${cocok}">${t('kap_pindah', { nama: KELAS[cocok].nama })}</button>`
-      : t('kap_saran_wa', { wa: P.waLink(t('wa_msg') + ` (${o} orang, ${kp} koper)`) });
+      : t('kap_saran_wa', { wa: P.waLink(t('wa_msg') + ` (${t('orang', { n: o })}, ${t('koper', { n: kp })})`) });
     m.className = 'pmsg on info'; m.innerHTML = t('kap_lebih', { nama: KELAS[k].nama, o: S.orang[k], k: S.koper[k], saran });
     return false;
   }
@@ -170,7 +170,61 @@
   }
   function segar() { kapasitas(); ringkas(); }
 
-  P.kamus({ id: ID, ms: MS });
+  const UMUM_EN = {
+    wa_msg: 'Hi Tempera, I\'d like to ask about a Soekarno-Hatta airport transfer.',
+    wa_bantu: 'Hi admin, I need help with the payment for booking {id} (airport transfer).',
+    bayar_ok: '✅ <b>Payment successful.</b> The confirmation and invoice are sent to your WhatsApp. Driver details are sent before your travel day.',
+    bayar_pending: '⏳ <b>Awaiting payment.</b> Please complete it within 30 minutes. A confirmation is sent to WhatsApp automatically once paid.',
+    bayar_gagal: 'Payment failed. Try again, or choose another method.',
+    bayar_tutup: 'The payment window was closed. Tap <b>Book &amp; pay</b> again to retry, or <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">ask the admin for help</a>.',
+  };
+  const EN = Object.assign({}, UMUM_EN, {
+    nav_beranda: 'Home', nav_ot: 'Open Trip', nav_pesan: 'Book',
+    kicker: 'Bandung ⇄ Soekarno-Hatta', h1: 'Soekarno-Hatta Airport Transfer from Bandung',
+    sub: 'A private car with driver, straight from your home or hotel in Bandung. Fixed price per car, not per person. Book and pay online in 2 minutes.',
+    c1: 'Fuel and tolls included', c2: 'Driver tracks your flight', c3: '60 minutes free waiting', c4: 'Pay a deposit',
+    cta: 'Check price & book', cta_wa: 'Ask on WhatsApp',
+    harga_judul: 'Price per car, one way',
+    harga_lead: 'Same price for <b>drop-off</b> (Bandung → airport) and <b>pick-up</b> (airport → Bandung). Includes car, driver, fuel, and tolls.',
+    per_mobil: 'per car, one way', favorit: 'Most comfortable',
+    muat: 'Max. {o} people + {k} large suitcases',
+    cat_tambah: 'Outside Bandung city (Lembang, Soreang, Padalarang, North Cimahi, and surroundings): add {x}.',
+    form_judul: 'Book an airport transfer', form_lead: 'Enter your trip details. The final price is calculated automatically and can be paid right away.',
+    f_arah: 'Where to?', arah_antar: 'Drop-off at the airport', arah_antar_s: 'Bandung → Soetta', arah_jemput: 'Pick-up from the airport', arah_jemput_s: 'Soetta → Bandung',
+    f_kelas: 'Car', f_pax: 'Passengers', f_koper: 'Large suitcases <i>(cabin bags not counted)</i>',
+    orang: '{n} people', koper: '{n} suitcases',
+    f_terminal: 'Terminal', f_terminal_s: 'Check your ticket or the airline app. You can change it via WhatsApp if it changes.',
+    f_tgl_antar: 'Departure date', f_tgl_jemput: 'Arrival date',
+    f_jam_antar: 'Pick-up time at your address', f_jam_jemput: 'Flight landing time',
+    f_jam_antar_s: 'Tip: 5 hours before departure (domestic), 6 hours (international).', f_jam_jemput_s: 'As shown on your ticket. The driver adjusts if your flight is delayed.',
+    f_flight_antar: 'Flight number <i>(optional)</i>', f_flight_jemput: 'Flight number <i>(required)</i>', f_flight_ph: 'Example: AK 380 / GA 404',
+    f_flight_jemput_s: 'The driver tracks your landing time with this number.',
+    f_area_antar: 'Pick-up from', f_area_jemput: 'Drop-off at', area_kota: 'Bandung city', area_kota_s: 'no extra charge', area_luar: 'Outside Bandung city',
+    area_s: 'Outside the city: Lembang, Soreang, Padalarang, North Cimahi, Jatinangor, and surroundings.',
+    f_alamat_antar: 'Full pick-up address', f_alamat_jemput: 'Full drop-off address', f_alamat_ph: 'Street, house number / hotel name, landmark',
+    f_nama: 'Your name', f_wa: 'WhatsApp number', f_wa_ph: '+60 12-345 6789 or +62 8xx',
+    f_bayar: 'Payment', dp: '{p}% deposit', bayar_dp_s: 'rest in cash to the driver', bayar_lunas: 'Pay in full', bayar_lunas_s: 'no cash needed',
+    setuju: 'I agree to the <a href="syarat.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="syarat.html#privasi" target="_blank" rel="noopener">Privacy Policy</a>.',
+    kirim: 'Book & pay', memproses: 'Processing…',
+    aman: 'Secure payment via Midtrans: QRIS, GoPay, ShopeePay, bank transfer (VA), credit/debit card. Prices are in Indonesian Rupiah.',
+    r_mobil: 'Car', r_tambah_luar: 'Outside-city surcharge', r_tambah_dini: 'Early-morning surcharge (before 05:00)', r_total: 'Total', r_bayar_dp: 'Pay now (deposit)', r_sisa: 'Remaining, in cash to the driver', r_bayar: 'Pay now',
+    kap_lebih: '⚠️ The <b>{nama}</b> fits at most {o} people and {k} large suitcases. {saran}',
+    kap_saran: 'Choose the <b>{nama}</b> ({harga}) so everything fits.', kap_saran_wa: 'For a group this size, <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">ask the admin</a> (2 cars are possible).',
+    kap_pindah: 'Switch to {nama}',
+    e_tgl: 'Choose a date.', e_jam: 'Enter a time.', e_flight: 'Enter your flight number (example: AK 380).', e_alamat: 'Enter the full address.', e_nama: 'Enter your name.', e_wa: 'Invalid WhatsApp number.', e_setuju: 'Please tick the Terms & Conditions box first.', e_kap: 'The number of passengers or suitcases exceeds the car\'s capacity.', e_snap: 'The payment page failed to load. Check your connection and try again.', e_jaringan: 'Connection lost. Please try again.',
+    tutup_layanan: 'The airport transfer service is currently closed. Please <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">contact the admin on WhatsApp</a>.',
+    t_judul: 'Included', t1: 'Private car + experienced driver', t2: 'Fuel and tolls Bandung - Soetta', t3: 'Picked up at your address, no shuttle-pool transfer', t4: '60 minutes free waiting after landing', t5: 'Digital invoice you can verify by QR',
+    tt_judul: 'Good to know', tt5: 'Airport parking is not included; paid as per the ticket', tt1: 'The price is per car, not per person', tt2: 'Waiting beyond 60 minutes is confirmed by the admin', tt3: 'Lots of luggage? Choose a bigger car so everything fits', tt4: 'Other destinations (Jakarta, Garut, Tasik, overnight): ask the admin on WhatsApp',
+    faq_judul: 'Frequently asked questions',
+    q1: 'How long is the drive from Bandung to Soekarno-Hatta Airport?', a1: 'Usually 3 to 4 hours via the toll road, depending on traffic. For international flights we recommend pick-up 6 hours before departure; for domestic flights, 5 hours.',
+    q2: 'What if my flight is delayed?', a2: 'The driver tracks your flight number and waits at the airport. The 60 minutes of free waiting starts from when your flight actually lands.',
+    q3: 'Does the price include tolls?', a3: 'Yes. The price per car includes the car, driver, fuel, and Bandung - Soekarno-Hatta tolls. There is no per-person charge. Airport parking is not included and is paid as per the ticket.',
+    q4: 'Why not take a shuttle bus?', a4: 'Shuttles are cheaper for 1-2 people with little luggage. For families or groups with large suitcases, a private car is more practical: you are picked up at your door, there is no need to go to a shuttle pool, there are no other stops, and you can leave at any time.',
+    q5: 'I\'m travelling from abroad. Can I book?', a5: 'Yes. Enter your WhatsApp number with the country code (e.g. +60, +65). You can pay with a Visa or Mastercard credit/debit card. Prices are in Indonesian Rupiah.',
+    q6: 'How do I meet the driver at the airport?', a6: 'The day before, the admin sends the driver\'s name, WhatsApp number, and car plate. After landing and collecting your luggage, message the driver on WhatsApp; the driver waits at your terminal\'s pick-up point.',
+    privasi: 'Privacy',
+  });
+  P.kamus({ id: ID, ms: MS, en: EN });
   document.addEventListener('p-lang', () => { isiPilihan(); tampilHarga(); arahUbah(); segar(); const w = P.waLink(t('wa_msg')); $('#waHero').href = w; $('#waMelayang').href = w; });
   const tgl = $('#fTgl'); tgl.min = P.hariIni();
   try { const q = new URL(location.href).searchParams; if (q.get('arah') === 'jemput') pilihRadio('arah', 'jemput'); if (KELAS[q.get('kelas')]) pilihRadio('kelas', q.get('kelas')); } catch (e) {}

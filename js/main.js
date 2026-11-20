@@ -212,6 +212,10 @@ id: {
   bm_how: 'Cara bayar', bm_note: 'Tulis nomor pesanan di berita transfer. Setelah membayar, kirim nama pengirim atau bukti bayar lewat WhatsApp. Pesanan dibatalkan otomatis kalau belum dibayar dalam {jam} jam.',
   bm_kode: 'Sudah termasuk kode unik {kode} (nominal dasar {base}). Bayar PERSIS sesuai angka di atas supaya pembayaranmu mudah kami cocokkan.', bm_transfer: 'Transfer ke salah satu rekening ini', bm_copy: 'Salin', bm_copied: 'Tersalin', bm_proof: 'Kirim bukti bayar ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Petunjuk ini juga dikirim ke WhatsApp kamu.',
   bm_msg: 'Bukti bayar pesanan {order} sebesar {nominal}. Nama pengirim: ',
+  gd_label: 'Panduan rute & tempat wisata:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Kota Bandung & Dago',
+  dh_title: 'Daftar Harga Sewa Mobil + Driver', dh_lead: 'Harga dalam Rupiah (IDR) per hari, pemakaian 12 jam, sudah termasuk mobil, driver, BBM, dan air mineral.', dh_th1: 'Mobil', dh_th2: 'Harga per hari', dh_maks: 'maks {n} orang',
+  dh_exc: 'Tidak termasuk: tol, parkir, dan makan driver.', dh_pay: 'Pembayaran: DP atau lunas, lewat transfer bank atau QRIS. Biaya tambahan untuk perjalanan lintas wilayah dihitung otomatis di formulir pemesanan.',
+  ft_nib: 'Usaha terdaftar di OSS · NIB 1710260026226', ft_mitra: 'Masuk Mitra', fl_harga: 'Daftar Harga', fl_bandara: 'Antar Jemput Bandara', fl_syarat: 'Syarat & Ketentuan', fl_privasi: 'Kebijakan Privasi', fl_kontak: 'Kontak',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Momen nyata dari perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
 },
 ms: {
@@ -413,16 +417,226 @@ ms: {
   bm_how: 'Cara bayaran', bm_note: 'Tulis nombor tempahan pada ruang rujukan pindahan. Selepas membayar, hantar nama pengirim atau bukti bayaran melalui WhatsApp. Tempahan dibatalkan secara automatik jika belum dibayar dalam {jam} jam.',
   bm_kode: 'Sudah termasuk kod unik {kode} (jumlah asas {base}). Bayar TEPAT mengikut angka di atas supaya pembayaran anda mudah kami padankan.', bm_transfer: 'Pindahan ke salah satu akaun ini', bm_copy: 'Salin', bm_copied: 'Disalin', bm_proof: 'Hantar bukti bayaran ke WhatsApp', bm_close: 'Tutup', bm_wa_sent: 'Arahan ini juga dihantar ke WhatsApp anda.',
   bm_msg: 'Bukti bayaran tempahan {order} sebanyak {nominal}. Nama pengirim: ',
+  gd_label: 'Panduan laluan & tempat menarik:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Bandar Bandung & Dago',
+  dh_title: 'Senarai Harga Sewa Kereta + Pemandu', dh_lead: 'Harga dalam Rupiah (IDR) sehari, penggunaan 12 jam, termasuk kereta, pemandu, petrol dan air mineral.', dh_th1: 'Kereta', dh_th2: 'Harga sehari', dh_maks: 'maks {n} orang',
+  dh_exc: 'Tidak termasuk: tol, parkir dan makan pemandu.', dh_pay: 'Pembayaran: deposit atau penuh, melalui pindahan bank atau QRIS. Caj tambahan untuk perjalanan merentas kawasan dikira secara automatik dalam borang tempahan.',
+  ft_nib: 'Perniagaan berdaftar di OSS · NIB 1710260026226', ft_mitra: 'Log masuk Rakan Kongsi', fl_harga: 'Senarai Harga', fl_bandara: 'Transfer Lapangan Terbang', fl_syarat: 'Terma & Syarat', fl_privasi: 'Dasar Privasi', fl_kontak: 'Hubungi',
   gl_title: 'Galeri Perjalanan', gl_sub: 'Detik sebenar daripada perjalanan bersama Tempera', gl_all: 'Lihat semua foto'
+},
+en: {
+  page_title: 'Bandung Car Rental with Driver, Open Trips & Airport Transfers | Tempera',
+  nav_home: 'Home', nav_weather: 'Live Weather', nav_dest: 'Destinations', nav_fleet: 'Car Rental',
+  nav_custom: 'Airport & Open Trips', nav_bandara: 'Airport', nav_bandara_m: 'Soekarno-Hatta Airport Transfer', nav_ot: 'Open Trip', nav_blog: 'Travel Guide', nav_faq: 'FAQ', nav_book: 'Book Now', nav_book_short: 'Book',
+  aria_theme: 'Switch light/dark theme', aria_menu: 'Open navigation menu', aria_left: 'Scroll left', aria_right: 'Scroll right',
+
+  hero_title: 'Private Car & Driver in Bandung',
+  hero_sub: '12-hour car with driver to Lembang, Ciwidey, Pangalengan, and Bandung city. Pay online, deposit accepted.',
+  hero_p1: 'Fuel included', hero_p2: '12-hour rental', hero_p3: 'Pay a deposit',
+  hero_cta1: 'Choose Destinations', hero_cta2: 'Choose a Car',
+
+  wx_title: 'Live Weather in Bandung & Around', wx_src: 'Open-Meteo data, updated every 10 minutes',
+  wx_hum: 'Humidity', wx_wind: 'Wind', wx_time: 'Time', wx_forecast: '12-Hour Forecast', wx_now: 'Now',
+  wx_loading: 'Loading...', wx_live: 'Live', wx_feels: 'Feels like {n}°', wx_alt: '{n} m above sea level', wx_refresh: 'Refresh weather',
+  wx_pagi: 'Morning', wx_siang: 'Midday', wx_sore: 'Afternoon', wx_malam: 'Night',
+
+  dest_title: 'Choose Destinations', dest_sub: 'Tap the places you want to visit, from one or more areas',
+  dest_order: 'Your driver will plan the visiting order with you on WhatsApp once the booking is confirmed.',
+  dest_tip: 'For a 12-hour rental, we suggest up to 4 destinations so the day stays relaxed.',
+  tag_utara: 'North Bandung', tag_selatan: 'South Bandung', tag_titik0: 'City centre',
+  card_lembang: 'Lembang', card_dago: 'Dago', card_kota: 'Bandung City', card_ciwidey: 'Ciwidey', card_pangalengan: 'Pangalengan',
+  sec_wisata: 'Attractions', sec_kuliner: 'Food & souvenirs',
+  pk_info: '12-hour rental, no cross-area fee',
+  cp_title: 'How to Book',
+  cp_1t: 'Choose destinations', cp_1d: 'Tap the places you want to visit, from one or more areas.',
+  cp_2t: 'Choose a car', cp_2d: 'Based on the number of passengers.',
+  cp_3t: 'Fill in your details', cp_3d: 'Name, WhatsApp, date, pick-up time.',
+  cp_4t: 'Pay', cp_4d: 'Pay in full or a deposit; confirmation and invoice are sent to WhatsApp.',
+  cp_note: 'A 12-hour rental covers one area: Lembang, Ciwidey, or Pangalengan. Bandung city and Dago can be added freely. Not sure where to go? Choose "Plan it with the driver".',
+  rute_bebas: '🧭 Not sure where to go? Plan it with the driver', satu_wilayah: 'One booking covers one area. Your picks in {lama} were replaced with {baru}. For two areas, book separate days.',
+  bar_text: '{n} destinations selected', bar_go: 'Next: choose a car', bar_form: 'Next: your details', bar_hint: 'The total appears after you choose a car', bar_open: 'View details', bar_close: 'Hide details',
+  picked_title: 'Your destinations', picked_empty: 'No destinations yet. Pick some in the Destinations section first.', picked_go: 'Choose destinations', picked_rm: 'Remove {name}',
+  lain_label: 'Other places (discuss with the driver)', lain_ph: 'Example: another place within the four service areas',
+  lain_note: 'Only for places within the four service areas. Not guaranteed: the driver or admin will confirm on WhatsApp whether there is enough time. For places outside the area, ask the admin in the Out of Town section.',
+  terms_html: 'I have read and agree to the <a href="syarat.html" target="_blank" rel="noopener" style="text-decoration:underline">Terms &amp; Conditions</a>, including the deposit, cancellation, and <a href="syarat.html#privasi" target="_blank" rel="noopener" style="text-decoration:underline">privacy</a> policies.',
+  err_terms: 'Please tick the Terms & Conditions box first.',
+  hero_p4: 'Digital invoice & trip sheet', gate_fields: 'Please complete the fields marked in red.',
+  lain_toggle: '+ Another place in mind? (optional)', add_dest: '+ Add destination',
+  sh_dest_title: 'Choose destinations', sh_dest_sub: 'Tap the places you want to visit. You can pick from more than one area.', sh_done: 'Done', sh_done_n: 'Done · {n} selected', sh_close: 'Close',
+  sh_fleet_title: 'Choose a car', sh_fleet_sub: 'Prices for a 12-hour rental, based on the number of passengers.',
+  mirip_text: 'You still have booking {order} awaiting payment for the same car and date. Open its payment instructions, or create a new booking if this one is for another group.', mirip_open: 'Open payment instructions', mirip_new: 'This is a different booking',
+  trust1: 'Pay only to Tempera\'s official account, in the name of Anwar Alzazali Mufti.', trust2: 'After payment, the confirmation and invoice are sent to your WhatsApp.',
+  trust3: 'Deposits, cancellations, and rescheduling: see the <a href="syarat.html#pembatalan" target="_blank" rel="noopener">Terms &amp; Conditions</a>.',
+  trust1_mt: 'Payments are processed securely by Midtrans (QRIS, bank transfer, e-wallet, card).', trust2_mt: 'The confirmation and invoice are sent to WhatsApp once payment is received.',
+  faq_a7_mt: 'Yes. At checkout, choose "Pay deposit". You pay part of the price through Midtrans and the rest in cash directly to the driver during the trip. The deposit is non-refundable if you cancel; see the Terms & Conditions for details.',
+  faq_a8_mt: 'Through Midtrans: QRIS, bank transfer, e-wallet, or Visa/Mastercard credit and debit cards. Prices are in Indonesian Rupiah.',
+  xp_title: 'Combining areas', xp_text: 'Adding {dest} makes your trip cover {n} areas outside Bandung city ({list}).', xp_cost: 'Cross-area fee',
+  xp_tip: 'It\'s more relaxed to split this into separate bookings on different days. Each booking is a 12-hour rental in one area, with no cross-area fee.',
+  xp_tip3: 'It\'s more relaxed to split this into three separate bookings on different days. Each booking is a 12-hour rental in one area, with no cross-area fee.',
+  lt_bl_title: 'Both in the south, but in different valleys', lt_bl: 'Ciwidey is in the south-west and Pangalengan in the south-east. There is no direct road between them, so you have to go around via Banjaran: about 62 km, roughly 2 hours on the road.',
+  lt_us_title: 'North and south: through the city centre', lt_us: 'Lembang is in the north, while Ciwidey and Pangalengan are in the south. The route passes through central Bandung, which is often congested, twice (going and returning). That adds about 90 km and 3 to 4 hours on the road.',
+  lt_3_title: 'Three areas in one day', lt_3: 'North, south-west, and south-east at once: about 152 km and 7 to 8 hours on the road, crossing congested central Bandung twice. That leaves only about 2 hours to take photos and enjoy the places.',
+  lt_why: 'The cross-area fee covers the extra fuel and the driver\'s travel time, since hours on the road count towards the 12-hour rental.', lt_cost: 'Cross-area fee', lt_total: 'Total',
+  xp_yes: 'Combine anyway (+{cost})', xp_no: 'Undo this choice',
+
+  fleet_title: 'Cars with Driver',
+  tr1_t: 'Fuel and drinking water included', tr1_s: 'No extra fuel charge', tr2_t: 'Pay a deposit', tr2_s: 'The rest in cash to the driver',
+  tr3_t: 'Digital invoice and trip sheet', tr3_s: 'Verify they are genuine with the QR code', tr4_t: 'Registered business', tr4_s: 'NIB 1710260026226 (OSS)',
+  pb_text: 'Enjoy Bandung. Leave the driving to us.',
+  dest_all: 'See all ({n})', dest_less: 'Show less', dest_sel: '{n} selected',
+  fleet_bag: 'Passenger numbers on each card assume normal luggage. With a lot of suitcases, fewer seats are available (vans such as the Hiace and Elf take about 4 people). Tell us how many suitcases when you book; the admin will confirm.',
+  fleet_note: '<span class="ic ic-clock"></span>All prices below are for a <b>12-hour rental</b> (car + driver + fuel). Example: pick-up at 07:00, finish by 19:00 at the latest.',
+  th_fleet: 'Car', th_cap: 'Comfortable / Max', th_bag: 'Luggage', th_price: '12-Hour Price', th_act: 'Action',
+  cap_comfort: '{n} comfortable', card_cap: '{cap} • Max {max}', card_people: '<span class="ic ic-people"></span><b>{cap}</b> + driver • Max {max}',
+  card_btn: 'Choose - {price} / 12 hrs', card_12: '12 hours', card_max: 'Max {max} passengers', card_nobag: '(without large luggage)', card_bag: 'With luggage: {n} passengers + {bag}', tbl_pick: 'Choose', opt_placeholder: '— Choose a Car First —', opt_label: '{name} - {price} / 12 hrs',
+  opt_full: ' — fully booked on this date', opt_left: ' — only {n} left!',
+  av_low: '⏳ Almost fully booked on this date: {list}.',
+  rv_title: 'What Our Guests Say', rv_sub: '⭐ {rata} out of 5 · genuine Tempera guest reviews: {n}', rv_left: 'Scroll left', rv_right: 'Scroll right',
+  av_some: '🚫 Fully booked on this date: {list}. Choose another car or another date.',
+  av_all: '🚫 <b>All cars are fully booked on this date.</b> Choose another date, or <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">ask the admin on WhatsApp</a>.',
+  av_card_full: '{car} is fully booked on the selected date. Choose another car or change the date.',
+  av_wa_msg: 'Hi Admin Tempera, I\'d like to check car availability for {tgl}.',
+
+  tc_title: 'Airport, Open Trips & Out of Town', tc_sub: 'Besides the 12-hour rental: Soekarno-Hatta airport transfers, open trips priced per seat, and trips out of town',
+  hb_k: 'Fixed price', hb_t: 'Soekarno-Hatta Airport Transfer', hb_d: 'Bandung ⇄ Soekarno-Hatta in a private car with driver. Price per car, fuel and tolls included. Book and pay online.', hb_mulai: 'from {x} / car', hb_btn: 'See prices & book',
+  ho_k: 'Pay per seat', ho_t: 'Open Trip', ho_d: 'Join a scheduled tour with other travellers: Kawah Putih, Lembang, Garut, and New Year trips. Ideal if you travel solo or as a pair.', ho_btn: 'See schedule', ho_next: 'Next: {judul}, {tgl}', ho_none: 'The next schedule will be announced soon',
+  hl_k: 'Via WhatsApp', hl_t: 'Out of Town & Overnight', hl_d: 'Jakarta, Garut, Tasikmalaya, 2–3 day trips, or other destinations. The price depends on distance and number of days, so the admin will confirm it.',
+  tc_desc: 'A car and driver just for your group, not public transport. Choose a destination to see an estimated fare, then send it to the admin on WhatsApp. Multi-day trips and other destinations are priced by the admin.', tc_s1: 'Choose a destination', tc_s2: 'Send via WhatsApp', tc_s3: 'Admin confirms the price',
+  tc_soetta: 'Soekarno-Hatta Airport', tc_garut: 'Bandung - Garut', tc_tasik: 'Bandung - Tasik', tc_jakarta: 'Bandung - Jakarta',
+  tc_multi: '2–3 day trip', tc_other: 'Other destination', tc_btn: 'Ask for a price on WhatsApp',
+  tc_j_antar: 'Drop-off only (no waiting)', tc_j_tunggu: 'Wait, then return', tc_jam: 'Waiting time at the destination (excluding travel time)', tc_jam_n: '{n} hours', tc_est: 'Estimated fare',
+  tc_cat: 'Estimate based on pick-up in Bandung city, excluding tolls and parking. The final price is confirmed by the admin.',
+  tc_rinci_antar: '{km} km one way × {tarif}/km', tc_rinci_min: 'minimum out-of-town fare', tc_rinci_tunggu: '{km2} km return × {tarif}/km + {jam} hours waiting × {tj}',
+  tc_msg_hit: 'Hi Admin Tempera, I\'d like a custom trip Bandung - {dest}, {jenis}. Website estimate: {harga}. Please confirm.',
+  tc_msg_j_antar: 'drop-off only', tc_msg_j_tunggu: 'waiting {jam} hours at the destination, then returning',
+  tc_msg_dest: 'Hi Admin Tempera, I\'d like to ask the price for a trip Bandung - {dest}.',
+  tc_msg_multi: 'Hi Admin Tempera, I\'d like to ask about a 2–3 day trip.',
+  tc_msg_other: 'Hi Admin Tempera, I\'d like to ask about an out-of-town trip (another destination).',
+  tc_msg_days: 'Hi Admin Tempera, I\'d like a {n}-day trip: {regions}.',
+  dest_soetta: 'Soekarno-Hatta Airport',
+
+  book_title: 'Book a Car & Driver in Bandung',
+  form_name: 'Full Name *', ph_name: 'Your name', form_wa: 'WhatsApp *', ph_wa: '+60 12xxxx or +62 812xxxx',
+  form_armada: 'Choose a Car (12-Hour Rental) *',
+  step1: 'Step 1: Choose an Area to Save Money',
+  titik0: '<b style="color:var(--accent)">🏙 Bandung city = starting point.</b> Pick-up and drop-off are in Bandung, so Bandung city &amp; Dago can be combined with any area. One booking covers only <b>one out-of-town area</b> (Lembang, Ciwidey, or Pangalengan) because they are far apart.',
+  rg_north: '🌲 NORTH', rg_ok1: '✓ One efficient direction', rg_south: '⛰️ SOUTH', rg_ok2: '✓ One southern direction',
+  step2: 'Step 2: Choose Destinations (Tick the Ones You Want)',
+  form_date: 'Date *', form_time: 'Pick-up Time', form_pax: 'Number of Passengers *',
+  form_note: 'Notes / Pick-up Location', ph_note: 'Pick up at Bandung Station...',
+  grp_lembang: '🌲 Lembang ({n} Destinations)', grp_dago: '🏙 Bandung City & Dago ({n} Destinations)',
+  grp_ciwidey: '⛰ Ciwidey ({n} Destinations)', grp_pangalengan: '☕ Pangalengan ({n} Destinations)',
+  picked: '{n} selected', pick_hint: 'Choose the destinations you want to visit', pick_all: 'Select All', clear_all: 'Clear All',
+  kota: 'Bandung City',
+  dur_base: '⏱ <b>The rental is limited to 12 hours</b>, counted from the pick-up time.',
+  dur_with: '⏱ <b>The rental is limited to 12 hours.</b> Pick-up {start}, finishing by {end} at the latest.',
+  dur_nextday: ' (next day)',
+  dur_min: '🕒 Book at least <b>{n} hours</b> before the pick-up time.',
+  dur_none: '<b>All pick-up times on this date are too soon.</b> Choose a later date or contact the admin.',
+  res_dur: '12 hours', res_dur_val: '12 hours ({start} - {end})',
+
+  summary: 'Price Breakdown', sum_armada: 'Car', not_chosen: 'Not chosen', choose_above: 'Choose a car above',
+  sum_dur: 'Rental time:', sum_cross: 'Cross-area fee:', sum_dest: 'Destinations:', none_yet: 'None yet', sum_cap: 'Capacity:',
+  sum_total: 'Total Price', inc_title: '<span class="ic ic-check"></span>Included', inc_list: 'Car, driver, fuel, drinking water, use for up to 12 hours',
+  exc_title: '<span class="ic ic-x"></span>Not included', exc_list: 'Tolls, parking, driver\'s meals',
+  submit: 'Confirm & Pay', processing: 'Processing...',
+  lbl_beda_lembah: ' (Different Southern Valleys)', lbl_utsel: ' (North-South Crossing)', lbl_tiga: ' (3 Directions)',
+  cap_line: '{cap} comfortable • Max {max}', mb_sewa: '12-hour rental',
+
+  cap_ok: '✅ {n} people fit comfortably in the {car}', cap_warn: '⚠ {n} people is more than the comfortable {cap}, but within the max of {max}',
+  cap_over: '🚫 {n} people exceeds the MAX of {max}',
+  cm_title: 'Over Maximum Capacity', cm_text: '{n} people exceeds the maximum capacity of the {car} ({max}). Please choose a bigger car.',
+  cm_change: 'Change Number', cm_upgrade: 'Upgrade',
+  up_msg: 'Hi Admin Tempera, I need transport for {n} people (more than our largest single vehicle). Please advise on multiple cars / extra vehicles.',
+
+  pm_title: 'Payment', pm_full: 'Pay in Full', pm_full_d: 'Done in one payment', pm_dp: 'Pay {p}% Deposit', pm_dp_d: 'Rest in cash to the driver',
+  pm_prev_dp: 'Pay now: {dp} · Rest in cash to the driver: {rest}', pm_prev_full: 'Pay now: {total} (in full)',
+
+  dlg_ok: 'OK', dlg_continue: 'Continue', dlg_back: 'Back', dlg_chat: 'Chat with admin', dlg_no: 'No',
+  err_name: 'Please enter your full name.', err_wa: 'Invalid WhatsApp number. Example: +60 12-345 6789 or +62 812xxxxxxx.',
+  err_fleet: 'Please choose a car.', err_dest: 'Choose at least one destination.', err_pax: 'Please enter the number of passengers.',
+  err_datetime: 'Please enter the date and pick-up time.',
+  err_min: 'Bookings must be made at least {n} hours before pick-up. Choose a later date or time, or contact the admin on WhatsApp for last-minute bookings.',
+  err_past: 'The pick-up time has already passed. Choose a later date or time.',
+  ask_overcomfort: '{n} people is more than the comfortable capacity of the {car} ({cap}), but still below the maximum of {max}. Continue anyway?',
+  btn_keep: 'Continue anyway', btn_change_pax: 'Change number',
+  ask_cross: 'Your destinations cover {n} areas outside Bandung city, so there is a cross-area fee of {cost}. Continue?',
+  btn_change_choice: 'Change selection',
+  err_snap: 'The payment system is not ready yet. Reload the page and try again.',
+  dp_note: ' The remaining {rest} is paid in cash directly to the driver during the trip.',
+  pay_ok: 'Payment successful!{dp} The confirmation and invoice will be sent to your WhatsApp.',
+  pay_pending: 'Awaiting payment.{dp} The invoice is sent to WhatsApp once payment is received.',
+  pay_err: 'Payment failed. Please try again.',
+  order_fail: 'Could not create the booking: {e}', order_fail2: 'Could not create the booking. Please try again.',
+  net_err: 'Connection problem. Check your internet and try again.',
+
+  w_bl_title: 'Both in the South, but Different Valleys', w_bl_badge: '62 KM DETOUR',
+  w_bl_desc: 'Ciwidey is in the <b>south-west</b>, Pangalengan in the <b>south-east</b>. There is no direct road between them.',
+  w_bl_via: 'you have to go around via', w_bl_route: 'Banjaran - 62 KM • 2 Hours',
+  w_base: 'Base package', w_bl_add: '+ Different valleys (fuel + time)', w_total: 'Total',
+  w_only_ciw: 'Choose Ciwidey only (cheaper)', w_only_pgl: 'Choose Pangalengan only',
+  w_us_title: 'Opposite Directions - North vs South',
+  w_us_desc: 'Lembang is in the <b>north</b>, Ciwidey/Pangalengan in the <b>south</b>. You have to cross central Bandung and its traffic twice.',
+  w_us_dist: 'About 90 KM extra • 3-4 hours on the road in one day', w_us_add: '+ North-South crossing',
+  w_us_btn: '💡 Make it 2 days instead? (More relaxed, recommended by drivers)',
+  w_3_badge: '3 SIDES OF BANDUNG', w_3_dirs: 'NORTH • SOUTH-WEST • SOUTH-EAST',
+  w_3_title: 'Wow, you want to circle all of Bandung in one day! 🔥',
+  w_north: 'North', w_sw: 'South-West', w_se: 'South-East',
+  w_3_dist_l: 'Total distance today', w_3_dist_v: '~152 KM • 7-8 hours on the road',
+  w_3_photo_l: 'Time for photos', w_3_photo_v: 'Only about 2 hours left 😥',
+  w_3_add: '+ 3-direction fee (fuel + driver overtime)',
+  w_3_honest: 'Honestly, squeezing it into one day is exhausting. Our drivers recommend <b class="text-white">splitting it into 3 days</b> so you can enjoy it.',
+  w_3_btn: '💡 MAKE IT 3 DAYS INSTEAD? (More relaxed)', w_3_one: 'Or choose just one area:', w_only: '{r} only',
+  w_3_keep: 'Keep all 3 areas? Just continue filling in the form.',
+
+  faq_title: 'Frequently Asked Questions',
+  faq_q1: 'How long is the rental?',
+  faq_a1: 'The rental is limited to 12 hours, counted from the pick-up time. Example: picked up at 07:00, finishing by 19:00 at the latest. The booking form shows the end time automatically.',
+  faq_q2: 'What is and isn\'t included?',
+  faq_a2: 'Included: car, driver, fuel, drinking water, and use for up to 12 hours. Not included: tolls, parking, and the driver\'s meals.',
+  faq_q3: 'Can I visit Lembang and Ciwidey in one day?',
+  faq_a3: 'One 12-hour booking covers one out-of-town area: Lembang, Ciwidey, or Pangalengan. They are far apart, so combining them means spending the day on the road. Bandung city & Dago can be combined with any area at no extra cost. For two areas, book two different days.',
+  faq_q4: 'How many destinations do you recommend in one day?',
+  faq_a4: 'We recommend no more than 4 destinations so the trip stays relaxed and unhurried.',
+  faq_q5: 'Do you offer Soekarno-Hatta Airport transfers?',
+  faq_a5: 'Yes. A fixed price per car (not per person), including fuel and tolls, which you can book and pay for directly on the Airport Transfer page. The driver tracks your flight and waits up to 60 minutes for free.',
+  faq_q6: 'What is an open trip, and what about other out-of-town destinations?',
+  faq_a6: 'An open trip is a tour schedule we organise; you pay per seat and travel with other participants. For other out-of-town trips (Jakarta, Garut, Tasikmalaya, overnight), choose the destination and ask for the price on WhatsApp.',
+  faq_q7: 'Can I pay a deposit?',
+  faq_a7: 'Yes. At checkout, choose "Pay deposit". You pay part of the price (bank transfer or QRIS) and the rest in cash directly to the driver during the trip. The deposit is non-refundable if you cancel; see the Terms & Conditions for details.',
+  faq_q8: 'How do I pay?', faq_a8: 'By bank transfer or QRIS to Tempera\'s official account. After you book, the payment screen shows the account and the exact amount, and the confirmation is sent to WhatsApp.',
+  faq_q9: 'I\'m travelling from abroad. Can I book?',
+  faq_a9: 'Yes. Enter your WhatsApp number with the country code, for example +60 12-345 6789 or +65 9123 4567. Prices are in Indonesian Rupiah. If none of the available payment methods work for you, chat with the admin on WhatsApp.',
+  faq_q10: 'What if the driver or car becomes unavailable?',
+  faq_a10: 'We arrange a similar replacement from our partners so your trip goes ahead.',
+  faq_q11: 'How do I contact the admin?',
+  faq_a11: 'Tap the WhatsApp button in the bottom-right corner, or use the contact details at the bottom of this page.',
+
+  ft_tagline: 'Your Travel Companion • Bandung • Private Trips',
+  ft_desc: 'Private trips around Bandung with a car and driver just for your group. Transparent prices, flexible routes.',
+  ft_area: 'Serving Bandung and surroundings', ft_crafted: 'Made with',
+  wa_online: 'Online', wa_consult: 'Chat on WhatsApp',
+  wa_float_msg: 'Hi Admin Tempera, I\'d like to ask about a tour package',
+  wa_2days: 'Hi, I\'d like a 2-day package: Lembang + Ciwidey/Pangalengan',
+  bm_title: 'Complete Your Payment', bm_order: 'Booking no.', bm_amount: 'Pay now', bm_rest: 'The remaining {rest} is paid in cash to the driver during the trip.',
+  bm_how: 'How to pay', bm_note: 'Write the booking number in the transfer note. After paying, send the sender\'s name or proof of payment via WhatsApp. The booking is cancelled automatically if not paid within {jam} hours.',
+  bm_kode: 'Includes the unique code {kode} (base amount {base}). Pay EXACTLY the amount above so we can match your payment easily.', bm_transfer: 'Transfer to one of these accounts', bm_copy: 'Copy', bm_copied: 'Copied', bm_proof: 'Send proof of payment via WhatsApp', bm_close: 'Close', bm_wa_sent: 'These instructions were also sent to your WhatsApp.',
+  bm_msg: 'Proof of payment for booking {order}, amount {nominal}. Sender\'s name: ',
+  gd_label: 'Route & attraction guides:', gd_ciw: 'Ciwidey & Kawah Putih', gd_kota: 'Bandung City & Dago',
+  dh_title: 'Car & Driver Rental Prices', dh_lead: 'Prices in Indonesian Rupiah (IDR) per day, 12 hours of use, including car, driver, fuel, and drinking water.', dh_th1: 'Car', dh_th2: 'Price per day', dh_maks: 'max {n} people',
+  dh_exc: 'Not included: tolls, parking, and the driver\'s meals.', dh_pay: 'Payment: deposit or in full, by bank transfer, QRIS, e-wallet, or card. Extra fees for cross-area trips are calculated automatically in the booking form.',
+  ft_nib: 'Registered business (OSS) · NIB 1710260026226', ft_mitra: 'Partner Login', fl_harga: 'Price List', fl_bandara: 'Airport Transfer', fl_syarat: 'Terms & Conditions', fl_privasi: 'Privacy Policy', fl_kontak: 'Contact',
+  gl_title: 'Trip Gallery', gl_sub: 'Real moments from trips with Tempera', gl_all: 'See all photos'
 }
 };
 const WX_DESC = {
   id: {0:'Cerah',1:'Cerah Berawan',2:'Berawan Sebagian',3:'Mendung',45:'Berkabut',48:'Kabut Tebal',51:'Gerimis Ringan',53:'Gerimis',55:'Gerimis Lebat',56:'Gerimis',57:'Gerimis Lebat',61:'Hujan Ringan',63:'Hujan Sedang',65:'Hujan Lebat',80:'Hujan Ringan',81:'Hujan Sedang',82:'Hujan Lebat',95:'Petir',96:'Petir + Hujan',99:'Badai Petir',_:'Berawan'},
-  ms: {0:'Cerah',1:'Cerah Berawan',2:'Separa Berawan',3:'Mendung',45:'Berkabus',48:'Kabus Tebal',51:'Hujan Renyai',53:'Renyai',55:'Renyai Lebat',56:'Renyai',57:'Renyai Lebat',61:'Hujan Ringan',63:'Hujan Sederhana',65:'Hujan Lebat',80:'Hujan Ringan',81:'Hujan Sederhana',82:'Hujan Lebat',95:'Ribut Petir',96:'Ribut Petir + Hujan',99:'Ribut Petir Kuat',_:'Berawan'}
+  ms: {0:'Cerah',1:'Cerah Berawan',2:'Separa Berawan',3:'Mendung',45:'Berkabus',48:'Kabus Tebal',51:'Hujan Renyai',53:'Renyai',55:'Renyai Lebat',56:'Renyai',57:'Renyai Lebat',61:'Hujan Ringan',63:'Hujan Sederhana',65:'Hujan Lebat',80:'Hujan Ringan',81:'Hujan Sederhana',82:'Hujan Lebat',95:'Ribut Petir',96:'Ribut Petir + Hujan',99:'Ribut Petir Kuat',_:'Berawan'},
+  en: {0:'Clear',1:'Mostly Clear',2:'Partly Cloudy',3:'Overcast',45:'Foggy',48:'Thick Fog',51:'Light Drizzle',53:'Drizzle',55:'Heavy Drizzle',56:'Drizzle',57:'Heavy Drizzle',61:'Light Rain',63:'Moderate Rain',65:'Heavy Rain',80:'Light Showers',81:'Showers',82:'Heavy Showers',95:'Thunderstorm',96:'Thunderstorm + Rain',99:'Severe Thunderstorm',_:'Cloudy'}
 };
 
 let currentLang = (function(){
-  try{ const s=localStorage.getItem('tempera_lang'); if(s==='id'||s==='ms') return s; }catch(e){}
+  try{ const q=new URL(location.href).searchParams.get('lang'); if(q==='id'||q==='ms'||q==='en'){ try{ localStorage.setItem('tempera_lang',q); }catch(e){} return q; } }catch(e){}
+  try{ const s=localStorage.getItem('tempera_lang'); if(s==='id'||s==='ms'||s==='en') return s; }catch(e){}
   return /^ms\b/i.test(navigator.language||'') ? 'ms' : 'id';   // tamu dengan HP berbahasa Melayu langsung dapat bahasa Melayu
 })();
 function t(key, vars){
@@ -442,15 +656,15 @@ function applyStaticText(root){
 }
 function updateLangButton(){
   const flag=document.getElementById('currentLangFlag'), lbl=document.getElementById('currentLang');
-  if(flag) flag.textContent=currentLang==='ms'?'🇲🇾':'🇮🇩';
-  if(lbl) lbl.textContent=currentLang==='ms'?'MY':'ID';
+  if(flag) flag.textContent=({ms:'🇲🇾',en:'🇬🇧'})[currentLang]||'🇮🇩';
+  if(lbl) lbl.textContent=({ms:'MY',en:'EN'})[currentLang]||'ID';
   document.querySelectorAll('#langMenu [data-lang]').forEach(b=>{
     const on=b.dataset.lang===currentLang; const c=b.querySelector('.check');
     b.style.background=on?'var(--bg-section-alt)':'transparent'; if(c) c.classList.toggle('hidden',!on);
   });
 }
 function applyLanguage(lang){
-  currentLang=(lang==='ms')?'ms':'id';
+  currentLang=(lang==='ms'||lang==='en')?lang:'id';
   try{ localStorage.setItem('tempera_lang',currentLang); }catch(e){}
   applyStaticText(); updateLangButton(); refreshDynamic();
 }
@@ -572,9 +786,9 @@ function setHeroImage(url){
 }
 function applyHero(){
   const h=document.getElementById('heroTitle'), p=document.getElementById('heroSub');
-  const ms=currentLang==='ms';
-  const title=String((ms?SETTINGS.hero_title_ms:SETTINGS.hero_title)||'').trim();
-  const sub=String((ms?SETTINGS.hero_subtitle_ms:SETTINGS.hero_subtitle)||'').trim();
+  const ms=currentLang==='ms', en=currentLang==='en';   // EN: teks kamus (atau hero_title_en/hero_subtitle_en bila kelak diisi di pengaturan)
+  const title=String((en?SETTINGS.hero_title_en:ms?SETTINGS.hero_title_ms:SETTINGS.hero_title)||'').trim();
+  const sub=String((en?SETTINGS.hero_subtitle_en:ms?SETTINGS.hero_subtitle_ms:SETTINGS.hero_subtitle)||'').trim();
   if(h) h.textContent=title||t('hero_title');
   if(p) p.textContent=sub||t('hero_sub');
   let url;
@@ -730,7 +944,7 @@ function renderUlasan(){
   let sec=document.getElementById('ulasan');
   if(!ULASAN.list.length){ if(sec) sec.remove(); return; }
   if(!sec){ const faq=document.getElementById('cuaca')||document.getElementById('faq'); if(!faq) return; sec=document.createElement('section'); sec.id='ulasan'; sec.className='py-24 theme-section border-t'; sec.style.borderColor='var(--border-soft)'; faq.before(sec); }
-  const loc=currentLang==='ms'?'ms-MY':'id-ID';
+  const loc=wxLocale();
   const bulan=(ym)=>{ const m=/^(\d{4})-(\d{2})$/.exec(ym||''); return m?new Date(Date.UTC(+m[1],+m[2]-1,15)).toLocaleDateString(loc,{month:'long',year:'numeric',timeZone:'UTC'}):''; };
   const rata=ULASAN.rata!=null?ULASAN.rata.toLocaleString(loc,{minimumFractionDigits:1,maximumFractionDigits:1}):'-';
   const kartu=ULASAN.list.map(u=>{ const n=Math.max(1,Math.min(5,Number(u.bintang)||0));
@@ -838,8 +1052,8 @@ function renderDestinasi(){
       return head+`<div class="dchips">${atas.map(n=>chip(sc,n)).join('')}</div><details class="dmore"><summary data-all="${esc(t('dest_all',{n:sisa.length}))}" data-less="${esc(t('dest_less'))}"></summary><div class="dchips">${sisa.map(n=>chip(sc,n)).join('')}</div></details>`;
     }).join('');
     const ms=currentLang==='ms';
-    const judul=c.judul?((ms&&c.judul_ms)||c.judul):t(c.title);
-    const tag=c.judul?((ms&&c.tag_ms)||c.tag||''):t(c.tag);
+    const judul=c.judul?kartuJudul(c):t(c.title);
+    const tag=c.judul?kartuTag(c):t(c.tag);
     const foto=c.img?kartuFotoUrl(c.img):'';
     const g0=c.secs[0]&&c.secs[0].g, bebas=g0&&RUTE_BEBAS[g0]?`<div class="dchips"><button type="button" class="dchip dchip-bebas" data-g="${esc(g0)}" data-n="${esc(RUTE_BEBAS[g0])}" aria-pressed="false">${esc(t('rute_bebas'))}</button></div>`:'';
     return `<article class="dcard theme-card"><div class="paket-img"${foto?` style="background-image:url('${esc(foto)}')"`:''} role="img" aria-label="${esc(judul)}">${tag?`<span class="paket-tag">${esc(tag)}</span>`:''}</div><div class="dcard-body"><h3 class="paket-title">${esc(judul)}</h3>${bebas}${secs}<p class="paket-info">${esc(t('pk_info'))}</p></div></article>`;
@@ -1036,7 +1250,7 @@ function bukaSheetDest(){
     build:(body)=>{
       const ms=currentLang==='ms';
       DEST_CARDS.forEach(c=>{
-        const h=document.createElement('p'); h.className='ts-h'; h.textContent=c.judul?((ms&&c.judul_ms)||c.judul):t(c.title); body.appendChild(h);
+        const h=document.createElement('p'); h.className='ts-h'; h.textContent=c.judul?kartuJudul(c):t(c.title); body.appendChild(h);
         const g0=c.secs[0]&&c.secs[0].g;
         if(g0&&RUTE_BEBAS[g0]){ const w0=document.createElement('div'); w0.className='dchips'; const b0=document.createElement('button'); b0.type='button'; b0.className='dchip dchip-bebas'; b0.dataset.g=g0; b0.dataset.n=RUTE_BEBAS[g0]; b0.setAttribute('aria-pressed','false'); b0.textContent=t('rute_bebas'); w0.appendChild(b0); body.appendChild(w0); }
         c.secs.forEach(sc=>{
@@ -1249,7 +1463,7 @@ function layananLain(){
   const o=document.getElementById('hoNext'); if(!o) return;
   if(LL.trip===undefined){ o.textContent=''; return; }
   if(!LL.trip){ o.textContent=t('ho_none'); return; }
-  const tgl=new Date(LL.trip.tanggal+'T00:00:00+07:00').toLocaleDateString(currentLang==='ms'?'ms-MY':'id-ID',{weekday:'short',day:'numeric',month:'short',timeZone:'Asia/Jakarta'});
+  const tgl=new Date(LL.trip.tanggal+'T00:00:00+07:00').toLocaleDateString(wxLocale(),{weekday:'short',day:'numeric',month:'short',timeZone:'Asia/Jakarta'});
   o.textContent=t('ho_next',{judul:LL.trip.judul,tgl,n:LL.trip.sisa});
 }
 (function muatOpenTripTerdekat(){
@@ -1349,7 +1563,11 @@ function getWeatherIcon(code,isDay){ const V='\uFE0F'; const x=getWeatherType(co
   if(x==='fog') return '🌫'+V; if(x==='drizzle') return '🌦'+V; if(x==='rain') return '🌧'+V; if(x==='thunder') return '⛈'+V; return '⛅'; }
 function getWeatherDesc(code){ const d=WX_DESC[currentLang]||WX_DESC.id; return d[code]||d._; }
 function wxPhase(){ const h=(new Date().getUTCHours()+7)%24; if(h>=5&&h<10) return 'pagi'; if(h>=10&&h<15) return 'siang'; if(h>=15&&h<18) return 'sore'; return 'malam'; }
-function wxLocale(){ return currentLang==='ms'?'ms-MY':'id-ID'; }
+// Judul & label kartu destinasi dari database (kolom _ms untuk Melayu; Inggris dipetakan di sini, nama tempat tetap)
+const EN_KARTU={'Kota Bandung':'Bandung City','Bandung Utara':'North Bandung','Bandung Selatan':'South Bandung','Titik 0':'City centre'};
+function kartuJudul(c){ if(currentLang==='ms') return c.judul_ms||c.judul; if(currentLang==='en') return EN_KARTU[c.judul]||c.judul; return c.judul; }
+function kartuTag(c){ const tg=c.tag||''; if(currentLang==='ms') return c.tag_ms||tg; if(currentLang==='en') return EN_KARTU[tg]||tg; return tg; }
+function wxLocale(){ return ({ms:'ms-MY',en:'en-GB'})[currentLang]||'id-ID'; }
 function renderWeather(){
   const card=document.getElementById('weather-main-card'); if(!card) return;
   const phase=wxPhase();
@@ -1476,7 +1694,7 @@ function askConfirm(message,okText,cancelText){ return temperaDialog({message,ok
 /* Daftar Harga (tabel SEO di bawah) ikut data armada dari database; baris statis di HTML = cadangan */
 function renderDaftarHarga(){
   const tb=document.getElementById('dh-body'); if(!tb||!Array.isArray(ARMADA_DATA)||!ARMADA_DATA.length) return;
-  const maks='maks {n} orang';
+  const maks=t('dh_maks');
   tb.innerHTML=ARMADA_DATA.map(u=>`<tr><td>${esc(u.name)}${u.capacityMax?` <small>${esc(maks.replace('{n}',u.capacityMax))}</small>`:''}</td><td>${formatPrice(u.price)}</td></tr>`).join('');
 }
 function refreshDynamic(){
@@ -1578,6 +1796,7 @@ document.addEventListener('click',e=>{
 function bayarSnap(data){
   const dpNote=(data.payment_mode==='dp'&&data.dp_amount)?t('dp_note',{rest:formatPrice(data.total-data.dp_amount)}):'';
   window.snap.pay(data.snap_token,{
+    language: currentLang==='en'?'en':'id',   // halaman pembayaran Midtrans ikut bahasa Inggris
     onSuccess:(r)=>{ lacak('purchase',{transaction_id:data.order_id,value:Number(data.payment_mode==='dp'?data.dp_amount:data.total)||0,currency:'IDR',payment_mode:data.payment_mode||'lunas',metode:(r&&r.payment_type)||''}); notify(t('pay_ok',{dp:dpNote})); },
     onPending:()=>notify(t('pay_pending',{dp:dpNote})),
     onError:()=>notify(t('pay_err')),

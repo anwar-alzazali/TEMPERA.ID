@@ -89,6 +89,7 @@
           <div id="langMenu" class="hidden absolute right-0 mt-3 w-48 rounded-2xl shadow-2xl z-[9999] border overflow-hidden" style="background:var(--bg-card);border-color:var(--border-color)">
             <button type="button" onclick="changeLanguage('id')" data-lang="id" class="w-full text-left px-4 py-3 text-[12px] flex justify-between" style="color:var(--text-primary)">🇮🇩 Bahasa Indonesia <span class="check hidden">✓</span></button>
             <button type="button" onclick="changeLanguage('ms')" data-lang="ms" class="w-full text-left px-4 py-3 text-[12px] flex justify-between" style="color:var(--text-primary)">🇲🇾 Bahasa Melayu <span class="check hidden">✓</span></button>
+            <button type="button" onclick="changeLanguage('en')" data-lang="en" class="w-full text-left px-4 py-3 text-[12px] flex justify-between" style="color:var(--text-primary)">🇬🇧 English <span class="check hidden">✓</span></button>
           </div>
         </div>
         <a href="#pesan" onclick="handlePesanSekarang(event)" class="hidden sm:inline-flex items-center justify-center font-bold px-4 py-2 rounded-full text-[11px] uppercase tracking-wider shadow-lg hover:brightness-110 ml-1" style="background:var(--accent);color:var(--on-accent)" data-i18n="nav_book">Pesan Sekarang</a>
@@ -195,7 +196,7 @@
 </div>
 <p class="text-center text-[12px] mt-6" style="color:var(--text-secondary)" data-i18n="dest_order">Urutan kunjungan diatur driver bersamamu lewat WhatsApp setelah pesanan dikonfirmasi.</p>
 <p class="text-center text-[11px] mt-2" style="color:var(--text-muted)" data-i18n="dest_tip">Untuk sewa 12 jam, kami sarankan maksimal 4 destinasi supaya perjalanan tetap santai.</p>
-<p class="text-[12px] mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-secondary)">Panduan rute &amp; tempat wisata: <a href="lembang" class="underline underline-offset-4">Lembang</a><a href="ciwidey" class="underline underline-offset-4">Ciwidey &amp; Kawah Putih</a><a href="pangalengan" class="underline underline-offset-4">Pangalengan</a><a href="kota-bandung" class="underline underline-offset-4">Kota Bandung &amp; Dago</a><a href="blog/" class="underline underline-offset-4">Blog</a></p>
+<p class="text-[12px] mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-secondary)"><span data-i18n="gd_label">Panduan rute &amp; tempat wisata:</span> <a href="lembang" class="underline underline-offset-4">Lembang</a><a href="ciwidey" class="underline underline-offset-4" data-i18n="gd_ciw">Ciwidey &amp; Kawah Putih</a><a href="pangalengan" class="underline underline-offset-4">Pangalengan</a><a href="kota-bandung" class="underline underline-offset-4" data-i18n="gd_kota">Kota Bandung &amp; Dago</a><a href="blog/" class="underline underline-offset-4">Blog</a></p>
 </div></section>
 
 <!-- ARMADA -->
@@ -348,11 +349,11 @@
     .dh-wrap td small{display:block;font-size:12px;color:var(--text-secondary);font-weight:400;margin-top:2px}
   </style>
   <div class="dh-wrap">
-    <h2>Daftar Harga Sewa Mobil + Driver</h2>
-    <p>Harga dalam Rupiah (IDR) per hari, pemakaian 12 jam, sudah termasuk mobil, driver, BBM, dan air mineral.</p>
+    <h2 data-i18n="dh_title">Daftar Harga Sewa Mobil + Driver</h2>
+    <p data-i18n="dh_lead">Harga dalam Rupiah (IDR) per hari, pemakaian 12 jam, sudah termasuk mobil, driver, BBM, dan air mineral.</p>
     <div class="dh-scroll">
       <table>
-        <thead><tr><th>Mobil</th><th>Harga per hari</th></tr></thead>
+        <thead><tr><th data-i18n="dh_th1">Mobil</th><th data-i18n="dh_th2">Harga per hari</th></tr></thead>
         <tbody id="dh-body">
           <tr><td>Toyota Calya / Sigra <small>maks 6 orang</small></td><td>Rp 550.000</td></tr>
           <tr><td>Toyota Avanza / Xenia New <small>maks 6 orang</small></td><td>Rp 700.000</td></tr>
@@ -365,8 +366,8 @@
         </tbody>
       </table>
     </div>
-    <p>Tidak termasuk: tol, parkir, dan makan driver.</p>
-    <p>Pembayaran: DP atau lunas, lewat transfer bank atau QRIS. Biaya tambahan untuk perjalanan lintas wilayah dihitung otomatis di formulir pemesanan.</p>
+    <p data-i18n="dh_exc">Tidak termasuk: tol, parkir, dan makan driver.</p>
+    <p data-i18n="dh_pay">Pembayaran: DP atau lunas, lewat transfer bank atau QRIS. Biaya tambahan untuk perjalanan lintas wilayah dihitung otomatis di formulir pemesanan.</p>
   </div>
 </section>
 
@@ -446,7 +447,7 @@
   <h3 class="font-serif font-bold text-[14px] tracking-[0.35em] uppercase leading-none" style="color:var(--accent)">TEMPERA</h3>
   <p class="text-[10px] tracking-[0.3em] uppercase mt-2" style="color:var(--text-muted)" data-i18n="ft_tagline">Teman Perjalanan • Bandung • Private Trip</p>
   <p class="text-[12px] max-w-[380px] mx-auto mt-3 leading-relaxed" style="color:var(--text-muted)" data-i18n="ft_desc">Private trip Bandung dengan mobil dan driver untuk rombongan Anda sendiri. Harga transparan, rute bisa diatur.</p>
-  <p class="text-[10px] tracking-[0.12em] mt-3" style="color:var(--text-muted)">Usaha terdaftar di OSS &middot; NIB 1710260026226</p>
+  <p class="text-[10px] tracking-[0.12em] mt-3" style="color:var(--text-muted)" data-i18n="ft_nib">Usaha terdaftar di OSS · NIB 1710260026226</p>
 
   <div class="soc-row" id="footerSocial">
     <a id="socWa" class="soc" href="https://wa.me/6285196755972" target="_blank" rel="noopener" aria-label="WhatsApp Tempera"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.05 4.91A9.82 9.82 0 0 0 12.04 2C6.46 2 2.05 6.41 2.05 12c0 1.76.46 3.48 1.32 4.99L2 22l5.18-1.36A9.82 9.82 0 0 0 12.04 22c5.58 0 10-4.41 10-9.99 0-2.67-1.04-5.18-2.99-7.1zM12.04 20.15a8.07 8.07 0 0 1-4.11-1.13l-.3-.18-3.07.81.82-2.99-.19-.31A8.08 8.08 0 0 1 4.03 12c0-4.49 3.65-8.14 8.15-8.14 2.18 0 4.22.85 5.76 2.39a8.09 8.09 0 0 1 2.39 5.76c0 4.5-3.66 8.14-8.29 8.14zm4.47-6.08c-.24-.12-1.43-.71-1.65-.79-.22-.08-.38-.12-.54.12-.16.24-.62.79-.76.95-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.01-.37.1-.49.1-.1.24-.26.36-.39.12-.12.16-.21.24-.35.08-.14.04-.26-.02-.38-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46c-.16 0-.38.06-.58.26-.2.2-.76.74-.76 1.81s.78 2.1.89 2.25c.11.14 1.53 2.34 3.71 3.28.52.22.92.35 1.24.45.52.16.99.14 1.36.09.41-.06 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z"/></svg></a>
@@ -456,8 +457,8 @@
   </div>
   <p class="text-[12px] font-semibold mt-3" style="color:var(--text-secondary)" id="footerWaText">WhatsApp 0851-9675-5972</p>
   <p class="text-[11px] mt-1" style="color:var(--text-muted)" data-i18n="ft_area">Melayani Bandung dan sekitarnya</p>
-  <a href="mitra.html" class="text-[11px] font-semibold mt-3 underline underline-offset-4" style="color:var(--accent)">Masuk Mitra</a>
-  <p class="text-[11px] mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-muted)"><a href="#daftar-harga" class="underline underline-offset-4">Daftar Harga</a><a href="bandara" class="underline underline-offset-4">Antar Jemput Bandara</a><a href="open-trip" class="underline underline-offset-4">Open Trip</a><a href="blog/" class="underline underline-offset-4">Blog</a><a href="syarat.html" class="underline underline-offset-4">Syarat &amp; Ketentuan</a><a href="syarat.html#privasi" class="underline underline-offset-4">Kebijakan Privasi</a><a href="syarat.html#kontak" class="underline underline-offset-4">Kontak</a></p>
+  <a href="mitra.html" class="text-[11px] font-semibold mt-3 underline underline-offset-4" style="color:var(--accent)" data-i18n="ft_mitra">Masuk Mitra</a>
+  <p class="text-[11px] mt-3 flex flex-wrap justify-center gap-x-3 gap-y-1" style="color:var(--text-muted)"><a href="#daftar-harga" class="underline underline-offset-4" data-i18n="fl_harga">Daftar Harga</a><a href="bandara" class="underline underline-offset-4" data-i18n="fl_bandara">Antar Jemput Bandara</a><a href="open-trip" class="underline underline-offset-4">Open Trip</a><a href="blog/" class="underline underline-offset-4">Blog</a><a href="syarat.html" class="underline underline-offset-4" data-i18n="fl_syarat">Syarat &amp; Ketentuan</a><a href="syarat.html#privasi" class="underline underline-offset-4" data-i18n="fl_privasi">Kebijakan Privasi</a><a href="syarat.html#kontak" class="underline underline-offset-4" data-i18n="fl_kontak">Kontak</a></p>
 
   <div class="mt-5 pt-4 border-t w-full max-w-lg flex flex-row items-center justify-center gap-2 text-[10px]" style="border-color:var(--border-soft)">
     <p style="color:var(--text-muted)">© <span id="footerYear">2026</span> <span class="font-semibold" style="color:var(--text-secondary)">Tempera</span></p>
@@ -485,6 +486,6 @@
 <!-- MODAL KAPASITAS -->
 <div id="capacityModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"><div class="absolute inset-0 bg-black/40 backdrop-blur-md" onclick="closeCapacityModal()"></div><div id="capacityModalBox" role="dialog" aria-modal="true" aria-labelledby="capacityModalTitle" tabindex="-1" class="relative border-2 rounded-[24px] max-w-[440px] w-full p-7"><div id="capacityModalIcon" class="w-14 h-14 rounded-full flex items-center justify-center text-2xl mx-auto mb-4"></div><h3 id="capacityModalTitle" class="font-bold text-center text-[16px] uppercase"></h3><p id="capacityModalText" class="text-[13px] text-center mt-3"></p><div id="capacityModalActions" class="grid grid-cols-2 gap-3 mt-6"></div></div></div>
 
-<script src="js/main.js?v=20261106g"></script>
+<script src="js/main.js?v=20261120en"></script>
 </body>
 </html>

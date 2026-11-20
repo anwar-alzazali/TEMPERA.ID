@@ -18,6 +18,14 @@
       bayar_gagal: 'Pembayaran gagal. Cuba lagi, atau pilih kaedah lain.',
       bayar_tutup: 'Tetingkap pembayaran ditutup. Tekan <b>Bayar</b> sekali lagi, atau <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">minta bantuan admin</a>.',
     },
+    en: {
+      wa_msg: 'Hi Tempera, I\'d like to ask about the open trips.',
+      wa_bantu: 'Hi admin, I need help with the payment for booking {id} (open trip).',
+      bayar_ok: '✅ <b>Payment successful, your seat is booked.</b> The confirmation and invoice are sent to WhatsApp. We send the driver details the day before departure.',
+      bayar_pending: '⏳ <b>Awaiting payment.</b> Your seat is held for 30 minutes. Complete the payment so the seat is not released.',
+      bayar_gagal: 'Payment failed. Try again, or choose another method.',
+      bayar_tutup: 'The payment window was closed. Your seat is held for up to 30 minutes; tap <b>Pay</b> again for a new booking, or <a href="{wa}" target="_blank" rel="noopener" style="text-decoration:underline">ask the admin for help</a>.',
+    },
   };
   const ID = Object.assign({}, UMUM.id, {
     nav_beranda: 'Beranda', nav_bandara: 'Bandara', nav_jadwal: 'Jadwal',
@@ -112,8 +120,8 @@
 
   function kartu(r) {
     const d = new Date(r.tanggal + 'T00:00:00+07:00');
-    const bln = d.toLocaleDateString(P.lang === 'ms' ? 'ms-MY' : 'id-ID', { month: 'short', timeZone: 'Asia/Jakarta' });
-    const hari = d.toLocaleDateString(P.lang === 'ms' ? 'ms-MY' : 'id-ID', { weekday: 'short', timeZone: 'Asia/Jakarta' });
+    const bln = d.toLocaleDateString(({ ms: 'ms-MY', en: 'en-GB' })[P.lang] || 'id-ID', { month: 'short', timeZone: 'Asia/Jakarta' });
+    const hari = d.toLocaleDateString(({ ms: 'ms-MY', en: 'en-GB' })[P.lang] || 'id-ID', { weekday: 'short', timeZone: 'Asia/Jakarta' });
     const mb = mobil(r), pct = mb.pct;
     const f = fotoUrl(r.foto_url);
     return `<article class="otkartu">
@@ -233,7 +241,43 @@
     const s = document.createElement('script'); s.type = 'application/ld+json'; s.id = 'ldTrip'; s.textContent = JSON.stringify(ld); document.head.appendChild(s);
   }
 
-  P.kamus({ id: ID, ms: MS });
+  const EN = Object.assign({}, UMUM.en, {
+    nav_beranda: 'Home', nav_bandara: 'Airport', nav_jadwal: 'Schedule',
+    kicker: 'Open Trips from Bandung', h1: 'Travel together, pay per seat',
+    sub: 'Join one of our scheduled tours: travel with other participants in a Tempera car with driver. Ideal if you travel solo, as a pair, or don\'t want to rent a whole car.',
+    c1: 'Price per person', c2: 'Local driver', c3: 'Seat guaranteed once paid', cta: 'See schedule',
+    jadwal_judul: 'Open trip schedule', jadwal_lead: 'Remaining seats update live. Your seat is held for 30 minutes while you pay.',
+    memuat: 'Loading schedule…', gagal: 'The schedule could not be loaded. Reload the page, or ask the admin on WhatsApp.',
+    kosong: 'The next open trip schedule is being prepared.', kosong_wa: 'Notify me on WhatsApp',
+    per_orang: '/ person', sisa: '{n} seats left', sisa_tipis: 'Only {n} seats left!', habis: 'Full', ditutup: 'Registration closed',
+    lihat: 'View & book', kumpul: 'Meeting point: {x}', jemput: 'Picked up at your hotel/home ({x})', jemput_semua: 'Picked up at your hotel/home', siap: 'Be ready for pick-up by {jam}',
+    jemput_info: '🏨 <b>Picked up at each participant\'s hotel or home</b>{area}. Please be ready in the lobby/at your door <b>by {jam} at the latest</b>. Participants who are not ready at that time will be left behind, without a refund.', jemput_area: ' ({x} area)',
+    berangkat: 'Departs {jam}', min: 'Departs with at least {n} participants',
+    kursi_info: '💺 <b>Seats are assigned the day before</b> in order of payment: the earlier you pay, the further forward you sit.',
+    min_info: 'Departs once at least <b>{n} participants</b> have joined. The car matches the group size (Avanza/Calya, Innova, or Hiace). If there are not enough participants by the deadline, you can switch to another date or get a 100% refund.',
+    armada: 'Car: {x}', armada_auto: '🚐 The vehicle type matches the number of participants', tersedia: 'Seats available',
+    st_kosong: 'Be the first to join · departs with at least {min} people',
+    st_butuh: 'Participants so far: {x} · {y} more needed to depart',
+    st_pasti: 'Participants so far: {x} · departure confirmed',
+    utama: '📍 Main destinations', bonus: '✨ Bonus stops if time allows', ubah_info: 'The order and number of stops may change due to weather, traffic, or conditions on the ground. Main destinations always come first; bonus stops are visited if there is time. Entrance tickets included in the package for places we could not visit are refunded.',
+    itinerary: 'Itinerary', termasuk: 'Included', tidak: 'Not included', catatan: 'Notes',
+    f_kursi: 'Number of seats', f_nama: 'Your name', f_wa: 'WhatsApp number', f_wa_ph: '+60 12-345 6789 or +62 8xx',
+    f_peserta: 'Other participants\' names', f_peserta_s: '(optional, separate with commas)', f_alamat: 'Hotel name / pick-up address', f_alamat_ph: 'Hotel name + address, or full home address',
+    setuju: 'I agree to the <a href="syarat.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> and <a href="syarat.html#privasi" target="_blank" rel="noopener">Privacy Policy</a>.',
+    total: 'Total ({n} seats)', bayar: 'Pay {x}', memproses: 'Processing…', tutup: 'Close',
+    aman: 'Full payment via Midtrans: QRIS, GoPay, ShopeePay, bank transfer (VA), credit/debit card. Prices are in Indonesian Rupiah.',
+    e_nama: 'Enter your name.', e_wa: 'Invalid WhatsApp number.', e_alamat: 'Enter the pick-up address.', e_setuju: 'Please tick the Terms & Conditions box first.', e_snap: 'The payment page failed to load. Check your connection and try again.', e_jaringan: 'Connection lost. Please try again.',
+    bagikan: 'Share', disalin: 'Link copied',
+    cara_judul: 'How to join', s1: '1. Choose a date', s1d: 'See the destinations, date, meeting point, and seats left.', s2: '2. Pay for your seat', s2d: 'Pay online by QRIS, e-wallet, bank transfer, or card. Your seat is booked in your name straight away.', s3: '3. Come to the meeting point', s3d: 'The day before, we send the driver details and the participants\' WhatsApp group.',
+    pribadi: 'Prefer to travel with just your own group? Choose a <a href="/#destinasi" style="text-decoration:underline">private trip (12-hour car + driver rental)</a>.',
+    faq_judul: 'Frequently asked questions',
+    q1: 'What if the minimum number of participants is not reached?', a1: 'If there are not enough participants by the deadline, you can choose to move to another date or get a 100% refund.',
+    q2: 'Can I cancel after paying?', a2: 'Cancellations follow the Terms & Conditions. Since your seat is held for you, contact the admin as soon as possible if you cannot make it; you may also transfer your seat to someone else.',
+    q3: 'How is this different from a private trip?', a3: 'On an open trip you share a car with other participants and follow a set route and timetable. On a private trip, the car and driver are only for your group and you choose the route.',
+    q4: 'Do I pay the entrance tickets myself?', a4: 'Check the "Included" and "Not included" sections of each trip. If tickets and meals are not listed as included, you pay for them yourself on site.',
+    privasi: 'Privacy',
+  });
+  P.kamus({ id: ID, ms: MS, en: EN });
   document.addEventListener('p-lang', () => { if (DATA.length || $('#daftar .otkartu')) daftar(); $('#waMelayang').href = P.waLink(t('wa_msg')); if (aktif) buka(aktif.id, false); });
   P.setelan(['admin_wa']).then(() => { $('#waMelayang').href = P.waLink(t('wa_msg')); }).catch(() => {});
   muat();
