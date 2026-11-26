@@ -94,14 +94,14 @@ VIEWS.kas = async function () {
       const uji = await panggil(true);
       if (!uji.ok) { toast(uji.error || 'Gagal memeriksa', true); return; }
       const siap = (uji.hasil || []).filter((h) => h.akan_dikirim);
-      if (!siap.length) { toast('Semua driver sudah lunas, tidak ada yang perlu diingatkan'); return; }
-      const daftar = siap.map((h) => `• ${h.nama}: ${rp(h.total)}`).join('\n');
-      if (!confirm(`Kirim WA pengingat kas ke ${siap.length} driver yang belum lunas?\n\n${daftar}\n\n(Maksimal 1 pesan per driver per hari.)`)) return;
+      if (!siap.length) { toast('Tidak ada nomor WA driver aktif yang bisa dikirimi.'); return; }
+      const daftar = siap.map((h) => `• ${h.nama}: ${h.total > 0 ? `Belum lunas — ${rp(h.total)}` : (h.status_iuran === 'bebas iuran' ? 'Bebas iuran' : h.status_iuran === 'belum ditagih' ? 'Belum masuk periode iuran' : 'Sudah lunas')}`).join('\n');
+      if (!confirm(`Kirim ringkasan kas + pengingat pribadi ke ${siap.length} driver aktif?\n\n${daftar}\n\n(Maksimal 1 pesan per driver per hari per mode.)`)) return;
       btn.textContent = `Mengirim ke ${siap.length} driver…`;
       const j = await panggil(false);
       if (!j.ok) { toast(j.error || 'Gagal mengirim', true); return; }
       const gagal = (j.hasil || []).filter((h) => h.ok === false);
-      toast(`Pengingat terkirim ke ${j.dikirim} driver` + (gagal.length ? `, ${gagal.length} dilewati/gagal` : ''), gagal.length > 0 && !j.dikirim);
+      toast(`Ringkasan kas + pengingat terkirim ke ${j.dikirim} driver` + (gagal.length ? `, ${gagal.length} dilewati/gagal` : ''), gagal.length > 0 && !j.dikirim);
     } finally { btn.disabled = false; btn.textContent = lama; }
   });
   $('#trSimpan').addEventListener('click', async (e) => {
