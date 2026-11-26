@@ -438,7 +438,7 @@ function cetak(judul,sub,isi){
   w.document.close(); w.focus(); setTimeout(()=>w.print(),300);
 }
 function gambarKas(k, iu){
-  const bagIuran=iu?`<div class="card">
+  // Saldo/total tetap berasal dari seluruh transaksi; hanya daftar riwayat yang disaring.\n  const transaksiTampil = (k.transaksi || []).filter((x) => String(x.tanggal || '') >= '2026-11-01');\n  const bagIuran=iu?`<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h2 style="margin:0">Rekap iuran kas</h2>
         <div class="acts" style="margin:0">${linkBayar(iu)?`<a class="btn sm" href="${esc(linkBayar(iu))}">Bayar kas & iuran</a>`:''}<button class="btn ghost sm" type="button" id="kCetak">Cetak</button></div></div>
       <div class="note" style="margin:6px 0 8px">Setoran otomatis menutup bulan tertua yang belum lunas. ✅ lunas · ◐ sebagian · ❌ belum</div>
@@ -459,7 +459,7 @@ function gambarKas(k, iu){
       <div class="stat"><div class="v">${rp(k.keluar)}</div><div class="l">Total keluar</div></div>
     </div>
     <div class="note">Pembukuan yang sama untuk semua anggota. Transaksi terbaru di atas.</div>`
-    +(k.transaksi.length?k.transaksi.map((x)=>`<article class="card kas">
+    +(transaksiTampil.length?transaksiTampil.map((x)=>`<article class="card kas">
       <div class="top"><div><b>${esc(KAS_JENIS[x.jenis]||x.jenis)}</b><div class="note">${esc(tglPendek(x.tanggal))}${x.nama?' • '+esc(x.nama):''}</div></div>
       <div class="j ${x.jumlah<0?'min':'plus'}">${x.jumlah<0?'− ':'+ '}${rp(Math.abs(x.jumlah))}</div></div>
       ${x.keterangan?`<div class="note">${esc(x.keterangan)}</div>`:''}
