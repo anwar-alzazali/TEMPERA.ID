@@ -95,7 +95,7 @@ VIEWS.kas = async function () {
       if (!uji.ok) { toast(uji.error || 'Gagal memeriksa', true); return; }
       const siap = (uji.hasil || []).filter((h) => h.akan_dikirim);
       if (!siap.length) { toast('Tidak ada nomor WA driver aktif yang bisa dikirimi.'); return; }
-      const daftar = siap.map((h) => `• ${h.nama}: ${h.total > 0 ? `Belum lunas — ${rp(h.total)}` : (h.status_iuran === 'bebas iuran' ? 'Bebas iuran' : h.status_iuran === 'belum ditagih' ? 'Belum masuk periode iuran' : 'Sudah lunas')}`).join('\n');
+      const daftar = siap.map((h) => `• ${h.total > 0 ? '✅' : '❌'} ${h.nama}: ${rp(h.total)}${h.total > 0 ? ' — Sudah lunas' : ' — Belum lunas'}`).join('\n');
       if (!confirm(`Kirim ringkasan kas + pengingat pribadi ke ${siap.length} driver aktif?\n\n${daftar}\n\n(Maksimal 1 pesan per driver per hari per mode.)`)) return;
       btn.textContent = `Mengirim ke ${siap.length} driver…`;
       const j = await panggil(false);
