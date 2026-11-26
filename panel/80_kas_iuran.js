@@ -96,7 +96,15 @@ VIEWS.kas = async function () {
       const siap = (uji.hasil || []).filter((h) => h.akan_dikirim);
       if (!siap.length) { toast('Semua driver sudah lunas, tidak ada yang perlu diingatkan'); return; }
       const daftar = siap.map((h) => `• ${h.nama}: ${rp(h.total)}`).join('\n');
-      if (!confirm(`Kirim WA pengingat kas ke ${siap.length} driver yang belum lunas?\n\n${daftar}\n\n(Maksimal 1 pesan per driver per hari.)`)) return;
+      // Contoh pesan dari mode dry sudah memuat rekap lunas, tunggakan, dan saldo kas.
+      // Normalisasi \n literal dari Edge Function agar konfirmasi mudah dibaca.
+      const contoh = (uji.hasil || []).find((h) => h.contoh)?.contoh || '';
+      const contohTeks = String(contoh).replace(/\\n/g, '\n');
+      const ringkasan = contohTeks.includes('━━━━━━━━━━━━━━')
+        ? contohTeks.split('━━━━━━━━━━━━━━').slice(1).join('━━━━━━━━━━━━━━').trim()
+        : contohTeks.trim();
+      const isiRekap = ringkasan || 'Rekap kas tidak tersedia pada hasil pemeriksaan.';
+      if (!confirm(`Kirim WA pengingat kas ke ${siap.length} driver yang belum lunas?\n\nDAFTAR TUNGGAKAN\n${daftar}\n\n${isiRekap}\n\n(Maksimal 1 pesan per driver per hari.)`)) return;
       btn.textContent = `Mengirim ke ${siap.length} driver…`;
       const j = await panggil(false);
       if (!j.ok) { toast(j.error || 'Gagal mengirim', true); return; }
